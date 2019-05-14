@@ -1,5 +1,7 @@
 package com.example.smartdrone;
 
+import android.content.res.Resources;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -8,12 +10,25 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class SimulationActivity extends AppCompatActivity {
+import org.billthefarmer.mididriver.MidiDriver;
+
+import java.util.Locale;
+
+public class SimulationActivity extends AppCompatActivity
+    implements MidiDriver.OnMidiStartListener
+{
 
     public static final String MESSAGE_LOG =
             "Simulation";
 
     public static KeyFinder keyFinder = new KeyFinder();
+
+    TextView text;
+    int prevKey;
+    int curKey;
+
+    public MidiDriver midi;
+    public MediaPlayer mediaPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,6 +37,26 @@ public class SimulationActivity extends AppCompatActivity {
         // keyFinder.setNoteTimerLength(100);                 // Future User Parameter
         Log.d(MESSAGE_LOG, "Simulation Started.");
         constructNoteButtons();
+
+        // MidiDriver stuff.
+        midi = new MidiDriver();
+        if (midi != null) {
+            midi.setOnMidiStartListener(this);
+        }
+        prevKey = -1;
+    }
+
+    // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
+    // On resume
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+
+        // Start midi
+
+        if (midi != null)
+            midi.start();
     }
 
     public void addNote(View view) {
@@ -29,6 +64,7 @@ public class SimulationActivity extends AppCompatActivity {
         int noteIx = Integer.parseInt(noteIxStr);
         keyFinder.addNoteToList(keyFinder.getAllNotes().getNoteAtIndex(noteIx));
         printActiveKeyToScreen();
+        playActiveKeyNote();
         Log.d(MESSAGE_LOG, keyFinder.getActiveNotes().toString()); // active note list
     }
 
@@ -64,5 +100,59 @@ public class SimulationActivity extends AppCompatActivity {
             });
             llArr[i%2].addView(curNoteButton, lp);
         }
+    }
+
+    public void playActiveKeyNote() {
+        prevKey = curKey;
+        curKey = keyFinder.getActiveKey().getIx() + 36; // 36 == C
+        if (prevKey != curKey) {
+            sendMidi(0x80, prevKey, 0);
+            sendMidi(0x90, curKey, 63);
+        }
+    }
+
+
+    // Method taken from:
+    // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
+    // Listener for sending initial midi messages when the Sonivox
+    // synthesizer has been started, such as program change.
+    @Override
+    public void onMidiStart()
+    {
+        // Program change - harpsichord
+        sendMidi();
+
+        // Get the config
+        int config[] = midi.config();
+
+        Resources resources = getResources();
+    }
+
+    // Method taken from:
+    // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
+    // Send a midi message, 2 bytes
+    protected void sendMidi()
+    {
+        byte msg[] = new byte[2];
+
+        msg[0] = (byte) 0xc0;
+                             // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
+        msg[1] = (byte) 54;  // 42 == Cello
+
+        midi.write(msg);
+    }
+
+    // Method taken from:
+    // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
+    // Send a midi message, 3 bytes
+    protected void sendMidi(int m, int n, int v)
+    {
+        byte msg[] = new byte[3];
+
+        msg[0] = (byte) m;
+        msg[1] = (byte) n;
+        msg[2] = (byte) v;
+
+        midi.write(msg);
     }
 }
