@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">SmartDrone Test</string>
+    <string name="simulationButtonText_main">Simulation</string>
+    <string name="noteText">note</string>
+    <string name="pitchText">pitch</string>
+    <string name="activeKeyString">Active Key:</string>
+</resources>
