@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity
     public static int plugin = 52;
     // TODO: Turn into user parameter.
     // Used for practicing different modes.
-    public static int mode = 2; // 0 = Ionian; 1 = Dorian; 2 = Phyrgian; ... (update later for melodic minor, other tonalities...)
+    public static int mode = 1; // 0 = Ionian; 1 = Dorian; 2 = Phyrgian; ... (update later for melodic minor, other tonalities...)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -208,12 +208,16 @@ public class MainActivity extends AppCompatActivity
         if (prevActiveKey != curActiveKey) {
             printActiveKeyToScreen();
 
+            // Just testing the chord function. Add me back later plz
             /*
             // Stop the current note.
             sendMidi(0x80, prevActiveKey + modeOffset, 0);
             // Start the new note.
             sendMidi(0x90, curActiveKey + modeOffset, 63);
             */
+            // Stop the current note.
+            sendMidiChordDorian(0x80, prevActiveKey + modeOffset, 0);
+            sendMidiChordDorian(0x90, curActiveKey + modeOffset, 63);
         }
     }
 
@@ -257,7 +261,8 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Sends multiple messages to be synthesized by midi dirver.
+     * Sends multiple messages to be synthesized by midi driver.
+     * Each note is given specifically.
      * @param       m // TODO: Find out variable names
      * @param       midiKeys int[]; indexes of notes (uses octaves).
      * @param       volume int; volume of notes.
@@ -267,6 +272,29 @@ public class MainActivity extends AppCompatActivity
             sendMidi(m, key, volume);
         }
     }
+
+    protected void sendMidiChordMajor(int m, int midiKey, int volume) {
+        sendMidi(m, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[0], volume);
+        sendMidi(m, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[1] + 12, volume);
+        sendMidi(m, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[2], volume);
+    }
+
+    protected void sendMidiChordPhrygian(int m, int midiKey, int volume) {
+        sendMidi(m, midiKey, volume);
+        sendMidi(m, midiKey + 13, volume);
+        sendMidi(m, midiKey + 17, volume);
+        sendMidi(m, midiKey + 19, volume);
+    }
+
+    protected void sendMidiChordDorian(int m, int midiKey, int volume) {
+        sendMidi(m, midiKey, volume);
+        sendMidi(m, midiKey + 7, volume);
+        sendMidi(m, midiKey + 17, volume);
+        sendMidi(m, midiKey + 22, volume);
+        sendMidi(m, midiKey + 27, volume);
+        sendMidi(m, midiKey + 31, volume);
+    }
+
 
     /**
      * Update the text view that displays the current active key.
