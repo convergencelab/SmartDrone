@@ -83,4 +83,16 @@
         app:layout_constraintBottom_toTopOf="@+id/activeKeyPlainText"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/keyTimerButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="incrementKeyTimer"
+        android:text="@string/keyTimerText"
+        app:layout_constraintBottom_toTopOf="@+id/expirationButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </android.support.constraint.ConstraintLayout>
