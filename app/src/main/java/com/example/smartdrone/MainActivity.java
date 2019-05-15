@@ -12,20 +12,21 @@
 
 /*
  * TODO:
- * - refactor code.
  * - debug accuracy of note detection.
  * - add user parameter for sensitivity.
- *     - add user parameter than decides how long a note stays in the cue before it expires.
+ **    - add user parameter than decides how long a note stays in the cue before it expires.
  *       (default = 5)
+ **    - update java library so new key has to take over
  * - add user parameter for mode.
  * - fix sound distortion bug when switching activities.
  * - improve functionality.
- *     - note must be heard for a variable amount of time before it's added to list
+ **    - note must be heard for a variable amount of time before it's added to list
  *       (to prevent adding erroneous notes)
  * - look into api for signal filtering.
  * - Debug features that displays the current active notes on the screen
  *   (or logcat?)
  * - add feature that active keys can generate chords.
+ * - make it so note timer doesn't start for curnote until another note is detected
  */
 
 package com.example.smartdrone;
@@ -58,16 +59,15 @@ import be.tarsos.dsp.util.PitchConverter;
 public class MainActivity extends AppCompatActivity
     implements MidiDriver.OnMidiStartListener {
 
-    // TarsosDSP
     public AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
-    // Midi Driver
     public MidiDriver midi;
-    // Key Finder
     public KeyFinder keyFinder;
 
     // Used for accessing note names.
     public static final String[] notes =
             { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+    public static final String MESSAGE_LOG = "mainActivityDebug";
 
     // Variables for tracking active keys/notes
     int prevActiveKey = -1;
@@ -76,10 +76,11 @@ public class MainActivity extends AppCompatActivity
 
     // List of all the plugins available.
     // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
+    // TODO: Add user parameter.
     public static int plugin = 52;
-    // TODO: Turn into user parameter.
     // Used for practicing different modes.
-    public static int mode = 1; // 0 = Ionian; 1 = Dorian; 2 = Phyrgian; ... (update later for melodic minor, other tonalities...)
+    // TODO: Add user parameter.
+    public static int mode = 0; // 0 = Ionian; 1 = Dorian; 2 = Phrygian; ... (update later for melodic minor, other tonalities...)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,7 +116,6 @@ public class MainActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-
         if (midi != null)
             midi.start();
     }
@@ -125,14 +125,17 @@ public class MainActivity extends AppCompatActivity
      * @param       noteIx int; index of note.
      */
     public void addNote(int noteIx) {
-        keyFinder.addNoteToList(keyFinder.getAllNotes().getNoteAtIndex(noteIx));
+        Note curNote = keyFinder.getAllNotes().getNoteAtIndex(noteIx);
+        keyFinder.addNoteToList(curNote);
+        Log.d(MESSAGE_LOG, curNote.getName());
+
         // printActiveKeyToScreen();
         playActiveKeyNote();
         // Log.d(MESSAGE_LOG, keyFinder.getActiveNotes().toString()); // active note list
     }
 
     /**
-     * Converts pitch to note index.
+     * Converts pitch (hertz) to note index.
      * @param       pitchInHz double;
      * @return      int; ix of note.
      */
@@ -151,19 +154,19 @@ public class MainActivity extends AppCompatActivity
 
     /**
      * Update the note text on screen.
-     * @param       pitchInHz double; pitch of note, in hertz.
+     * @param       pitchInHz double; pitch of note (hertz).
      */
     public void setNoteText(double pitchInHz) {
         if (pitchInHz != -1) {
             setNoteText(notes[convertPitchToIx(pitchInHz)]);
         } else {
-            setNoteText("null");
+            setNoteText("");
         }
     }
 
     /**
      * Update the pitch text on screen.
-     * @param       pitchInHz double; pitch of note, in hertz.
+     * @param       pitchInHz double; pitch of note (hertz).
      */
     public void setPitchText(double pitchInHz) {
         TextView pitchText = (TextView) findViewById(R.id.pitchText);
@@ -181,7 +184,7 @@ public class MainActivity extends AppCompatActivity
         // Convert pitch to midi key.
         int midiKey = convertPitchToIx((double) pitchInHz);
         // If new note is heard.
-        if (midiKey != prevAddedNote && midiKey != -1) {
+        if (midiKey != prevAddedNote && pitchInHz != -1) {
             addNote(midiKey);
         }
         // Update text views.
@@ -199,102 +202,100 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Plays the tone of the current active key.
+     * Plays the tone(s) of the current active key.
      */
     public void playActiveKeyNote() {
+        //TODO:  This may have to be refactored so that it won't differentiate between same notes of
+        //TODO:  a different octave.
         prevActiveKey = curActiveKey;
         curActiveKey = keyFinder.getActiveKey().getIx() + 36; // 36 == C
         int modeOffset = MusicTheory.MAJOR_SCALE_SEQUENCE[mode];
         if (prevActiveKey != curActiveKey) {
-            printActiveKeyToScreen();
+            printActiveKeyToScreen(); // FOR TESTING
 
-            // Just testing the chord function. Add me back later plz
-            /*
+            //TODO: Send everything as an array (work for any number of notes)
             // Stop the current note.
-            sendMidi(0x80, prevActiveKey + modeOffset, 0);
+            sendMidi(0X80, prevActiveKey + modeOffset, 0);
             // Start the new note.
-            sendMidi(0x90, curActiveKey + modeOffset, 63);
-            */
-            // Stop the current note.
-            sendMidiChordDorian(0x80, prevActiveKey + modeOffset, 0);
-            sendMidiChordDorian(0x90, curActiveKey + modeOffset, 63);
+            sendMidi(0X90, curActiveKey + modeOffset, 63);
         }
     }
 
-    // Method taken from:
-    // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
-    // Listener for sending initial midi messages when the Sonivox
-    // synthesizer has been started, such as program change.
+    /**
+     * https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
+     *
+     * Listener for sending initial midi messages when the Sonivox
+     * synthesizer has been started, such as program change.
+     */
     @Override
     public void onMidiStart() {
-        sendMidi();
+        sendMidiSetup();
     }
 
-    // Method taken from:
-    // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
-    // Send a midi message, 2 bytes
-    protected void sendMidi() {
+    /**
+     * https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
+     *
+     * Initial setup data for midi.
+     */
+    protected void sendMidiSetup() {
         byte msg[] = new byte[2];
-
-        msg[0] = (byte) 0xc0;
+        msg[0] = (byte) 0XC0;    // 0XC0 == PROGRAM CHANGE
         msg[1] = (byte) plugin;
-
         midi.write(msg);
     }
 
-    // Method taken from:
-    // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
     /**
+     * https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
+     *
      * Send data that is to be synthesized by midi driver.
-     * @param       m // TODO: Find out variable names
+     * @param       event int; type of event.
      * @param       midiKey int; index of note (uses octaves).
      * @param       volume int; volume of note.
      */
-    protected void sendMidi(int m, int midiKey, int volume) {
+    protected void sendMidi(int event, int midiKey, int volume) {
         byte msg[] = new byte[3];
-
-        msg[0] = (byte) m;
+        msg[0] = (byte) event;
         msg[1] = (byte) midiKey;
         msg[2] = (byte) volume;
-
         midi.write(msg);
     }
 
     /**
      * Sends multiple messages to be synthesized by midi driver.
      * Each note is given specifically.
-     * @param       m // TODO: Find out variable names
+     * @param       event int; type of event.
      * @param       midiKeys int[]; indexes of notes (uses octaves).
      * @param       volume int; volume of notes.
      */
-    protected void sendMidiChord(int m, int[] midiKeys, int volume) {
+    protected void sendMidiChord(int event, int[] midiKeys, int volume) {
         for (int key : midiKeys) {
-            sendMidi(m, key, volume);
+            sendMidi(event, key, volume);
         }
     }
 
-    protected void sendMidiChordMajor(int m, int midiKey, int volume) {
-        sendMidi(m, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[0], volume);
-        sendMidi(m, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[1] + 12, volume);
-        sendMidi(m, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[2], volume);
+    /* TEST VOICINGS */
+
+    protected void sendMidiChordMajor(int event, int midiKey, int volume) {
+        sendMidi(event, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[0], volume);
+        sendMidi(event, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[1] + 12, volume);
+        sendMidi(event, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[2], volume);
     }
 
-    protected void sendMidiChordPhrygian(int m, int midiKey, int volume) {
-        sendMidi(m, midiKey, volume);
-        sendMidi(m, midiKey + 13, volume);
-        sendMidi(m, midiKey + 17, volume);
-        sendMidi(m, midiKey + 19, volume);
+    protected void sendMidiChordPhrygian(int event, int midiKey, int volume) {
+        sendMidi(event, midiKey, volume);
+        sendMidi(event, midiKey + 13, volume);
+        sendMidi(event, midiKey + 17, volume);
+        sendMidi(event, midiKey + 19, volume);
     }
 
-    protected void sendMidiChordDorian(int m, int midiKey, int volume) {
-        sendMidi(m, midiKey, volume);
-        sendMidi(m, midiKey + 7, volume);
-        sendMidi(m, midiKey + 17, volume);
-        sendMidi(m, midiKey + 22, volume);
-        sendMidi(m, midiKey + 27, volume);
-        sendMidi(m, midiKey + 31, volume);
+    protected void sendMidiChordDorian(int event, int midiKey, int volume) {
+        sendMidi(event, midiKey, volume);
+        sendMidi(event, midiKey + 7, volume);
+        sendMidi(event, midiKey + 17, volume);
+        sendMidi(event, midiKey + 22, volume);
+        sendMidi(event, midiKey + 27, volume);
+        sendMidi(event, midiKey + 31, volume);
     }
-
 
     /**
      * Update the text view that displays the current active key.

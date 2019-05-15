@@ -162,11 +162,11 @@ public class SimulationActivity extends AppCompatActivity
     // Method taken from:
     // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
     // Send a midi message, 3 bytes
-    protected void sendMidi(int m, int n, int v)
+    protected void sendMidi(int event, int n, int v)
     {
         byte msg[] = new byte[3];
 
-        msg[0] = (byte) m;
+        msg[0] = (byte) event;
         msg[1] = (byte) n;
         msg[2] = (byte) v;
 
