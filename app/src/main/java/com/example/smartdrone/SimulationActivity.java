@@ -1,3 +1,10 @@
+/*
+ * @SOURCES:
+ * Midi Driver         : https://github.com/billthefarmer/mididriver
+ * Signal Processing   : https://github.com/JorenSix/TarsosDSP
+ * TarsosDSP Example   : https://stackoverflow.com/questions/31231813/tarsosdsp-pitch-analysis-for-dummies
+ */
+
 package com.example.smartdrone;
 
 import android.content.res.Resources;
@@ -15,8 +22,7 @@ import org.billthefarmer.mididriver.MidiDriver;
 import java.util.Locale;
 
 public class SimulationActivity extends AppCompatActivity
-    implements MidiDriver.OnMidiStartListener
-{
+    implements MidiDriver.OnMidiStartListener {
 
     public static final String MESSAGE_LOG =
             "Simulation";
@@ -24,8 +30,8 @@ public class SimulationActivity extends AppCompatActivity
     public static KeyFinder keyFinder = new KeyFinder();
 
     TextView text;
-    int prevKey;
-    int curKey;
+    int prevActiveKey;
+    int curActiveKey;
 
     public MidiDriver midi;
     public MediaPlayer mediaPlayer;
@@ -43,7 +49,7 @@ public class SimulationActivity extends AppCompatActivity
         if (midi != null) {
             midi.setOnMidiStartListener(this);
         }
-        prevKey = -1;
+        prevActiveKey = -1;
     }
 
     // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
@@ -52,12 +58,22 @@ public class SimulationActivity extends AppCompatActivity
     protected void onResume()
     {
         super.onResume();
-
         // Start midi
-
         if (midi != null)
             midi.start();
     }
+
+    // I don't think this fixed anything.
+    // On pause
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        // Stop midi
+        if (midi != null)
+            midi.stop();
+    }
+
 
     public void addNote(View view) {
         String noteIxStr = view.getTag().toString();
@@ -65,6 +81,7 @@ public class SimulationActivity extends AppCompatActivity
         keyFinder.addNoteToList(keyFinder.getAllNotes().getNoteAtIndex(noteIx));
         printActiveKeyToScreen();
         playActiveKeyNote();
+        // Prints list of active notes to log.
         Log.d(MESSAGE_LOG, keyFinder.getActiveNotes().toString()); // active note list
     }
 
@@ -103,11 +120,11 @@ public class SimulationActivity extends AppCompatActivity
     }
 
     public void playActiveKeyNote() {
-        prevKey = curKey;
-        curKey = keyFinder.getActiveKey().getIx() + 36; // 36 == C
-        if (prevKey != curKey) {
-            sendMidi(0x80, prevKey, 0);
-            sendMidi(0x90, curKey, 63);
+        prevActiveKey = curActiveKey;
+        curActiveKey = keyFinder.getActiveKey().getIx() + 36; // 36 == C
+        if (prevActiveKey != curActiveKey) {
+            sendMidi(0x80, prevActiveKey, 0);
+            sendMidi(0x90, curActiveKey, 63);
         }
     }
 
@@ -145,11 +162,11 @@ public class SimulationActivity extends AppCompatActivity
     // Method taken from:
     // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
     // Send a midi message, 3 bytes
-    protected void sendMidi(int m, int n, int v)
+    protected void sendMidi(int event, int n, int v)
     {
         byte msg[] = new byte[3];
 
-        msg[0] = (byte) m;
+        msg[0] = (byte) event;
         msg[1] = (byte) n;
         msg[2] = (byte) v;
 
