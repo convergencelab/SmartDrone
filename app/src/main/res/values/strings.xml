@@ -5,4 +5,5 @@
     <string name="pitchText">pitch</string>
     <string name="activeKeyString">Active Key:</string>
     <string name="expirationText" />
+    <string name="keyTimerText" />
 </resources>

@@ -79,8 +79,14 @@ public class MainActivity extends AppCompatActivity
     int prevAddedNote = -1;
 
     int noteExpirationLength;
+    int keyTimerLength;
+
+    int[] lydianVoicing = { 0, 7, 14, 21, 28, 35, 42 }; // mode 3
+    int[] maj7Voicing = { 0, 7, 16, 23};
+    int[] susVoicing = { 7, 17, 21, 24, 28, 33};
 
     Button expirationButton;
+    Button keyTimerButton;
 
     // List of all the plugins available.
     // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
@@ -88,7 +94,7 @@ public class MainActivity extends AppCompatActivity
     public static int plugin = 52;
     // Used for practicing different modes.
     // TODO: Add user parameter.
-    public static int mode = 0; // 0 = Ionian; 1 = Dorian; 2 = Phrygian; ... (update later for melodic minor, other tonalities...)
+    public static int mode = 3; // 0 = Ionian; 1 = Dorian; 2 = Phrygian; ... (update later for melodic minor, other tonalities...)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,6 +126,10 @@ public class MainActivity extends AppCompatActivity
         noteExpirationLength = keyFinder.getNoteTimerLength();
         expirationButton.setText("" + noteExpirationLength);
 
+        keyTimerButton = (Button) findViewById(R.id.keyTimerButton);
+        keyTimerLength = keyFinder.getKeyTimerLength();
+        keyTimerButton.setText("" + keyTimerLength);
+
         // Construct Midi Driver.
         midi = new MidiDriver();
         midi.setOnMidiStartListener(this);
@@ -142,6 +152,7 @@ public class MainActivity extends AppCompatActivity
         keyFinder.addNoteToList(curNote);
         Log.d(MESSAGE_LOG_ADD, curNote.getName());
         Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
+        prevAddedNote = noteIx;
 
         // printActiveKeyToScreen();
         playActiveKeyNote();
@@ -227,16 +238,25 @@ public class MainActivity extends AppCompatActivity
         //TODO:  This may have to be refactored so that it won't differentiate between same notes of
         //TODO:  a different octave.
         prevActiveKey = curActiveKey;
+        if (keyFinder.getActiveKey() == null) {
+            return;
+        }
         curActiveKey = keyFinder.getActiveKey().getIx() + 36; // 36 == C
         int modeOffset = MusicTheory.MAJOR_SCALE_SEQUENCE[mode];
         if (prevActiveKey != curActiveKey) {
             printActiveKeyToScreen(); // FOR TESTING
+
 
             //TODO: Send everything as an array (work for any number of notes)
             // Stop the current note.
             sendMidi(0X80, prevActiveKey + modeOffset, 0);
             // Start the new note.
             sendMidi(0X90, curActiveKey + modeOffset, 63);
+
+            /*
+            sendMidiChord(0X80, susVoicing, 0, prevActiveKey);
+            sendMidiChord(0X90, susVoicing, 63, curActiveKey);
+            */
         }
     }
 
@@ -292,6 +312,19 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * Sends multiple messages to be synthesized by midi driver.
+     * Each note is given specifically.
+     * @param       event int; type of event.
+     * @param       midiKeys int[]; indexes of notes (uses octaves).
+     * @param       volume int; volume of notes.
+     */
+    protected void sendMidiChord(int event, int[] midiKeys, int volume, int rootIx) {
+        for (int key : midiKeys) {
+            sendMidi(event, key + rootIx, volume);
+        }
+    }
+
     /* TEST VOICINGS */
 
     protected void sendMidiChordMajor(int event, int midiKey, int volume) {
@@ -328,5 +361,11 @@ public class MainActivity extends AppCompatActivity
         noteExpirationLength = (noteExpirationLength % 10) + 1;
         keyFinder.setNoteTimerLength(noteExpirationLength);
         expirationButton.setText("" + noteExpirationLength);
+    }
+
+    public void incrementKeyTimer(View view) {
+        keyTimerLength = (keyTimerLength % 5) + 1;
+        keyFinder.setKeyTimerLength(keyTimerLength);
+        keyTimerButton.setText("" + keyTimerLength);
     }
 }
