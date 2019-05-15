@@ -27,6 +27,7 @@
  *   (or logcat?)
  * - add feature that active keys can generate chords.
  * - make it so note timer doesn't start for curnote until another note is detected
+ * - Find out how to create listener for note being removed from list (expired).
  */
 
 package com.example.smartdrone;
@@ -38,6 +39,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.example.smartdrone.KeyFinder;
@@ -67,12 +69,18 @@ public class MainActivity extends AppCompatActivity
     public static final String[] notes =
             { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
-    public static final String MESSAGE_LOG = "mainActivityDebug";
+    public static final String MESSAGE_LOG_ADD = "mainActivityDebugAdd";
+    public static final String MESSAGE_LOG_REMOVE = "mainActivityDebugRemove";
+    public static final String MESSAGE_LOG_LIST = "mainActivityDebugList";
 
     // Variables for tracking active keys/notes
     int prevActiveKey = -1;
     int curActiveKey = -1;
     int prevAddedNote = -1;
+
+    int noteExpirationLength;
+
+    Button expirationButton;
 
     // List of all the plugins available.
     // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
@@ -107,6 +115,11 @@ public class MainActivity extends AppCompatActivity
         audioThread.start();
 
         keyFinder = new KeyFinder();
+
+        expirationButton = (Button) findViewById(R.id.expirationButton);
+        noteExpirationLength = keyFinder.getNoteTimerLength();
+        expirationButton.setText("" + noteExpirationLength);
+
         // Construct Midi Driver.
         midi = new MidiDriver();
         midi.setOnMidiStartListener(this);
@@ -127,7 +140,8 @@ public class MainActivity extends AppCompatActivity
     public void addNote(int noteIx) {
         Note curNote = keyFinder.getAllNotes().getNoteAtIndex(noteIx);
         keyFinder.addNoteToList(curNote);
-        Log.d(MESSAGE_LOG, curNote.getName());
+        Log.d(MESSAGE_LOG_ADD, curNote.getName());
+        Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
 
         // printActiveKeyToScreen();
         playActiveKeyNote();
@@ -183,9 +197,14 @@ public class MainActivity extends AppCompatActivity
     public void processPitch(float pitchInHz) {
         // Convert pitch to midi key.
         int midiKey = convertPitchToIx((double) pitchInHz);
-        // If new note is heard.
+        // If new note is heard, add to list.
         if (midiKey != prevAddedNote && pitchInHz != -1) {
             addNote(midiKey);
+        }
+        if (keyFinder.noteHasBeenRemoved()) {
+            keyFinder.resetNoteHasBeenRemoved();
+            Log.d(MESSAGE_LOG_REMOVE, keyFinder.getRemovedNote().getName());
+            Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
         }
         // Update text views.
         setPitchText(pitchInHz);
@@ -303,5 +322,11 @@ public class MainActivity extends AppCompatActivity
     public void printActiveKeyToScreen() {
         TextView tv = findViewById(R.id.activeKeyPlainText);
         tv.setText("Active Key: " + keyFinder.getActiveKey().getName());
+    }
+
+    public void incrementNoteExpiration(View view) {
+        noteExpirationLength = (noteExpirationLength % 10) + 1;
+        keyFinder.setNoteTimerLength(noteExpirationLength);
+        expirationButton.setText("" + noteExpirationLength);
     }
 }
