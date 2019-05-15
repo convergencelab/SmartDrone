@@ -83,6 +83,17 @@
         app:layout_constraintBottom_toTopOf="@+id/activeKeyPlainText"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:id="@+id/noteExpirationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/noteTimerLabel"
+        app:layout_constraintBottom_toTopOf="@+id/activeKeyPlainText"
+        app:layout_constraintStart_toEndOf="@+id/expirationButton" />
+
     <Button
         android:id="@+id/keyTimerButton"
         android:layout_width="wrap_content"
@@ -106,15 +117,51 @@
         app:layout_constraintBottom_toTopOf="@+id/noteExpirationLabel"
         app:layout_constraintStart_toEndOf="@+id/keyTimerButton" />
 
-    <TextView
-        android:id="@+id/noteExpirationLabel"
+    <Button
+        android:id="@+id/noteLengthTimerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginBottom="24dp"
-        android:text="@string/noteTimerLabel"
-        app:layout_constraintBottom_toTopOf="@+id/activeKeyPlainText"
-        app:layout_constraintStart_toEndOf="@+id/expirationButton" />
+        android:layout_marginBottom="8dp"
+        android:text="@string/noteLengthRequirementText"
+        android:onClick="incrementNoteLengthRequirement"
+        app:layout_constraintBottom_toTopOf="@+id/keyTimerButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/noteLengthRequirementLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="38dp"
+        android:text="@string/noteLengthRequirementLabel"
+        app:layout_constraintBottom_toTopOf="@+id/keyTimerLabel"
+        app:layout_constraintStart_toEndOf="@+id/noteLengthTimerButton" />
+
+    <Button
+        android:id="@+id/userModeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="changeUserMode"
+        android:text="@string/userModeString"
+        app:layout_constraintBottom_toTopOf="@+id/noteLengthTimerButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/userModeLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="36dp"
+        android:text="@string/userModeLabel"
+        android:onClick="changeUserMode"
+        app:layout_constraintBottom_toTopOf="@+id/noteLengthRequirementLabel"
+        app:layout_constraintStart_toEndOf="@+id/userModeButton" />
 
 </android.support.constraint.ConstraintLayout>

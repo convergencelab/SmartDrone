@@ -4,8 +4,13 @@
     <string name="noteText">note</string>
     <string name="pitchText">pitch</string>
     <string name="activeKeyString">Active Key:</string>
+
     <string name="expirationText" />
-    <string name="keyTimerText" />
     <string name="noteTimerLabel">Note Timer</string>
+    <string name="keyTimerText" />
     <string name="keyTimerLabel">Key Timer</string>
+    <string name="noteLengthRequirementLabel">Note Length Filter</string>
+    <string name="noteLengthRequirementText" />
+    <string name="userModeString" />
+    <string name="userModeLabel">User Mode</string>
 </resources>

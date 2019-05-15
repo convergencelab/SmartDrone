@@ -82,16 +82,40 @@ public class MainActivity extends AppCompatActivity
     int noteExpirationLength;
     int keyTimerLength;
 
-    int[] lydianVoicing = { 0, 7, 14, 21, 28, 35, 42 }; // mode 3
-    int[] maj7Voicing = { 0, 7, 16, 23};
-    int[] susVoicing = { 7, 17, 21, 24, 28, 33};
+    int[] drone           = { 0 };
+    int[] majorTriad      = { 0, 7, 16};
+    int[] maj7Voicing     = { 0, 7, 16, 23, 26};
+    int[] lydianVoicing   = { 5, 12, 19, 26, 33, 40 }; // mode 3
+    int[] susVoicing      = { 7, 17, 21, 24, 28, 33};
+    int[] phrygianVoicing = { 4, 17, 21, 23, 28};
+    int[][] voicings = {
+            drone,
+            majorTriad,
+            maj7Voicing,
+            lydianVoicing,
+            susVoicing,
+            phrygianVoicing};
+    int[] curVoicing;
+    int[] prevVoicing;
 
+    int userModeIx = 0;
+    String[] userModeName = {
+            "Drone",
+            "Major Triad",
+            "Major7",
+            "Lydian",
+            "Sus/Mixolydian",
+            "Phrygian", };
+
+
+    // Used to keep track how long a note was heard.
     public long timeRegistered;
-    public long timeNow;
-    public long noteLengthRequirement;
+    public int noteLengthRequirement;
 
     Button expirationButton;
     Button keyTimerButton;
+    Button noteLengthRequirementButton;
+    Button userModeButton;
 
     // List of all the plugins available.
     // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
@@ -127,6 +151,9 @@ public class MainActivity extends AppCompatActivity
 
         keyFinder = new KeyFinder();
 
+        // The amount of time a note must be registered for until it is added to the active note list.
+        noteLengthRequirement = 100;
+
         // Button for Note Timer
         expirationButton = (Button) findViewById(R.id.expirationButton);
         noteExpirationLength = keyFinder.getNoteTimerLength();
@@ -137,10 +164,14 @@ public class MainActivity extends AppCompatActivity
         keyTimerLength = keyFinder.getKeyTimerLength();
         keyTimerButton.setText("" + keyTimerLength);
 
-        // TODO make user parameter.
-        // The amount of time a note must be registered for until it is added to the active note list.
-        noteLengthRequirement = 150;
+        // Button for note length requirement.\
+        noteLengthRequirementButton = (Button) findViewById(R.id.noteLengthTimerButton);
+        noteLengthRequirementButton.setText("" + noteLengthRequirement);
 
+        // User mode button
+        userModeIx = 0;
+        userModeButton = (Button) findViewById(R.id.userModeButton);
+        userModeButton.setText(userModeName[userModeIx]);
 
         // Construct Midi Driver.
         midi = new MidiDriver();
@@ -268,16 +299,16 @@ public class MainActivity extends AppCompatActivity
         if (prevActiveKey != curActiveKey) {
             printActiveKeyToScreen(); // FOR TESTING
 
+            /*
             //TODO: Send everything as an array (work for any number of notes)
             // Stop the current note.
             sendMidi(0X80, prevActiveKey + modeOffset, 0);
             // Start the new note.
             sendMidi(0X90, curActiveKey + modeOffset, 63);
-
-            /*
-            sendMidiChord(0X80, susVoicing, 0, prevActiveKey);
-            sendMidiChord(0X90, susVoicing, 63, curActiveKey);
             */
+
+            sendMidiChord(0X80, voicings[userModeIx], 0, prevActiveKey);
+            sendMidiChord(0X90, voicings[userModeIx], 63, curActiveKey);
         }
     }
 
@@ -379,7 +410,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void incrementNoteExpiration(View view) {
-        noteExpirationLength = (noteExpirationLength % 10) + 1;
+        noteExpirationLength = (noteExpirationLength % 5) + 1;
         keyFinder.setNoteTimerLength(noteExpirationLength);
         expirationButton.setText("" + noteExpirationLength);
     }
@@ -388,5 +419,18 @@ public class MainActivity extends AppCompatActivity
         keyTimerLength = (keyTimerLength % 5) + 1;
         keyFinder.setKeyTimerLength(keyTimerLength);
         keyTimerButton.setText("" + keyTimerLength);
+    }
+
+    public void incrementNoteLengthRequirement(View view) {
+        noteLengthRequirement = (noteLengthRequirement % 200) + 25;
+        noteLengthRequirementButton.setText("" + noteLengthRequirement);
+    }
+
+    public void changeUserMode(View view) {
+        sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKey);
+        userModeIx = (userModeIx + 1) % voicings.length;
+        userModeButton.setText(userModeName[userModeIx]);
+        sendMidiChord(0X90, voicings[userModeIx], 63, curActiveKey);
+        Log.d(MESSAGE_LOG_REMOVE, "hi");
     }
 }
