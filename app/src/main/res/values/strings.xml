@@ -6,4 +6,6 @@
     <string name="activeKeyString">Active Key:</string>
     <string name="expirationText" />
     <string name="keyTimerText" />
+    <string name="noteTimerLabel">Note Timer</string>
+    <string name="keyTimerLabel">Key Timer</string>
 </resources>

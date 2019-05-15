@@ -76,7 +76,8 @@ public class MainActivity extends AppCompatActivity
     // Variables for tracking active keys/notes
     int prevActiveKey = -1;
     int curActiveKey = -1;
-    int prevAddedNote = -1;
+    int prevAddedNote = -1; //TODO Refactor; should have ix in variable name.
+    int curNoteIx = -1;
 
     int noteExpirationLength;
     int keyTimerLength;
@@ -84,6 +85,10 @@ public class MainActivity extends AppCompatActivity
     int[] lydianVoicing = { 0, 7, 14, 21, 28, 35, 42 }; // mode 3
     int[] maj7Voicing = { 0, 7, 16, 23};
     int[] susVoicing = { 7, 17, 21, 24, 28, 33};
+
+    public long timeRegistered;
+    public long timeNow;
+    public long noteLengthRequirement;
 
     Button expirationButton;
     Button keyTimerButton;
@@ -94,7 +99,7 @@ public class MainActivity extends AppCompatActivity
     public static int plugin = 52;
     // Used for practicing different modes.
     // TODO: Add user parameter.
-    public static int mode = 3; // 0 = Ionian; 1 = Dorian; 2 = Phrygian; ... (update later for melodic minor, other tonalities...)
+    public static int mode = 0; // 0 = Ionian; 1 = Dorian; 2 = Phrygian; ... (update later for melodic minor, other tonalities...)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,13 +127,20 @@ public class MainActivity extends AppCompatActivity
 
         keyFinder = new KeyFinder();
 
+        // Button for Note Timer
         expirationButton = (Button) findViewById(R.id.expirationButton);
         noteExpirationLength = keyFinder.getNoteTimerLength();
         expirationButton.setText("" + noteExpirationLength);
 
+        // Button for Key timer.
         keyTimerButton = (Button) findViewById(R.id.keyTimerButton);
         keyTimerLength = keyFinder.getKeyTimerLength();
         keyTimerButton.setText("" + keyTimerLength);
+
+        // TODO make user parameter.
+        // The amount of time a note must be registered for until it is added to the active note list.
+        noteLengthRequirement = 150;
+
 
         // Construct Midi Driver.
         midi = new MidiDriver();
@@ -210,7 +222,13 @@ public class MainActivity extends AppCompatActivity
         int midiKey = convertPitchToIx((double) pitchInHz);
         // If new note is heard, add to list.
         if (midiKey != prevAddedNote && pitchInHz != -1) {
-            addNote(midiKey);
+            if (midiKey != curNoteIx) {
+                curNoteIx = midiKey;
+                timeRegistered = System.currentTimeMillis();
+            }
+            else if (noteMeetsConfidence()) {
+                addNote(midiKey);
+            }
         }
         if (keyFinder.noteHasBeenRemoved()) {
             keyFinder.resetNoteHasBeenRemoved();
@@ -220,6 +238,10 @@ public class MainActivity extends AppCompatActivity
         // Update text views.
         setPitchText(pitchInHz);
         setNoteText(pitchInHz);
+    }
+
+    public boolean noteMeetsConfidence() {
+        return (System.currentTimeMillis() - timeRegistered) > noteLengthRequirement;
     }
 
     /**
@@ -245,7 +267,6 @@ public class MainActivity extends AppCompatActivity
         int modeOffset = MusicTheory.MAJOR_SCALE_SEQUENCE[mode];
         if (prevActiveKey != curActiveKey) {
             printActiveKeyToScreen(); // FOR TESTING
-
 
             //TODO: Send everything as an array (work for any number of notes)
             // Stop the current note.

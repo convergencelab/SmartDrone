@@ -95,4 +95,26 @@
         app:layout_constraintBottom_toTopOf="@+id/expirationButton"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:id="@+id/keyTimerLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="32dp"
+        android:text="@string/keyTimerLabel"
+        app:layout_constraintBottom_toTopOf="@+id/noteExpirationLabel"
+        app:layout_constraintStart_toEndOf="@+id/keyTimerButton" />
+
+    <TextView
+        android:id="@+id/noteExpirationLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="24dp"
+        android:text="@string/noteTimerLabel"
+        app:layout_constraintBottom_toTopOf="@+id/activeKeyPlainText"
+        app:layout_constraintStart_toEndOf="@+id/expirationButton" />
+
 </android.support.constraint.ConstraintLayout>
