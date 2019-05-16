@@ -82,16 +82,18 @@ public class MainActivity extends AppCompatActivity
     int noteExpirationLength;
     int keyTimerLength;
 
-    int[] drone           = { 0 };
-    int[] majorTriad      = { 0, 7, 16};
-    int[] maj7Voicing     = { 0, 7, 16, 23, 26};
-    int[] lydianVoicing   = { 5, 12, 19, 26, 33, 40 }; // mode 3
-    int[] susVoicing      = { 7, 17, 21, 24, 28, 33};
-    int[] phrygianVoicing = { 4, 17, 21, 23, 28};
+    int[] drone           = { 0                     };
+    int[] majorTriad      = { 0,  7, 16             };
+    int[] maj7Voicing     = { 0,  7, 16, 23, 26     };
+    int[] dorianVoicing   = { 2, 12, 17, 23         };
+    int[] lydianVoicing   = { 5, 12, 19, 26, 33, 40 };
+    int[] susVoicing      = { 7, 17, 21, 24, 28, 33 };
+    int[] phrygianVoicing = { 4, 17, 21, 23, 28     };
     int[][] voicings = {
             drone,
             majorTriad,
             maj7Voicing,
+            dorianVoicing,
             lydianVoicing,
             susVoicing,
             phrygianVoicing};
@@ -103,6 +105,7 @@ public class MainActivity extends AppCompatActivity
             "Drone",
             "Major Triad",
             "Major7",
+            "Gabe Voicing",
             "Lydian",
             "Sus/Mixolydian",
             "Phrygian", };
@@ -152,7 +155,9 @@ public class MainActivity extends AppCompatActivity
         keyFinder = new KeyFinder();
 
         // The amount of time a note must be registered for until it is added to the active note list.
-        noteLengthRequirement = 100;
+        noteLengthRequirement = 60;
+        keyFinder.setKeyTimerLength(2);
+        keyFinder.setNoteTimerLength(2);
 
         // Button for Note Timer
         expirationButton = (Button) findViewById(R.id.expirationButton);
@@ -208,6 +213,10 @@ public class MainActivity extends AppCompatActivity
      * @return      int; ix of note.
      */
     public int convertPitchToIx(double pitchInHz) {
+        // No note is heard.
+        if (pitchInHz == -1) {
+            return -1;
+        }
         return PitchConverter.hertzToMidiKey(pitchInHz) % 12;
     }
 
@@ -251,12 +260,25 @@ public class MainActivity extends AppCompatActivity
     public void processPitch(float pitchInHz) {
         // Convert pitch to midi key.
         int midiKey = convertPitchToIx((double) pitchInHz);
-        // If new note is heard, add to list.
-        if (midiKey != prevAddedNote && pitchInHz != -1) {
-            if (midiKey != curNoteIx) {
+        // Note change is detected.
+        if (midiKey != prevAddedNote) {
+            // Previously added note is no longer heard; start timer.
+            if (prevAddedNote != -1) {
+                keyFinder.getAllNotes().getNoteAtIndex(
+                        prevAddedNote).startNoteTimer(keyFinder, noteExpirationLength);
+            }
+
+            // No note is heard.
+            if (pitchInHz == -1) {
+                curNoteIx = -1;
+                prevAddedNote = -1;
+            }
+            // Different note is heard.
+            else if (midiKey != curNoteIx) {
                 curNoteIx = midiKey;
                 timeRegistered = System.currentTimeMillis();
             }
+            // Current note is heard.
             else if (noteMeetsConfidence()) {
                 addNote(midiKey);
             }
@@ -372,8 +394,13 @@ public class MainActivity extends AppCompatActivity
      * @param       volume int; volume of notes.
      */
     protected void sendMidiChord(int event, int[] midiKeys, int volume, int rootIx) {
+        int octaveAdjustment = 0;
+        if (midiKeys[0] + rootIx > 47) {
+            octaveAdjustment = -12;
+        }
+
         for (int key : midiKeys) {
-            sendMidi(event, key + rootIx, volume);
+            sendMidi(event, key + rootIx + octaveAdjustment, volume);
         }
     }
 
@@ -422,7 +449,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void incrementNoteLengthRequirement(View view) {
-        noteLengthRequirement = (noteLengthRequirement % 200) + 25;
+        noteLengthRequirement = (noteLengthRequirement + 15) % 165;
         noteLengthRequirementButton.setText("" + noteLengthRequirement);
     }
 
