@@ -213,6 +213,10 @@ public class MainActivity extends AppCompatActivity
      * @return      int; ix of note.
      */
     public int convertPitchToIx(double pitchInHz) {
+        // No note is heard.
+        if (pitchInHz == -1) {
+            return -1;
+        }
         return PitchConverter.hertzToMidiKey(pitchInHz) % 12;
     }
 
@@ -256,12 +260,25 @@ public class MainActivity extends AppCompatActivity
     public void processPitch(float pitchInHz) {
         // Convert pitch to midi key.
         int midiKey = convertPitchToIx((double) pitchInHz);
-        // If new note is heard, add to list.
-        if (midiKey != prevAddedNote && pitchInHz != -1) {
-            if (midiKey != curNoteIx) {
+        // Note change is detected.
+        if (midiKey != prevAddedNote) {
+            // Previously added note is no longer heard; start timer.
+            if (prevAddedNote != -1) {
+                keyFinder.getAllNotes().getNoteAtIndex(
+                        prevAddedNote).startNoteTimer(keyFinder, noteExpirationLength);
+            }
+
+            // No note is heard.
+            if (pitchInHz == -1) {
+                curNoteIx = -1;
+                prevAddedNote = -1;
+            }
+            // Different note is heard.
+            else if (midiKey != curNoteIx) {
                 curNoteIx = midiKey;
                 timeRegistered = System.currentTimeMillis();
             }
+            // Current note is heard.
             else if (noteMeetsConfidence()) {
                 addNote(midiKey);
             }
