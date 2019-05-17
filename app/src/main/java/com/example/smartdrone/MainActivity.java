@@ -63,15 +63,17 @@ public class MainActivity extends AppCompatActivity
 
     public AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
     public MidiDriver midi;
-    public KeyFinder keyFinder;
+    public static KeyFinder keyFinder = new KeyFinder();
 
     // Used for accessing note names.
     public static final String[] notes =
             { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
-    public static final String MESSAGE_LOG_ADD = "mainActivityDebugAdd";
-    public static final String MESSAGE_LOG_REMOVE = "mainActivityDebugRemove";
-    public static final String MESSAGE_LOG_LIST = "mainActivityDebugList";
+    public static final String MESSAGE_LOG_ADD        = "mainActivityDebugAdd";
+    public static final String MESSAGE_LOG_REMOVE     = "mainActivityDebugRemove";
+    public static final String MESSAGE_LOG_LIST       = "mainActivityDebugList";
+    public static final String MESSAGE_LOG_SPEED      = "mainActivityDebugSpeed";
+    public static final String MESSAGE_LOG_NOTE_TIMER = "mainActivityDebugNTimer";
 
     // Variables for tracking active keys/notes
     int prevActiveKey = -1;
@@ -152,7 +154,7 @@ public class MainActivity extends AppCompatActivity
         Thread audioThread = new Thread(dispatcher, "Audio Thread");
         audioThread.start();
 
-        keyFinder = new KeyFinder();
+        // keyFinder = new KeyFinder();     CHECKING IF STATIC MAKES IT FASTER
 
         // The amount of time a note must be registered for until it is added to the active note list.
         noteLengthRequirement = 60;
@@ -259,13 +261,22 @@ public class MainActivity extends AppCompatActivity
      */
     public void processPitch(float pitchInHz) {
         // Convert pitch to midi key.
-        int midiKey = convertPitchToIx((double) pitchInHz);
+        int curKey = convertPitchToIx((double) pitchInHz); // No note will return -1
+
+        // Debug statement to see how fast the engine runs.
+        // if (midiKey != -1) {
+            //Log.d(MESSAGE_LOG_SPEED, "Processing: " + keyFinder.getAllNotes().getNoteAtIndex(midiKey));
+        // }
+
         // Note change is detected.
-        if (midiKey != prevAddedNote) {
-            // Previously added note is no longer heard; start timer.
+        if (curKey != prevAddedNote) {
+            // If previously added note is no longer heard.
             if (prevAddedNote != -1) {
+                // Start timer.
                 keyFinder.getAllNotes().getNoteAtIndex(
                         prevAddedNote).startNoteTimer(keyFinder, noteExpirationLength);
+                Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
+                        prevAddedNote).getName() + ": Started");
             }
 
             // No note is heard.
@@ -274,19 +285,27 @@ public class MainActivity extends AppCompatActivity
                 prevAddedNote = -1;
             }
             // Different note is heard.
-            else if (midiKey != curNoteIx) {
-                curNoteIx = midiKey;
+            else if (curKey != curNoteIx) {
+                curNoteIx = curKey;
                 timeRegistered = System.currentTimeMillis();
             }
             // Current note is heard.
             else if (noteMeetsConfidence()) {
-                addNote(midiKey);
+                addNote(curKey);
+                keyFinder.getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
+                Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
+                        prevAddedNote).getName() + ": Cancelled");
             }
         }
-        if (keyFinder.noteHasBeenRemoved()) {
-            keyFinder.resetNoteHasBeenRemoved();
+        // Note removal detected.
+        if (keyFinder.getNoteHasBeenRemoved()) {
+            keyFinder.setNoteHasBeenRemoved(false);
             Log.d(MESSAGE_LOG_REMOVE, keyFinder.getRemovedNote().getName());
             Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
+        }
+        // If active key has changed.
+        if (keyFinder.getActiveKeyHasChanged()) {
+            playActiveKeyNote();
         }
         // Update text views.
         setPitchText(pitchInHz);
