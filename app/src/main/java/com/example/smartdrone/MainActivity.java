@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity
      * @param       pitchInHz double; pitch of note (hertz).
      */
     public void setPitchText(double pitchInHz) {
-        TextView pitchText = (TextView) findViewById(R.id.pitchText);
+        TextView pitchText = (TextView) findViewById(R.id.pitchText); //TODO optimize
         pitchText.setText("" + (int) pitchInHz);
     }
 
@@ -278,7 +278,6 @@ public class MainActivity extends AppCompatActivity
                 Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
                         prevAddedNote).getName() + ": Started");
             }
-
             // No note is heard.
             if (pitchInHz == -1) {
                 curNoteIx = -1;
@@ -477,6 +476,6 @@ public class MainActivity extends AppCompatActivity
         userModeIx = (userModeIx + 1) % voicings.length;
         userModeButton.setText(userModeName[userModeIx]);
         sendMidiChord(0X90, voicings[userModeIx], 63, curActiveKey);
-        Log.d(MESSAGE_LOG_REMOVE, "hi");
+        // Log.d(MESSAGE_LOG_REMOVE, "hi");
     }
 }
