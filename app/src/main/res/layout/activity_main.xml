@@ -164,4 +164,16 @@
         app:layout_constraintBottom_toTopOf="@+id/noteLengthRequirementLabel"
         app:layout_constraintStart_toEndOf="@+id/userModeButton" />
 
+    <Button
+        android:id="@+id/volumeButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginBottom="42dp"
+        android:onClick="incrementVolume"
+        android:text="Button"
+        app:layout_constraintBottom_toTopOf="@+id/userModeButton"
+        app:layout_constraintStart_toStartOf="parent" />
+
 </android.support.constraint.ConstraintLayout>

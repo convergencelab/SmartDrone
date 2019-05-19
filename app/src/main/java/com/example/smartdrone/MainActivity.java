@@ -61,7 +61,7 @@ import be.tarsos.dsp.util.PitchConverter;
 public class MainActivity extends AppCompatActivity
     implements MidiDriver.OnMidiStartListener {
 
-    public AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
+    public AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0); //pp
     public MidiDriver midi;
     public static KeyFinder keyFinder = new KeyFinder();
 
@@ -112,15 +112,17 @@ public class MainActivity extends AppCompatActivity
             "Sus/Mixolydian",
             "Phrygian", };
 
-
     // Used to keep track how long a note was heard.
     public long timeRegistered;
-    public int noteLengthRequirement;
+    public int noteLengthRequirement; //pp
+
+    public int midiVolume;
 
     Button expirationButton;
     Button keyTimerButton;
     Button noteLengthRequirementButton;
     Button userModeButton;
+    Button volumeButton;
 
     // List of all the plugins available.
     // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
@@ -179,6 +181,10 @@ public class MainActivity extends AppCompatActivity
         userModeIx = 0;
         userModeButton = (Button) findViewById(R.id.userModeButton);
         userModeButton.setText(userModeName[userModeIx]);
+
+        midiVolume = 65;
+        volumeButton = findViewById(R.id.volumeButton);
+        volumeButton.setText("" + midiVolume);
 
         // Construct Midi Driver.
         midi = new MidiDriver();
@@ -348,7 +354,7 @@ public class MainActivity extends AppCompatActivity
             */
 
             sendMidiChord(0X80, voicings[userModeIx], 0, prevActiveKey);
-            sendMidiChord(0X90, voicings[userModeIx], 63, curActiveKey);
+            sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKey);
         }
     }
 
@@ -477,5 +483,12 @@ public class MainActivity extends AppCompatActivity
         userModeButton.setText(userModeName[userModeIx]);
         sendMidiChord(0X90, voicings[userModeIx], 63, curActiveKey);
         // Log.d(MESSAGE_LOG_REMOVE, "hi");
+    }
+
+    public void incrementVolume(View view) {
+        midiVolume = (midiVolume + 5) % 105;
+        sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKey);
+        sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKey);
+        volumeButton.setText("" + midiVolume);
     }
 }
