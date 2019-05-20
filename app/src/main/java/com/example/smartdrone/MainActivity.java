@@ -61,9 +61,10 @@ import be.tarsos.dsp.util.PitchConverter;
 public class MainActivity extends AppCompatActivity
     implements MidiDriver.OnMidiStartListener {
 
-    public AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0); //pp
+    public AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0); //ph
     public MidiDriver midi;
     public static KeyFinder keyFinder = new KeyFinder();
+    // public PitchHandler pitchHandler = new PitchHandler();
 
     // Used for accessing note names.
     public static final String[] notes =
@@ -76,10 +77,10 @@ public class MainActivity extends AppCompatActivity
     public static final String MESSAGE_LOG_NOTE_TIMER = "mainActivityDebugNTimer";
 
     // Variables for tracking active keys/notes
-    int prevActiveKey = -1;
-    int curActiveKey = -1;
-    int prevAddedNote = -1; //TODO Refactor; should have ix in variable name.
-    int curNoteIx = -1;
+    static int prevActiveKey = -1;
+    static int curActiveKey = -1;
+    int prevAddedNoteIx = -1; //ph
+    int curNoteIx = -1;       //ph
 
     int noteExpirationLength;
     int keyTimerLength;
@@ -113,8 +114,8 @@ public class MainActivity extends AppCompatActivity
             "Phrygian", };
 
     // Used to keep track how long a note was heard.
-    public long timeRegistered;
-    public int noteLengthRequirement; //pp
+    public long timeRegistered;       //ph
+    public int noteLengthRequirement; //ph
 
     public int midiVolume;
 
@@ -123,6 +124,7 @@ public class MainActivity extends AppCompatActivity
     Button noteLengthRequirementButton;
     Button userModeButton;
     Button volumeButton;
+    TextView activeKeyText = findViewById(R.id.activeKeyPlainText);
 
     // List of all the plugins available.
     // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
@@ -137,9 +139,14 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // proccess.start() ...
+        // Update text views.
+        // setPitchText(pitchInHz);
+        // setNoteText(pitchInHz);
+
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
-            public void handlePitch(PitchDetectionResult res, AudioEvent e){
+            public void handlePitch(PitchDetectionResult res, AudioEvent e) {
                 final float pitchInHz = res.getPitch();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -159,7 +166,7 @@ public class MainActivity extends AppCompatActivity
         // keyFinder = new KeyFinder();     CHECKING IF STATIC MAKES IT FASTER
 
         // The amount of time a note must be registered for until it is added to the active note list.
-        noteLengthRequirement = 60;
+        noteLengthRequirement = 60; //ph
         keyFinder.setKeyTimerLength(2);
         keyFinder.setNoteTimerLength(2);
 
@@ -199,6 +206,7 @@ public class MainActivity extends AppCompatActivity
             midi.start();
     }
 
+    // ph
     /**
      * Add note to Active Note list based on the given ix.
      * @param       noteIx int; index of note.
@@ -208,13 +216,14 @@ public class MainActivity extends AppCompatActivity
         keyFinder.addNoteToList(curNote);
         Log.d(MESSAGE_LOG_ADD, curNote.getName());
         Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
-        prevAddedNote = noteIx;
+        prevAddedNoteIx = noteIx;
 
         // printActiveKeyToScreen();
         playActiveKeyNote();
         // Log.d(MESSAGE_LOG, keyFinder.getActiveNotes().toString()); // active note list
     }
 
+    //ph
     /**
      * Converts pitch (hertz) to note index.
      * @param       pitchInHz double;
@@ -258,6 +267,7 @@ public class MainActivity extends AppCompatActivity
         pitchText.setText("" + (int) pitchInHz);
     }
 
+    //ph
     /**
      * Utilizes other single purpose methods.
      * 1. Converts pitch to ix.
@@ -275,19 +285,19 @@ public class MainActivity extends AppCompatActivity
         // }
 
         // Note change is detected.
-        if (curKey != prevAddedNote) {
+        if (curKey != prevAddedNoteIx) {
             // If previously added note is no longer heard.
-            if (prevAddedNote != -1) {
+            if (prevAddedNoteIx != -1) {
                 // Start timer.
                 keyFinder.getAllNotes().getNoteAtIndex(
-                        prevAddedNote).startNoteTimer(keyFinder, noteExpirationLength);
+                        prevAddedNoteIx).startNoteTimer(keyFinder, noteExpirationLength);
                 Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
-                        prevAddedNote).getName() + ": Started");
+                        prevAddedNoteIx).getName() + ": Started");
             }
             // No note is heard.
             if (pitchInHz == -1) {
                 curNoteIx = -1;
-                prevAddedNote = -1;
+                prevAddedNoteIx = -1;
             }
             // Different note is heard.
             else if (curKey != curNoteIx) {
@@ -299,7 +309,7 @@ public class MainActivity extends AppCompatActivity
                 addNote(curKey);
                 keyFinder.getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
                 Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
-                        prevAddedNote).getName() + ": Cancelled");
+                        prevAddedNoteIx).getName() + ": Cancelled");
             }
         }
         // Note removal detected.
@@ -317,6 +327,7 @@ public class MainActivity extends AppCompatActivity
         setNoteText(pitchInHz);
     }
 
+    //ph
     public boolean noteMeetsConfidence() {
         return (System.currentTimeMillis() - timeRegistered) > noteLengthRequirement;
     }
@@ -333,7 +344,7 @@ public class MainActivity extends AppCompatActivity
     /**
      * Plays the tone(s) of the current active key.
      */
-    public void playActiveKeyNote() {
+    public static void playActiveKeyNote() {
         //TODO:  This may have to be refactored so that it won't differentiate between same notes of
         //TODO:  a different octave.
         prevActiveKey = curActiveKey;
@@ -455,9 +466,9 @@ public class MainActivity extends AppCompatActivity
     /**
      * Update the text view that displays the current active key.
      */
-    public void printActiveKeyToScreen() {
-        TextView tv = findViewById(R.id.activeKeyPlainText);
-        tv.setText("Active Key: " + keyFinder.getActiveKey().getName());
+    public static void printActiveKeyToScreen() {
+        // TextView activeKeyText = findViewById(R.id.activeKeyPlainText);
+        activeKeyText.setText("Active Key: " + keyFinder.getActiveKey().getName());
     }
 
     public void incrementNoteExpiration(View view) {
