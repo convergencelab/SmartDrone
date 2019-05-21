@@ -10,4 +10,7 @@ public class Constants {
     public static final String MESSAGE_LOG_LIST       = "mainActivityDebugList";
     public static final String MESSAGE_LOG_SPEED      = "mainActivityDebugSpeed";
     public static final String MESSAGE_LOG_NOTE_TIMER = "mainActivityDebugNTimer";
+
+    public static final int START_NOTE = 0X90;
+    public static final int STOP_NOTE  = 0X80;
 }

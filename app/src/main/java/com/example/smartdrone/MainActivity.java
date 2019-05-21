@@ -54,7 +54,8 @@ import be.tarsos.dsp.util.PitchConverter;
 public class MainActivity extends AppCompatActivity
     implements MidiDriver.OnMidiStartListener {
 
-    public ViewHelper viewHelper;
+    // public ViewHelper tvr;
+    public TextViewResources tvr;
 
     public AudioDispatcher dispatcher = PitchProcessorHelper.getDispatcher();
 
@@ -76,7 +77,7 @@ public class MainActivity extends AppCompatActivity
         // setPitchText(pitchInHz);
         // setNoteText(pitchInHz);
 
-        viewHelper = new ViewHelper(this);
+        tvr = new TextViewResources(this);
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
@@ -105,25 +106,25 @@ public class MainActivity extends AppCompatActivity
         // Button for Note Timer
         // noteTimerButton = (Button) findViewById(R.id.noteTimerButton);
         KeyFinderHelper.setNoteTimerLength(KeyFinderHelper.getKeyFinder().getNoteTimerLength());
-        viewHelper.noteTimerButton.setText("" + KeyFinderHelper.getNoteTimerLength());
+        tvr.noteTimerButton.setText("" + KeyFinderHelper.getNoteTimerLength());
 
         // Button for Key timer.
         // keyTimerButton = (Button) findViewById(R.id.keyTimerButton);
         KeyFinderHelper.setKeyTimerLength(KeyFinderHelper.getKeyFinder().getKeyTimerLength());
-        viewHelper.keyTimerButton.setText("" + KeyFinderHelper.getKeyTimerLength());
+        tvr.keyTimerButton.setText("" + KeyFinderHelper.getKeyTimerLength());
 
         // Button for note length requirement.\
         // noteLengthFilterButton = (Button) findViewById(R.id.noteFilterButton);
-        viewHelper.noteLengthFilterButton.setText("" + PitchProcessorHelper.getNoteLengthFilter());
+        tvr.noteLengthFilterButton.setText("" + PitchProcessorHelper.getNoteLengthFilter());
 
         // User mode button
         // userModeIx = 0;
         // userModeButton = (Button) findViewById(R.id.userModeButton);
         // userModeButton.setText(userModeName[userModeIx]);
-        viewHelper.userModeButton.setText("" + VoicingsHelper.getNameAtIx(VoicingsHelper.getUserVoicingIx()));
+        tvr.userModeButton.setText("" + VoicingsHelper.getNameAtIx(VoicingsHelper.getUserVoicingIx()));
 
         // volumeButton = findViewById(R.id.volumeButton);
-        viewHelper.volumeButton.setText("" + MidiDriverHelper.getVolume());
+        tvr.volumeButton.setText("" + MidiDriverHelper.getVolume());
 
         // Construct Midi Driver.
         MidiDriverHelper.getMidiDriver().setOnMidiStartListener(this);
@@ -283,16 +284,8 @@ public class MainActivity extends AppCompatActivity
         if (KeyFinderHelper.getPrevActiveKeyIx() != KeyFinderHelper.getCurActiveKeyIx()) {
             printActiveKeyToScreen(); // FOR TESTING
 
-            /*
-            //TODO: Send everything as an array (work for any number of notes)
-            // Stop the current note.
-            sendMidi(0X80, prevActiveKey + modeOffset, 0);
-            // Start the new note.
-            sendMidi(0X90, curActiveKey + modeOffset, 63);
-            */
-
-            sendMidiChord(0X80, VoicingsHelper.getCurVoicing(), 0, KeyFinderHelper.getPrevActiveKeyIx());
-            sendMidiChord(0X90, VoicingsHelper.getCurVoicing(), MidiDriverHelper.getVolume(), KeyFinderHelper.getCurActiveKeyIx());
+            MidiDriverHelper.sendMidiChord(0X80, VoicingsHelper.getCurVoicing(), 0, KeyFinderHelper.getPrevActiveKeyIx());
+            MidiDriverHelper.sendMidiChord(0X90, VoicingsHelper.getCurVoicing(), MidiDriverHelper.getVolume(), KeyFinderHelper.getCurActiveKeyIx());
         }
     }
 
@@ -304,66 +297,7 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onMidiStart() {
-        sendMidiSetup();
-    }
-
-    /**
-     * https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
-     *
-     * Initial setup data for midi.
-     */
-    protected void sendMidiSetup() {
-        byte msg[] = new byte[2];
-        msg[0] = (byte) 0XC0;    // 0XC0 == PROGRAM CHANGE
-        msg[1] = (byte) MidiDriverHelper.getPlugin();
-        MidiDriverHelper.getMidiDriver().write(msg);
-    }
-
-    /**
-     * https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
-     *
-     * Send data that is to be synthesized by midi driver.
-     * @param       event int; type of event.
-     * @param       midiKey int; index of note (uses octaves).
-     * @param       volume int; volume of note.
-     */
-    protected void sendMidi(int event, int midiKey, int volume) {
-        byte msg[] = new byte[3];
-        msg[0] = (byte) event;
-        msg[1] = (byte) midiKey;
-        msg[2] = (byte) volume;
-        MidiDriverHelper.getMidiDriver().write(msg);
-    }
-
-    /**
-     * Sends multiple messages to be synthesized by midi driver.
-     * Each note is given specifically.
-     * @param       event int; type of event.
-     * @param       midiKeys int[]; indexes of notes (uses octaves).
-     * @param       volume int; volume of notes.
-     */
-    protected void sendMidiChord(int event, int[] midiKeys, int volume) {
-        for (int key : midiKeys) {
-            sendMidi(event, key, volume);
-        }
-    }
-
-    /**
-     * Sends multiple messages to be synthesized by midi driver.
-     * Each note is given specifically.
-     * @param       event int; type of event.
-     * @param       midiKeys int[]; indexes of notes (uses octaves).
-     * @param       volume int; volume of notes.
-     */
-    protected void sendMidiChord(int event, int[] midiKeys, int volume, int rootIx) {
-        int octaveAdjustment = 0;
-        if (midiKeys[0] + rootIx > 47) {
-            octaveAdjustment = -12;
-        }
-
-        for (int key : midiKeys) {
-            sendMidi(event, key + rootIx + octaveAdjustment, volume);
-        }
+        MidiDriverHelper.sendMidiSetup();
     }
 
     /**
@@ -377,33 +311,38 @@ public class MainActivity extends AppCompatActivity
     public void incrementNoteExpiration(View view) {
         KeyFinderHelper.setNoteTimerLength((KeyFinderHelper.getNoteTimerLength() % 5) + 1);
         KeyFinderHelper.getKeyFinder().setNoteTimerLength(KeyFinderHelper.getNoteTimerLength());
-        viewHelper.noteTimerButton.setText("" + KeyFinderHelper.getNoteTimerLength());
+        tvr.noteTimerButton.setText("" + KeyFinderHelper.getNoteTimerLength());
     }
 
     public void incrementKeyTimer(View view) {
         KeyFinderHelper.setKeyTimerLength((KeyFinderHelper.getKeyTimerLength() % 5) + 1);
         KeyFinderHelper.getKeyFinder().setKeyTimerLength(KeyFinderHelper.getKeyTimerLength());
-        viewHelper.keyTimerButton.setText("" + KeyFinderHelper.getKeyTimerLength());
+        tvr.keyTimerButton.setText("" + KeyFinderHelper.getKeyTimerLength());
     }
 
     public void incrementNoteLengthRequirement(View view) {
-        // noteLengthFilter = (noteLengthFilter + 15) % 165;
         PitchProcessorHelper.incrementNoteLengthFilter();
-        viewHelper.noteLengthFilterButton.setText("" + PitchProcessorHelper.getNoteLengthFilter());
+        tvr.noteLengthFilterButton.setText("" + PitchProcessorHelper.getNoteLengthFilter());
     }
 
     public void changeUserMode(View view) {
-        sendMidiChord(0X80, VoicingsHelper.getCurVoicing(), 0, KeyFinderHelper.getCurActiveKeyIx());
+        MidiDriverHelper.sendMidiChord(Constants.STOP_NOTE, VoicingsHelper.getCurVoicing(),
+                0, KeyFinderHelper.getCurActiveKeyIx());
         VoicingsHelper.incrementIx();
-        viewHelper.userModeButton.setText(VoicingsHelper.getCurVoicingName());
-        sendMidiChord(0X90, VoicingsHelper.getCurVoicing(), 63, KeyFinderHelper.getCurActiveKeyIx());
-        // Log.d(MESSAGE_LOG_REMOVE, "hi");
+        tvr.userModeButton.setText(VoicingsHelper.getCurVoicingName());
+        MidiDriverHelper.sendMidiChord(
+                Constants.START_NOTE, VoicingsHelper.getCurVoicing(),
+                MidiDriverHelper.getVolume(), KeyFinderHelper.getCurActiveKeyIx());
     }
 
     public void incrementVolume(View view) {
         MidiDriverHelper.incrementVolume();
-        sendMidiChord(0X80, VoicingsHelper.getCurVoicing(), 0, KeyFinderHelper.getCurActiveKeyIx());
-        sendMidiChord(0X90, VoicingsHelper.getCurVoicing(), MidiDriverHelper.getVolume(), KeyFinderHelper.getCurActiveKeyIx());
-        viewHelper.volumeButton.setText("" + MidiDriverHelper.getVolume());
+        MidiDriverHelper.sendMidiChord(
+                Constants.STOP_NOTE, VoicingsHelper.getCurVoicing(),
+                0, KeyFinderHelper.getCurActiveKeyIx());
+        MidiDriverHelper.sendMidiChord(
+                Constants.START_NOTE, VoicingsHelper.getCurVoicing(),
+                MidiDriverHelper.getVolume(), KeyFinderHelper.getCurActiveKeyIx());
+        tvr.volumeButton.setText("" + MidiDriverHelper.getVolume());
     }
 }
