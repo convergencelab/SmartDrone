@@ -59,23 +59,10 @@ public class MainActivity extends AppCompatActivity
 
     public AudioDispatcher dispatcher = PitchProcessorHelper.getDispatcher();
 
-    /*
-    // Button noteTimerButton;
-    Button keyTimerButton;
-    Button noteLengthFilterButton;
-    Button userModeButton;
-    Button volumeButton;
-    */
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // proccess.start() ...
-        // Update text views.
-        // setPitchText(pitchInHz);
-        // setNoteText(pitchInHz);
 
         tvr = new TextViewResources(this);
 
@@ -99,28 +86,21 @@ public class MainActivity extends AppCompatActivity
         audioThread.start();
 
         // The amount of time a note must be registered for until it is added to the active note list.
-        // noteLengthFilter = 60; //ph
         KeyFinderHelper.getKeyFinder().setKeyTimerLength(3);
         KeyFinderHelper.getKeyFinder().setNoteTimerLength(2);
 
         // Button for Note Timer
-        // noteTimerButton = (Button) findViewById(R.id.noteTimerButton);
         KeyFinderHelper.setNoteTimerLength(KeyFinderHelper.getKeyFinder().getNoteTimerLength());
         tvr.noteTimerButton.setText("" + KeyFinderHelper.getNoteTimerLength());
 
         // Button for Key timer.
-        // keyTimerButton = (Button) findViewById(R.id.keyTimerButton);
         KeyFinderHelper.setKeyTimerLength(KeyFinderHelper.getKeyFinder().getKeyTimerLength());
         tvr.keyTimerButton.setText("" + KeyFinderHelper.getKeyTimerLength());
 
         // Button for note length requirement.\
-        // noteLengthFilterButton = (Button) findViewById(R.id.noteFilterButton);
         tvr.noteLengthFilterButton.setText("" + PitchProcessorHelper.getNoteLengthFilter());
 
         // User mode button
-        // userModeIx = 0;
-        // userModeButton = (Button) findViewById(R.id.userModeButton);
-        // userModeButton.setText(userModeName[userModeIx]);
         tvr.userModeButton.setText("" + VoicingsHelper.getNameAtIx(VoicingsHelper.getUserVoicingIx()));
 
         // volumeButton = findViewById(R.id.volumeButton);
@@ -146,13 +126,10 @@ public class MainActivity extends AppCompatActivity
     public void addNote(int noteIx) {
         Note curNote = KeyFinderHelper.getKeyFinder().getAllNotes().getNoteAtIndex(noteIx);
         KeyFinderHelper.getKeyFinder().addNoteToList(curNote);
-        // Log.d(MESSAGE_LOG_ADD, curNote.getName());
-        // Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
+        Log.d(Constants.MESSAGE_LOG_ADD, curNote.getName());
+        Log.d(Constants.MESSAGE_LOG_LIST, KeyFinderHelper.getKeyFinder().getActiveNotes().toString());
         KeyFinderHelper.setPrevAddedNoteIx(noteIx);
-
-        // printActiveKeyToScreen();
         playActiveKeyNote();
-        // Log.d(MESSAGE_LOG, keyFinder.getActiveNotes().toString()); // active note list
     }
 
     //ph
@@ -338,11 +315,15 @@ public class MainActivity extends AppCompatActivity
     public void incrementVolume(View view) {
         MidiDriverHelper.incrementVolume();
         MidiDriverHelper.sendMidiChord(
-                Constants.STOP_NOTE, VoicingsHelper.getCurVoicing(),
-                0, KeyFinderHelper.getCurActiveKeyIx());
+                Constants.STOP_NOTE,
+                VoicingsHelper.getCurVoicing(),
+                0,
+                KeyFinderHelper.getCurActiveKeyIx());
         MidiDriverHelper.sendMidiChord(
-                Constants.START_NOTE, VoicingsHelper.getCurVoicing(),
-                MidiDriverHelper.getVolume(), KeyFinderHelper.getCurActiveKeyIx());
+                Constants.START_NOTE,
+                VoicingsHelper.getCurVoicing(),
+                MidiDriverHelper.getVolume(),
+                KeyFinderHelper.getCurActiveKeyIx());
         tvr.volumeButton.setText("" + MidiDriverHelper.getVolume());
     }
 }
