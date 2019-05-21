@@ -5,6 +5,7 @@
  * TarsosDSP Example   : https://stackoverflow.com/questions/31231813/tarsosdsp-pitch-analysis-for-dummies
  */
 
+
 package com.example.smartdrone;
 
 import android.content.res.Resources;
@@ -16,6 +17,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.example.smartdrone.KeyFinder;
+import com.example.smartdrone.R;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
@@ -36,6 +40,7 @@ public class SimulationActivity extends AppCompatActivity
     public MidiDriver midi;
     public MediaPlayer mediaPlayer;
 
+    /*
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +56,7 @@ public class SimulationActivity extends AppCompatActivity
         }
         prevActiveKey = -1;
     }
+    */
 
     // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
     // On resume
@@ -90,10 +96,12 @@ public class SimulationActivity extends AppCompatActivity
         tv.setText("Active Key: " + keyFinder.getActiveKey().getName());
     }
 
+
     /**
      * Generate buttons for all 12 notes.
      * Each button will add the corresponding note to the KeyFinder.
      */
+    /*
     public void constructNoteButtons() {
         // Had to add LinearLayout class in front of LayoutParams
         LinearLayout llLeft = (LinearLayout)findViewById(R.id.noteButtonLayoutLeft);
@@ -104,7 +112,7 @@ public class SimulationActivity extends AppCompatActivity
         // Construct and add note button.
         for (int i = 0; i < 12; i++) {
             final Button curNoteButton = new Button(this);
-            curNoteButton.setText(MainActivity.notes[i]);
+            curNoteButton.setText(MainActivity[i]);
             // curNoteButton.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             curNoteButton.setId(i);
             curNoteButton.setTag(i);
@@ -118,6 +126,7 @@ public class SimulationActivity extends AppCompatActivity
             llArr[i%2].addView(curNoteButton, lp);
         }
     }
+    */
 
     public void playActiveKeyNote() {
         prevActiveKey = curActiveKey;

@@ -1,20 +1,12 @@
 package com.example.smartdrone;
 
 import android.app.Activity;
-import android.content.Context;
-import android.util.Log;
-import android.widget.TextView;
 
 import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.AudioEvent;
-import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
-import be.tarsos.dsp.pitch.PitchDetectionHandler;
-import be.tarsos.dsp.pitch.PitchDetectionResult;
-import be.tarsos.dsp.pitch.PitchProcessor;
 import be.tarsos.dsp.util.PitchConverter;
 
-public class PitchHandler {
+public class PitchProcessorHelperDelete {
     private AudioDispatcher dispatcher;
     private int prevAddedNoteIx;
     private int curNoteIx;
@@ -22,18 +14,19 @@ public class PitchHandler {
     // private KeyFinder keyFinder;
     private Activity activity;
     private long timeRegistered;       //ph
-    private int noteLengthRequirement; //ph
+    private int noteLengthFilter; //ph
 
-    public PitchHandler(Activity activity, KeyFinder keyFinder) {
+    public PitchProcessorHelperDelete(Activity activity, KeyFinder keyFinder) {
         this.activity = activity;
         // this.keyFinder = keyFinder;
         this.dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0); //ph
         this.prevAddedNoteIx = -1;
         this.curNoteIx = -1;
-        this.noteLengthRequirement = 60;
+        this.noteLengthFilter = 60;
         noteExpirationLength = keyFinder.getNoteTimerLength();
     }
 
+    /*
     public void start() {
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
@@ -54,6 +47,7 @@ public class PitchHandler {
         Thread audioThread = new Thread(dispatcher, "Audio Thread");
         audioThread.start();
     }
+    */
 
     /**
      * Utilizes other single purpose methods.
@@ -62,11 +56,12 @@ public class PitchHandler {
      * 3. Updates the text views on screen.
      * @param       pitchInHz float; current pitch being heard.
      */
+    /*
     public void processPitch(float pitchInHz) {
         // Convert pitch to midi key.
-        int curKey = convertPitchToIx((double) pitchInHz); // No note will return -1
+        int curIx = convertPitchToIx((double) pitchInHz); // No note will return -1
         // Note change is detected.
-        if (curKey != prevAddedNoteIx) {
+        if (curIx != prevAddedNoteIx) {
             // If previously added note is no longer heard.
             if (prevAddedNoteIx != -1) {
                 // Start timer.
@@ -81,14 +76,14 @@ public class PitchHandler {
                 prevAddedNoteIx = -1;
             }
             // Different note is heard.
-            else if (curKey != curNoteIx) {
-                curNoteIx = curKey;
+            else if (curIx != curNoteIx) {
+                curNoteIx = curIx;
                 timeRegistered = System.currentTimeMillis();
             }
             // Current note is heard.
             else if (noteMeetsConfidence()) {
-                addNote(curKey);
-                MainActivity.keyFinder.getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
+                addNote(curIx);
+                MainActivity.keyFinder.getAllNotes().getNoteAtIndex(curIx).cancelNoteTimer();
                 // Log.d(MESSAGE_LOG_NOTE_TIMER, MainActivity.keyFinder.getAllNotes().getNoteAtIndex(
                 //        prevAddedNoteIx).getName() + ": Cancelled");
             }
@@ -101,9 +96,10 @@ public class PitchHandler {
         }
         // If active key has changed.
         if (MainActivity.keyFinder.getActiveKeyHasChanged()) {
-            MainActivity.playActiveKeyNote();
+            // MainActivity.playActiveKeyNote();
         }
     }
+    */
 
     /**
      * Converts pitch (hertz) to note index.
@@ -119,23 +115,8 @@ public class PitchHandler {
     }
 
     public boolean noteMeetsConfidence() {
-        return (System.currentTimeMillis() - timeRegistered) > noteLengthRequirement;
+        return (System.currentTimeMillis() - timeRegistered) > noteLengthFilter;
     }
 
-    /**
-     * Add note to Active Note list based on the given ix.
-     * @param       noteIx int; index of note.
-     */
-    public void addNote(int noteIx) {
-        Note curNote = MainActivity.keyFinder.getAllNotes().getNoteAtIndex(noteIx);
-        MainActivity.keyFinder.addNoteToList(curNote);
-        // Log.d(MESSAGE_LOG_ADD, curNote.getName());
-        // Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
-        prevAddedNoteIx = noteIx;
-
-        // printActiveKeyToScreen();
-        playActiveKeyNote();
-        // Log.d(MESSAGE_LOG, keyFinder.getActiveNotes().toString()); // active note list
-    }
 
 }

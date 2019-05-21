@@ -2,8 +2,10 @@
   <dictionary name="macdo">
     <words>
       <w>midikey</w>
+      <w>mixolydian</w>
       <w>phrygian</w>
       <w>tarsos</w>
+      <w>voiceleader</w>
       <w>voicings</w>
     </words>
   </dictionary>
