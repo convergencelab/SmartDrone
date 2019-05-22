@@ -12,15 +12,22 @@
 
 /*
  * TODO:
- * - fix audio bug when switching activities.
+ * - debug accuracy of note detection.
+ * - add user parameter for sensitivity.
+ **    - add user parameter than decides how long a note stays in the cue before it expires.
+ *       (default = 5)
+ **    - update java library so new key has to take over
+ * - add user parameter for mode.
+ * - fix sound distortion bug when switching activities.
+ * - improve functionality.
+ **    - note must be heard for a variable amount of time before it's added to list
+ *       (to prevent adding erroneous notes)
  * - look into api for signal filtering.
- * - create Voiceleader java library.
- * - exception handling
- * - organize source code
- * - follow proper naming conventions
- * - if two keys are equal contenders, app will pick key with lowest index (timer starts first)
- *     - make it more random.
- * - remove unused import statements
+ * - Debug features that displays the current active notes on the screen
+ *   (or logcat?)
+ * - add feature that active keys can generate chords.
+ * - make it so note timer doesn't start for curnote until another note is detected
+ * - Find out how to create listener for note being removed from list (expired).
  */
 
 package com.example.smartdrone;
@@ -52,23 +59,87 @@ import be.tarsos.dsp.util.PitchConverter;
 
 
 public class MainActivity extends AppCompatActivity
-    implements MidiDriver.OnMidiStartListener {
+        implements MidiDriver.OnMidiStartListener {
 
-    // public ViewHelper tvr;
-    public TextViewResources tvr;
+    public AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0); //pp
+    public MidiDriver midi;
+    public static KeyFinder keyFinder = new KeyFinder();
 
-    public AudioDispatcher dispatcher = PitchProcessorHelper.getDispatcher();
+    // Used for accessing note names.
+    public static final String[] notes =
+            { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+    public static final String MESSAGE_LOG_ADD        = "mainActivityDebugAdd";
+    public static final String MESSAGE_LOG_REMOVE     = "mainActivityDebugRemove";
+    public static final String MESSAGE_LOG_LIST       = "mainActivityDebugList";
+    public static final String MESSAGE_LOG_SPEED      = "mainActivityDebugSpeed";
+    public static final String MESSAGE_LOG_NOTE_TIMER = "mainActivityDebugNTimer";
+
+    // Variables for tracking active keys/notes
+    int prevActiveKey = -1;
+    int curActiveKey = -1;
+    int prevAddedNote = -1; //TODO Refactor; should have ix in variable name.
+    int curNoteIx = -1;
+
+    int noteExpirationLength;
+    int keyTimerLength;
+
+    int[] drone           = { 0                     };
+    int[] majorTriad      = { 0,  7, 16             };
+    int[] maj7Voicing     = { 0,  7, 16, 23, 26     };
+    int[] dorianVoicing   = { 2, 12, 17, 23         };
+    int[] lydianVoicing   = { 5, 12, 19, 26, 33, 40 };
+    int[] susVoicing      = { 7, 17, 21, 24, 28, 33 };
+    int[] phrygianVoicing = { 4, 17, 21, 23, 28     };
+    int[][] voicings = {
+            drone,
+            majorTriad,
+            maj7Voicing,
+            dorianVoicing,
+            lydianVoicing,
+            susVoicing,
+            phrygianVoicing};
+    int[] curVoicing;
+    int[] prevVoicing;
+
+    int userModeIx = 0;
+    String[] userModeName = {
+            "Drone",
+            "Major Triad",
+            "Major7",
+            "Gabe Voicing",
+            "Lydian",
+            "Sus/Mixolydian",
+            "Phrygian", };
+
+    // Used to keep track how long a note was heard.
+    public long timeRegistered;
+    public int noteLengthRequirement; //pp
+
+    public int midiVolume;
+
+    Button expirationButton;
+    Button keyTimerButton;
+    Button noteLengthRequirementButton;
+    Button userModeButton;
+    Button volumeButton;
+
+    // List of all the plugins available.
+    // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
+    // TODO: Add user parameter.
+    public static int plugin = 52;
+    // Used for practicing different modes.
+    // TODO: Add user parameter.
+    public static int mode = 0; // 0 = Ionian; 1 = Dorian; 2 = Phrygian; ... (update later for melodic minor, other tonalities...)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        tvr = new TextViewResources(this);
-
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
-            public void handlePitch(PitchDetectionResult res, AudioEvent e) {
+            public void handlePitch(PitchDetectionResult res, AudioEvent e){
                 final float pitchInHz = res.getPitch();
                 runOnUiThread(new Runnable() {
                     @Override
@@ -85,54 +156,65 @@ public class MainActivity extends AppCompatActivity
         Thread audioThread = new Thread(dispatcher, "Audio Thread");
         audioThread.start();
 
+        // keyFinder = new KeyFinder();     CHECKING IF STATIC MAKES IT FASTER
+
         // The amount of time a note must be registered for until it is added to the active note list.
-        KeyFinderHelper.getKeyFinder().setKeyTimerLength(3);
-        KeyFinderHelper.getKeyFinder().setNoteTimerLength(2);
+        noteLengthRequirement = 60;
+        keyFinder.setKeyTimerLength(2);
+        keyFinder.setNoteTimerLength(2);
 
         // Button for Note Timer
-        KeyFinderHelper.setNoteTimerLength(KeyFinderHelper.getKeyFinder().getNoteTimerLength());
-        tvr.noteTimerButton.setText("" + KeyFinderHelper.getNoteTimerLength());
+        expirationButton = (Button) findViewById(R.id.expirationButton);
+        noteExpirationLength = keyFinder.getNoteTimerLength();
+        expirationButton.setText("" + noteExpirationLength);
 
         // Button for Key timer.
-        KeyFinderHelper.setKeyTimerLength(KeyFinderHelper.getKeyFinder().getKeyTimerLength());
-        tvr.keyTimerButton.setText("" + KeyFinderHelper.getKeyTimerLength());
+        keyTimerButton = (Button) findViewById(R.id.keyTimerButton);
+        keyTimerLength = keyFinder.getKeyTimerLength();
+        keyTimerButton.setText("" + keyTimerLength);
 
         // Button for note length requirement.\
-        tvr.noteLengthFilterButton.setText("" + PitchProcessorHelper.getNoteLengthFilter());
+        noteLengthRequirementButton = (Button) findViewById(R.id.noteLengthTimerButton);
+        noteLengthRequirementButton.setText("" + noteLengthRequirement);
 
         // User mode button
-        tvr.userModeButton.setText("" + VoicingsHelper.getNameAtIx(VoicingsHelper.getUserVoicingIx()));
+        userModeIx = 0;
+        userModeButton = (Button) findViewById(R.id.userModeButton);
+        userModeButton.setText(userModeName[userModeIx]);
 
-        // volumeButton = findViewById(R.id.volumeButton);
-        tvr.volumeButton.setText("" + MidiDriverHelper.getVolume());
+        midiVolume = 65;
+        volumeButton = findViewById(R.id.volumeButton);
+        volumeButton.setText("" + midiVolume);
 
         // Construct Midi Driver.
-        MidiDriverHelper.getMidiDriver().setOnMidiStartListener(this);
+        midi = new MidiDriver();
+        midi.setOnMidiStartListener(this);
     }
 
     @Override
     protected void onResume()
     {
         super.onResume();
-        if (MidiDriverHelper.getMidiDriver() != null)
-            MidiDriverHelper.getMidiDriver().start();
+        if (midi != null)
+            midi.start();
     }
 
-    // ph
     /**
      * Add note to Active Note list based on the given ix.
      * @param       noteIx int; index of note.
      */
     public void addNote(int noteIx) {
-        Note curNote = KeyFinderHelper.getKeyFinder().getAllNotes().getNoteAtIndex(noteIx);
-        KeyFinderHelper.getKeyFinder().addNoteToList(curNote);
-        Log.d(Constants.MESSAGE_LOG_ADD, curNote.getName());
-        Log.d(Constants.MESSAGE_LOG_LIST, KeyFinderHelper.getKeyFinder().getActiveNotes().toString());
-        KeyFinderHelper.setPrevAddedNoteIx(noteIx);
+        Note curNote = keyFinder.getAllNotes().getNoteAtIndex(noteIx);
+        keyFinder.addNoteToList(curNote);
+        Log.d(MESSAGE_LOG_ADD, curNote.getName());
+        Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
+        prevAddedNote = noteIx;
+
+        // printActiveKeyToScreen();
         playActiveKeyNote();
+        // Log.d(MESSAGE_LOG, keyFinder.getActiveNotes().toString()); // active note list
     }
 
-    //ph
     /**
      * Converts pitch (hertz) to note index.
      * @param       pitchInHz double;
@@ -161,7 +243,7 @@ public class MainActivity extends AppCompatActivity
      */
     public void setNoteText(double pitchInHz) {
         if (pitchInHz != -1) {
-            setNoteText(Constants.NOTES[convertPitchToIx(pitchInHz)]);
+            setNoteText(notes[convertPitchToIx(pitchInHz)]);
         } else {
             setNoteText("");
         }
@@ -176,7 +258,6 @@ public class MainActivity extends AppCompatActivity
         pitchText.setText("" + (int) pitchInHz);
     }
 
-    //ph
     /**
      * Utilizes other single purpose methods.
      * 1. Converts pitch to ix.
@@ -186,55 +267,58 @@ public class MainActivity extends AppCompatActivity
      */
     public void processPitch(float pitchInHz) {
         // Convert pitch to midi key.
-        int curIx = convertPitchToIx((double) pitchInHz); // No note will return -1
+        int curKey = convertPitchToIx((double) pitchInHz); // No note will return -1
 
         // Debug statement to see how fast the engine runs.
         // if (midiKey != -1) {
-            //Log.d(MESSAGE_LOG_SPEED, "Processing: " + keyFinder.getAllNotes().getNoteAtIndex(midiKey));
+        //Log.d(MESSAGE_LOG_SPEED, "Processing: " + keyFinder.getAllNotes().getNoteAtIndex(midiKey));
         // }
 
         // Note change is detected.
-        if (curIx != KeyFinderHelper.getPrevAddedNoteIx()) {
+        if (curKey != prevAddedNote) {
             // If previously added note is no longer heard.
-            if (KeyFinderHelper.getPrevAddedNoteIx() != -1) {
+            if (prevAddedNote != -1) {
                 // Start timer.
-                KeyFinderHelper.getKeyFinder().getAllNotes().getNoteAtIndex(
-                        KeyFinderHelper.getPrevAddedNoteIx()).startNoteTimer(KeyFinderHelper.getKeyFinder(), KeyFinderHelper.getNoteTimerLength());
-                // Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
-                //        prevAddedNoteIx).getName() + ": Started");
+                keyFinder.getAllNotes().getNoteAtIndex(
+                        prevAddedNote).startNoteTimer(keyFinder, noteExpirationLength);
+                Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
+                        prevAddedNote).getName() + ": Started");
             }
             // No note is heard.
             if (pitchInHz == -1) {
-                KeyFinderHelper.setCurNoteIx(-1);
-                KeyFinderHelper.setPrevAddedNoteIx(-1);
+                curNoteIx = -1;
+                prevAddedNote = -1;
             }
             // Different note is heard.
-            else if (curIx != KeyFinderHelper.getCurNoteIx()) {
-                KeyFinderHelper.setCurNoteIx(curIx);
-                // timeRegistered = System.currentTimeMillis();
-                PitchProcessorHelper.setTimeRegistered(System.currentTimeMillis());
+            else if (curKey != curNoteIx) {
+                curNoteIx = curKey;
+                timeRegistered = System.currentTimeMillis();
             }
             // Current note is heard.
-            else if (PitchProcessorHelper.noteMeetsConfidence()) {
-                addNote(curIx);
-                KeyFinderHelper.getKeyFinder().getAllNotes().getNoteAtIndex(curIx).cancelNoteTimer();
-                // Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
-                //        prevAddedNoteIx).getName() + ": Cancelled");
+            else if (noteMeetsConfidence()) {
+                addNote(curKey);
+                keyFinder.getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
+                Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
+                        prevAddedNote).getName() + ": Cancelled");
             }
         }
         // Note removal detected.
-        if (KeyFinderHelper.getKeyFinder().getNoteHasBeenRemoved()) {
-            KeyFinderHelper.getKeyFinder().setNoteHasBeenRemoved(false);
-            // Log.d(MESSAGE_LOG_REMOVE, KeyFinderHelper.getKeyFinder().getRemovedNote().getName());
-            // Log.d(MESSAGE_LOG_LIST, KeyFinderHelper.getKeyFinder().getActiveNotes().toString());
+        if (keyFinder.getNoteHasBeenRemoved()) {
+            keyFinder.setNoteHasBeenRemoved(false);
+            Log.d(MESSAGE_LOG_REMOVE, keyFinder.getRemovedNote().getName());
+            Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
         }
         // If active key has changed.
-        if (KeyFinderHelper.getKeyFinder().getActiveKeyHasChanged()) {
+        if (keyFinder.getActiveKeyHasChanged()) {
             playActiveKeyNote();
         }
         // Update text views.
         setPitchText(pitchInHz);
         setNoteText(pitchInHz);
+    }
+
+    public boolean noteMeetsConfidence() {
+        return (System.currentTimeMillis() - timeRegistered) > noteLengthRequirement;
     }
 
     /**
@@ -252,17 +336,25 @@ public class MainActivity extends AppCompatActivity
     public void playActiveKeyNote() {
         //TODO:  This may have to be refactored so that it won't differentiate between same notes of
         //TODO:  a different octave.
-        // prevActiveKey = curActiveKey;
-        KeyFinderHelper.setPrevActiveKeyIx(KeyFinderHelper.getCurActiveKeyIx());
-        if (KeyFinderHelper.getKeyFinder().getActiveKey() == null) {
+        prevActiveKey = curActiveKey;
+        if (keyFinder.getActiveKey() == null) {
             return;
         }
-        KeyFinderHelper.setCurActiveKeyIx(KeyFinderHelper.getKeyFinder().getActiveKey().getIx() + 36); // 36 == C
-        if (KeyFinderHelper.getPrevActiveKeyIx() != KeyFinderHelper.getCurActiveKeyIx()) {
+        curActiveKey = keyFinder.getActiveKey().getIx() + 36; // 36 == C
+        int modeOffset = MusicTheory.MAJOR_SCALE_SEQUENCE[mode];
+        if (prevActiveKey != curActiveKey) {
             printActiveKeyToScreen(); // FOR TESTING
 
-            MidiDriverHelper.sendMidiChord(0X80, VoicingsHelper.getCurVoicing(), 0, KeyFinderHelper.getPrevActiveKeyIx());
-            MidiDriverHelper.sendMidiChord(0X90, VoicingsHelper.getCurVoicing(), MidiDriverHelper.getVolume(), KeyFinderHelper.getCurActiveKeyIx());
+            /*
+            //TODO: Send everything as an array (work for any number of notes)
+            // Stop the current note.
+            sendMidi(0X80, prevActiveKey + modeOffset, 0);
+            // Start the new note.
+            sendMidi(0X90, curActiveKey + modeOffset, 63);
+            */
+
+            sendMidiChord(0X80, voicings[userModeIx], 0, prevActiveKey);
+            sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKey);
         }
     }
 
@@ -274,56 +366,129 @@ public class MainActivity extends AppCompatActivity
      */
     @Override
     public void onMidiStart() {
-        MidiDriverHelper.sendMidiSetup();
+        sendMidiSetup();
+    }
+
+    /**
+     * https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
+     *
+     * Initial setup data for midi.
+     */
+    protected void sendMidiSetup() {
+        byte msg[] = new byte[2];
+        msg[0] = (byte) 0XC0;    // 0XC0 == PROGRAM CHANGE
+        msg[1] = (byte) plugin;
+        midi.write(msg);
+    }
+
+    /**
+     * https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
+     *
+     * Send data that is to be synthesized by midi driver.
+     * @param       event int; type of event.
+     * @param       midiKey int; index of note (uses octaves).
+     * @param       volume int; volume of note.
+     */
+    protected void sendMidi(int event, int midiKey, int volume) {
+        byte msg[] = new byte[3];
+        msg[0] = (byte) event;
+        msg[1] = (byte) midiKey;
+        msg[2] = (byte) volume;
+        midi.write(msg);
+    }
+
+    /**
+     * Sends multiple messages to be synthesized by midi driver.
+     * Each note is given specifically.
+     * @param       event int; type of event.
+     * @param       midiKeys int[]; indexes of notes (uses octaves).
+     * @param       volume int; volume of notes.
+     */
+    protected void sendMidiChord(int event, int[] midiKeys, int volume) {
+        for (int key : midiKeys) {
+            sendMidi(event, key, volume);
+        }
+    }
+
+    /**
+     * Sends multiple messages to be synthesized by midi driver.
+     * Each note is given specifically.
+     * @param       event int; type of event.
+     * @param       midiKeys int[]; indexes of notes (uses octaves).
+     * @param       volume int; volume of notes.
+     */
+    protected void sendMidiChord(int event, int[] midiKeys, int volume, int rootIx) {
+        int octaveAdjustment = 0;
+        if (midiKeys[0] + rootIx > 47) {
+            octaveAdjustment = -12;
+        }
+
+        for (int key : midiKeys) {
+            sendMidi(event, key + rootIx + octaveAdjustment, volume);
+        }
+    }
+
+    /* TEST VOICINGS */
+
+    protected void sendMidiChordMajor(int event, int midiKey, int volume) {
+        sendMidi(event, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[0], volume);
+        sendMidi(event, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[1] + 12, volume);
+        sendMidi(event, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[2], volume);
+    }
+
+    protected void sendMidiChordPhrygian(int event, int midiKey, int volume) {
+        sendMidi(event, midiKey, volume);
+        sendMidi(event, midiKey + 13, volume);
+        sendMidi(event, midiKey + 17, volume);
+        sendMidi(event, midiKey + 19, volume);
+    }
+
+    protected void sendMidiChordDorian(int event, int midiKey, int volume) {
+        sendMidi(event, midiKey, volume);
+        sendMidi(event, midiKey + 7, volume);
+        sendMidi(event, midiKey + 17, volume);
+        sendMidi(event, midiKey + 22, volume);
+        sendMidi(event, midiKey + 27, volume);
+        sendMidi(event, midiKey + 31, volume);
     }
 
     /**
      * Update the text view that displays the current active key.
      */
     public void printActiveKeyToScreen() {
-        TextView activeKeyText = findViewById(R.id.activeKeyPlainText);
-        activeKeyText.setText("Active Key: " + KeyFinderHelper.getKeyFinder().getActiveKey().getName());
+        TextView tv = findViewById(R.id.activeKeyPlainText);
+        tv.setText("Active Key: " + keyFinder.getActiveKey().getName());
     }
 
     public void incrementNoteExpiration(View view) {
-        KeyFinderHelper.setNoteTimerLength((KeyFinderHelper.getNoteTimerLength() % 5) + 1);
-        KeyFinderHelper.getKeyFinder().setNoteTimerLength(KeyFinderHelper.getNoteTimerLength());
-        tvr.noteTimerButton.setText("" + KeyFinderHelper.getNoteTimerLength());
+        noteExpirationLength = (noteExpirationLength % 5) + 1;
+        keyFinder.setNoteTimerLength(noteExpirationLength);
+        expirationButton.setText("" + noteExpirationLength);
     }
 
     public void incrementKeyTimer(View view) {
-        KeyFinderHelper.setKeyTimerLength((KeyFinderHelper.getKeyTimerLength() % 5) + 1);
-        KeyFinderHelper.getKeyFinder().setKeyTimerLength(KeyFinderHelper.getKeyTimerLength());
-        tvr.keyTimerButton.setText("" + KeyFinderHelper.getKeyTimerLength());
+        keyTimerLength = (keyTimerLength % 5) + 1;
+        keyFinder.setKeyTimerLength(keyTimerLength);
+        keyTimerButton.setText("" + keyTimerLength);
     }
 
     public void incrementNoteLengthRequirement(View view) {
-        PitchProcessorHelper.incrementNoteLengthFilter();
-        tvr.noteLengthFilterButton.setText("" + PitchProcessorHelper.getNoteLengthFilter());
+        noteLengthRequirement = (noteLengthRequirement + 15) % 165;
+        noteLengthRequirementButton.setText("" + noteLengthRequirement);
     }
 
     public void changeUserMode(View view) {
-        MidiDriverHelper.sendMidiChord(Constants.STOP_NOTE, VoicingsHelper.getCurVoicing(),
-                0, KeyFinderHelper.getCurActiveKeyIx());
-        VoicingsHelper.incrementIx();
-        tvr.userModeButton.setText(VoicingsHelper.getCurVoicingName());
-        MidiDriverHelper.sendMidiChord(
-                Constants.START_NOTE, VoicingsHelper.getCurVoicing(),
-                MidiDriverHelper.getVolume(), KeyFinderHelper.getCurActiveKeyIx());
+        sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKey);
+        userModeIx = (userModeIx + 1) % voicings.length;
+        userModeButton.setText(userModeName[userModeIx]);
+        sendMidiChord(0X90, voicings[userModeIx], 63, curActiveKey);
+        // Log.d(MESSAGE_LOG_REMOVE, "hi");
     }
 
     public void incrementVolume(View view) {
-        MidiDriverHelper.incrementVolume();
-        MidiDriverHelper.sendMidiChord(
-                Constants.STOP_NOTE,
-                VoicingsHelper.getCurVoicing(),
-                0,
-                KeyFinderHelper.getCurActiveKeyIx());
-        MidiDriverHelper.sendMidiChord(
-                Constants.START_NOTE,
-                VoicingsHelper.getCurVoicing(),
-                MidiDriverHelper.getVolume(),
-                KeyFinderHelper.getCurActiveKeyIx());
-        tvr.volumeButton.setText("" + MidiDriverHelper.getVolume());
+        midiVolume = (midiVolume + 5) % 105;
+        sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKey);
+        sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKey);
+        volumeButton.setText("" + midiVolume);
     }
 }
