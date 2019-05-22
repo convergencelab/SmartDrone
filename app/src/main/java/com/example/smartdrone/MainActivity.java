@@ -54,10 +54,81 @@ import be.tarsos.dsp.util.PitchConverter;
 public class MainActivity extends AppCompatActivity
     implements MidiDriver.OnMidiStartListener {
 
+<<<<<<< HEAD
     // public ViewHelper tvr;
     public TextViewResources tvr;
 
     public AudioDispatcher dispatcher = PitchProcessorHelper.getDispatcher();
+=======
+    public AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
+    public MidiDriver midi;
+    public static KeyFinder keyFinder = new KeyFinder();
+
+    // Used for accessing note names.
+    public static final String[] notes =
+            { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+    public static final String MESSAGE_LOG_ADD        = "mainActivityDebugAdd";
+    public static final String MESSAGE_LOG_REMOVE     = "mainActivityDebugRemove";
+    public static final String MESSAGE_LOG_LIST       = "mainActivityDebugList";
+    public static final String MESSAGE_LOG_SPEED      = "mainActivityDebugSpeed";
+    public static final String MESSAGE_LOG_NOTE_TIMER = "mainActivityDebugNTimer";
+
+    // Variables for tracking active keys/notes
+    int prevActiveKey = -1;
+    int curActiveKey = -1;
+    int prevAddedNote = -1; //TODO Refactor; should have ix in variable name.
+    int curNoteIx = -1;
+
+    int noteExpirationLength;
+    int keyTimerLength;
+
+    int[] drone           = { 0                     };
+    int[] majorTriad      = { 0,  7, 16             };
+    int[] maj7Voicing     = { 0,  7, 16, 23, 26     };
+    int[] dorianVoicing   = { 2, 12, 17, 23         };
+    int[] lydianVoicing   = { 5, 12, 19, 26, 33, 40 };
+    int[] susVoicing      = { 7, 17, 21, 24, 28, 33 };
+    int[] phrygianVoicing = { 4, 17, 21, 23, 28     };
+    int[][] voicings = {
+            drone,
+            majorTriad,
+            maj7Voicing,
+            dorianVoicing,
+            lydianVoicing,
+            susVoicing,
+            phrygianVoicing};
+    int[] curVoicing;
+    int[] prevVoicing;
+
+    int userModeIx = 0;
+    String[] userModeName = {
+            "Drone",
+            "Major Triad",
+            "Major7",
+            "Gabe Voicing",
+            "Lydian",
+            "Sus/Mixolydian",
+            "Phrygian", };
+
+
+    // Used to keep track how long a note was heard.
+    public long timeRegistered;
+    public int noteLengthRequirement;
+
+    Button expirationButton;
+    Button keyTimerButton;
+    Button noteLengthRequirementButton;
+    Button userModeButton;
+
+    // List of all the plugins available.
+    // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
+    // TODO: Add user parameter.
+    public static int plugin = 52;
+    // Used for practicing different modes.
+    // TODO: Add user parameter.
+    public static int mode = 0; // 0 = Ionian; 1 = Dorian; 2 = Phrygian; ... (update later for melodic minor, other tonalities...)
+>>>>>>> parent of e9a9177... Volume Button Added
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,9 +174,12 @@ public class MainActivity extends AppCompatActivity
         // User mode button
         tvr.userModeButton.setText("" + VoicingsHelper.getNameAtIx(VoicingsHelper.getUserVoicingIx()));
 
+<<<<<<< HEAD
         // volumeButton = findViewById(R.id.volumeButton);
         tvr.volumeButton.setText("" + MidiDriverHelper.getVolume());
 
+=======
+>>>>>>> parent of e9a9177... Volume Button Added
         // Construct Midi Driver.
         MidiDriverHelper.getMidiDriver().setOnMidiStartListener(this);
     }
@@ -261,8 +335,21 @@ public class MainActivity extends AppCompatActivity
         if (KeyFinderHelper.getPrevActiveKeyIx() != KeyFinderHelper.getCurActiveKeyIx()) {
             printActiveKeyToScreen(); // FOR TESTING
 
+<<<<<<< HEAD
             MidiDriverHelper.sendMidiChord(0X80, VoicingsHelper.getCurVoicing(), 0, KeyFinderHelper.getPrevActiveKeyIx());
             MidiDriverHelper.sendMidiChord(0X90, VoicingsHelper.getCurVoicing(), MidiDriverHelper.getVolume(), KeyFinderHelper.getCurActiveKeyIx());
+=======
+            /*
+            //TODO: Send everything as an array (work for any number of notes)
+            // Stop the current note.
+            sendMidi(0X80, prevActiveKey + modeOffset, 0);
+            // Start the new note.
+            sendMidi(0X90, curActiveKey + modeOffset, 63);
+            */
+
+            sendMidiChord(0X80, voicings[userModeIx], 0, prevActiveKey);
+            sendMidiChord(0X90, voicings[userModeIx], 63, curActiveKey);
+>>>>>>> parent of e9a9177... Volume Button Added
         }
     }
 
@@ -311,6 +398,7 @@ public class MainActivity extends AppCompatActivity
                 Constants.START_NOTE, VoicingsHelper.getCurVoicing(),
                 MidiDriverHelper.getVolume(), KeyFinderHelper.getCurActiveKeyIx());
     }
+<<<<<<< HEAD
 
     public void incrementVolume(View view) {
         MidiDriverHelper.incrementVolume();
@@ -326,4 +414,6 @@ public class MainActivity extends AppCompatActivity
                 KeyFinderHelper.getCurActiveKeyIx());
         tvr.volumeButton.setText("" + MidiDriverHelper.getVolume());
     }
+=======
+>>>>>>> parent of e9a9177... Volume Button Added
 }
