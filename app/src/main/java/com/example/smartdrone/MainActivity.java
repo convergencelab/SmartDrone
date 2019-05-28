@@ -61,9 +61,9 @@ import be.tarsos.dsp.util.PitchConverter;
 public class MainActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
 
-    public AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0); //pp
+    public AudioDispatcher dispatcher;
     public MidiDriver midi;
-    public static KeyFinder keyFinder = new KeyFinder();
+    public KeyFinder keyFinder;
 
     // Used for accessing note names.
     public static final String[] notes =
@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity
 
     // Used to keep track how long a note was heard.
     public long timeRegistered;
-    public int noteLengthRequirement; //pp
+    public int noteLengthRequirement;
 
     public int midiVolume;
 
@@ -128,14 +128,14 @@ public class MainActivity extends AppCompatActivity
     // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
     // TODO: Add user parameter.
     public static int plugin = 52;
-    // Used for practicing different modes.
-    // TODO: Add user parameter.
-    public static int mode = 0; // 0 = Ionian; 1 = Dorian; 2 = Phrygian; ... (update later for melodic minor, other tonalities...)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
+        keyFinder = new KeyFinder();
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
@@ -341,7 +341,6 @@ public class MainActivity extends AppCompatActivity
             return;
         }
         curActiveKey = keyFinder.getActiveKey().getIx() + 36; // 36 == C
-        int modeOffset = MusicTheory.MAJOR_SCALE_SEQUENCE[mode];
         if (prevActiveKey != curActiveKey) {
             printActiveKeyToScreen(); // FOR TESTING
 
