@@ -89,7 +89,7 @@ public class MainActivity extends AppCompatActivity
     int[] maj7Voicing     = { 0,  7, 16, 23, 26     };
     int[] dorianVoicing   = { 2, 12, 17, 23         };
     int[] lydianVoicing   = { 5, 12, 19, 26, 33, 40 };
-    int[] susVoicing      = { 7, 17, 21, 24, 28, 33 };
+    int[] mixolydianVoicing      = { 7, 17, 21, 24, 28, 33 };
     int[] phrygianVoicing = { 4, 17, 21, 23, 28     };
     int[][] voicings = {
             drone,
@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity
             maj7Voicing,
             dorianVoicing,
             lydianVoicing,
-            susVoicing,
+            mixolydianVoicing,
             phrygianVoicing};
     int[] curVoicing;
     int[] prevVoicing;
@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity
             "Major7",
             "Gabe Voicing",
             "Lydian",
-            "Sus/Mixolydian",
+            "Mixolydian",
             "Phrygian", };
 
     // Used to keep track how long a note was heard.
