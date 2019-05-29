@@ -62,9 +62,9 @@ import be.tarsos.dsp.util.PitchConverter;
 public class MainActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
 
-    public AudioDispatcher dispatcher;
-    public MidiDriver midi;
-    public KeyFinder keyFinder;
+    public static AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
+    public static MidiDriver midi;
+    public static KeyFinder keyFinder = new KeyFinder();
 
     // Used for accessing note names.
     public static final String[] notes =
@@ -76,40 +76,40 @@ public class MainActivity extends AppCompatActivity
     public static final String MESSAGE_LOG_SPEED      = "mainActivityDebugSpeed";
     public static final String MESSAGE_LOG_NOTE_TIMER = "mainActivityDebugNTimer";
 
+    static final String STATE_KEYFINDER = "stateKeyFinder";
+
     // Variables for tracking active keys/notes
-    int prevActiveKey = -1;
-    int curActiveKey = -1;
-    int prevAddedNote = -1; //TODO Refactor; should have ix in variable name.
+    int prevActiveKeyIx = -1;
+    int curActiveKeyIx = -1;
+    int prevAddedNoteIx = -1;
     int curNoteIx = -1;
     boolean droneActive;
 
     int noteExpirationLength;
     int keyTimerLength;
 
-    int[] drone           = { 0                     };
-    int[] majorTriad      = { 0,  7, 16             };
-    int[] maj7Voicing     = { 0,  7, 16, 23, 26     };
-    int[] dorianVoicing   = { 2, 12, 17, 23         };
-    int[] lydianVoicing   = { 5, 12, 19, 26, 33, 40 };
-    int[] mixolydianVoicing      = { 7, 17, 21, 24, 28, 33 };
-    int[] phrygianVoicing = { 4, 17, 21, 23, 28     };
+    int[] drone             = { 0                     };
+    int[] majorTriad        = { 0,  7, 16             };
+    int[] maj7Voicing       = { 0,  7, 16, 23, 26     };
+    int[] gabeVoicing       = { 2, 12, 17, 23         };
+    int[] lydianVoicing     = { 5, 12, 19, 26, 33, 40 };
+    int[] mixolydianVoicing = { 7, 17, 21, 24, 28, 33 };
+    int[] phrygianVoicing   = { 4, 17, 21, 23, 28     };
     int[][] voicings = {
             drone,
             majorTriad,
             maj7Voicing,
-            dorianVoicing,
+            gabeVoicing,
             lydianVoicing,
             mixolydianVoicing,
             phrygianVoicing};
-    int[] curVoicing;
-    int[] prevVoicing;
 
     int userModeIx = 0;
     String[] userModeName = {
             "Drone",
             "Major Triad",
             "Major7",
-            "Gabe Voicing",
+            "Gabe",
             "Lydian",
             "Mixolydian",
             "Phrygian", };
@@ -137,9 +137,6 @@ public class MainActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
-        keyFinder = new KeyFinder();
-
         droneActive = false;
         playButton = findViewById(R.id.control_drone_button);
 
@@ -162,7 +159,10 @@ public class MainActivity extends AppCompatActivity
         Thread audioThread = new Thread(dispatcher, "Audio Thread");
         audioThread.start();
 
-        // keyFinder = new KeyFinder();     CHECKING IF STATIC MAKES IT FASTER
+        prevActiveKeyIx = -1;
+        curActiveKeyIx = -1;
+        prevAddedNoteIx = -1;
+        curNoteIx = -1;
 
         // The amount of time a note must be registered for until it is added to the active note list.
         noteLengthRequirement = 60;
@@ -205,6 +205,14 @@ public class MainActivity extends AppCompatActivity
 //            midi.start();
 //    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (midi != null) {
+            stopDrone();
+        }
+    }
+
     /**
      * Add note to Active Note list based on the given ix.
      * @param       noteIx int; index of note.
@@ -214,7 +222,7 @@ public class MainActivity extends AppCompatActivity
         keyFinder.addNoteToList(curNote);
         Log.d(MESSAGE_LOG_ADD, curNote.getName());
         Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
-        prevAddedNote = noteIx;
+        prevAddedNoteIx = noteIx;
 
         // printActiveKeyToScreen();
         playActiveKeyNote();
@@ -281,19 +289,19 @@ public class MainActivity extends AppCompatActivity
         // }
 
         // Note change is detected.
-        if (curKey != prevAddedNote) {
+        if (curKey != prevAddedNoteIx) {
             // If previously added note is no longer heard.
-            if (prevAddedNote != -1) {
+            if (prevAddedNoteIx != -1) {
                 // Start timer.
                 keyFinder.getAllNotes().getNoteAtIndex(
-                        prevAddedNote).startNoteTimer(keyFinder, noteExpirationLength);
+                        prevAddedNoteIx).startNoteTimer(keyFinder, noteExpirationLength);
                 Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
-                        prevAddedNote).getName() + ": Started");
+                        prevAddedNoteIx).getName() + ": Started");
             }
             // No note is heard.
             if (pitchInHz == -1) {
                 curNoteIx = -1;
-                prevAddedNote = -1;
+                prevAddedNoteIx = -1;
             }
             // Different note is heard.
             else if (curKey != curNoteIx) {
@@ -305,7 +313,7 @@ public class MainActivity extends AppCompatActivity
                 addNote(curKey);
                 keyFinder.getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
                 Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
-                        prevAddedNote).getName() + ": Cancelled");
+                        prevAddedNoteIx).getName() + ": Cancelled");
             }
         }
         // Note removal detected.
@@ -340,29 +348,27 @@ public class MainActivity extends AppCompatActivity
      * Plays the tone(s) of the current active key.
      */
     public void playActiveKeyNote() {
-        //TODO:  This may have to be refactored so that it won't differentiate between same notes of
-        //TODO:  a different octave.
-        prevActiveKey = curActiveKey;
+        prevActiveKeyIx = curActiveKeyIx;
         if (keyFinder.getActiveKey() == null) {
             return;
         }
         if (!droneActive) {
             return;
         }
-        curActiveKey = keyFinder.getActiveKey().getIx() + 36; // 36 == C
-        if (prevActiveKey != curActiveKey) {
+        curActiveKeyIx = keyFinder.getActiveKey().getIx() + 36; // 36 == C
+        if (prevActiveKeyIx != curActiveKeyIx) {
             printActiveKeyToScreen(); // FOR TESTING
 
             /*
             //TODO: Send everything as an array (work for any number of notes)
             // Stop the current note.
-            sendMidi(0X80, prevActiveKey + modeOffset, 0);
+            sendMidi(0X80, prevActiveKeyIx + modeOffset, 0);
             // Start the new note.
-            sendMidi(0X90, curActiveKey + modeOffset, 63);
+            sendMidi(0X90, curActiveKeyIx + modeOffset, 63);
             */
 
-            sendMidiChord(0X80, voicings[userModeIx], 0, prevActiveKey);
-            sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKey);
+            sendMidiChord(0X80, voicings[userModeIx], 0, prevActiveKeyIx);
+            sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKeyIx);
         }
     }
 
@@ -486,17 +492,17 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void changeUserMode(View view) {
-        sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKey);
+        sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKeyIx);
         userModeIx = (userModeIx + 1) % voicings.length;
         userModeButton.setText(userModeName[userModeIx]);
-        sendMidiChord(0X90, voicings[userModeIx], 63, curActiveKey);
+        sendMidiChord(0X90, voicings[userModeIx], 63, curActiveKeyIx);
         // Log.d(MESSAGE_LOG_REMOVE, "hi");
     }
 
     public void incrementVolume(View view) {
         midiVolume = (midiVolume + 5) % 105;
-        sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKey);
-        sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKey);
+        sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKeyIx);
+        sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKeyIx);
         volumeButton.setText("" + midiVolume);
     }
 
@@ -528,12 +534,16 @@ public class MainActivity extends AppCompatActivity
             midi.stop();
             droneActive = false;
             keyFinder.cleanse();
+            TextView tv = findViewById(R.id.activeKeyPlainText);
+            tv.setText("Active Key: ");
             playButton.setImageResource(R.drawable.ic_play_drone);
         }
     }
 
     public void openDroneSettings(View view) {
+        stopDrone();
         Intent intent = new Intent(this, DroneSettingsActivity.class);
         startActivity(intent);
+        playDrone();
     }
 }
