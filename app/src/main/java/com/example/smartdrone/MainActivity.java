@@ -40,6 +40,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.example.smartdrone.KeyFinder;
@@ -80,6 +81,7 @@ public class MainActivity extends AppCompatActivity
     int curActiveKey = -1;
     int prevAddedNote = -1; //TODO Refactor; should have ix in variable name.
     int curNoteIx = -1;
+    boolean droneActive;
 
     int noteExpirationLength;
     int keyTimerLength;
@@ -123,6 +125,7 @@ public class MainActivity extends AppCompatActivity
     Button noteLengthRequirementButton;
     Button userModeButton;
     Button volumeButton;
+    ImageButton playButton;
 
     // List of all the plugins available.
     // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
@@ -136,6 +139,9 @@ public class MainActivity extends AppCompatActivity
 
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
         keyFinder = new KeyFinder();
+
+        droneActive = false;
+        playButton = findViewById(R.id.play_button);
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
@@ -160,7 +166,7 @@ public class MainActivity extends AppCompatActivity
 
         // The amount of time a note must be registered for until it is added to the active note list.
         noteLengthRequirement = 60;
-        keyFinder.setKeyTimerLength(2);
+        keyFinder.setKeyTimerLength(3);
         keyFinder.setNoteTimerLength(2);
 
         // Button for Note Timer
@@ -191,13 +197,13 @@ public class MainActivity extends AppCompatActivity
         midi.setOnMidiStartListener(this);
     }
 
-    @Override
-    protected void onResume()
-    {
-        super.onResume();
-        if (midi != null)
-            midi.start();
-    }
+//    @Override
+//    protected void onResume()
+//    {
+//        super.onResume();
+//        if (midi != null)
+//            midi.start();
+//    }
 
     /**
      * Add note to Active Note list based on the given ix.
@@ -338,6 +344,9 @@ public class MainActivity extends AppCompatActivity
         //TODO:  a different octave.
         prevActiveKey = curActiveKey;
         if (keyFinder.getActiveKey() == null) {
+            return;
+        }
+        if (!droneActive) {
             return;
         }
         curActiveKey = keyFinder.getActiveKey().getIx() + 36; // 36 == C
@@ -489,5 +498,37 @@ public class MainActivity extends AppCompatActivity
         sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKey);
         sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKey);
         volumeButton.setText("" + midiVolume);
+    }
+
+    public void controlDrone(View view) {
+        if (droneActive) {
+            stopDrone();
+        }
+        else {
+            playDrone();
+        }
+    }
+
+    /**
+     * Start tone(s) being produced by drone.
+     */
+    public void playDrone() {
+        if (midi != null) {
+            midi.start();
+            droneActive = true;
+            playButton.setImageResource(R.drawable.ic_pause_drone);
+        }
+    }
+
+    /**
+     * Stop tone(s) being produced by drone.
+     */
+    public void stopDrone() {
+        if (midi != null) {
+            midi.stop();
+            droneActive = false;
+            keyFinder.cleanse();
+            playButton.setImageResource(R.drawable.ic_play_drone);
+        }
     }
 }
