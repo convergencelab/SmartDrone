@@ -10,11 +10,11 @@
 
     <!-- Note Length Filter Setting -->
     <ListPreference
-        android:key="note_length_filter"
-        android:title="Note Length Filter"
         android:defaultValue="Medium (Default)"
         android:entries="@array/note_length_filter_name_array"
         android:entryValues="@array/note_length_filter_values_array"
-        android:summary="Select the length for the note filter." />
+        android:key="@string/note_length_filter_key"
+        android:summary="@string/note_length_filter_summary"
+        android:title="@string/note_length_filter_title" />
 
 </PreferenceScreen>

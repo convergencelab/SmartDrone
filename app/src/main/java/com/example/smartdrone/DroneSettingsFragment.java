@@ -14,6 +14,7 @@ import android.widget.TextView;
  */
 public class DroneSettingsFragment extends PreferenceFragmentCompat {
 
+    // TODO: currently, preferences have no affect on app settings
     @Override
     public void onCreatePreferences(Bundle bundle, String rootKey) {
         setPreferencesFromResource(R.xml.drone_preferences, rootKey);

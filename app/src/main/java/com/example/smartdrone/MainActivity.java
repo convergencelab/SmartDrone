@@ -11,23 +11,15 @@
  */
 
 /*
- * TODO:
+ * TODO MASTER:
  * - debug accuracy of note detection.
- * - add user parameter for sensitivity.
- **    - add user parameter than decides how long a note stays in the cue before it expires.
- *       (default = 5)
- **    - update java library so new key has to take over
- * - add user parameter for mode.
- * - fix sound distortion bug when switching activities.
- * - improve functionality.
- **    - note must be heard for a variable amount of time before it's added to list
- *       (to prevent adding erroneous notes)
  * - look into api for signal filtering.
- * - Debug features that displays the current active notes on the screen
- *   (or logcat?)
  * - add feature that active keys can generate chords.
- * - make it so note timer doesn't start for curnote until another note is detected
- * - Find out how to create listener for note being removed from list (expired).
+ * - make drone settings affect drone
+ * - convert activity into fragments
+ * - make drone settings stretch across full width of screen
+ * - request user permission for audio recording
+ * - user preference for screen staying on during use
  */
 
 package com.example.smartdrone;
