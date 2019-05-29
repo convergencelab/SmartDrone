@@ -12,6 +12,8 @@
 
 /*
  * TODO MASTER:
+ * - SAVE DRONE STATE ON DRONE SETTINGS TAB
+ * - Make it so if main activity is stopped; pitch processing does not happen
  * - debug accuracy of note detection.
  * - look into api for signal filtering.
  * - add feature that active keys can generate chords.

@@ -19,4 +19,7 @@
     <string name="note_length_filter_key">note_length_filter</string>
     <string name="note_length_filter_title">Note Length Filter</string>
     <string name="note_length_filter_summary">Select the length for the note filter.</string>
+    <string name="active_key_sensitivity">active_key_sensitivity</string>
+    <string name="active_key_sensitivity_summary">Sensitivity of key change detection.</string>
+    <string name="active_key_sensitivity_title">Active Key Sensitivity</string>
 </resources>
