@@ -30,8 +30,8 @@ public class SimulationActivity extends AppCompatActivity
     public static KeyFinder keyFinder = new KeyFinder();
 
     TextView text;
-    int prevActiveKey;
-    int curActiveKey;
+    int prevActiveKeyIx;
+    int curActiveKeyIx;
 
     public MidiDriver midi;
     public MediaPlayer mediaPlayer;
@@ -49,7 +49,7 @@ public class SimulationActivity extends AppCompatActivity
         if (midi != null) {
             midi.setOnMidiStartListener(this);
         }
-        prevActiveKey = -1;
+        prevActiveKeyIx = -1;
     }
 
     // https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
@@ -120,11 +120,11 @@ public class SimulationActivity extends AppCompatActivity
     }
 
     public void playActiveKeyNote() {
-        prevActiveKey = curActiveKey;
-        curActiveKey = keyFinder.getActiveKey().getIx() + 36; // 36 == C
-        if (prevActiveKey != curActiveKey) {
-            sendMidi(0x80, prevActiveKey, 0);
-            sendMidi(0x90, curActiveKey, 63);
+        prevActiveKeyIx = curActiveKeyIx;
+        curActiveKeyIx = keyFinder.getActiveKey().getIx() + 36; // 36 == C
+        if (prevActiveKeyIx != curActiveKeyIx) {
+            sendMidi(0x80, prevActiveKeyIx, 0);
+            sendMidi(0x90, curActiveKeyIx, 63);
         }
     }
 
