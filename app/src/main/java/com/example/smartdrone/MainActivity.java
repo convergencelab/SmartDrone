@@ -141,7 +141,7 @@ public class MainActivity extends AppCompatActivity
         keyFinder = new KeyFinder();
 
         droneActive = false;
-        playButton = findViewById(R.id.play_button);
+        playButton = findViewById(R.id.control_drone_button);
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
@@ -516,7 +516,7 @@ public class MainActivity extends AppCompatActivity
         if (midi != null) {
             midi.start();
             droneActive = true;
-            playButton.setImageResource(R.drawable.ic_pause_drone);
+            playButton.setImageResource(R.drawable.ic_stop_drone);
         }
     }
 
@@ -530,5 +530,10 @@ public class MainActivity extends AppCompatActivity
             keyFinder.cleanse();
             playButton.setImageResource(R.drawable.ic_play_drone);
         }
+    }
+
+    public void openDroneSettings(View view) {
+        Intent intent = new Intent(this, DroneSettingsActivity.class);
+        startActivity(intent);
     }
 }
