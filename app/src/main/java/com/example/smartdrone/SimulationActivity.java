@@ -19,8 +19,6 @@ import android.widget.TextView;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
-import java.util.Locale;
-
 public class SimulationActivity extends AppCompatActivity
     implements MidiDriver.OnMidiStartListener {
 
@@ -104,7 +102,7 @@ public class SimulationActivity extends AppCompatActivity
         // Construct and add note button.
         for (int i = 0; i < 12; i++) {
             final Button curNoteButton = new Button(this);
-            curNoteButton.setText(MainActivity.notes[i]);
+            curNoteButton.setText(DroneActivity.notes[i]);
             // curNoteButton.setTextAlignment(View.TEXT_ALIGNMENT_VIEW_START);
             curNoteButton.setId(i);
             curNoteButton.setTag(i);

@@ -1,20 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-
-    <!-- Example Preference. DELETE WHEN FINISHED. -->
-    <android.support.v7.preference.SwitchPreferenceCompat
-        android:defaultValue="true"
-        android:key="example_switch"
-        android:summary="Turn this option on or off"
-        android:title="Settings option" />
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <!-- Note Length Filter Setting -->
     <ListPreference
-        android:key="note_length_filter"
-        android:title="Note Length Filter"
-        android:defaultValue="Medium (Default)"
+        android:defaultValue="false"
         android:entries="@array/note_length_filter_name_array"
         android:entryValues="@array/note_length_filter_values_array"
-        android:summary="Select the length for the note filter." />
+        android:key="noteLen"
+        android:summary="@string/note_length_filter_summary"
+        android:title="@string/note_length_filter_title"
+        app:iconSpaceReserved="false"/>
+
+    <!-- Active Key Sensitivity -->
+    <ListPreference
+        android:defaultValue="Medium (Default)"
+        android:entries="@array/active_key_sensitivity_names"
+        android:entryValues="@array/active_key_sensitivity_values"
+        android:key="keySens"
+        android:summary="@string/active_key_sensitivity_summary"
+        android:title="@string/active_key_sensitivity_title"
+        app:iconSpaceReserved="false"/>
 
 </PreferenceScreen>

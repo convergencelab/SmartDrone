@@ -14,10 +14,10 @@
         <!-- Drone Settings Activity -->
         <activity android:name=".DroneSettingsActivity"
             android:label="Settings"
-            android:parentActivityName=".MainActivity">
+            android:parentActivityName=".DroneActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MainActivity"/>
+                android:value=".DroneActivity"/>
         </activity>
 
         <!-- Simulation Activity -->
@@ -25,7 +25,7 @@
 
         <!-- Main Activity -->
         <activity
-            android:name=".MainActivity"
+            android:name=".DroneActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

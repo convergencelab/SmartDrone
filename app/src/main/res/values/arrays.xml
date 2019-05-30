@@ -31,12 +31,30 @@
 
     <!-- Note Length Filter Values-->
     <string-array name="note_length_filter_values_array">
-        <item>40</item>
+        <item>30</item>
 
         <item>60</item>
 
-        <item>80</item>
-
         <item>100</item>
+
+        <item>150</item>
+    </string-array>
+
+    <!-- Active Key Sensitivity Names-->
+    <string-array name="active_key_sensitivity_names">
+        <item>High</item>
+
+        <item>Medium (Default)</item>
+
+        <item>Low</item>
+    </string-array>
+
+    <!-- Active Key Sensitivity Values-->
+    <string-array name="active_key_sensitivity_values">
+        <item>2</item>
+
+        <item>3</item>
+
+        <item>4</item>
     </string-array>
 </resources>
