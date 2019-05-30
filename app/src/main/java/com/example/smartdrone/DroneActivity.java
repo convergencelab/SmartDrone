@@ -27,6 +27,7 @@
 package com.example.smartdrone;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -36,6 +37,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.smartdrone.KeyFinder;
 import com.example.smartdrone.R;
@@ -53,22 +55,28 @@ import be.tarsos.dsp.pitch.PitchProcessor;
 import be.tarsos.dsp.util.PitchConverter;
 
 
-public class MainActivity extends AppCompatActivity
+public class DroneActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
+
+    public DroneModel droneModel = new DroneModel();
+
 
     public static AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
     public static MidiDriver midi;
-    public static KeyFinder keyFinder = new KeyFinder();
+//    public KeyFinder keyFinder = new KeyFinder();
+
+    private SharedPreferences mPreferences;
+    private String sharedPrefFile = "com.example.android.smartdrone";
 
     // Used for accessing note names.
     public static final String[] notes =
             { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
-    public static final String MESSAGE_LOG_ADD        = "mainActivityDebugAdd";
-    public static final String MESSAGE_LOG_REMOVE     = "mainActivityDebugRemove";
-    public static final String MESSAGE_LOG_LIST       = "mainActivityDebugList";
-    public static final String MESSAGE_LOG_SPEED      = "mainActivityDebugSpeed";
-    public static final String MESSAGE_LOG_NOTE_TIMER = "mainActivityDebugNTimer";
+    public static final String MESSAGE_LOG_ADD        = "note_add";
+    public static final String MESSAGE_LOG_REMOVE     = "note_remove";
+    public static final String MESSAGE_LOG_LIST       = "note_list";
+    public static final String MESSAGE_LOG_SPEED      = "process_speed";
+    public static final String MESSAGE_LOG_NOTE_TIMER = "note_timer";
 
     static final String STATE_KEYFINDER = "stateKeyFinder";
 
@@ -110,7 +118,7 @@ public class MainActivity extends AppCompatActivity
 
     // Used to keep track how long a note was heard.
     public long timeRegistered;
-    public int noteLengthRequirement;
+    public static int noteLengthRequirement;
 
     public int midiVolume;
 
@@ -130,6 +138,8 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
 
         droneActive = false;
         playButton = findViewById(R.id.control_drone_button);
@@ -159,21 +169,26 @@ public class MainActivity extends AppCompatActivity
         curNoteIx = -1;
 
         // The amount of time a note must be registered for until it is added to the active note list.
-        noteLengthRequirement = 60;
-        keyFinder.setKeyTimerLength(3);
-        keyFinder.setNoteTimerLength(2);
+        noteLengthRequirement = mPreferences.getInt(DroneSettingsActivity.NOTE_LEN_KEY, 60);
+        Log.d("noteLenFilter", Integer.toString(noteLengthRequirement));
+
+        Log.d("notelen", Integer.toString(noteLengthRequirement));
+
+        keyTimerLength = mPreferences.getInt(DroneSettingsActivity.KEY_SENS_KEY, 3);
+        droneModel.getKeyFinder().setKeyTimerLength(keyTimerLength);
+        droneModel.getKeyFinder().setNoteTimerLength(2);
 
         // Button for Note Timer
         expirationButton = (Button) findViewById(R.id.expirationButton);
-        noteExpirationLength = keyFinder.getNoteTimerLength();
+        noteExpirationLength = droneModel.getKeyFinder().getNoteTimerLength();
         expirationButton.setText("" + noteExpirationLength);
 
         // Button for Key timer.
         keyTimerButton = (Button) findViewById(R.id.keyTimerButton);
-        keyTimerLength = keyFinder.getKeyTimerLength();
+        // keyTimerLength = droneModel.getKeyFinder().getKeyTimerLength();
         keyTimerButton.setText("" + keyTimerLength);
 
-        // Button for note length requirement.\
+        // Button for note length requirement.
         noteLengthRequirementButton = (Button) findViewById(R.id.noteLengthTimerButton);
         noteLengthRequirementButton.setText("" + noteLengthRequirement);
 
@@ -189,6 +204,19 @@ public class MainActivity extends AppCompatActivity
         // Construct Midi Driver.
         midi = new MidiDriver();
         midi.setOnMidiStartListener(this);
+
+        android.support.v7.preference.PreferenceManager
+                .setDefaultValues(this, R.xml.drone_preferences, false);
+
+        SharedPreferences sharedPref =
+                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        String noteLenPref = sharedPref.getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
+        String keySensPref = sharedPref.getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
+        noteLengthRequirement = Integer.parseInt(noteLenPref);
+        keyTimerLength = Integer.parseInt(keySensPref);
+        noteLengthRequirementButton.setText(noteLenPref);
+        keyTimerButton.setText(keySensPref);
+        // Toast.makeText(this, switchPref/*.toString()*/, Toast.LENGTH_SHORT).show();
     }
 
 //    @Override
@@ -207,20 +235,29 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    @Override
+    protected void onPause(){
+        super.onPause();
+
+        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
+        // preferencesEditor.putInt(COUNT_KEY, mCount); // THIS LINE TO PUT PREFERENCES
+        // preferencesEditor.apply();                   // APPLY CHANGES
+    }
+
     /**
      * Add note to Active Note list based on the given ix.
      * @param       noteIx int; index of note.
      */
     public void addNote(int noteIx) {
-        Note curNote = keyFinder.getAllNotes().getNoteAtIndex(noteIx);
-        keyFinder.addNoteToList(curNote);
+        Note curNote = droneModel.getKeyFinder().getAllNotes().getNoteAtIndex(noteIx);
+        droneModel.getKeyFinder().addNoteToList(curNote);
         Log.d(MESSAGE_LOG_ADD, curNote.getName());
-        Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
+        Log.d(MESSAGE_LOG_LIST, droneModel.getKeyFinder().getActiveNotes().toString());
         prevAddedNoteIx = noteIx;
 
         // printActiveKeyToScreen();
         playActiveKeyNote();
-        // Log.d(MESSAGE_LOG, keyFinder.getActiveNotes().toString()); // active note list
+        // Log.d(MESSAGE_LOG, droneModel.getKeyFinder().getActiveNotes().toString()); // active note list
     }
 
     /**
@@ -279,7 +316,7 @@ public class MainActivity extends AppCompatActivity
 
         // Debug statement to see how fast the engine runs.
         // if (midiKey != -1) {
-        //Log.d(MESSAGE_LOG_SPEED, "Processing: " + keyFinder.getAllNotes().getNoteAtIndex(midiKey));
+        //Log.d(MESSAGE_LOG_SPEED, "Processing: " + droneModel.getKeyFinder().getAllNotes().getNoteAtIndex(midiKey));
         // }
 
         // Note change is detected.
@@ -287,9 +324,9 @@ public class MainActivity extends AppCompatActivity
             // If previously added note is no longer heard.
             if (prevAddedNoteIx != -1) {
                 // Start timer.
-                keyFinder.getAllNotes().getNoteAtIndex(
-                        prevAddedNoteIx).startNoteTimer(keyFinder, noteExpirationLength);
-                Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
+                droneModel.getKeyFinder().getAllNotes().getNoteAtIndex(
+                        prevAddedNoteIx).startNoteTimer(droneModel.getKeyFinder(), noteExpirationLength);
+                Log.d(MESSAGE_LOG_NOTE_TIMER, droneModel.getKeyFinder().getAllNotes().getNoteAtIndex(
                         prevAddedNoteIx).getName() + ": Started");
             }
             // No note is heard.
@@ -305,19 +342,19 @@ public class MainActivity extends AppCompatActivity
             // Current note is heard.
             else if (noteMeetsConfidence()) {
                 addNote(curKey);
-                keyFinder.getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
-                Log.d(MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
+                droneModel.getKeyFinder().getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
+                Log.d(MESSAGE_LOG_NOTE_TIMER, droneModel.getKeyFinder().getAllNotes().getNoteAtIndex(
                         prevAddedNoteIx).getName() + ": Cancelled");
             }
         }
         // Note removal detected.
-        if (keyFinder.getNoteHasBeenRemoved()) {
-            keyFinder.setNoteHasBeenRemoved(false);
-            Log.d(MESSAGE_LOG_REMOVE, keyFinder.getRemovedNote().getName());
-            Log.d(MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
+        if (droneModel.getKeyFinder().getNoteHasBeenRemoved()) {
+            droneModel.getKeyFinder().setNoteHasBeenRemoved(false);
+            Log.d(MESSAGE_LOG_REMOVE, droneModel.getKeyFinder().getRemovedNote().getName());
+            Log.d(MESSAGE_LOG_LIST, droneModel.getKeyFinder().getActiveNotes().toString());
         }
         // If active key has changed.
-        if (keyFinder.getActiveKeyHasChanged()) {
+        if (droneModel.getKeyFinder().getActiveKeyHasChanged()) {
             playActiveKeyNote();
         }
         // Update text views.
@@ -343,13 +380,13 @@ public class MainActivity extends AppCompatActivity
      */
     public void playActiveKeyNote() {
         prevActiveKeyIx = curActiveKeyIx;
-        if (keyFinder.getActiveKey() == null) {
+        if (droneModel.getKeyFinder().getActiveKey() == null) {
             return;
         }
         if (!droneActive) {
             return;
         }
-        curActiveKeyIx = keyFinder.getActiveKey().getIx() + 36; // 36 == C
+        curActiveKeyIx = droneModel.getKeyFinder().getActiveKey().getIx() + 36; // 36 == C
         if (prevActiveKeyIx != curActiveKeyIx) {
             printActiveKeyToScreen(); // FOR TESTING
 
@@ -465,18 +502,18 @@ public class MainActivity extends AppCompatActivity
      */
     public void printActiveKeyToScreen() {
         TextView tv = findViewById(R.id.activeKeyPlainText);
-        tv.setText("Active Key: " + keyFinder.getActiveKey().getName());
+        tv.setText("Active Key: " + droneModel.getKeyFinder().getActiveKey().getName());
     }
 
     public void incrementNoteExpiration(View view) {
         noteExpirationLength = (noteExpirationLength % 5) + 1;
-        keyFinder.setNoteTimerLength(noteExpirationLength);
+        droneModel.getKeyFinder().setNoteTimerLength(noteExpirationLength);
         expirationButton.setText("" + noteExpirationLength);
     }
 
     public void incrementKeyTimer(View view) {
         keyTimerLength = (keyTimerLength % 5) + 1;
-        keyFinder.setKeyTimerLength(keyTimerLength);
+        droneModel.getKeyFinder().setKeyTimerLength(keyTimerLength);
         keyTimerButton.setText("" + keyTimerLength);
     }
 
@@ -524,10 +561,13 @@ public class MainActivity extends AppCompatActivity
      * Stop tone(s) being produced by drone.
      */
     public void stopDrone() {
+        if (!droneActive) {
+            return;
+        }
         if (midi != null) {
             midi.stop();
             droneActive = false;
-            keyFinder.cleanse();
+            droneModel.getKeyFinder().cleanse();
             TextView tv = findViewById(R.id.activeKeyPlainText);
             tv.setText("Active Key: ");
             playButton.setImageResource(R.drawable.ic_play_drone);
@@ -538,6 +578,6 @@ public class MainActivity extends AppCompatActivity
         stopDrone();
         Intent intent = new Intent(this, DroneSettingsActivity.class);
         startActivity(intent);
-        playDrone();
+        playDrone(); // TODO: this line is playing the drone before the second activity starts
     }
 }

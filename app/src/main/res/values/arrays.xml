@@ -31,13 +31,13 @@
 
     <!-- Note Length Filter Values-->
     <string-array name="note_length_filter_values_array">
-        <item>40</item>
+        <item>30</item>
 
         <item>60</item>
 
-        <item>80</item>
-
         <item>100</item>
+
+        <item>150</item>
     </string-array>
 
     <!-- Active Key Sensitivity Names-->

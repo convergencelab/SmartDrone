@@ -6,7 +6,7 @@
         android:defaultValue="false"
         android:entries="@array/note_length_filter_name_array"
         android:entryValues="@array/note_length_filter_values_array"
-        android:key="@string/note_length_filter_key"
+        android:key="noteLen"
         android:summary="@string/note_length_filter_summary"
         android:title="@string/note_length_filter_title"
         app:iconSpaceReserved="false"/>
@@ -16,7 +16,7 @@
         android:defaultValue="Medium (Default)"
         android:entries="@array/active_key_sensitivity_names"
         android:entryValues="@array/active_key_sensitivity_values"
-        android:key="@string/active_key_sensitivity"
+        android:key="keySens"
         android:summary="@string/active_key_sensitivity_summary"
         android:title="@string/active_key_sensitivity_title"
         app:iconSpaceReserved="false"/>
