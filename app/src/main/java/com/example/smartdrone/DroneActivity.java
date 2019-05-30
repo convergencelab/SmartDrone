@@ -28,8 +28,6 @@ package com.example.smartdrone;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -37,13 +35,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.smartdrone.KeyFinder;
-import com.example.smartdrone.R;
 
 import org.billthefarmer.mididriver.MidiDriver;
-import org.w3c.dom.Text;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
@@ -63,7 +56,6 @@ public class DroneActivity extends AppCompatActivity
 
     public static AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
     public static MidiDriver midi;
-//    public KeyFinder keyFinder = new KeyFinder();
 
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.android.smartdrone";
@@ -122,11 +114,7 @@ public class DroneActivity extends AppCompatActivity
 
     public int midiVolume;
 
-    Button expirationButton;
-    Button keyTimerButton;
-    Button noteLengthRequirementButton;
     Button userModeButton;
-    Button volumeButton;
     ImageButton playButton;
 
     // List of all the plugins available.
@@ -178,19 +166,8 @@ public class DroneActivity extends AppCompatActivity
         droneModel.getKeyFinder().setKeyTimerLength(keyTimerLength);
         droneModel.getKeyFinder().setNoteTimerLength(2);
 
-        // Button for Note Timer
-        expirationButton = (Button) findViewById(R.id.expirationButton);
         noteExpirationLength = droneModel.getKeyFinder().getNoteTimerLength();
-        expirationButton.setText("" + noteExpirationLength);
 
-        // Button for Key timer.
-        keyTimerButton = (Button) findViewById(R.id.keyTimerButton);
-        // keyTimerLength = droneModel.getKeyFinder().getKeyTimerLength();
-        keyTimerButton.setText("" + keyTimerLength);
-
-        // Button for note length requirement.
-        noteLengthRequirementButton = (Button) findViewById(R.id.noteLengthTimerButton);
-        noteLengthRequirementButton.setText("" + noteLengthRequirement);
 
         // User mode button
         userModeIx = 0;
@@ -198,8 +175,6 @@ public class DroneActivity extends AppCompatActivity
         userModeButton.setText(userModeName[userModeIx]);
 
         midiVolume = 65;
-        volumeButton = findViewById(R.id.volumeButton);
-        volumeButton.setText("" + midiVolume);
 
         // Construct Midi Driver.
         midi = new MidiDriver();
@@ -208,24 +183,14 @@ public class DroneActivity extends AppCompatActivity
         android.support.v7.preference.PreferenceManager
                 .setDefaultValues(this, R.xml.drone_preferences, false);
 
+        // TODO: magic code that controls and saves user preferences
         SharedPreferences sharedPref =
                 android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
         String noteLenPref = sharedPref.getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
         String keySensPref = sharedPref.getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
         noteLengthRequirement = Integer.parseInt(noteLenPref);
         keyTimerLength = Integer.parseInt(keySensPref);
-        noteLengthRequirementButton.setText(noteLenPref);
-        keyTimerButton.setText(keySensPref);
-        // Toast.makeText(this, switchPref/*.toString()*/, Toast.LENGTH_SHORT).show();
     }
-
-//    @Override
-//    protected void onResume()
-//    {
-//        super.onResume();
-//        if (midi != null)
-//            midi.start();
-//    }
 
     @Override
     protected void onStop() {
@@ -255,9 +220,7 @@ public class DroneActivity extends AppCompatActivity
         Log.d(MESSAGE_LOG_LIST, droneModel.getKeyFinder().getActiveNotes().toString());
         prevAddedNoteIx = noteIx;
 
-        // printActiveKeyToScreen();
         playActiveKeyNote();
-        // Log.d(MESSAGE_LOG, droneModel.getKeyFinder().getActiveNotes().toString()); // active note list
     }
 
     /**
@@ -313,11 +276,6 @@ public class DroneActivity extends AppCompatActivity
     public void processPitch(float pitchInHz) {
         // Convert pitch to midi key.
         int curKey = convertPitchToIx((double) pitchInHz); // No note will return -1
-
-        // Debug statement to see how fast the engine runs.
-        // if (midiKey != -1) {
-        //Log.d(MESSAGE_LOG_SPEED, "Processing: " + droneModel.getKeyFinder().getAllNotes().getNoteAtIndex(midiKey));
-        // }
 
         // Note change is detected.
         if (curKey != prevAddedNoteIx) {
@@ -389,14 +347,6 @@ public class DroneActivity extends AppCompatActivity
         curActiveKeyIx = droneModel.getKeyFinder().getActiveKey().getIx() + 36; // 36 == C
         if (prevActiveKeyIx != curActiveKeyIx) {
             printActiveKeyToScreen(); // FOR TESTING
-
-            /*
-            //TODO: Send everything as an array (work for any number of notes)
-            // Stop the current note.
-            sendMidi(0X80, prevActiveKeyIx + modeOffset, 0);
-            // Start the new note.
-            sendMidi(0X90, curActiveKeyIx + modeOffset, 63);
-            */
 
             sendMidiChord(0X80, voicings[userModeIx], 0, prevActiveKeyIx);
             sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKeyIx);
@@ -473,30 +423,6 @@ public class DroneActivity extends AppCompatActivity
         }
     }
 
-    /* TEST VOICINGS */
-
-    protected void sendMidiChordMajor(int event, int midiKey, int volume) {
-        sendMidi(event, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[0], volume);
-        sendMidi(event, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[1] + 12, volume);
-        sendMidi(event, midiKey + MusicTheory.MAJOR_TRAID_SEQUENCE[2], volume);
-    }
-
-    protected void sendMidiChordPhrygian(int event, int midiKey, int volume) {
-        sendMidi(event, midiKey, volume);
-        sendMidi(event, midiKey + 13, volume);
-        sendMidi(event, midiKey + 17, volume);
-        sendMidi(event, midiKey + 19, volume);
-    }
-
-    protected void sendMidiChordDorian(int event, int midiKey, int volume) {
-        sendMidi(event, midiKey, volume);
-        sendMidi(event, midiKey + 7, volume);
-        sendMidi(event, midiKey + 17, volume);
-        sendMidi(event, midiKey + 22, volume);
-        sendMidi(event, midiKey + 27, volume);
-        sendMidi(event, midiKey + 31, volume);
-    }
-
     /**
      * Update the text view that displays the current active key.
      */
@@ -505,36 +431,17 @@ public class DroneActivity extends AppCompatActivity
         tv.setText("Active Key: " + droneModel.getKeyFinder().getActiveKey().getName());
     }
 
-    public void incrementNoteExpiration(View view) {
-        noteExpirationLength = (noteExpirationLength % 5) + 1;
-        droneModel.getKeyFinder().setNoteTimerLength(noteExpirationLength);
-        expirationButton.setText("" + noteExpirationLength);
-    }
-
-    public void incrementKeyTimer(View view) {
-        keyTimerLength = (keyTimerLength % 5) + 1;
-        droneModel.getKeyFinder().setKeyTimerLength(keyTimerLength);
-        keyTimerButton.setText("" + keyTimerLength);
-    }
-
-    public void incrementNoteLengthRequirement(View view) {
-        noteLengthRequirement = (noteLengthRequirement + 15) % 165;
-        noteLengthRequirementButton.setText("" + noteLengthRequirement);
-    }
-
     public void changeUserMode(View view) {
         sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKeyIx);
         userModeIx = (userModeIx + 1) % voicings.length;
         userModeButton.setText(userModeName[userModeIx]);
         sendMidiChord(0X90, voicings[userModeIx], 63, curActiveKeyIx);
-        // Log.d(MESSAGE_LOG_REMOVE, "hi");
     }
 
     public void incrementVolume(View view) {
         midiVolume = (midiVolume + 5) % 105;
         sendMidiChord(0X80, voicings[userModeIx], 0, curActiveKeyIx);
         sendMidiChord(0X90, voicings[userModeIx], midiVolume, curActiveKeyIx);
-        volumeButton.setText("" + midiVolume);
     }
 
     public void controlDrone(View view) {
@@ -555,6 +462,8 @@ public class DroneActivity extends AppCompatActivity
             droneActive = true;
             playButton.setImageResource(R.drawable.ic_stop_drone);
         }
+        Log.d("prefs", "keyTimer: " + Integer.toString(keyTimerLength)
+                + "; filter len: " + Integer.toString(noteLengthRequirement));
     }
 
     /**
@@ -575,9 +484,7 @@ public class DroneActivity extends AppCompatActivity
     }
 
     public void openDroneSettings(View view) {
-        stopDrone();
         Intent intent = new Intent(this, DroneSettingsActivity.class);
         startActivity(intent);
-        playDrone(); // TODO: this line is playing the drone before the second activity starts
     }
 }
