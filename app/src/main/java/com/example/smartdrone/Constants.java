@@ -16,6 +16,15 @@ public class Constants {
      */
     public static final int BUFFER_OVERLAP = 0;
 
+    /**
+     * Names of all 12 notes using sharps.
+     */
     public static final String[] notes =
             { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+
+    /**
+     * Names of all 12 notes using flats.
+     */
+    public static final String[] notesFlat =
+            { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
 }

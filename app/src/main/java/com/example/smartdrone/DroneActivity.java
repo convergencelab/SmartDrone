@@ -13,6 +13,7 @@
 /*
  * TODO MASTER:
  * - SAVE DRONE STATE ON DRONE SETTINGS TAB
+ * - MOVE NOTE/PITCH DISPLAY TO ABSTRACT PIANO
  * - Make it so if main activity is stopped; pitch processing does not happen
  * - debug accuracy of note detection.
  * - look into api for signal filtering.
@@ -49,16 +50,10 @@ import be.tarsos.dsp.util.PitchConverter;
 public class DroneActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
 
-    public DroneModel droneModel = new DroneModel();
-
-    public static MidiDriver midi;
+    public DroneModel droneModel;
 
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.android.smartdrone";
-
-//    // Used for accessing note names.
-//    public static final String[] notes =
-//            { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
     public static final String MESSAGE_LOG_ADD        = "note_add";
     public static final String MESSAGE_LOG_REMOVE     = "note_remove";
@@ -121,12 +116,14 @@ public class DroneActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_drone_main);
+
+        droneModel = new DroneModel(this);
 
         mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
 
         droneActive = false;
-        playButton = findViewById(R.id.control_drone_button);
+        playButton = findViewById(R.id.drone_control_button);
 
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
@@ -173,8 +170,7 @@ public class DroneActivity extends AppCompatActivity
         midiVolume = 65;
 
         // Construct Midi Driver.
-        midi = new MidiDriver();
-        midi.setOnMidiStartListener(this);
+        droneModel.getMidiDriver().setOnMidiStartListener(this);
 
         android.support.v7.preference.PreferenceManager
                 .setDefaultValues(this, R.xml.drone_preferences, false);
@@ -191,7 +187,7 @@ public class DroneActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        if (midi != null) {
+        if (droneModel.getMidiDriver() != null) {
             stopDrone();
         }
     }
@@ -361,7 +357,7 @@ public class DroneActivity extends AppCompatActivity
         byte msg[] = new byte[2];
         msg[0] = (byte) 0XC0;    // 0XC0 == PROGRAM CHANGE
         msg[1] = (byte) plugin;
-        midi.write(msg);
+        droneModel.getMidiDriver().write(msg);
     }
 
     /**
@@ -377,7 +373,7 @@ public class DroneActivity extends AppCompatActivity
         msg[0] = (byte) event;
         msg[1] = (byte) midiKey;
         msg[2] = (byte) volume;
-        midi.write(msg);
+        droneModel.getMidiDriver().write(msg);
     }
 
     /**
@@ -445,8 +441,8 @@ public class DroneActivity extends AppCompatActivity
      * Start tone(s) being produced by drone.
      */
     public void playDrone() {
-        if (midi != null) {
-            midi.start();
+        if (droneModel.getMidiDriver() != null) {
+            droneModel.getMidiDriver().start();
             droneActive = true;
             playButton.setImageResource(R.drawable.ic_stop_drone);
         }
@@ -461,8 +457,8 @@ public class DroneActivity extends AppCompatActivity
         if (!droneActive) {
             return;
         }
-        if (midi != null) {
-            midi.stop();
+        if (droneModel.getMidiDriver() != null) {
+            droneModel.getMidiDriver().stop();
             droneActive = false;
             droneModel.getKeyFinder().cleanse();
             TextView tv = findViewById(R.id.activeKeyPlainText);
