@@ -38,10 +38,8 @@ import android.widget.TextView;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
-import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
-import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
@@ -53,16 +51,14 @@ public class DroneActivity extends AppCompatActivity
 
     public DroneModel droneModel = new DroneModel();
 
-
-    public static AudioDispatcher dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(22050,1024,0);
     public static MidiDriver midi;
 
     private SharedPreferences mPreferences;
     private String sharedPrefFile = "com.example.android.smartdrone";
 
-    // Used for accessing note names.
-    public static final String[] notes =
-            { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+//    // Used for accessing note names.
+//    public static final String[] notes =
+//            { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
 
     public static final String MESSAGE_LOG_ADD        = "note_add";
     public static final String MESSAGE_LOG_REMOVE     = "note_remove";
@@ -146,9 +142,9 @@ public class DroneActivity extends AppCompatActivity
         };
         AudioProcessor pitchProcessor = new PitchProcessor(
                 PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 22050, 1024, pdh);
-        dispatcher.addAudioProcessor(pitchProcessor);
+        droneModel.getDispatcher().addAudioProcessor(pitchProcessor);
 
-        Thread audioThread = new Thread(dispatcher, "Audio Thread");
+        Thread audioThread = new Thread(droneModel.getDispatcher(), "Audio Thread");
         audioThread.start();
 
         prevActiveKeyIx = -1;
@@ -251,7 +247,7 @@ public class DroneActivity extends AppCompatActivity
      */
     public void setNoteText(double pitchInHz) {
         if (pitchInHz != -1) {
-            setNoteText(notes[convertPitchToIx(pitchInHz)]);
+            setNoteText(Constants.notes[convertPitchToIx(pitchInHz)]);
         } else {
             setNoteText("");
         }
@@ -324,14 +320,6 @@ public class DroneActivity extends AppCompatActivity
         return (System.currentTimeMillis() - timeRegistered) > noteLengthRequirement;
     }
 
-    /**
-     * Start the simulation activity.
-     * @param       view View; current view.
-     */
-    public void simulationActivity(View view) {
-        Intent intent = new Intent(this, SimulationActivity.class);
-        startActivity(intent);
-    }
 
     /**
      * Plays the tone(s) of the current active key.
