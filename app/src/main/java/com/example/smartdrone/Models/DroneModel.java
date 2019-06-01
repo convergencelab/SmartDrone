@@ -23,15 +23,11 @@ public class DroneModel {
      */
     private DroneActivity droneActivity;
 
-    private long timeRegistered;
+    private DroneModel self = this;
+
+//    private long timeRegistered;
 
     private VoicingModel voicingModel;
-
-    //todo refactor: better naming convention
-    /**
-     * Controls the user voicing.
-     */
-    private int userVoicingIx;
 
     /**
      * Handles key finder object.
@@ -44,29 +40,39 @@ public class DroneModel {
     private MidiDriverModel midiDriverModel;
 
     /**
-     * Audio dispatcher connected to microphone.
+     * Handles PitchProcessor object.
      */
-    private AudioDispatcher dispatcher;
+    private PitchProcessorModel pitchProcessorModel;
 
     /**
-     * Current key being output.
+     * Controls the user voicing.
      */
-    private int prevActiveKeyIx;
+    private int userVoicingIx;
 
-    /**
-     * Previous key that was output.
-     */
-    private int curActiveKeyIx;
+//    /**
+//     * Audio dispatcher connected to microphone.
+//     */
+//    private AudioDispatcher dispatcher;
 
-    /**
-     * Last note that was added to active note list.
-     */
-    private int prevAddedNoteIx;
-
-    /**
-     * Current note being monitored.
-     */
-    private int curNoteIx;
+//    /**
+//     * Current key being output.
+//     */
+//    private int prevActiveKeyIx;
+//
+//    /**
+//     * Previous key that was output.
+//     */
+//    private int curActiveKeyIx;
+//
+//    /**
+//     * Last note that was added to active note list.
+//     */
+//    private int prevAddedNoteIx;
+//
+//    /**
+//     * Current note being monitored.
+//     */
+//    private int curNoteIx;
 
     /**
      * True if drone has just been started without an active key or is producing output.
@@ -80,25 +86,26 @@ public class DroneModel {
         this.droneActivity = droneActivity;
         keyFinderModel = new KeyFinderModel();
         midiDriverModel = new MidiDriverModel();
+        pitchProcessorModel = new PitchProcessorModel(this);
 
-        dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
-                Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
+//        dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
+//                Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
         droneActive = false;
-        prevActiveKeyIx = -1;
-        curActiveKeyIx = -1;
-        prevAddedNoteIx = -1;
-        curNoteIx = -1;
+//        prevActiveKeyIx = -1;
+//        curActiveKeyIx = -1;
+//        prevAddedNoteIx = -1;
+//        curNoteIx = -1;
         voicingModel = new VoicingModel();
         userVoicingIx = 0;
     }
 
-    /**
-     * Get audio dispatcher.
-     * @return      AudioDispatcher; audio dispatcher.
-     */
-    public AudioDispatcher getDispatcher() {
-        return dispatcher;
-    }
+//    /**
+//     * Get audio dispatcher.
+//     * @return      AudioDispatcher; audio dispatcher.
+//     */
+//    public AudioDispatcher getDispatcher() {
+//        return dispatcher;
+//    }
 
     public boolean isDroneActive() {
         return droneActive;
@@ -111,36 +118,37 @@ public class DroneModel {
      * 3. Updates the text views on screen.
      * @param       pitchInHz float; current pitch being heard.
      */
-    public void processPitch(float pitchInHz) {
-        // Convert pitch to midi key.
-        int curKey = convertPitchToIx((double) pitchInHz); // No note will return -1 // todo
-
-        // Note change is detected.
-        if (curKey != prevAddedNoteIx) {
-            // If previously added note is no longer heard.
-            if (prevAddedNoteIx != -1) {
-                // Start timer.
-                keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(
-                        prevAddedNoteIx).startNoteTimer(keyFinderModel.getKeyFinder(), droneActivity.noteExpirationLength); // todo
-                Log.d(Constants.MESSAGE_LOG_NOTE_TIMER, keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(
-                        prevAddedNoteIx).getName() + ": Started");
-            }
-            // No note is heard.
-            if (pitchInHz == -1) {
-                curNoteIx = -1;
-                prevAddedNoteIx = -1;
-            }
-            // Different note is heard.
-            else if (curKey != curNoteIx) {
-                curNoteIx = curKey;
-                timeRegistered = System.currentTimeMillis();
-            }
-            // Current note is heard.
-            else if (noteMeetsConfidence()) {
-                addNote(curKey);
-                keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
-            }
-        }
+    public void processPitch(float pitchInHz, DroneActivity droneActivity, DroneModel droneModel) {
+        pitchProcessorModel.processPitch(pitchInHz, droneActivity, droneModel);
+//        // Convert pitch to midi key.
+//        int curKey = convertPitchToIx((double) pitchInHz); // No note will return -1 // todo
+//
+//        // Note change is detected.
+//        if (curKey != prevAddedNoteIx) {
+//            // If previously added note is no longer heard.
+//            if (prevAddedNoteIx != -1) {
+//                // Start timer.
+//                keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(
+//                        prevAddedNoteIx).startNoteTimer(keyFinderModel.getKeyFinder(), droneActivity.noteExpirationLength); // todo
+//                Log.d(Constants.MESSAGE_LOG_NOTE_TIMER, keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(
+//                        prevAddedNoteIx).getName() + ": Started");
+//            }
+//            // No note is heard.
+//            if (pitchInHz == -1) {
+//                curNoteIx = -1;
+//                prevAddedNoteIx = -1;
+//            }
+//            // Different note is heard.
+//            else if (curKey != curNoteIx) {
+//                curNoteIx = curKey;
+//                timeRegistered = System.currentTimeMillis();
+//            }
+//            // Current note is heard.
+//            else if (noteMeetsConfidence()) {
+//                addNote(curKey);
+//                keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
+//            }
+//        }
         // Note removal detected.
         if (keyFinderModel.getKeyFinder().getNoteHasBeenRemoved()) {
             keyFinderModel.getKeyFinder().setNoteHasBeenRemoved(false);
@@ -158,67 +166,55 @@ public class DroneModel {
     }
 
     /**
-     * Add note to Active Note list based on the given ix.
-     * @param       noteIx int; index of note.
-     */
-    public void addNote(int noteIx) {
-        // Adds note to active note list.
-        keyFinderModel.addNote(noteIx);
-
-        prevAddedNoteIx = noteIx;
-        playActiveKeyNote();
-    }
-
-    /**
      * Plays the tone(s) of the current active key.
      */
     public void playActiveKeyNote() {
-        prevActiveKeyIx = curActiveKeyIx;
+        pitchProcessorModel.prevActiveKeyIx = pitchProcessorModel.curActiveKeyIx;
         // No active key, or drone is inactive.
         if (keyFinderModel.getKeyFinder().getActiveKey() == null || !droneActive) {
             return;
         }
-        curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx() + 36; // 36 == C
-        if (prevActiveKeyIx != curActiveKeyIx) {
+        pitchProcessorModel.curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx() + 36; // 36 == C
+        if (pitchProcessorModel.prevActiveKeyIx != pitchProcessorModel.curActiveKeyIx) {
             droneActivity.printActiveKeyToScreen(); //todo create listener for key change
             // Stop chord.
             midiDriverModel.sendMidiChord(Constants.STOP_NOTE,
                     voicingModel.getVoicingCollection()
                     .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(),
-                    Constants.VOLUME_OFF, prevActiveKeyIx);
+                    Constants.VOLUME_OFF, pitchProcessorModel.prevActiveKeyIx);
             // Start chord.
             midiDriverModel.sendMidiChord(Constants.START_NOTE,
                     voicingModel.getVoicingCollection()
                     .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(),
-                    midiDriverModel.getVolume(), curActiveKeyIx);
+                    midiDriverModel.getVolume(), pitchProcessorModel.curActiveKeyIx);
         }
     }
 
-    public boolean noteMeetsConfidence() {
-        return (System.currentTimeMillis() - timeRegistered) > droneActivity.noteLengthRequirement;
-    }
+//    public boolean noteMeetsConfidence() {
+//        return (System.currentTimeMillis() - timeRegistered) > droneActivity.noteLengthRequirement;
+//    }
 
-    /**
-     * Converts pitch (hertz) to note index.
-     * @param       pitchInHz double;
-     * @return      int; ix of note.
-     */
-    public int convertPitchToIx(double pitchInHz) {
-        // No note is heard.
-        if (pitchInHz == -1) {
-            return -1;
-        }
-        return PitchConverter.hertzToMidiKey(pitchInHz) % 12;
-    }
+//    /**
+//     * Converts pitch (hertz) to note index.
+//     * @param       pitchInHz double;
+//     * @return      int; ix of note.
+//     */
+//    public int convertPitchToIx(double pitchInHz) {
+//        // No note is heard.
+//        if (pitchInHz == -1) {
+//            return -1;
+//        }
+//        return PitchConverter.hertzToMidiKey(pitchInHz) % 12;
+//    }
 
     public void changeUserMode() {
         midiDriverModel.sendMidiChord(Constants.STOP_NOTE, voicingModel.getVoicingCollection().
-                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), 0, curActiveKeyIx); // todo refactor. send midi chord should accept Voicing, not int[]
+                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), 0, pitchProcessorModel.getCurActiveKeyIx()); // todo refactor. send midi chord should accept Voicing, not int[]
 
         userVoicingIx = (userVoicingIx + 1) % voicingModel.STOCK_VOICINGS_NAMES.length;
 
         midiDriverModel.sendMidiChord(Constants.START_NOTE, voicingModel.getVoicingCollection().
-                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), midiDriverModel.getVolume(), curActiveKeyIx);
+                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), midiDriverModel.getVolume(), pitchProcessorModel.getCurActiveKeyIx());
     }
 
     public void toggleDrone() {
@@ -254,16 +250,18 @@ public class DroneModel {
                 droneActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        processPitch(pitchInHz);
+                        processPitch(pitchInHz, droneActivity, self);// todo be better
+                        monitorNoteQueued();
+                        monitorActiveKey();
                     }
                 });
             }
         };
         AudioProcessor pitchProcessor = new PitchProcessor(
                 PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 22050, 1024, pdh);
-        getDispatcher().addAudioProcessor(pitchProcessor);
+        pitchProcessorModel.getDispatcher().addAudioProcessor(pitchProcessor);
 
-        Thread audioThread = new Thread(getDispatcher(), "Audio Thread");
+        Thread audioThread = new Thread(pitchProcessorModel.getDispatcher(), "Audio Thread");
         audioThread.start();
     }
 
@@ -273,5 +271,31 @@ public class DroneModel {
 
     public MidiDriverModel getMidiDriverModel() {
         return midiDriverModel;
+    }
+
+    public PitchProcessorModel getPitchProcessorModel() {
+        return pitchProcessorModel;
+    }
+
+    public DroneActivity getDroneActivity() {
+        return droneActivity;
+    }
+
+    public void monitorActiveKey() {
+        //todo update screen text
+        if (keyFinderModel.getKeyFinder().getActiveKeyHasChanged()) {
+            playActiveKeyNote();
+            droneActivity.printActiveKeyToScreen();
+            keyFinderModel.getKeyFinder().setActiveKeyHasChanged(false);
+        }
+        //todo update midi driver
+    }
+
+    public void monitorNoteQueued() {
+        //todo add note to key finder
+        if (pitchProcessorModel.noteIsQueued) {
+            keyFinderModel.addNote(pitchProcessorModel.queuedNote);
+            pitchProcessorModel.noteIsQueued = false;
+        }
     }
 }

@@ -75,8 +75,8 @@ public class DroneActivity extends AppCompatActivity
 
         // Text Views.
         activeKeyText = findViewById(R.id.activeKeyPlainText);
-        pitchText     = findViewById(R.id.pitchText);
-        noteText      = findViewById(R.id.noteText);
+        pitchText = findViewById(R.id.pitchText);
+        noteText = findViewById(R.id.noteText);
 
         // Get note filter len from preferences.
         noteLengthRequirement = mPreferences.getInt(DroneSettingsActivity.NOTE_LEN_KEY,
@@ -136,7 +136,7 @@ public class DroneActivity extends AppCompatActivity
      */
     public void setNoteText(double pitchInHz) {
         if (pitchInHz != -1) {
-            setNoteText(Constants.notes[droneModel.convertPitchToIx(pitchInHz)]); //todo can be better
+            setNoteText(Constants.notes[droneModel.getPitchProcessorModel().convertPitchToIx(pitchInHz)]); //todo can be better
         } else {
             setNoteText("");
         }
