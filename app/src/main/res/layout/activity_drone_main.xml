@@ -15,7 +15,7 @@
         android:layout_marginEnd="100dp"
         android:layout_marginRight="100dp"
         android:layout_marginBottom="8dp"
-        android:gravity="right"
+        android:gravity="center_horizontal"
         android:text="@string/pitchText"
         app:layout_constraintBottom_toTopOf="@+id/noteText"
         app:layout_constraintEnd_toEndOf="parent"
@@ -49,45 +49,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginBottom="8dp"
+        android:layout_marginBottom="64dp"
         android:text="@string/activeKeyString"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/userModeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="8dp"
-        android:onClick="changeUserMode"
-        android:text="@string/userModeString"
-        app:layout_constraintBottom_toTopOf="@+id/activeKeyPlainText"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/userModeLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginLeft="24dp"
-        android:onClick="changeUserMode"
-        android:text="@string/userModeLabel"
-        app:layout_constraintBaseline_toBaselineOf="@+id/userModeButton"
-        app:layout_constraintStart_toEndOf="@+id/userModeButton" />
-
-    <Button
-        android:id="@+id/volumeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginBottom="16dp"
-        android:onClick="incrementVolume"
-        android:text="Button"
-        app:layout_constraintBottom_toTopOf="@+id/userModeButton"
         app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
@@ -121,9 +86,10 @@
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginBottom="8dp"
-        android:src="@drawable/ic_drone_sound"
+        android:onClick="changeVoicing"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/drone_control_button" />
+        app:layout_constraintEnd_toStartOf="@+id/drone_control_button"
+        app:srcCompat="@drawable/ic_drone_sound" />
 
 
 </android.support.constraint.ConstraintLayout>
