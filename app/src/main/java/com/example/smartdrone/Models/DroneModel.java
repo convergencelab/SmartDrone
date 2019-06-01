@@ -2,22 +2,31 @@ package com.example.smartdrone.Models;
 
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.DroneActivity;
 import com.example.smartdrone.KeyFinder;
 import com.example.smartdrone.Note;
+import com.example.smartdrone.R;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
 import be.tarsos.dsp.AudioDispatcher;
+import be.tarsos.dsp.AudioEvent;
+import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
+import be.tarsos.dsp.pitch.PitchDetectionHandler;
+import be.tarsos.dsp.pitch.PitchDetectionResult;
+import be.tarsos.dsp.pitch.PitchProcessor;
 import be.tarsos.dsp.util.PitchConverter;
 
 // TODO
 // Split model into multiple models (KeyFinder, MidiDriver, PitchProcessor, etc.)
 
-public class DroneModel {
+public class DroneModel
+//        implements MidiDriver.OnMidiStartListener
+{
     /**
      * Activity class that the model communicates with.
      */
@@ -27,6 +36,9 @@ public class DroneModel {
 
     private VoicingModel voicingModel;
 
+    // List of all the plugins available.
+    // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
+    //todo user parameter
     private int plugin;
 
     //todo refactor: better naming convention
@@ -75,6 +87,7 @@ public class DroneModel {
      */
     private boolean droneActive;
 
+    private int midiDriverVolume;
 
     /**
      * Constructor.
@@ -93,6 +106,8 @@ public class DroneModel {
         curNoteIx = -1;
         voicingModel = new VoicingModel();
         userModeIx = 0;
+        keyFinder.setNoteTimerLength(2);
+        midiDriverVolume = 65;
     }
 
     /**
@@ -162,8 +177,6 @@ public class DroneModel {
             else if (noteMeetsConfidence()) {
                 addNote(curKey);
                 keyFinder.getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
-//                Log.d(Constants.MESSAGE_LOG_NOTE_TIMER, keyFinder.getAllNotes().getNoteAtIndex(
-//                        prevAddedNoteIx).getName() + ": Cancelled");
             }
         }
         // Note removal detected.
@@ -219,27 +232,18 @@ public class DroneModel {
             Log.d(Constants.MESSAGE_LOG_VOICING, "before stop");
 
             // Stop chord.
-//            sendMidiChord(Constants.STOP_NOTE,
-//                    voicingModel.getVoicingCollection()
-//                    .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userModeIx]).getVoiceIxs(),
-//                    Constants.VOLUME_OFF, prevActiveKeyIx);
-            Log.d(Constants.MESSAGE_LOG_VOICING, "Contains Drone: " + (voicingModel.getVoicingCollection().getVoicing("Drone") != null));
             sendMidiChord(Constants.STOP_NOTE,
                     voicingModel.getVoicingCollection()
-                            .getVoicing("Drone").getVoiceIxs(),
+                    .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userModeIx]).getVoiceIxs(),
                     Constants.VOLUME_OFF, prevActiveKeyIx);
 
             Log.d(Constants.MESSAGE_LOG_VOICING, "after stop");
 
             // Start chord.
-//            sendMidiChord(Constants.START_NOTE,
-//                    voicingModel.getVoicingCollection()
-//                    .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userModeIx]).getVoiceIxs(),
-//                    droneActivity.midiVolume, curActiveKeyIx);
             sendMidiChord(Constants.START_NOTE,
                     voicingModel.getVoicingCollection()
-                            .getVoicing("Drone").getVoiceIxs(),
-                    droneActivity.midiVolume, curActiveKeyIx);
+                    .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userModeIx]).getVoiceIxs(),
+                    midiDriverVolume, curActiveKeyIx);
 
             Log.d(Constants.MESSAGE_LOG_VOICING, "after play");
         }
@@ -333,17 +337,63 @@ public class DroneModel {
         }
     }
 
-    // todo borken
     public void changeUserMode() {
-//        sendMidiChord(Constants.STOP_NOTE, droneActivity.voicings[userModeIx], 0, curActiveKeyIx);
         sendMidiChord(Constants.STOP_NOTE, voicingModel.getVoicingCollection().
                 getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userModeIx]).getVoiceIxs(), 0, curActiveKeyIx); // todo refactor. send midi chord should accept Voicing, not int[]
 
         userModeIx = (userModeIx + 1) % voicingModel.STOCK_VOICINGS_NAMES.length;
-//        droneModel.setUserModeIx((droneModel.getUserModeIx() + 1) % voicings.length);
 
-//        droneActivity.userModeButton.setText(droneActivity.userModeName[userModeIx]);
         sendMidiChord(Constants.START_NOTE, voicingModel.getVoicingCollection().
-                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userModeIx]).getVoiceIxs(), droneActivity.midiVolume, curActiveKeyIx);
+                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userModeIx]).getVoiceIxs(), midiDriverVolume, curActiveKeyIx);
+    }
+
+    public void toggleDrone() {
+        if (droneActive) {
+            deactivateDrone();
+//            TextView tv = findViewById(R.id.activeKeyPlainText);
+//            tv.setText("Active Key: ");
+//            controlButton.setImageResource(R.drawable.ic_play_drone);
+        }
+        else {
+            activateDrone();
+//            controlButton.setImageResource(R.drawable.ic_stop_drone);
+        }
+    }
+
+    public void activateDrone() {
+        if (midiDriver != null) {
+            midiDriver.start();
+            droneActive = true;
+        }
+    }
+
+    public void deactivateDrone() {
+        //todo Should clear all the activekey and active note stuff
+        if (midiDriver != null) {
+            midiDriver.stop();
+            droneActive = false;
+            getKeyFinder().cleanse();
+        }
+    }
+
+    public void startPitchProcessor() {
+        PitchDetectionHandler pdh = new PitchDetectionHandler() {
+            @Override
+            public void handlePitch(PitchDetectionResult res, AudioEvent e){
+                final float pitchInHz = res.getPitch();
+                droneActivity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        processPitch(pitchInHz);
+                    }
+                });
+            }
+        };
+        AudioProcessor pitchProcessor = new PitchProcessor(
+                PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 22050, 1024, pdh);
+        getDispatcher().addAudioProcessor(pitchProcessor);
+
+        Thread audioThread = new Thread(getDispatcher(), "Audio Thread");
+        audioThread.start();
     }
 }

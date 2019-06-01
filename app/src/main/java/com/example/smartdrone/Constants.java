@@ -28,6 +28,7 @@ public class Constants {
     public static final String[] notesFlat =
             { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
 
+    // Message Log Constants
     public static final String MESSAGE_LOG_ADD        = "note_add";
     public static final String MESSAGE_LOG_REMOVE     = "note_remove";
     public static final String MESSAGE_LOG_LIST       = "note_list";
@@ -35,11 +36,16 @@ public class Constants {
     public static final String MESSAGE_LOG_NOTE_TIMER = "note_timer";
     public static final String MESSAGE_LOG_VOICING    = "voicing_test";
 
-    // Midi Constants
+    // Midi driver Constants
     public static final int START_NOTE     = 0X90;
     public static final int STOP_NOTE      = 0X80;
     public static final int PROGRAM_CHANGE = 0XC0;
     public static final int VOLUME_OFF     = 0;
 
+    // Plugin Constants
     public static final int PLUGIN_CHOIR   = 52;
+
+    // Default Constants
+    public static final int NOTE_FILTER_LENGTH_DEFAULT = 60;
+    public static final int KEY_SENS_DEFAULT = 3;
 }
