@@ -91,7 +91,7 @@ public class DroneActivity extends AppCompatActivity
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
 
         // Construct Midi Driver.
-        droneModel.getMidiDriver().setOnMidiStartListener(this);
+        droneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
 
         android.support.v7.preference.PreferenceManager
                 .setDefaultValues(this, R.xml.drone_preferences, false);
@@ -108,7 +108,7 @@ public class DroneActivity extends AppCompatActivity
     @Override
     protected void onStop() {
         super.onStop();
-        if (droneModel.getMidiDriver() != null) {
+        if (droneModel.getMidiDriverModel().getMidiDriver() != null) {
             droneModel.deactivateDrone();
         }
     }
@@ -158,7 +158,7 @@ public class DroneActivity extends AppCompatActivity
      */
     @Override
     public void onMidiStart() {
-        droneModel.sendMidiSetup();
+        droneModel.getMidiDriverModel().sendMidiSetup();
     }
 
     /**

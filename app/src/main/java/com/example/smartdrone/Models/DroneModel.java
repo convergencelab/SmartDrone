@@ -4,9 +4,6 @@ import android.util.Log;
 
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.DroneActivity;
-import com.example.smartdrone.Note;
-
-import org.billthefarmer.mididriver.MidiDriver;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.AudioEvent;
@@ -30,11 +27,6 @@ public class DroneModel {
 
     private VoicingModel voicingModel;
 
-    // List of all the plugins available.
-    // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
-    //todo user parameter
-    private int plugin;
-
     //todo refactor: better naming convention
     /**
      * Controls the user voicing.
@@ -47,14 +39,14 @@ public class DroneModel {
     private KeyFinderModel keyFinderModel;
 
     /**
+     * Handles MidiDriver object.
+     */
+    private MidiDriverModel midiDriverModel;
+
+    /**
      * Audio dispatcher connected to microphone.
      */
     private AudioDispatcher dispatcher;
-
-    /**
-     * Midi driver for outputting audio.
-     */
-    private MidiDriver midiDriver;
 
     /**
      * Current key being output.
@@ -81,28 +73,23 @@ public class DroneModel {
      */
     private boolean droneActive;
 
-    private int midiDriverVolume;
-
     /**
      * Constructor.
      */
     public DroneModel(DroneActivity droneActivity) {
         this.droneActivity = droneActivity;
-//        keyFinder = new KeyFinder();
         keyFinderModel = new KeyFinderModel();
+        midiDriverModel = new MidiDriverModel();
+
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
                 Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
-        midiDriver = new MidiDriver();
         droneActive = false;
-        plugin = Constants.PLUGIN_CHOIR;
         prevActiveKeyIx = -1;
         curActiveKeyIx = -1;
         prevAddedNoteIx = -1;
         curNoteIx = -1;
         voicingModel = new VoicingModel();
         userVoicingIx = 0;
-//        keyFinder.setNoteTimerLength(2);
-        midiDriverVolume = 65;
     }
 
     /**
@@ -113,20 +100,8 @@ public class DroneModel {
         return dispatcher;
     }
 
-    /**
-     * Get midi driver.
-     * @return      MidiDriver; midi driver.
-     */
-    public MidiDriver getMidiDriver() {
-        return midiDriver;
-    }
-
     public boolean isDroneActive() {
         return droneActive;
-    }
-
-    public void setIsDroneActive(boolean isActive) {
-        droneActive = isActive;
     }
 
     /**
@@ -178,8 +153,8 @@ public class DroneModel {
         }
 
         // Update text views.
-        droneActivity.setPitchText(pitchInHz); // todo
-        droneActivity.setNoteText(pitchInHz);  // todo
+        droneActivity.setPitchText(pitchInHz);
+        droneActivity.setNoteText(pitchInHz);
     }
 
     /**
@@ -187,69 +162,40 @@ public class DroneModel {
      * @param       noteIx int; index of note.
      */
     public void addNote(int noteIx) {
-        Note curNote = keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(noteIx);
-        keyFinderModel.getKeyFinder().addNoteToList(curNote);
-        Log.d(Constants.MESSAGE_LOG_ADD, curNote.getName());
-        Log.d(Constants.MESSAGE_LOG_LIST, keyFinderModel.getKeyFinder().getActiveNotes().toString());
+        // Adds note to active note list.
+        keyFinderModel.addNote(noteIx);
+
         prevAddedNoteIx = noteIx;
-
-        playActiveKeyNote(); // todo
+        playActiveKeyNote();
     }
-
 
     /**
      * Plays the tone(s) of the current active key.
      */
     public void playActiveKeyNote() {
         prevActiveKeyIx = curActiveKeyIx;
-        if (keyFinderModel.getKeyFinder().getActiveKey() == null) {
-            return;
-        }
-        if (!droneActive) {
+        // No active key, or drone is inactive.
+        if (keyFinderModel.getKeyFinder().getActiveKey() == null || !droneActive) {
             return;
         }
         curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx() + 36; // 36 == C
         if (prevActiveKeyIx != curActiveKeyIx) {
-            droneActivity.printActiveKeyToScreen(); // FOR TESTING
-
-            Log.d("debug", "sending midi");
-            // todo Restore these
-            // sendMidiChord(Constants.STOP_NOTE, droneActivity.voicings[userVoicingIx], Constants.VOLUME_OFF, prevActiveKeyIx);
-            // sendMidiChord(Constants.START_NOTE, droneActivity.voicings[userVoicingIx], droneActivity.midiVolume, curActiveKeyIx);
-            Log.d(Constants.MESSAGE_LOG_VOICING, "before stop");
-
+            droneActivity.printActiveKeyToScreen(); //todo create listener for key change
             // Stop chord.
-            sendMidiChord(Constants.STOP_NOTE,
+            midiDriverModel.sendMidiChord(Constants.STOP_NOTE,
                     voicingModel.getVoicingCollection()
                     .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(),
                     Constants.VOLUME_OFF, prevActiveKeyIx);
-
-            Log.d(Constants.MESSAGE_LOG_VOICING, "after stop");
-
             // Start chord.
-            sendMidiChord(Constants.START_NOTE,
+            midiDriverModel.sendMidiChord(Constants.START_NOTE,
                     voicingModel.getVoicingCollection()
                     .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(),
-                    midiDriverVolume, curActiveKeyIx);
-
-            Log.d(Constants.MESSAGE_LOG_VOICING, "after play");
+                    midiDriverModel.getVolume(), curActiveKeyIx);
         }
     }
 
     public boolean noteMeetsConfidence() {
         return (System.currentTimeMillis() - timeRegistered) > droneActivity.noteLengthRequirement;
-    }
-
-    public int getUserModeIx() {
-        return userVoicingIx;
-    }
-
-    public void setUserModeIx(int i) {
-        userVoicingIx = i;
-    }
-
-    public int getCurActiveKeyIx() {
-        return curActiveKeyIx;
     }
 
     /**
@@ -265,73 +211,14 @@ public class DroneModel {
         return PitchConverter.hertzToMidiKey(pitchInHz) % 12;
     }
 
-    /**
-     * https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
-     *
-     * Initial setup data for midi.
-     */
-    public void sendMidiSetup() {
-        byte msg[] = new byte[2];
-        msg[0] = (byte) Constants.PROGRAM_CHANGE;    // 0XC0 == PROGRAM CHANGE
-        msg[1] = (byte) plugin;
-        midiDriver.write(msg);
-    }
-
-    /**
-     * https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
-     *
-     * Send data that is to be synthesized by midi driver.
-     * @param       event int; type of event.
-     * @param       midiKey int; index of note (uses octaves).
-     * @param       volume int; volume of note.
-     */
-    public void sendMidi(int event, int midiKey, int volume) {
-        byte msg[] = new byte[3];
-        msg[0] = (byte) event;
-        msg[1] = (byte) midiKey;
-        msg[2] = (byte) volume;
-        midiDriver.write(msg);
-    }
-
-    /**
-     * Sends multiple messages to be synthesized by midi driver.
-     * Each note is given specifically.
-     * @param       event int; type of event.
-     * @param       midiKeys int[]; indexes of notes (uses octaves).
-     * @param       volume int; volume of notes.
-     */
-    public void sendMidiChord(int event, int[] midiKeys, int volume) {
-        for (int key : midiKeys) {
-            sendMidi(event, key, volume);
-        }
-    }
-
-    /**
-     * Sends multiple messages to be synthesized by midi driver.
-     * Each note is given specifically.
-     * @param       event int; type of event.
-     * @param       midiKeys int[]; indexes of notes (uses octaves).
-     * @param       volume int; volume of notes.
-     */
-    public void sendMidiChord(int event, int[] midiKeys, int volume, int rootIx) {
-        int octaveAdjustment = 0;
-        if (midiKeys[0] + rootIx > 47) {
-            octaveAdjustment = -12;
-        }
-
-        for (int key : midiKeys) {
-            sendMidi(event, key + rootIx + octaveAdjustment, volume);
-        }
-    }
-
     public void changeUserMode() {
-        sendMidiChord(Constants.STOP_NOTE, voicingModel.getVoicingCollection().
+        midiDriverModel.sendMidiChord(Constants.STOP_NOTE, voicingModel.getVoicingCollection().
                 getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), 0, curActiveKeyIx); // todo refactor. send midi chord should accept Voicing, not int[]
 
         userVoicingIx = (userVoicingIx + 1) % voicingModel.STOCK_VOICINGS_NAMES.length;
 
-        sendMidiChord(Constants.START_NOTE, voicingModel.getVoicingCollection().
-                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), midiDriverVolume, curActiveKeyIx);
+        midiDriverModel.sendMidiChord(Constants.START_NOTE, voicingModel.getVoicingCollection().
+                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), midiDriverModel.getVolume(), curActiveKeyIx);
     }
 
     public void toggleDrone() {
@@ -344,16 +231,16 @@ public class DroneModel {
     }
 
     public void activateDrone() {
-        if (midiDriver != null) {
-            midiDriver.start();
+        if (midiDriverModel.getMidiDriver() != null) {
+            midiDriverModel.getMidiDriver().start();
             droneActive = true;
         }
     }
 
     public void deactivateDrone() {
-        //todo Should clear all the activekey and active note stuff
-        if (midiDriver != null) {
-            midiDriver.stop();
+        //todo Should clear all the active key and active note stuff
+        if (midiDriverModel.getMidiDriver() != null) {
+            midiDriverModel.getMidiDriver().stop();
             droneActive = false;
             keyFinderModel.getKeyFinder().cleanse();
         }
@@ -382,5 +269,9 @@ public class DroneModel {
 
     public KeyFinderModel getKeyFinderModel() {
         return keyFinderModel;
+    }
+
+    public MidiDriverModel getMidiDriverModel() {
+        return midiDriverModel;
     }
 }
