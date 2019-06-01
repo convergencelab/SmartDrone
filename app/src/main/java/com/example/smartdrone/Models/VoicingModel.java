@@ -7,7 +7,7 @@ import com.example.smartdrone.VoicingCollection;
 
 public class VoicingModel {
     /**
-     * Stock voicings indices.
+     * Stock voicings note indices.
      */
     private int[] DRONE       = { 0                     };
     private int[] MAJOR_TRIAD = { 0,  7, 16             };
@@ -17,6 +17,7 @@ public class VoicingModel {
     private int[] MIXOLYDIAN  = { 7, 17, 21, 24, 28, 33 };
     private int[] PHRYGIAN    = { 4, 17, 21, 23, 28     };
 
+    //todo create database for all current names.
     /**
      * Names of stock voicings.
      */

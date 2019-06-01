@@ -36,15 +36,13 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
-
 import com.example.smartdrone.Models.DroneModel;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
 
 public class DroneActivity extends AppCompatActivity
-        implements MidiDriver.OnMidiStartListener
-{
+        implements MidiDriver.OnMidiStartListener {
 
     private DroneModel droneModel;
     private SharedPreferences mPreferences;
@@ -84,13 +82,13 @@ public class DroneActivity extends AppCompatActivity
         noteLengthRequirement = mPreferences.getInt(DroneSettingsActivity.NOTE_LEN_KEY,
                 Constants.NOTE_FILTER_LENGTH_DEFAULT);
         // Set filter length.
-        noteExpirationLength = droneModel.getKeyFinder().getNoteTimerLength();
+        noteExpirationLength = droneModel.getKeyFinderModel().getKeyFinder().getNoteTimerLength();
 
         // Get key sens len from preferences.
         keyTimerLength = mPreferences.getInt(DroneSettingsActivity.KEY_SENS_KEY,
                 Constants.KEY_SENS_DEFAULT);
         // Set active key sensitivity.
-        droneModel.getKeyFinder().setKeyTimerLength(keyTimerLength);
+        droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
 
         // Construct Midi Driver.
         droneModel.getMidiDriver().setOnMidiStartListener(this);
@@ -167,7 +165,7 @@ public class DroneActivity extends AppCompatActivity
      * Update the text view that displays the current active key.
      */
     public void printActiveKeyToScreen() {
-        activeKeyText.setText("Active Key: " + droneModel.getKeyFinder().getActiveKey().getName());
+        activeKeyText.setText("Active Key: " + droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getName());
     }
 
     public void toggleDrone(View view) {

@@ -47,5 +47,6 @@ public class Constants {
 
     // Default Constants
     public static final int NOTE_FILTER_LENGTH_DEFAULT = 60;
-    public static final int KEY_SENS_DEFAULT = 3;
+    public static final int KEY_SENS_DEFAULT           = 3;
+    public static final int NOTE_TIMER_LEN             = 2;
 }
