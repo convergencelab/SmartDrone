@@ -11,6 +11,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
         <!-- Drone Settings Activity -->
         <activity android:name=".DroneSettingsActivity"
             android:label="Settings"
@@ -19,9 +20,6 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DroneActivity"/>
         </activity>
-
-        <!-- Simulation Activity -->
-        <activity android:name=".SimulationActivity" />
 
         <!-- Main Activity -->
         <activity

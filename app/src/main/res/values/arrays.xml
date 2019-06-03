@@ -29,6 +29,7 @@
         <item>Very Long</item>
     </string-array>
 
+    <!-- TODO convert to integers-->
     <!-- Note Length Filter Values-->
     <string-array name="note_length_filter_values_array">
         <item>30</item>
