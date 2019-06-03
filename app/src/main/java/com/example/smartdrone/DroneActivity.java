@@ -13,7 +13,6 @@
 //todo:
 // SAVE DRONE STATE ON DRONE SETTINGS ACTIVITY STARTED
 // MOVE NOTE/PITCH DISPLAY TO ABSTRACT PIANO
-// Use listeners to update active key text on drone activity
 
 // Display notes with correct enharmonic spelling; ex: (C# -> Db), (A# -> Bb)
 // Make it so if main activity is stopped; pitch processing does not happen
@@ -32,25 +31,31 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.example.smartdrone.Models.DroneModel;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
+import java.util.HashMap;
+
 
 public class DroneActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
 
+    //todo left off here. create 12 mapped values... ya i know.
+    private final static HashMap<String, String> nameToResIdName = new HashMap<>();
+
+
     private DroneModel droneModel;
 
     ImageButton controlButton;
+    ImageView piano;
     TextView activeKeyText;
-    TextView pitchText;
-    TextView noteText;
+
 
 
     @Override
@@ -61,13 +66,15 @@ public class DroneActivity extends AppCompatActivity
         // Handles drone logic.
         droneModel = new DroneModel(this);
 
+        // Builds hashmap for note name to piano image name.
+        createPianoMap();
+
         // Activate/Deactivate Drone toggle button.
         controlButton = findViewById(R.id.drone_control_button);
 
         // Text Views.
         activeKeyText = findViewById(R.id.activeKeyPlainText);
-        pitchText = findViewById(R.id.pitchText);
-        noteText = findViewById(R.id.noteText);
+        piano = findViewById(R.id.image_piano);
 
         // Construct Midi Driver.
         droneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
@@ -97,7 +104,7 @@ public class DroneActivity extends AppCompatActivity
         SharedPreferences sharedPref =
                 android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
 
-        //todo string conversion to int is redundant
+        //todo: make ints by default so no conversion is necessary
         String noteLenPref = sharedPref.getString(DroneSettingsActivity.NOTE_LEN_KEY, "60"); // default value for noteLenFilter
         String keySensPref = sharedPref.getString(DroneSettingsActivity.KEY_SENS_KEY, "3");  // default value for key sensitivity
 
@@ -112,10 +119,17 @@ public class DroneActivity extends AppCompatActivity
 
     /**
      * Update the note text on screen.
-     * @param       newNote String; name of note.
+     * @param       noteName String; name of note.
      */
-    public void setNoteText(String newNote) {
-        noteText.setText(newNote);
+    public void setNoteText(String noteName) {
+        if (noteName.length() == 0) {
+            piano.setImageResource(R.drawable.piano_null);
+        } else {
+            //todo fix this line
+            String piano_text = nameToResIdName.get(noteName);
+            int resID = getResources().getIdentifier(piano_text, "drawable", getPackageName());
+            piano.setImageResource(resID);
+        }
     }
 
     /**
@@ -128,14 +142,6 @@ public class DroneActivity extends AppCompatActivity
         } else {
             setNoteText("");
         }
-    }
-
-    /**
-     * Update the pitch text on screen.
-     * @param       pitchInHz double; pitch of note (hertz).
-     */
-    public void setPitchText(double pitchInHz) {
-        pitchText.setText("" + (int) pitchInHz);
     }
 
     /**
@@ -156,26 +162,52 @@ public class DroneActivity extends AppCompatActivity
         activeKeyText.setText("Active Key: " + droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getName());
     }
 
+    /**
+     * Toggle state of drone; active or inactive.
+     * Updates drawable on toggle button.
+     */
     public void toggleDrone(View view) {
-        // Function toggles drone Active/Inactive.
         droneModel.toggleDrone();
-        // Drone now active.
+
         if (droneModel.droneIsActive()) {
             controlButton.setImageResource(R.drawable.ic_stop_drone);
         }
-        // Drone now inactive.
         else {
             activeKeyText.setText("Active Key: ");
             controlButton.setImageResource(R.drawable.ic_play_drone);
         }
     }
 
+    /**
+     * Open drone settings activity.
+     * @param       view View; view that button is displayed on.
+     */
     public void openDroneSettings(View view) {
+        // Deactivate drone if active.
+        if (droneModel.droneIsActive()) {
+            droneModel.deactivateDrone();
+        }
         Intent droneSettingsIntent = new Intent(this, DroneSettingsActivity.class);
         startActivity(droneSettingsIntent);
     }
 
+    /**
+     * Toggle to next voicing.
+     * @param       view View; view that button is displayed on.
+     */
     public void changeVoicing(View view) {
         droneModel.changeUserVoicing();
+    }
+
+    public void createPianoMap() {
+        String str;
+        for (int i = 0; i < 12; i++) {
+            str = "piano_";
+            str += Character.toLowerCase(Constants.notes[i].charAt(0));
+            if (Constants.notes[i].length() == 2) {
+                str += "_sharp";
+            }
+            nameToResIdName.put(Constants.notes[i], str);
+        }
     }
 }

@@ -3,14 +3,13 @@ package com.example.smartdrone.Models;
 import android.util.Log;
 
 import com.example.smartdrone.Constants;
-import com.example.smartdrone.DroneActivity;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.util.PitchConverter;
 
 
-//todo make indices reset on active/deactivate toggle
+//todo make current/prev notes/keys reset on active/deactivate toggle
 public class PitchProcessorModel {
     /**
      * Audio dispatcher connected to microphone.
@@ -23,26 +22,30 @@ public class PitchProcessorModel {
     private long timeRegistered;
 
     /**
-     * Current key being output.
+     * Index of current active key.
      */
-    public int prevActiveKeyIx; //todo make private
+    private int curActiveKeyIx;
 
     /**
-     * Previous key that was output.
+     * Index previous active key.
      */
-    public int curActiveKeyIx; //todo make private
+    private int prevActiveKeyIx;
 
     /**
-     * Last note that was added to active note list.
+     * Index of current monitored note.
      */
-    public int prevAddedNoteIx; //todo make private
-
+    private int curNoteIx;
 
     /**
-     * Current note being monitored.
+     * Index of previous note.
+     * Last note added to key finder.
      */
-    public int curNoteIx; //todo make private
+    private int prevAddedNoteIx;
 
+    /**
+     * Filter for note length.
+     * Number of milliseconds.
+     */
     public int noteFilterLengthRequirement;
 
     /**
@@ -51,27 +54,21 @@ public class PitchProcessorModel {
     public PitchProcessorModel() {
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
                 Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
-
-        prevActiveKeyIx = -1;
-        curActiveKeyIx = -1;
-        prevAddedNoteIx = -1;
-        curNoteIx = -1;
-//        noteIsQueued = false;
+        // Set all note/key indices to -1.
+        this.resetAllIxs();
     }
 
     /**
-     * Utilizes other single purpose methods.
-     * 1. Converts pitch to ix.
-     * 2. Adds note (based on ix) to active note list.
-     * 3. Updates the text views on screen.
-     * @param       pitchInHz float; current pitch being heard.
+     * //todo: fill in method description
+     * @param pitchInHz
+     * @param keyFinderModel
      */
-    public void processPitch(float pitchInHz, DroneActivity droneActivity, KeyFinderModel keyFinderModel) {
+    public void processPitch(float pitchInHz, KeyFinderModel keyFinderModel) {
         // Convert pitch to midi key.
-        int curKey = convertPitchToIx((double) pitchInHz); // No note will return -1 // todo
+        int curIx = convertPitchToIx((double) pitchInHz); // No note will return -1
 
         // Note change is detected.
-        if (curKey != prevAddedNoteIx) {
+        if (curIx != prevAddedNoteIx) {
             // If previously added note is no longer heard.
             if (prevAddedNoteIx != -1) {
                 // Start timer.
@@ -87,25 +84,93 @@ public class PitchProcessorModel {
                 prevAddedNoteIx = -1;
             }
             // Different note is heard.
-            else if (curKey != curNoteIx) {
-                curNoteIx = curKey;
+            else if (curIx != curNoteIx) {
+                curNoteIx = curIx;
                 timeRegistered = System.currentTimeMillis();
             }
             // Current note is heard.
-            else if (noteMeetsConfidence(droneActivity)) { //todo move preferences to proper location
-                keyFinderModel.addNote(curKey);
-                prevAddedNoteIx = curKey;
-                keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
+            else if (noteMeetsConfidence()) { //todo move preferences to proper location
+                keyFinderModel.addNote(curIx);
+                prevAddedNoteIx = curIx;
+                keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(curIx).cancelNoteTimer();
             }
         }
     }
 
+    /**
+     * Get index of current active key.
+     * @return      int; index of current active key.
+     */
+    public int getCurActiveKeyIx() {
+        return curActiveKeyIx;
+    }
+
+    /**
+     * Set index of current active key.
+     * @param       keyIx int; index of current active key.
+     */
+    public void setCurActiveKeyIx(int keyIx) {
+        curActiveKeyIx = keyIx;
+    }
+
+    /**
+     * Get index of previous active key.
+     * @return      int; index of previous active key.
+     */
+    public int getPrevActiveKeyIx() {
+        return prevActiveKeyIx;
+    }
+
+    /**
+     * Set index of previous active key.
+     * @param       keyIx int; index of previous active key.
+     */
     public void setPrevActiveKeyIx(int keyIx) {
         prevActiveKeyIx = keyIx;
     }
 
+    /**
+     * Get index of current monitored note.
+     * @return      int; index of current monitored note.
+     */
+    public int getCurNoteIx() {
+        return curNoteIx;
+    }
+
+    /**
+     * Set index of current monitored note.
+     * @param       noteIx int; index of current monitored note.
+     */
+    public void setCurNoteIx(int noteIx) {
+        curNoteIx = noteIx;
+    }
+
+    /**
+     * Get index of previous added note.
+     * @return      int; index of previous added note.
+     */
+    public int getPrevAddedNoteIx() {
+        return prevAddedNoteIx;
+    }
+
+    /**
+     * Set index of previous added note.
+     * @param       noteIx int; index of previous added note.
+     */
     public void setPrevAddedNoteIx(int noteIx) {
         prevAddedNoteIx = noteIx;
+    }
+
+    /**
+     * Get audio dispatcher.
+     * @return      AudioDispatcher; audio dispatcher.
+     */
+    public AudioDispatcher getDispatcher() {
+        return dispatcher;
+    }
+
+    public boolean noteMeetsConfidence() {
+        return (System.currentTimeMillis() - timeRegistered) > noteFilterLengthRequirement;
     }
 
     /**
@@ -121,23 +186,22 @@ public class PitchProcessorModel {
         return PitchConverter.hertzToMidiKey(pitchInHz) % 12;
     }
 
-    public boolean noteMeetsConfidence(DroneActivity droneActivity) {
-        return (System.currentTimeMillis() - timeRegistered) > noteFilterLengthRequirement;
+    /**
+     * Check if parameter index is same as
+     * @param curIx
+     * @return
+     */
+    public boolean newNoteDetected(int curIx) {
+        return curIx != prevAddedNoteIx;
     }
 
-    public AudioDispatcher getDispatcher() {
-        return dispatcher;
+    /**
+     * Set all note/key indices to -1.
+     */
+    public void resetAllIxs() {
+        prevActiveKeyIx = -1;
+        curActiveKeyIx = -1;
+        prevAddedNoteIx = -1;
+        curNoteIx = -1;
     }
-
-    public int getCurActiveKeyIx() {
-        return curActiveKeyIx;
-    }
-
-    public int getPrevActiveKeyIx() {
-        return prevActiveKeyIx;
-    }
-
-//    public void setNoteIsQueued(boolean bool) {
-//        noteIsQueued = bool;
-//    }
 }
