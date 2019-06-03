@@ -32,6 +32,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -45,13 +46,6 @@ public class DroneActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
 
     private DroneModel droneModel;
-    private SharedPreferences mPreferences;
-    private String sharedPrefFile = "com.example.android.smartdrone";
-
-    public int noteExpirationLength;
-    int keyTimerLength;
-
-    public int noteLengthRequirement;
 
     ImageButton controlButton;
     TextView activeKeyText;
@@ -66,9 +60,6 @@ public class DroneActivity extends AppCompatActivity
 
         // Handles drone logic.
         droneModel = new DroneModel(this);
-        droneModel.startPitchProcessor();
-
-        mPreferences = getSharedPreferences(sharedPrefFile, MODE_PRIVATE);
 
         // Activate/Deactivate Drone toggle button.
         controlButton = findViewById(R.id.drone_control_button);
@@ -78,31 +69,11 @@ public class DroneActivity extends AppCompatActivity
         pitchText = findViewById(R.id.pitchText);
         noteText = findViewById(R.id.noteText);
 
-        // Get note filter len from preferences.
-        noteLengthRequirement = mPreferences.getInt(DroneSettingsActivity.NOTE_LEN_KEY,
-                Constants.NOTE_FILTER_LENGTH_DEFAULT);
-        // Set filter length.
-        noteExpirationLength = droneModel.getKeyFinderModel().getKeyFinder().getNoteTimerLength();
-
-        // Get key sens len from preferences.
-        keyTimerLength = mPreferences.getInt(DroneSettingsActivity.KEY_SENS_KEY,
-                Constants.KEY_SENS_DEFAULT);
-        // Set active key sensitivity.
-        droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
-
         // Construct Midi Driver.
         droneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
 
         android.support.v7.preference.PreferenceManager
                 .setDefaultValues(this, R.xml.drone_preferences, false);
-
-        // TODO: magic code that controls and saves user preferences
-        SharedPreferences sharedPref =
-                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        String noteLenPref = sharedPref.getString(DroneSettingsActivity.NOTE_LEN_KEY, "60"); // default value for noteLenFilter
-        String keySensPref = sharedPref.getString(DroneSettingsActivity.KEY_SENS_KEY, "3");  // default value for key sensitivity
-        noteLengthRequirement = Integer.parseInt(noteLenPref);
-        keyTimerLength = Integer.parseInt(keySensPref);
     }
 
     @Override
@@ -114,12 +85,29 @@ public class DroneActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         super.onPause();
+    }
 
-//        SharedPreferences.Editor preferencesEditor = mPreferences.edit();
-        // preferencesEditor.putInt(COUNT_KEY, mCount); // THIS LINE TO PUT PREFERENCES
-        // preferencesEditor.apply();                   // APPLY CHANGES
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //todo: magic code that controls and saves user preferences
+        SharedPreferences sharedPref =
+                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
+
+        //todo string conversion to int is redundant
+        String noteLenPref = sharedPref.getString(DroneSettingsActivity.NOTE_LEN_KEY, "60"); // default value for noteLenFilter
+        String keySensPref = sharedPref.getString(DroneSettingsActivity.KEY_SENS_KEY, "3");  // default value for key sensitivity
+
+        // Update fields to match user saved preferences.
+        int noteLengthRequirement = Integer.parseInt(noteLenPref);
+        int keyTimerLength = Integer.parseInt(keySensPref);
+        droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
+        droneModel.getPitchProcessorModel().noteFilterLengthRequirement = noteLengthRequirement;
+
+        droneModel.startDroneProcess();
     }
 
     /**
@@ -172,7 +160,7 @@ public class DroneActivity extends AppCompatActivity
         // Function toggles drone Active/Inactive.
         droneModel.toggleDrone();
         // Drone now active.
-        if (droneModel.isDroneActive()) {
+        if (droneModel.droneIsActive()) {
             controlButton.setImageResource(R.drawable.ic_stop_drone);
         }
         // Drone now inactive.
@@ -188,6 +176,6 @@ public class DroneActivity extends AppCompatActivity
     }
 
     public void changeVoicing(View view) {
-        droneModel.changeUserMode();
+        droneModel.changeUserVoicing();
     }
 }

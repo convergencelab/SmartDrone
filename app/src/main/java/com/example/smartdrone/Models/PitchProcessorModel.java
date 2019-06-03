@@ -9,6 +9,8 @@ import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.util.PitchConverter;
 
+
+//todo make indices reset on active/deactivate toggle
 public class PitchProcessorModel {
     /**
      * Audio dispatcher connected to microphone.
@@ -23,31 +25,30 @@ public class PitchProcessorModel {
     /**
      * Current key being output.
      */
-    public int prevActiveKeyIx;
+    public int prevActiveKeyIx; //todo make private
 
     /**
      * Previous key that was output.
      */
-    public int curActiveKeyIx;
+    public int curActiveKeyIx; //todo make private
 
     /**
      * Last note that was added to active note list.
      */
-    public int prevAddedNoteIx;
+    public int prevAddedNoteIx; //todo make private
 
-    public int queuedNote;
-
-    public boolean noteIsQueued;
 
     /**
      * Current note being monitored.
      */
-    public int curNoteIx;
+    public int curNoteIx; //todo make private
+
+    public int noteFilterLengthRequirement;
 
     /**
      * Constructor.
       */
-    public PitchProcessorModel(DroneModel droneModel) {
+    public PitchProcessorModel() {
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
                 Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
 
@@ -55,7 +56,7 @@ public class PitchProcessorModel {
         curActiveKeyIx = -1;
         prevAddedNoteIx = -1;
         curNoteIx = -1;
-        noteIsQueued = false;
+//        noteIsQueued = false;
     }
 
     /**
@@ -65,7 +66,7 @@ public class PitchProcessorModel {
      * 3. Updates the text views on screen.
      * @param       pitchInHz float; current pitch being heard.
      */
-    public void processPitch(float pitchInHz, DroneActivity droneActivity, DroneModel droneModel) {
+    public void processPitch(float pitchInHz, DroneActivity droneActivity, KeyFinderModel keyFinderModel) {
         // Convert pitch to midi key.
         int curKey = convertPitchToIx((double) pitchInHz); // No note will return -1 // todo
 
@@ -74,9 +75,10 @@ public class PitchProcessorModel {
             // If previously added note is no longer heard.
             if (prevAddedNoteIx != -1) {
                 // Start timer.
-                droneModel.getKeyFinderModel().getKeyFinder().getAllNotes().getNoteAtIndex(
-                        prevAddedNoteIx).startNoteTimer(droneModel.getKeyFinderModel().getKeyFinder(), droneActivity.noteExpirationLength); // todo
-                Log.d(Constants.MESSAGE_LOG_NOTE_TIMER, droneModel.getKeyFinderModel().getKeyFinder().getAllNotes().getNoteAtIndex(
+                keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(
+                        prevAddedNoteIx).startNoteTimer(keyFinderModel.getKeyFinder(),
+                        keyFinderModel.getKeyFinder().getNoteTimerLength());
+                Log.d(Constants.MESSAGE_LOG_NOTE_TIMER, keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(
                         prevAddedNoteIx).getName() + ": Started");
             }
             // No note is heard.
@@ -91,10 +93,9 @@ public class PitchProcessorModel {
             }
             // Current note is heard.
             else if (noteMeetsConfidence(droneActivity)) { //todo move preferences to proper location
-                queuedNote = curKey;
-                noteIsQueued = true;
+                keyFinderModel.addNote(curKey);
                 prevAddedNoteIx = curKey;
-                droneModel.getKeyFinderModel().getKeyFinder().getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
+                keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(curKey).cancelNoteTimer();
             }
         }
     }
@@ -121,7 +122,7 @@ public class PitchProcessorModel {
     }
 
     public boolean noteMeetsConfidence(DroneActivity droneActivity) {
-        return (System.currentTimeMillis() - timeRegistered) > droneActivity.noteLengthRequirement;
+        return (System.currentTimeMillis() - timeRegistered) > noteFilterLengthRequirement;
     }
 
     public AudioDispatcher getDispatcher() {
@@ -136,7 +137,7 @@ public class PitchProcessorModel {
         return prevActiveKeyIx;
     }
 
-    public void setNoteIsQueued(boolean bool) {
-        noteIsQueued = bool;
-    }
+//    public void setNoteIsQueued(boolean bool) {
+//        noteIsQueued = bool;
+//    }
 }

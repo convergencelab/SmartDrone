@@ -1,8 +1,8 @@
 <resources>
     <string name="app_name">SmartDrone</string>
     <string name="simulationButtonText_main">Sim</string>
-    <string name="noteText">note</string>
-    <string name="pitchText">pitch</string>
+    <string name="noteText">inactive</string>
+    <string name="pitchText"></string>
     <string name="activeKeyString">Active Key:</string>
 
     <string name="expirationText" />

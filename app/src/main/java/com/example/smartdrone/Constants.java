@@ -35,6 +35,7 @@ public class Constants {
     public static final String MESSAGE_LOG_SPEED      = "process_speed";
     public static final String MESSAGE_LOG_NOTE_TIMER = "note_timer";
     public static final String MESSAGE_LOG_VOICING    = "voicing_test";
+    public static final String MESSAGE_LOG_PREF       = "drone_pref";
 
     // Midi driver Constants
     public static final int START_NOTE     = 0X90;

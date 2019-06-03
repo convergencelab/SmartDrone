@@ -5,10 +5,8 @@ import android.util.Log;
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.VoicingCollection;
 
-public class VoicingModel {
-    /**
-     * Stock voicings note indices.
-     */
+class VoicingModel {
+    /* Stock Voicing Indices */
     private int[] DRONE       = { 0                     };
     private int[] MAJOR_TRIAD = { 0,  7, 16             };
     private int[] MAJOR_9     = { 0,  7, 16, 23, 26     };
@@ -21,7 +19,7 @@ public class VoicingModel {
     /**
      * Names of stock voicings.
      */
-    public String[] STOCK_VOICINGS_NAMES = { // todo change to private later
+    String[] STOCK_VOICINGS_NAMES = { // todo change to private later
             "Drone",
             "Major Triad",
             "Major 9",
@@ -41,7 +39,8 @@ public class VoicingModel {
             GABE,
             LYDIAN,
             MIXOLYDIAN,
-            PHRYGIAN};
+            PHRYGIAN
+    };
 
     /**
      * Voicing container.
@@ -52,7 +51,7 @@ public class VoicingModel {
      * Constructor.
      * Constructs stock voicings.
      */
-    public VoicingModel() {
+    VoicingModel() {
         this.voicingCollection = new VoicingCollection();
         // Load stock voicings into voicing collection. // todo adapt for persistent data
         for (int i = 0; i < STOCK_VOICINGS_NAMES.length ; i++) {
@@ -65,7 +64,7 @@ public class VoicingModel {
      * Get voicing collection.
      * @return      VoicingCollection; voicing collection.
      */
-    public VoicingCollection getVoicingCollection() {
+    VoicingCollection getVoicingCollection() {
         return voicingCollection;
     }
 }
