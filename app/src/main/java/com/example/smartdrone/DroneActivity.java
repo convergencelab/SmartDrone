@@ -31,6 +31,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -137,6 +138,7 @@ public class DroneActivity extends AppCompatActivity
      * @param       pitchInHz double; pitch of note (hertz).
      */
     public void setNoteText(double pitchInHz) {
+        Log.d("speed", "*speed test*");
         if (pitchInHz != -1) {
             setNoteText(Constants.notes[droneModel.getPitchProcessorModel().convertPitchToIx(pitchInHz)]); //todo can be better
         } else {

@@ -1,6 +1,7 @@
 package com.example.smartdrone.Models;
 
 import com.example.smartdrone.Constants;
+import com.example.smartdrone.Voicing;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
@@ -109,5 +110,20 @@ public class MidiDriverModel {
         for (int key : midiKeys) {
             sendMidi(event, key + rootIx + octaveAdjustment, volume);
         }
+    }
+
+    public void switchToVoicing(int[] voiceIxs, int cur, int prev) {
+        // Stop chord.
+        stopVoicing(voiceIxs, prev);
+        // Start chord.
+        startVoicing(voiceIxs, cur);
+    }
+
+    public void stopVoicing(int[] voiceIxs, int keyIx) {
+        sendMidiChord(Constants.STOP_NOTE, voiceIxs, Constants.VOLUME_OFF, keyIx);
+    }
+
+    private void startVoicing(int[] voiceIxs, int keyIx) {
+        sendMidiChord(Constants.START_NOTE, voiceIxs, getVolume(), keyIx);
     }
 }
