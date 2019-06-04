@@ -9,7 +9,6 @@ import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.util.PitchConverter;
 
 
-//todo make current/prev notes/keys reset on active/deactivate toggle
 public class PitchProcessorModel {
     /**
      * Audio dispatcher connected to microphone.
@@ -37,8 +36,14 @@ public class PitchProcessorModel {
      */
     private boolean noteHasChanged;
 
+    /**
+     * Flag if a note timer is ready to be started.
+     */
     private boolean noteTimerIsQueued;
 
+    /**
+     * Index of the note that is ready to be started.
+     */
     private int noteToStart;
 
     /**
@@ -50,7 +55,7 @@ public class PitchProcessorModel {
     /**
      * Constructor.
       */
-    public PitchProcessorModel() {
+    PitchProcessorModel() {
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
                 Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
         lastHeard = -1;
@@ -63,8 +68,9 @@ public class PitchProcessorModel {
      * Process pitch of note.
      * @param       pitchInHz float; pitch in hertz.
      * @param       keyFinderModel KeyFinderModel; handles key finder.
+     * @return      int; index of cur heard.
      */
-    public void processPitch(float pitchInHz, KeyFinderModel keyFinderModel) {
+    int processPitch(float pitchInHz, KeyFinderModel keyFinderModel) {
         int curHeard = convertPitchToIx((double) pitchInHz);
         if (noteChangeDetected(curHeard)) {
             lastHeard = curHeard;
@@ -84,6 +90,7 @@ public class PitchProcessorModel {
             keyFinderModel.cancelNoteTimer(curHeard);
             Log.d("timer", curHeard + " cancelled");
         }
+        return curHeard;
     }
 
     /**
@@ -99,7 +106,7 @@ public class PitchProcessorModel {
      * Set index of last heard note.
      * @param       noteIx int; index of note.
      */
-    public void setLastHeard(int noteIx) {
+    void setLastHeard(int noteIx) {
         lastHeard = noteIx;
     }
 
@@ -107,7 +114,7 @@ public class PitchProcessorModel {
      * Set index of last added note.
      * @param       noteIx int; index of note.
      */
-    public void setLastAdded(int noteIx) {
+    void setLastAdded(int noteIx) {
         lastAdded = noteIx;
     }
 
@@ -115,16 +122,16 @@ public class PitchProcessorModel {
      * Get audio dispatcher.
      * @return      AudioDispatcher; audio dispatcher.
      */
-    public AudioDispatcher getDispatcher() {
+    AudioDispatcher getDispatcher() {
         return dispatcher;
     }
 
     /**
-     * Check if the current
-     * @return
+     * Check if the note filter length has been reached.
+     * @return      boolean; true if note has been heard as long as the filter length.
      */
     private boolean noteFilterLengthMet() {
-        return (System.currentTimeMillis() - timeOfChange) > noteFilterLength;
+        return (System.currentTimeMillis() - timeOfChange) >= noteFilterLength;
     }
 
     /**
@@ -145,7 +152,7 @@ public class PitchProcessorModel {
      * @param       curIx int; index of current heard note.
      * @return      boolean; true if same as last heard note index.
      */
-    public boolean noteChangeDetected(int curIx) {
+    private boolean noteChangeDetected(int curIx) {
         return curIx != lastHeard;
     }
 
@@ -153,7 +160,7 @@ public class PitchProcessorModel {
      * Check if note change has been detected.
      * @return      boolean; true if note change detected.
      */
-    public boolean noteHasChanged() {
+    boolean noteHasChanged() {
         return noteHasChanged;
     }
 
@@ -161,7 +168,7 @@ public class PitchProcessorModel {
      * Set note change detection flag.
      * @param       bool boolean; true if change detected.
      */
-    public void setNoteHasChanged(boolean bool) {
+    void setNoteHasChanged(boolean bool) {
         noteHasChanged = bool;
     }
 
@@ -176,14 +183,5 @@ public class PitchProcessorModel {
      */
     private boolean noteCanBeAdded(int ix) {
         return ix != Constants.NULL_NOTE_IX && ix != lastAdded && noteFilterLengthMet();
-    }
-
-    /**
-     * Check whether or not a note is detected.
-     * @param       noteIx int; index of note.
-     * @return      boolean; true if note heard.
-     */
-    private boolean isNullNote(int noteIx) {
-        return noteIx == Constants.NULL_NOTE_IX;
     }
 }

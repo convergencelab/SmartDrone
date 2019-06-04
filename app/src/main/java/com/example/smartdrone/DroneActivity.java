@@ -47,17 +47,13 @@ import java.util.HashMap;
 public class DroneActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
 
-    //todo left off here. create 12 mapped values... ya i know.
     private final static HashMap<String, String> nameToResIdName = new HashMap<>();
-
 
     private DroneModel droneModel;
 
     ImageButton controlButton;
     ImageView piano;
     TextView activeKeyText;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,8 +102,10 @@ public class DroneActivity extends AppCompatActivity
                 android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
 
         //todo: make ints by default so no conversion is necessary
-        String noteLenPref = sharedPref.getString(DroneSettingsActivity.NOTE_LEN_KEY, "60"); // default value for noteLenFilter
-        String keySensPref = sharedPref.getString(DroneSettingsActivity.KEY_SENS_KEY, "3");  // default value for key sensitivity
+        String noteLenPref = sharedPref.
+                getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
+        String keySensPref = sharedPref.
+                getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
@@ -118,32 +116,18 @@ public class DroneActivity extends AppCompatActivity
         droneModel.startDroneProcess();
     }
 
-    //todo clean up this method (proper name, turn two methods into one.)
     /**
-     * Update the note text on screen.
-     * @param       noteName String; name of note.
+     * Update the piano image on screen.
+     * @param       noteIx int; index of note.
      */
-    public void setNoteText(String noteName) {
-        if (noteName.length() == 0) {
+    public void setPianoImage(int noteIx) {
+        if (noteIx == Constants.NULL_NOTE_IX) {
             piano.setImageResource(R.drawable.piano_null);
-        } else {
-            //todo fix this line
-            String piano_text = nameToResIdName.get(noteName);
+        }
+        else {
+            String piano_text = nameToResIdName.get(Constants.notes[noteIx]);
             int resID = getResources().getIdentifier(piano_text, "drawable", getPackageName());
             piano.setImageResource(resID);
-        }
-    }
-
-    /**
-     * Update the note text on screen.
-     * @param       pitchInHz double; pitch of note (hertz).
-     */
-    public void setNoteText(double pitchInHz) {
-        Log.d("speed", "*speed test*");
-        if (pitchInHz != -1) {
-            setNoteText(Constants.notes[droneModel.getPitchProcessorModel().convertPitchToIx(pitchInHz)]); //todo can be better
-        } else {
-            setNoteText("");
         }
     }
 
@@ -162,7 +146,8 @@ public class DroneActivity extends AppCompatActivity
      * Update the text view that displays the current active key.
      */
     public void printActiveKeyToScreen() {
-        activeKeyText.setText("Active Key: " + droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getName());
+        activeKeyText.setText("Active Key: " + droneModel
+                .getKeyFinderModel().getKeyFinder().getActiveKey().getName());
     }
 
     /**
@@ -202,6 +187,9 @@ public class DroneActivity extends AppCompatActivity
         droneModel.changeUserVoicing();
     }
 
+    /**
+     * Builds hashmap for getting name of piano image.
+     */
     public void createPianoMap() {
         String str;
         for (int i = 0; i < 12; i++) {

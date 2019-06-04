@@ -1,7 +1,6 @@
 package com.example.smartdrone.Models;
 
 import com.example.smartdrone.Constants;
-import com.example.smartdrone.Voicing;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
@@ -23,7 +22,7 @@ public class MidiDriverModel {
 
     /**
      * Midi driver volume.
-     * MIN - MAX; 0 - 100.
+     * MIN -> MAX; 0 -> 100.
      */
     private int volume;
 
@@ -45,10 +44,18 @@ public class MidiDriverModel {
         return midiDriver;
     }
 
+    /**
+     * Set volume for midi driver.
+     * @param       volume int; volume for midi driver.
+     */
     public void setVolume(int volume) {
         this.volume = volume;
     }
 
+    /**
+     * Get volume for midi driver.
+     * @return      int; volume of midi driver.
+     */
     public int getVolume() {
         return volume;
     }
@@ -94,6 +101,7 @@ public class MidiDriverModel {
         }
     }
 
+    //todo clean up. refactor, make an improved ui for using this method.
     /**
      * Sends multiple messages to be synthesized by midi driver.
      * Each note is given specifically.
@@ -106,12 +114,18 @@ public class MidiDriverModel {
         if (midiKeys[0] + rootIx > 47) {
             octaveAdjustment = -12;
         }
-
         for (int key : midiKeys) {
             sendMidi(event, key + rootIx + octaveAdjustment, volume);
         }
     }
 
+    //todo refactor; should pass voicing object as parameter.
+    /**
+     * Stops previous voicing, and starts new voicing.
+     * @param voiceIxs
+     * @param cur
+     * @param prev
+     */
     public void switchToVoicing(int[] voiceIxs, int cur, int prev) {
         // Stop chord.
         stopVoicing(voiceIxs, prev);
@@ -119,6 +133,11 @@ public class MidiDriverModel {
         startVoicing(voiceIxs, cur);
     }
 
+    /**
+     * Stop voicing.
+     * @param voiceIxs
+     * @param keyIx
+     */
     public void stopVoicing(int[] voiceIxs, int keyIx) {
         sendMidiChord(Constants.STOP_NOTE, voiceIxs, Constants.VOLUME_OFF, keyIx);
     }
