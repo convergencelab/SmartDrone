@@ -125,7 +125,7 @@ public class DroneActivity extends AppCompatActivity
             piano.setImageResource(R.drawable.piano_null);
         }
         else {
-            String piano_text = nameToResIdName.get(Constants.notes[noteIx]);
+            String piano_text = nameToResIdName.get(Constants.NOTES_SHARP[noteIx]);
             int resID = getResources().getIdentifier(piano_text, "drawable", getPackageName());
             piano.setImageResource(resID);
         }
@@ -146,8 +146,8 @@ public class DroneActivity extends AppCompatActivity
      * Update the text view that displays the current active key.
      */
     public void printActiveKeyToScreen() {
-        activeKeyText.setText("Active Key: " + droneModel
-                .getKeyFinderModel().getKeyFinder().getActiveKey().getName());
+        activeKeyText.setText("Active Key: " + Constants.NOTES_FLAT[droneModel
+                .getKeyFinderModel().getKeyFinder().getActiveKey().getIx()]);
     }
 
     /**
@@ -194,11 +194,11 @@ public class DroneActivity extends AppCompatActivity
         String str;
         for (int i = 0; i < 12; i++) {
             str = "piano_";
-            str += Character.toLowerCase(Constants.notes[i].charAt(0));
-            if (Constants.notes[i].length() == 2) {
+            str += Character.toLowerCase(Constants.NOTES_SHARP[i].charAt(0));
+            if (Constants.NOTES_SHARP[i].length() == 2) {
                 str += "_sharp";
             }
-            nameToResIdName.put(Constants.notes[i], str);
+            nameToResIdName.put(Constants.NOTES_SHARP[i], str);
         }
     }
 }

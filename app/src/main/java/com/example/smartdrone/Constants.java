@@ -1,5 +1,7 @@
 package com.example.smartdrone;
 
+import com.example.smartdrone.Models.DroneModel;
+
 public class Constants {
     /**
      * Requested sample rate.
@@ -19,8 +21,12 @@ public class Constants {
     /**
      * Names of all 12 notes using sharps.
      */
-    public static final String[] notes =
-            { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    public static final String[] NOTES_SHARP = MusicTheory.CHROMATIC_SCALE_SHARP;
+
+    /**
+     * Names of all 12 notes using flats.
+     */
+    public static final String[] NOTES_FLAT  = MusicTheory.CHROMATIC_SCALE_FLAT;
 
     /**
      * Names of all 12 notes using flats.
