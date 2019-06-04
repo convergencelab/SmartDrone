@@ -113,11 +113,12 @@ public class DroneActivity extends AppCompatActivity
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
         int keyTimerLength = Integer.parseInt(keySensPref);
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
-        droneModel.getPitchProcessorModel().noteFilterLengthRequirement = noteLengthRequirement;
+        droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
 
         droneModel.startDroneProcess();
     }
 
+    //todo clean up this method (proper name, turn two methods into one.)
     /**
      * Update the note text on screen.
      * @param       noteName String; name of note.

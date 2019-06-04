@@ -168,13 +168,15 @@ public class DroneModel {
     public void deactivateDrone() {
         //todo: fix bug where pitch/note text freezes to whatever it last displayed.
         if (midiDriverModel.getMidiDriver() != null) {
-            midiDriverModel.getMidiDriver().stop();
             droneIsActive = false;
+            midiDriverModel.getMidiDriver().stop();
             cleanseDrone();
             keyFinderModel.getKeyFinder().cleanse();
+            droneActivity.setNoteText(Constants.NULL_NOTE_IX);
         }
     }
 
+    //todo clean up method, whatever that means
     /**
      * Starts the drone process.
      * Process notes & monitor active key.
@@ -188,10 +190,9 @@ public class DroneModel {
                     @Override
                     public void run() {
                         if (droneIsActive) {
+                            Log.d("speed", "*speed test*");
                             //todo optimize. No need to run these if drone is inactive
-//                            Log.d("speed", "*speed test*");
                             processPitch(pitchInHz, droneActivity, keyFinderModel);
-                            // Active key can change at any time.
                             monitorActiveKey();
                         }
                     }
@@ -244,44 +245,12 @@ public class DroneModel {
     }
 
     /**
-     * Get index of current active key.
-     * @return      int; index of current active key.
-     */
-    public int getCurActiveKeyIx() {
-        return curActiveKeyIx;
-    }
-
-    /**
-     * Set index of current active key.
-     * @param       keyIx int; index of current active key.
-     */
-    public void setCurActiveKeyIx(int keyIx) {
-        curActiveKeyIx = keyIx;
-    }
-
-    /**
-     * Get index of previous active key.
-     * @return      int; index of previous active key.
-     */
-    public int getPrevActiveKeyIx() {
-        return prevActiveKeyIx;
-    }
-
-    /**
-     * Set index of previous active key.
-     * @param       keyIx int; index of previous active key.
-     */
-    public void setPrevActiveKeyIx(int keyIx) {
-        prevActiveKeyIx = keyIx;
-    }
-
-    /**
      * Set all note/key indices to -1.
      */
     public void cleanseDrone() {
-        prevActiveKeyIx = -1;
-        curActiveKeyIx = -1;
-        pitchProcessorModel.setLastAdded(-1);
-        pitchProcessorModel.setLastHeard(-1);
+        prevActiveKeyIx = Constants.NULL_KEY_IX;
+        curActiveKeyIx = Constants.NULL_KEY_IX;
+        pitchProcessorModel.setLastAdded(Constants.NULL_NOTE_IX);
+        pitchProcessorModel.setLastHeard(Constants.NULL_NOTE_IX);
     }
 }

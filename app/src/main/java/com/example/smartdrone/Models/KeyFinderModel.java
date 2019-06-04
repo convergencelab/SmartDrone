@@ -61,4 +61,24 @@ public class KeyFinderModel {
     public void setKeyTimerLength(int seconds) {
         this.keyTimerLength = seconds;
     }
+
+    /**
+     * Starts timer for note.
+     * Timer will remove note from active notes.
+     * @param       noteIx int; index of note.
+     */
+    public void startNoteTimer(int noteIx) {
+        keyFinder.getAllNotes().getNoteAtIndex(noteIx)
+                .startNoteTimer(keyFinder, Constants.NOTE_TIMER_LEN);
+    }
+
+    /**
+     * Cancels timer for note.
+     * Will stop the scheduled task of removing note from active note list.
+     * @param       noteIx int; index of note.
+     */
+    public void cancelNoteTimer(int noteIx) {
+        keyFinder.getAllNotes().getNoteAtIndex(noteIx)
+                .cancelNoteTimer();
+    }
 }

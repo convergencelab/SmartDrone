@@ -50,4 +50,15 @@ public class Constants {
     public static final int NOTE_FILTER_LENGTH_DEFAULT = 60;
     public static final int KEY_SENS_DEFAULT           = 3;
     public static final int NOTE_TIMER_LEN             = 2;
+
+    /**
+     * Note index for null.
+     * Used when microphone has not detected a note.
+     */
+    public static final int NULL_NOTE_IX = -1;
+
+    /**
+     * Key index for null.
+     */
+    public static final int NULL_KEY_IX = -1;
 }
