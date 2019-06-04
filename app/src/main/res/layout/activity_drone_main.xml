@@ -6,22 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".DroneActivity">
 
-    <TextView
-        android:id="@+id/activeKeyPlainText"
-        android:layout_width="231dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="64dp"
-        android:gravity="center_horizontal"
-        android:text="@string/activeKeyString"
-        android:textSize="36sp"
-        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
     <ImageView
         android:id="@+id/image_piano"
         android:layout_width="355dp"
@@ -35,6 +19,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/piano_null" />
+
+    <Button
+        android:id="@+id/active_key_button"
+        android:layout_width="175dp"
+        android:layout_height="175dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/active_key_background"
+        android:gravity="center"
+        android:text="@string/active_key_default"
+        android:textSize="64sp"
+        app:layout_constraintBottom_toTopOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
@@ -54,10 +55,10 @@
             android:id="@+id/drone_sound_button"
             android:layout_width="0dp"
             android:layout_height="64dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_weight="1"
             android:onClick="changeVoicing"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -68,10 +69,10 @@
             android:id="@+id/drone_control_button"
             android:layout_width="0dp"
             android:layout_height="64dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_weight="1"
             android:onClick="toggleDrone"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -82,10 +83,10 @@
             android:id="@+id/drone_settings_button"
             android:layout_width="0dp"
             android:layout_height="64dp"
+            android:layout_marginLeft="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
-            android:layout_marginLeft="8dp"
             android:layout_weight="1"
             android:onClick="openDroneSettings"
             app:layout_constraintBottom_toBottomOf="parent"

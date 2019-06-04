@@ -33,6 +33,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,7 +54,7 @@ public class DroneActivity extends AppCompatActivity
 
     ImageButton controlButton;
     ImageView piano;
-    TextView activeKeyText;
+    Button activeKeyButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,9 +69,9 @@ public class DroneActivity extends AppCompatActivity
 
         // Activate/Deactivate Drone toggle button.
         controlButton = findViewById(R.id.drone_control_button);
+        activeKeyButton = findViewById(R.id.active_key_button);
 
         // Text Views.
-        activeKeyText = findViewById(R.id.activeKeyPlainText);
         piano = findViewById(R.id.image_piano);
 
         // Construct Midi Driver.
@@ -116,6 +117,12 @@ public class DroneActivity extends AppCompatActivity
         droneModel.startDroneProcess();
     }
 
+    //todo: save state of drone model when screen is rotated.
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
     /**
      * Update the piano image on screen.
      * @param       noteIx int; index of note.
@@ -146,7 +153,8 @@ public class DroneActivity extends AppCompatActivity
      * Update the text view that displays the current active key.
      */
     public void printActiveKeyToScreen() {
-        activeKeyText.setText("Active Key: " + Constants.NOTES_FLAT[droneModel
+        activeKeyButton.setTextSize(64);
+        activeKeyButton.setText(Constants.NOTES_FLAT[droneModel
                 .getKeyFinderModel().getKeyFinder().getActiveKey().getIx()]);
     }
 
@@ -161,7 +169,6 @@ public class DroneActivity extends AppCompatActivity
             controlButton.setImageResource(R.drawable.ic_stop_drone);
         }
         else {
-            activeKeyText.setText("Active Key: ");
             controlButton.setImageResource(R.drawable.ic_play_drone);
         }
     }
@@ -188,7 +195,7 @@ public class DroneActivity extends AppCompatActivity
     }
 
     /**
-     * Builds hashmap for getting name of piano image.
+     * Builds hash map for (note name -> piano image file name).
      */
     public void createPianoMap() {
         String str;

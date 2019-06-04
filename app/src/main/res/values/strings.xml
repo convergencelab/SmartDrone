@@ -3,7 +3,7 @@
     <string name="simulationButtonText_main">Sim</string>
     <string name="noteText">inactive</string>
     <string name="pitchText"></string>
-    <string name="activeKeyString">Active Key:</string>
+    <string name="activeKeyString">Active</string>
 
     <string name="expirationText" />
     <string name="noteTimerLabel">Note Timer</string>
@@ -22,4 +22,5 @@
     <string name="active_key_sensitivity">active_key_sensitivity</string>
     <string name="active_key_sensitivity_summary">Sensitivity of key change detection.</string>
     <string name="active_key_sensitivity_title">Active Key Sensitivity</string>
+    <string name="active_key_default">Listening</string>
 </resources>
