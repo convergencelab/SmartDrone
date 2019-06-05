@@ -34,6 +34,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -49,7 +50,7 @@ import java.util.HashMap;
 public class DroneActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
 
-    private final static HashMap<String, String> nameToResIdName = new HashMap<>();
+    private HashMap<String, String> nameToResIdName;
 
     private DroneModel droneModel;
 
@@ -59,11 +60,16 @@ public class DroneActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(Constants.MESSAGE_LOG_ACTV, "create");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drone_main);
 
+        nameToResIdName = new HashMap<>();
+
         // Handles drone logic.
         droneModel = new DroneModel(this);
+        // Construct Midi Driver.
+        droneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
 
         // Builds hashmap for note name to piano image name.
         createPianoMap();
@@ -75,28 +81,28 @@ public class DroneActivity extends AppCompatActivity
         // Text Views.
         piano = findViewById(R.id.image_piano);
 
-        // Construct Midi Driver.
-        droneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
-
         android.support.v7.preference.PreferenceManager
                 .setDefaultValues(this, R.xml.drone_preferences, false);
     }
 
     @Override
     protected void onStop() {
+        Log.d(Constants.MESSAGE_LOG_ACTV, "stop");
         super.onStop();
-        if (droneModel.getMidiDriverModel().getMidiDriver() != null) {
+        if (droneModel.isActive()) {
             droneModel.deactivateDrone();
         }
     }
 
     @Override
     protected void onPause() {
+        Log.d(Constants.MESSAGE_LOG_ACTV, "pause");
         super.onPause();
     }
 
     @Override
     protected void onResume() {
+        Log.d(Constants.MESSAGE_LOG_ACTV, "resume");
         super.onResume();
 
         //todo: magic code that controls and saves user preferences
@@ -118,9 +124,16 @@ public class DroneActivity extends AppCompatActivity
         droneModel.startDroneProcess();
     }
 
+    @Override
+    public void onDestroy() {
+        Log.d(Constants.MESSAGE_LOG_ACTV, "destroy");
+        super.onDestroy();
+    }
+
     //todo: save state of drone model when screen is rotated.
     @Override
     public void onSaveInstanceState(Bundle outState) {
+//        outState.putSerializable("obj_state", droneModel);
         super.onSaveInstanceState(outState);
     }
 
@@ -147,6 +160,7 @@ public class DroneActivity extends AppCompatActivity
      */
     @Override
     public void onMidiStart() {
+        Log.d(Constants.MESSAGE_LOG_ACTV, "midi start");
         droneModel.getMidiDriverModel().sendMidiSetup();
     }
 
@@ -166,7 +180,7 @@ public class DroneActivity extends AppCompatActivity
     public void toggleDroneState(View view) {
         droneModel.toggleDroneState();
 
-        if (droneModel.droneIsActive()) {
+        if (droneModel.isActive()) {
             controlButton.setImageResource(R.drawable.ic_stop_drone);
         }
         else {
@@ -180,20 +194,12 @@ public class DroneActivity extends AppCompatActivity
      */
     public void openDroneSettings(View view) {
         // Deactivate drone if active.
-        if (droneModel.droneIsActive()) {
+        if (droneModel.isActive()) {
             droneModel.deactivateDrone();
         }
         Intent droneSettingsIntent = new Intent(this, DroneSettingsActivity.class);
         startActivity(droneSettingsIntent);
     }
-
-//    /**
-//     * Toggle to next voicing.
-//     * @param       view View; view that button is displayed on.
-//     */
-//    public void changeVoicing(View view) {
-//        droneModel.changeUserVoicingTemplate();
-//    }
 
     /**
      * Builds hash map for (note name -> piano image file name).

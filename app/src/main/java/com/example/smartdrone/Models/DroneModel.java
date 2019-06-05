@@ -4,8 +4,9 @@ import android.util.Log;
 
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.DroneActivity;
-import com.example.smartdrone.KeyFinder;
 import com.example.smartdrone.Voicing;
+
+import java.io.Serializable;
 
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
@@ -14,12 +15,7 @@ import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
 
 
-public class DroneModel {
-//    /**
-//     * Current voicing for drone.
-//     */
-//    private Voicing curVoicing;
-
+public class DroneModel implements Serializable {
     /**
      * Previous voicing for drone.
      */
@@ -68,7 +64,7 @@ public class DroneModel {
     /**
      * True if drone has just been started without an active key or is producing output.
      */
-    private boolean droneIsActive;
+    private boolean isActive;
 
     /**
      * Constructor.
@@ -82,7 +78,7 @@ public class DroneModel {
 
         prevActiveKeyIx = -1;
         curActiveKeyIx = -1;
-        droneIsActive = false;
+        isActive = false;
         userVoicingIx = 0;
         prevVoicing = null;
     }
@@ -91,8 +87,8 @@ public class DroneModel {
      * Check if drone is active.
      * @return      boolean; true if drone is active.
      */
-    public boolean droneIsActive() {
-        return droneIsActive;
+    public boolean isActive() {
+        return isActive;
     }
 
     /**
@@ -125,16 +121,9 @@ public class DroneModel {
      */
     private void playActiveKeyNote() {
         // No active key, or drone is inactive.
-        if (noActiveKey() || !droneIsActive) {
+        if (noActiveKey() || !isActive) {
             return;
         }
-//        curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx() + 36; // 36 == C
-//        if (prevActiveKeyIx != curActiveKeyIx) {
-//            // Stop chord.
-//            int[] voiceIxs = voicingModel.getVoicingCollection()
-//                    .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs();
-//            midiDriverModel.playVoicing(voiceIxs, curActiveKeyIx, prevActiveKeyIx);
-//        }
         curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx();
         if (prevActiveKeyIx != curActiveKeyIx) {
             // Stop chord.
@@ -145,31 +134,11 @@ public class DroneModel {
         }
     }
 
-//    //todo: LATER IMPLEMENTATION: this function should really let the user pick a voicing from a list
-//    //todo: fix bug that occurs where audio playback happens when there is no active key
-//    /**
-//     * Changes user voicing to next voicing.
-//     */
-//    public void changeUserVoicingTemplate() {
-//        // new hip code
-//
-//        midiDriverModel.setCurVoicingTemplate()
-//
-//        // old dirty code
-//        midiDriverModel.sendMidiChord(Constants.STOP_NOTE, voicingModel.getVoicingCollection().
-//                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), 0, curActiveKeyIx); // todo refactor. send midi chord should accept Voicing, not int[]
-//
-//        userVoicingIx = (userVoicingIx + 1) % voicingModel.STOCK_VOICINGS_NAMES.length;
-//
-//        midiDriverModel.sendMidiChord(Constants.START_NOTE, voicingModel.getVoicingCollection().
-//                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), midiDriverModel.getVolume(), curActiveKeyIx);
-//    }
-
     /**
      * Switches drone state from active and inactive.
      */
     public void toggleDroneState() {
-        if (droneIsActive) {
+        if (isActive) {
             deactivateDrone();
         }
         else {
@@ -183,7 +152,7 @@ public class DroneModel {
      */
     private void activateDrone() {
         if (midiDriverModel.getMidiDriver() != null) {
-            droneIsActive = true;
+            isActive = true;
             midiDriverModel.getMidiDriver().start();
         }
     }
@@ -194,7 +163,7 @@ public class DroneModel {
      */
     public void deactivateDrone() {
         if (midiDriverModel.getMidiDriver() != null) {
-            droneIsActive = false;
+            isActive = false;
             midiDriverModel.getMidiDriver().stop();
             cleanseDrone();
             keyFinderModel.getKeyFinder().cleanse();
@@ -215,7 +184,7 @@ public class DroneModel {
                 droneActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (droneIsActive) {
+                        if (isActive) {
                             Log.d("speed", "*speed test*");
                             //todo optimize. No need to run these if drone is inactive
                             processPitch(pitchInHz, droneActivity, keyFinderModel);
