@@ -1,10 +1,21 @@
 package com.example.smartdrone.Models;
 
 import com.example.smartdrone.Constants;
+import com.example.smartdrone.Voicing;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
 public class MidiDriverModel {
+    /**
+     * Current voicing being synthesized; transposed.
+     */
+    private Voicing curVoicing;
+
+    /**
+     * Flag is sound is currently being produced by midi driver.
+     */
+    private boolean isActive;
+
     /**
      * Default midi driver volume.
      */
@@ -18,6 +29,9 @@ public class MidiDriverModel {
     // List of all the plugins available.
     // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
     //todo user parameter
+    /**
+     * Plugin for midi driver; sound of drone.
+     */
     private int plugin;
 
     /**
@@ -29,11 +43,12 @@ public class MidiDriverModel {
     /**
      * Constructor
      */
-    public MidiDriverModel() {
+    MidiDriverModel() {
         midiDriver = new MidiDriver();
         volume = DEFAULT_VOLUME;
         plugin = Constants.PLUGIN_CHOIR;
-
+        curVoicing = null;
+        isActive = false;
     }
 
     /**
@@ -80,7 +95,7 @@ public class MidiDriverModel {
      * @param       midiKey int; index of note (uses octaves).
      * @param       volume int; volume of note.
      */
-    public void sendMidi(int event, int midiKey, int volume) {
+    public void sendMidiNote(int event, int midiKey, int volume) {
         byte msg[] = new byte[3];
         msg[0] = (byte) event;
         msg[1] = (byte) midiKey;
@@ -88,6 +103,26 @@ public class MidiDriverModel {
         midiDriver.write(msg);
     }
 
+//    //todo this is old method; create new one
+//    //todo clean up. refactor, make an improved ui for using this method.
+//    /**
+//     * Sends multiple messages to be synthesized by midi driver.
+//     * Each note is given specifically.
+//     * @param       event int; type of event.
+//     * @param       midiKeys int[]; indexes of notes (uses octaves).
+//     * @param       volume int; volume of notes.
+//     */
+//    public void sendMidiChord(int event, int[] midiKeys, int volume, int rootIx) {
+//        int octaveAdjustment = 0;
+//        if (midiKeys[0] + rootIx > 47) {
+//            octaveAdjustment = -12;
+//        }
+//        for (int key : midiKeys) {
+//            sendMidiNote(event, key + rootIx + octaveAdjustment, volume);
+//        }
+//    }
+
+    //todo new method; delete old one
     /**
      * Sends multiple messages to be synthesized by midi driver.
      * Each note is given specifically.
@@ -95,54 +130,98 @@ public class MidiDriverModel {
      * @param       midiKeys int[]; indexes of notes (uses octaves).
      * @param       volume int; volume of notes.
      */
-    public void sendMidiChord(int event, int[] midiKeys, int volume) {
+    private void sendMidiChord(int event, int[] midiKeys, int volume) {
         for (int key : midiKeys) {
-            sendMidi(event, key, volume);
+            sendMidiNote(event, key, volume);
         }
     }
 
-    //todo clean up. refactor, make an improved ui for using this method.
     /**
-     * Sends multiple messages to be synthesized by midi driver.
-     * Each note is given specifically.
-     * @param       event int; type of event.
-     * @param       midiKeys int[]; indexes of notes (uses octaves).
-     * @param       volume int; volume of notes.
+     * Stops playing previous voicing and starts playing new voicing.
+     * @param       toPlay Voicing; voicing to play.
      */
-    public void sendMidiChord(int event, int[] midiKeys, int volume, int rootIx) {
-        int octaveAdjustment = 0;
-        if (midiKeys[0] + rootIx > 47) {
-            octaveAdjustment = -12;
+    public void playVoicing(Voicing toPlay) {
+        if (curVoicing != null) {
+            stopVoicing(curVoicing);
         }
-        for (int key : midiKeys) {
-            sendMidi(event, key + rootIx + octaveAdjustment, volume);
-        }
+        startVoicing(toPlay);
+        isActive = true;
     }
 
-    //todo refactor; should pass voicing object as parameter.
+//    //todo old methods; create new ones.
+//    /**
+//     * Stop voicing.
+//     * @param voiceIxs
+//     * @param keyIx
+//     */
+//    public void stopVoicing(int[] voiceIxs, int keyIx) {
+//        sendMidiChord(Constants.STOP_NOTE, voiceIxs, Constants.VOLUME_OFF, keyIx);
+//    }
+//
+//    private void startVoicing(int[] voiceIxs, int keyIx) {
+//        sendMidiChord(Constants.START_NOTE, voiceIxs, volume, keyIx);
+//    }
+
     /**
-     * Stops previous voicing, and starts new voicing.
-     * @param voiceIxs
-     * @param cur
-     * @param prev
+     * Stops voicing that
+     * @param       toStop Voicing; voicing to stop playing.
      */
-    public void switchToVoicing(int[] voiceIxs, int cur, int prev) {
-        // Stop chord.
-        stopVoicing(voiceIxs, prev);
-        // Start chord.
-        startVoicing(voiceIxs, cur);
+    public void stopVoicing(Voicing toStop) {
+        int[] voiceIxs = toStop.getVoiceIxs();
+        sendMidiChord(Constants.STOP_NOTE, voiceIxs, Constants.VOLUME_OFF); //todo new sendmidichord method
     }
 
     /**
-     * Stop voicing.
-     * @param voiceIxs
-     * @param keyIx
+     * Starts playing voicing.
+     * Updates current voicing flag.
+     * @param       toStart Voicing; voicing to be played.
      */
-    public void stopVoicing(int[] voiceIxs, int keyIx) {
-        sendMidiChord(Constants.STOP_NOTE, voiceIxs, Constants.VOLUME_OFF, keyIx);
+    public void startVoicing(Voicing toStart) {
+        int[] voiceIxs = toStart.getVoiceIxs();
+        sendMidiChord(Constants.START_NOTE, voiceIxs, volume); //todo new sendmidichordmethod
+        curVoicing = toStart;
     }
 
-    private void startVoicing(int[] voiceIxs, int keyIx) {
-        sendMidiChord(Constants.START_NOTE, voiceIxs, getVolume(), keyIx);
+//    /**
+//     * Get current voicing.
+//     * @return      Voicing; current voicing.
+//     */
+//    public Voicing getCurVoicingTransposed() {
+//        return curVoicingTransposed;
+//    }
+
+    /**
+     * Set current voicing.
+     * @param       voicing Voicing; current voicing.
+     */
+    public void setCurVoicing(Voicing voicing) {
+        curVoicing = voicing;
+    }
+
+//    /**
+//     * Get current voicing template.
+//     * @return      Voicing; voicing template.
+//     */
+//    public Voicing getCurVoicingTemplate() {
+//        return curVoicingTemplate;
+//    }
+
+//    /**
+//     * Set the current voicing template.
+//     * @param       voicingTemplate Voicing; voicing template.
+//     */
+//    public void setCurVoicingTemplate(Voicing voicingTemplate) {
+//        curVoicingTemplate = voicingTemplate;
+//        if (isActive) {
+//            //todo: some code that will properly transpose the current voicing being output
+//        }
+//    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean active) {
+        isActive = active;
     }
 }

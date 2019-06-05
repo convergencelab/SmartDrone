@@ -8,6 +8,9 @@
  * They both refer to the integer that represents the note, though,
  * midikey sometimes references the octave as well as the note name,
  * where ix only refers to the note name; ix only has 12 possible values.
+ *
+ * 'What is a drone' you ask?:
+ *     https://www.youtube.com/watch?v=8CnhcGpmH9Y
  */
 
 //todo:
@@ -31,12 +34,10 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.example.smartdrone.Models.DroneModel;
 
@@ -162,8 +163,8 @@ public class DroneActivity extends AppCompatActivity
      * Toggle state of drone; active or inactive.
      * Updates drawable on toggle button.
      */
-    public void toggleDrone(View view) {
-        droneModel.toggleDrone();
+    public void toggleDroneState(View view) {
+        droneModel.toggleDroneState();
 
         if (droneModel.droneIsActive()) {
             controlButton.setImageResource(R.drawable.ic_stop_drone);
@@ -186,13 +187,13 @@ public class DroneActivity extends AppCompatActivity
         startActivity(droneSettingsIntent);
     }
 
-    /**
-     * Toggle to next voicing.
-     * @param       view View; view that button is displayed on.
-     */
-    public void changeVoicing(View view) {
-        droneModel.changeUserVoicing();
-    }
+//    /**
+//     * Toggle to next voicing.
+//     * @param       view View; view that button is displayed on.
+//     */
+//    public void changeVoicing(View view) {
+//        droneModel.changeUserVoicingTemplate();
+//    }
 
     /**
      * Builds hash map for (note name -> piano image file name).

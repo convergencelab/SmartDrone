@@ -4,6 +4,8 @@ import android.util.Log;
 
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.DroneActivity;
+import com.example.smartdrone.KeyFinder;
+import com.example.smartdrone.Voicing;
 
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
@@ -13,6 +15,16 @@ import be.tarsos.dsp.pitch.PitchProcessor;
 
 
 public class DroneModel {
+//    /**
+//     * Current voicing for drone.
+//     */
+//    private Voicing curVoicing;
+
+    /**
+     * Previous voicing for drone.
+     */
+    private Voicing prevVoicing;
+
     /**
      * Activity class that the model communicates with.
      */
@@ -68,8 +80,11 @@ public class DroneModel {
         pitchProcessorModel = new PitchProcessorModel();
         voicingModel = new VoicingModel();
 
+        prevActiveKeyIx = -1;
+        curActiveKeyIx = -1;
         droneIsActive = false;
         userVoicingIx = 0;
+        prevVoicing = null;
     }
 
     /**
@@ -110,37 +125,50 @@ public class DroneModel {
      */
     private void playActiveKeyNote() {
         // No active key, or drone is inactive.
-        if (keyFinderModel.getKeyFinder().getActiveKey() == null || !droneIsActive) {
+        if (noActiveKey() || !droneIsActive) {
             return;
         }
-        curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx() + 36; // 36 == C
+//        curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx() + 36; // 36 == C
+//        if (prevActiveKeyIx != curActiveKeyIx) {
+//            // Stop chord.
+//            int[] voiceIxs = voicingModel.getVoicingCollection()
+//                    .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs();
+//            midiDriverModel.playVoicing(voiceIxs, curActiveKeyIx, prevActiveKeyIx);
+//        }
+        curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx();
         if (prevActiveKeyIx != curActiveKeyIx) {
             // Stop chord.
-            int[] voiceIxs = voicingModel.getVoicingCollection()
-                    .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs();
-            midiDriverModel.switchToVoicing(voiceIxs, curActiveKeyIx, prevActiveKeyIx);
+            Voicing v = voicingModel.getVoicingTemplateCollection()
+                    .getVoicingTemplate("7th (Drop II)")
+                    .generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), 0, 4);
+            midiDriverModel.playVoicing(v);
         }
     }
 
-    //todo: this function should really let the user pick a voicing from a list
-    //todo: fix bug that occurs where audio playback happens when there is no active key
-    /**
-     * Changes user voicing to next voicing.
-     */
-    public void changeUserVoicing() {
-        midiDriverModel.sendMidiChord(Constants.STOP_NOTE, voicingModel.getVoicingCollection().
-                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), 0, curActiveKeyIx); // todo refactor. send midi chord should accept Voicing, not int[]
-
-        userVoicingIx = (userVoicingIx + 1) % voicingModel.STOCK_VOICINGS_NAMES.length;
-
-        midiDriverModel.sendMidiChord(Constants.START_NOTE, voicingModel.getVoicingCollection().
-                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), midiDriverModel.getVolume(), curActiveKeyIx);
-    }
+//    //todo: LATER IMPLEMENTATION: this function should really let the user pick a voicing from a list
+//    //todo: fix bug that occurs where audio playback happens when there is no active key
+//    /**
+//     * Changes user voicing to next voicing.
+//     */
+//    public void changeUserVoicingTemplate() {
+//        // new hip code
+//
+//        midiDriverModel.setCurVoicingTemplate()
+//
+//        // old dirty code
+//        midiDriverModel.sendMidiChord(Constants.STOP_NOTE, voicingModel.getVoicingCollection().
+//                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), 0, curActiveKeyIx); // todo refactor. send midi chord should accept Voicing, not int[]
+//
+//        userVoicingIx = (userVoicingIx + 1) % voicingModel.STOCK_VOICINGS_NAMES.length;
+//
+//        midiDriverModel.sendMidiChord(Constants.START_NOTE, voicingModel.getVoicingCollection().
+//                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), midiDriverModel.getVolume(), curActiveKeyIx);
+//    }
 
     /**
      * Switches drone state from active and inactive.
      */
-    public void toggleDrone() {
+    public void toggleDroneState() {
         if (droneIsActive) {
             deactivateDrone();
         }
@@ -236,7 +264,7 @@ public class DroneModel {
     private void monitorActiveKey() {
         if (keyFinderModel.getKeyFinder().getActiveKeyHasChanged()) {
             prevActiveKeyIx = curActiveKeyIx;
-            playActiveKeyNote(); //todo fix side effect in this method. this method updates active key but DroneModel should do this itself.
+            playActiveKeyNote();
             droneActivity.printActiveKeyToScreen();
             keyFinderModel.getKeyFinder().setActiveKeyHasChanged(false);
         }
@@ -250,5 +278,31 @@ public class DroneModel {
         curActiveKeyIx = Constants.NULL_KEY_IX;
         pitchProcessorModel.setLastAdded(Constants.NULL_NOTE_IX);
         pitchProcessorModel.setLastHeard(Constants.NULL_NOTE_IX);
+        midiDriverModel.setCurVoicing(null);
+        prevVoicing = null;
+    }
+
+    /**
+     * Get previous voicing.
+     * @return      Voicing; previous voicing.
+     */
+    public Voicing getPrevVoicing() {
+        return prevVoicing;
+    }
+
+    /**
+     * Set previous voicing.
+     * @param       voicing Voicing; previous voicing.
+     */
+    public void setPrevVoicing(Voicing voicing) {
+        this.prevVoicing = voicing;
+    }
+
+    /**
+     * Check if there is an active key.
+     * @return      boolean; true if no active key.
+     */
+    private boolean noActiveKey() {
+        return keyFinderModel.getKeyFinder().getActiveKey() == null;
     }
 }
