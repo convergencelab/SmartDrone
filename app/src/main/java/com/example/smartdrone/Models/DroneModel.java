@@ -154,6 +154,8 @@ public class DroneModel implements Serializable {
         if (midiDriverModel.getMidiDriver() != null) {
             isActive = true;
             midiDriverModel.getMidiDriver().start();
+            startDroneProcess();
+
         }
     }
 
@@ -177,30 +179,40 @@ public class DroneModel implements Serializable {
      * Process notes & monitor active key.
      */
     public void startDroneProcess() {
+        // get pitch of event           // interface
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
-            public void handlePitch(PitchDetectionResult res, AudioEvent e){
-                final float pitchInHz = res.getPitch();
+                        // interface method
+            public void handlePitch(PitchDetectionResult result, AudioEvent event){
+                final float pitchInHz = result.getPitch();
                 droneActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (isActive) {
-                            Log.d("speed", "*speed test*");
+                            Log.d("speed_test", "*speed test*");
                             //todo optimize. No need to run these if drone is inactive
                             processPitch(pitchInHz, droneActivity, keyFinderModel);
                             monitorActiveKey();
+                        } else {
+                            Log.d(Constants.DEBUG_TAG, "here I am");
                         }
                     }
                 });
             }
         };
         AudioProcessor pitchProcessor = new PitchProcessor(
+                // arg 1 == pitch est algorithm
+                // arg 2 == sample rate
+                // arg 3 == buffer size
+                // arg 4 == 
                 PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 22050, 1024, pdh);
         pitchProcessorModel.getDispatcher().addAudioProcessor(pitchProcessor);
 
         Thread audioThread = new Thread(pitchProcessorModel.getDispatcher(), "Audio Thread");
         audioThread.start();
     }
+
+//    public void runThread
 
     /**
      * Get key finder model.

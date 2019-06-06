@@ -43,6 +43,7 @@ public class Constants {
     public static final String MESSAGE_LOG_VOICING    = "voicing_test";
     public static final String MESSAGE_LOG_PREF       = "drone_pref";
     public static final String MESSAGE_LOG_ACTV       = "drone_lifecycle";
+    public static final String DEBUG_TAG              = "drone_debug";
 
     // Midi driver Constants
     public static final int START_NOTE     = 0X90;

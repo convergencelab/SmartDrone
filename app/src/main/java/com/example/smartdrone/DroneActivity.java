@@ -60,8 +60,8 @@ public class DroneActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d(Constants.MESSAGE_LOG_ACTV, "create");
         super.onCreate(savedInstanceState);
+        Log.d(Constants.MESSAGE_LOG_ACTV, "create");
         setContentView(R.layout.activity_drone_main);
 
         nameToResIdName = new HashMap<>();
@@ -83,27 +83,6 @@ public class DroneActivity extends AppCompatActivity
 
         android.support.v7.preference.PreferenceManager
                 .setDefaultValues(this, R.xml.drone_preferences, false);
-    }
-
-    @Override
-    protected void onStop() {
-        Log.d(Constants.MESSAGE_LOG_ACTV, "stop");
-        super.onStop();
-        if (droneModel.isActive()) {
-            droneModel.deactivateDrone();
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        Log.d(Constants.MESSAGE_LOG_ACTV, "pause");
-        super.onPause();
-    }
-
-    @Override
-    protected void onResume() {
-        Log.d(Constants.MESSAGE_LOG_ACTV, "resume");
-        super.onResume();
 
         //todo: magic code that controls and saves user preferences
         SharedPreferences sharedPref =
@@ -121,19 +100,52 @@ public class DroneActivity extends AppCompatActivity
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
 
-        droneModel.startDroneProcess();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.d(Constants.MESSAGE_LOG_ACTV, "stop");
+        if (droneModel.isActive()) {
+            droneModel.deactivateDrone();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.d(Constants.MESSAGE_LOG_ACTV, "pause");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d(Constants.MESSAGE_LOG_ACTV, "resume");
+
+//        droneModel.startDroneProcess();
     }
 
     @Override
     public void onDestroy() {
-        Log.d(Constants.MESSAGE_LOG_ACTV, "destroy");
         super.onDestroy();
+        Log.d(Constants.MESSAGE_LOG_ACTV, "destroy");
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(Constants.MESSAGE_LOG_ACTV, "start");
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        Log.d(Constants.MESSAGE_LOG_ACTV, "restart");
     }
 
     //todo: save state of drone model when screen is rotated.
     @Override
     public void onSaveInstanceState(Bundle outState) {
-//        outState.putSerializable("obj_state", droneModel);
         super.onSaveInstanceState(outState);
     }
 
@@ -160,7 +172,6 @@ public class DroneActivity extends AppCompatActivity
      */
     @Override
     public void onMidiStart() {
-        Log.d(Constants.MESSAGE_LOG_ACTV, "midi start");
         droneModel.getMidiDriverModel().sendMidiSetup();
     }
 
@@ -196,6 +207,7 @@ public class DroneActivity extends AppCompatActivity
         // Deactivate drone if active.
         if (droneModel.isActive()) {
             droneModel.deactivateDrone();
+            controlButton.setImageResource(R.drawable.ic_play_drone);
         }
         Intent droneSettingsIntent = new Intent(this, DroneSettingsActivity.class);
         startActivity(droneSettingsIntent);
