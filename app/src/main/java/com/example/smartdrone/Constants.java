@@ -1,5 +1,7 @@
 package com.example.smartdrone;
 
+import com.example.smartdrone.Models.DroneModel;
+
 public class Constants {
     /**
      * Requested sample rate.
@@ -19,8 +21,12 @@ public class Constants {
     /**
      * Names of all 12 notes using sharps.
      */
-    public static final String[] notes =
-            { "C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B" };
+    public static final String[] NOTES_SHARP = MusicTheory.CHROMATIC_SCALE_SHARP;
+
+    /**
+     * Names of all 12 notes using flats.
+     */
+    public static final String[] NOTES_FLAT  = MusicTheory.CHROMATIC_SCALE_FLAT;
 
     /**
      * Names of all 12 notes using flats.
@@ -36,6 +42,8 @@ public class Constants {
     public static final String MESSAGE_LOG_NOTE_TIMER = "note_timer";
     public static final String MESSAGE_LOG_VOICING    = "voicing_test";
     public static final String MESSAGE_LOG_PREF       = "drone_pref";
+    public static final String MESSAGE_LOG_ACTV       = "drone_lifecycle";
+    public static final String DEBUG_TAG              = "drone_debug";
 
     // Midi driver Constants
     public static final int START_NOTE     = 0X90;
@@ -50,4 +58,15 @@ public class Constants {
     public static final int NOTE_FILTER_LENGTH_DEFAULT = 60;
     public static final int KEY_SENS_DEFAULT           = 3;
     public static final int NOTE_TIMER_LEN             = 2;
+
+    /**
+     * Note index for null.
+     * Used when microphone has not detected a note.
+     */
+    public static final int NULL_NOTE_IX = -1;
+
+    /**
+     * Key index for null.
+     */
+    public static final int NULL_KEY_IX = -1;
 }

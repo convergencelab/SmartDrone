@@ -9,7 +9,6 @@ import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.util.PitchConverter;
 
 
-//todo make current/prev notes/keys reset on active/deactivate toggle
 public class PitchProcessorModel {
     /**
      * Audio dispatcher connected to microphone.
@@ -19,158 +18,120 @@ public class PitchProcessorModel {
     /**
      * Used to stamp time of note heard.
      */
-    private long timeRegistered;
-
-    /**
-     * Index of current active key.
-     */
-    private int curActiveKeyIx;
-
-    /**
-     * Index previous active key.
-     */
-    private int prevActiveKeyIx;
+    private long timeOfChange;
 
     /**
      * Index of current monitored note.
      */
-    private int curNoteIx;
+    private int lastHeard;
 
     /**
      * Index of previous note.
      * Last note added to key finder.
      */
-    private int prevAddedNoteIx;
+    private int lastAdded;
+
+    /**
+     * Flag for change in note detection.
+     */
+    private boolean noteHasChanged;
+
+    /**
+     * Flag if a note timer is ready to be started.
+     */
+    private boolean noteTimerIsQueued;
+
+    /**
+     * Index of the note that is ready to be started.
+     */
+    private int noteToStart;
 
     /**
      * Filter for note length.
      * Number of milliseconds.
      */
-    public int noteFilterLengthRequirement;
+    public int noteFilterLength;
 
     /**
      * Constructor.
       */
-    public PitchProcessorModel() {
+    PitchProcessorModel() {
         dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
                 Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
-        // Set all note/key indices to -1.
-        this.resetAllIxs();
+        lastHeard = -1;
+        lastAdded = -1;
+        noteHasChanged = false;
+        noteTimerIsQueued = false;
     }
 
     /**
-     * //todo: fill in method description
-     * @param pitchInHz
-     * @param keyFinderModel
+     * Process pitch of note.
+     * @param       pitchInHz float; pitch in hertz.
+     * @param       keyFinderModel KeyFinderModel; handles key finder.
+     * @return      int; index of cur heard.
      */
-    public void processPitch(float pitchInHz, KeyFinderModel keyFinderModel) {
-        // Convert pitch to midi key.
-        int curIx = convertPitchToIx((double) pitchInHz); // No note will return -1
-
-        // Note change is detected.
-        if (curIx != prevAddedNoteIx) {
-            // If previously added note is no longer heard.
-            if (prevAddedNoteIx != -1) {
-                // Start timer.
-                keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(
-                        prevAddedNoteIx).startNoteTimer(keyFinderModel.getKeyFinder(),
-                        keyFinderModel.getKeyFinder().getNoteTimerLength());
-                Log.d(Constants.MESSAGE_LOG_NOTE_TIMER, keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(
-                        prevAddedNoteIx).getName() + ": Started");
-            }
-            // No note is heard.
-            if (pitchInHz == -1) {
-                curNoteIx = -1;
-                prevAddedNoteIx = -1;
-            }
-            // Different note is heard.
-            else if (curIx != curNoteIx) {
-                curNoteIx = curIx;
-                timeRegistered = System.currentTimeMillis();
-            }
-            // Current note is heard.
-            else if (noteMeetsConfidence()) { //todo move preferences to proper location
-                keyFinderModel.addNote(curIx);
-                prevAddedNoteIx = curIx;
-                keyFinderModel.getKeyFinder().getAllNotes().getNoteAtIndex(curIx).cancelNoteTimer();
+    int processPitch(float pitchInHz, KeyFinderModel keyFinderModel) {
+        int curHeard = convertPitchToIx((double) pitchInHz);
+        if (noteChangeDetected(curHeard)) {
+            lastHeard = curHeard;
+            noteHasChanged = true;
+            timeOfChange = System.currentTimeMillis();
+            lastAdded = Constants.NULL_NOTE_IX;
+            if (noteTimerIsQueued) {
+                keyFinderModel.startNoteTimer(noteToStart);
+                Log.d("timer", noteToStart + " started");
+                noteTimerIsQueued = false;
             }
         }
+        else if (noteCanBeAdded(curHeard)) {
+            lastAdded = curHeard;
+            keyFinderModel.addNote(curHeard);
+            queueNoteTimer(curHeard);
+            keyFinderModel.cancelNoteTimer(curHeard);
+            Log.d("timer", curHeard + " cancelled");
+        }
+        return curHeard;
     }
 
     /**
-     * Get index of current active key.
-     * @return      int; index of current active key.
+     * Flags timer for note is ready to be started.
+     * @param       noteIx int; index of note.
      */
-    public int getCurActiveKeyIx() {
-        return curActiveKeyIx;
+    private void queueNoteTimer(int noteIx) {
+        noteTimerIsQueued = true;
+        noteToStart = noteIx;
     }
 
     /**
-     * Set index of current active key.
-     * @param       keyIx int; index of current active key.
+     * Set index of last heard note.
+     * @param       noteIx int; index of note.
      */
-    public void setCurActiveKeyIx(int keyIx) {
-        curActiveKeyIx = keyIx;
+    void setLastHeard(int noteIx) {
+        lastHeard = noteIx;
     }
 
     /**
-     * Get index of previous active key.
-     * @return      int; index of previous active key.
+     * Set index of last added note.
+     * @param       noteIx int; index of note.
      */
-    public int getPrevActiveKeyIx() {
-        return prevActiveKeyIx;
-    }
-
-    /**
-     * Set index of previous active key.
-     * @param       keyIx int; index of previous active key.
-     */
-    public void setPrevActiveKeyIx(int keyIx) {
-        prevActiveKeyIx = keyIx;
-    }
-
-    /**
-     * Get index of current monitored note.
-     * @return      int; index of current monitored note.
-     */
-    public int getCurNoteIx() {
-        return curNoteIx;
-    }
-
-    /**
-     * Set index of current monitored note.
-     * @param       noteIx int; index of current monitored note.
-     */
-    public void setCurNoteIx(int noteIx) {
-        curNoteIx = noteIx;
-    }
-
-    /**
-     * Get index of previous added note.
-     * @return      int; index of previous added note.
-     */
-    public int getPrevAddedNoteIx() {
-        return prevAddedNoteIx;
-    }
-
-    /**
-     * Set index of previous added note.
-     * @param       noteIx int; index of previous added note.
-     */
-    public void setPrevAddedNoteIx(int noteIx) {
-        prevAddedNoteIx = noteIx;
+    void setLastAdded(int noteIx) {
+        lastAdded = noteIx;
     }
 
     /**
      * Get audio dispatcher.
      * @return      AudioDispatcher; audio dispatcher.
      */
-    public AudioDispatcher getDispatcher() {
+    AudioDispatcher getDispatcher() {
         return dispatcher;
     }
 
-    public boolean noteMeetsConfidence() {
-        return (System.currentTimeMillis() - timeRegistered) > noteFilterLengthRequirement;
+    /**
+     * Check if the note filter length has been reached.
+     * @return      boolean; true if note has been heard as long as the filter length.
+     */
+    private boolean noteFilterLengthMet() {
+        return (System.currentTimeMillis() - timeOfChange) >= noteFilterLength;
     }
 
     /**
@@ -180,28 +141,47 @@ public class PitchProcessorModel {
      */
     public int convertPitchToIx(double pitchInHz) {
         // No note is heard.
-        if (pitchInHz == -1) {
-            return -1;
+        if (pitchInHz == Constants.NULL_NOTE_IX) {
+            return Constants.NULL_NOTE_IX;
         }
         return PitchConverter.hertzToMidiKey(pitchInHz) % 12;
     }
 
     /**
-     * Check if parameter index is same as
-     * @param curIx
-     * @return
+     * Check if current note index is same as last heard note index.
+     * @param       curIx int; index of current heard note.
+     * @return      boolean; true if same as last heard note index.
      */
-    public boolean newNoteDetected(int curIx) {
-        return curIx != prevAddedNoteIx;
+    private boolean noteChangeDetected(int curIx) {
+        return curIx != lastHeard;
     }
 
     /**
-     * Set all note/key indices to -1.
+     * Check if note change has been detected.
+     * @return      boolean; true if note change detected.
      */
-    public void resetAllIxs() {
-        prevActiveKeyIx = -1;
-        curActiveKeyIx = -1;
-        prevAddedNoteIx = -1;
-        curNoteIx = -1;
+    boolean noteHasChanged() {
+        return noteHasChanged;
+    }
+
+    /**
+     * Set note change detection flag.
+     * @param       bool boolean; true if change detected.
+     */
+    void setNoteHasChanged(boolean bool) {
+        noteHasChanged = bool;
+    }
+
+    /**
+     * Three conditions in order to return true.
+     * 1) Note must be detected; not -1.
+     * 2) Ix was is not the last note added to list.
+     * 3) The note must be heard for the required amount of time.
+     *
+     * @param       ix int; index of note.
+     * @return      boolean; true if conditions met.
+     */
+    private boolean noteCanBeAdded(int ix) {
+        return ix != Constants.NULL_NOTE_IX && ix != lastAdded && noteFilterLengthMet();
     }
 }

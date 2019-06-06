@@ -1,10 +1,12 @@
 package com.example.smartdrone.Models;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.DroneActivity;
+import com.example.smartdrone.Voicing;
+
+import java.io.Serializable;
 
 import be.tarsos.dsp.AudioEvent;
 import be.tarsos.dsp.AudioProcessor;
@@ -13,7 +15,12 @@ import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
 
 
-public class DroneModel {
+public class DroneModel implements Serializable {
+    /**
+     * Previous voicing for drone.
+     */
+    private Voicing prevVoicing;
+
     /**
      * Activity class that the model communicates with.
      */
@@ -40,6 +47,16 @@ public class DroneModel {
     private PitchProcessorModel pitchProcessorModel;
 
     /**
+     * Index of current active key.
+     */
+    private int curActiveKeyIx;
+
+    /**
+     * Index previous active key.
+     */
+    private int prevActiveKeyIx;
+
+    /**
      * Controls the user voicing.
      */
     private int userVoicingIx;
@@ -47,7 +64,7 @@ public class DroneModel {
     /**
      * True if drone has just been started without an active key or is producing output.
      */
-    private boolean droneIsActive;
+    private boolean isActive;
 
     /**
      * Constructor.
@@ -59,16 +76,19 @@ public class DroneModel {
         pitchProcessorModel = new PitchProcessorModel();
         voicingModel = new VoicingModel();
 
-        droneIsActive = false;
+        prevActiveKeyIx = -1;
+        curActiveKeyIx = -1;
+        isActive = false;
         userVoicingIx = 0;
+        prevVoicing = null;
     }
 
     /**
      * Check if drone is active.
      * @return      boolean; true if drone is active.
      */
-    public boolean droneIsActive() {
-        return droneIsActive;
+    public boolean isActive() {
+        return isActive;
     }
 
     /**
@@ -80,8 +100,8 @@ public class DroneModel {
      * @param droneActivity   DroneActivity; activity that displays pitch.
      * @param keyFinderModel  KeyFinderModel; object control note processing.
      */
-    public void processPitch(float pitchInHz, DroneActivity droneActivity, KeyFinderModel keyFinderModel) {
-        pitchProcessorModel.processPitch(pitchInHz, keyFinderModel);
+    private void processPitch(float pitchInHz, DroneActivity droneActivity, KeyFinderModel keyFinderModel) {
+        int noteIx = pitchProcessorModel.processPitch(pitchInHz, keyFinderModel);
 
         // Note removal detected.
         if (keyFinderModel.getKeyFinder().getNoteHasBeenRemoved()) {
@@ -89,57 +109,36 @@ public class DroneModel {
             Log.d(Constants.MESSAGE_LOG_REMOVE, keyFinderModel.getKeyFinder().getRemovedNote().getName());
             Log.d(Constants.MESSAGE_LOG_LIST, keyFinderModel.getKeyFinder().getActiveNotes().toString());
         }
-        // Update text views.
-        droneActivity.setNoteText(pitchInHz);
+        if (pitchProcessorModel.noteHasChanged()) {
+            droneActivity.setPianoImage(noteIx);
+            pitchProcessorModel.setNoteHasChanged(false);
+        }
     }
 
     //todo: move to MidiDriverModel.
     /**
      * Plays the tone(s) of the current active key.
      */
-    public void playActiveKeyNote() {
-//        pitchProcessorModel.prevActiveKeyIx = pitchProcessorModel.curActiveKeyIx;
-        pitchProcessorModel.setPrevActiveKeyIx(pitchProcessorModel.getCurActiveKeyIx());
+    private void playActiveKeyNote() {
         // No active key, or drone is inactive.
-        if (keyFinderModel.getKeyFinder().getActiveKey() == null || !droneIsActive) {
+        if (noActiveKey() || !isActive) {
             return;
         }
-        pitchProcessorModel.setCurActiveKeyIx(keyFinderModel.getKeyFinder().getActiveKey().getIx() + 36); // 36 == C
-        if (pitchProcessorModel.getPrevActiveKeyIx() != pitchProcessorModel.getCurActiveKeyIx()) {
-            droneActivity.printActiveKeyToScreen(); //todo: see what happens if this line is deleted
+        curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx();
+        if (prevActiveKeyIx != curActiveKeyIx) {
             // Stop chord.
-            midiDriverModel.sendMidiChord(Constants.STOP_NOTE,
-                    voicingModel.getVoicingCollection()
-                    .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(),
-                    Constants.VOLUME_OFF, pitchProcessorModel.getPrevActiveKeyIx());
-            // Start chord.
-            midiDriverModel.sendMidiChord(Constants.START_NOTE,
-                    voicingModel.getVoicingCollection()
-                    .getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(),
-                    midiDriverModel.getVolume(), pitchProcessorModel.getCurActiveKeyIx());
+            Voicing v = voicingModel.getVoicingTemplateCollection()
+                    .getVoicingTemplate("7th (Drop II)")
+                    .generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), 0, 4);
+            midiDriverModel.playVoicing(v);
         }
-    }
-
-    //todo: this function should really let the user pick a voicing from a list
-    //todo: fix bug that occurs where audio playback happens when there is no active key
-    /**
-     * Changes user voicing to next voicing.
-     */
-    public void changeUserVoicing() {
-        midiDriverModel.sendMidiChord(Constants.STOP_NOTE, voicingModel.getVoicingCollection().
-                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), 0, pitchProcessorModel.getCurActiveKeyIx()); // todo refactor. send midi chord should accept Voicing, not int[]
-
-        userVoicingIx = (userVoicingIx + 1) % voicingModel.STOCK_VOICINGS_NAMES.length;
-
-        midiDriverModel.sendMidiChord(Constants.START_NOTE, voicingModel.getVoicingCollection().
-                getVoicing(voicingModel.STOCK_VOICINGS_NAMES[userVoicingIx]).getVoiceIxs(), midiDriverModel.getVolume(), pitchProcessorModel.getCurActiveKeyIx());
     }
 
     /**
      * Switches drone state from active and inactive.
      */
-    public void toggleDrone() {
-        if (droneIsActive) {
+    public void toggleDroneState() {
+        if (isActive) {
             deactivateDrone();
         }
         else {
@@ -151,10 +150,12 @@ public class DroneModel {
      * Activates drone.
      * Drone will process pitch and output audio in this state.
      */
-    public void activateDrone() {
+    private void activateDrone() {
         if (midiDriverModel.getMidiDriver() != null) {
-            droneIsActive = true;
+            isActive = true;
             midiDriverModel.getMidiDriver().start();
+            startDroneProcess();
+
         }
     }
 
@@ -163,45 +164,55 @@ public class DroneModel {
      * Drone will wait to be activated in this state.
      */
     public void deactivateDrone() {
-        //todo: fix bug where pitch/note text freezes to whatever it last displayed.
         if (midiDriverModel.getMidiDriver() != null) {
+            isActive = false;
             midiDriverModel.getMidiDriver().stop();
-            droneIsActive = false;
-            pitchProcessorModel.resetAllIxs();
+            cleanseDrone();
             keyFinderModel.getKeyFinder().cleanse();
+            droneActivity.setPianoImage(Constants.NULL_NOTE_IX);
         }
     }
 
+    //todo clean up method, whatever that means
     /**
      * Starts the drone process.
      * Process notes & monitor active key.
      */
     public void startDroneProcess() {
+        // get pitch of event           // interface
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
-            public void handlePitch(PitchDetectionResult res, AudioEvent e){
-                final float pitchInHz = res.getPitch();
+                        // interface method
+            public void handlePitch(PitchDetectionResult result, AudioEvent event){
+                final float pitchInHz = result.getPitch();
                 droneActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (droneIsActive) {
+                        if (isActive) {
+                            Log.d("speed_test", "*speed test*");
                             //todo optimize. No need to run these if drone is inactive
-                            // Log.d("speed", "*speed test*");
                             processPitch(pitchInHz, droneActivity, keyFinderModel);
-                            // Active key can change at any time.
                             monitorActiveKey();
+                        } else {
+                            Log.d(Constants.DEBUG_TAG, "here I am");
                         }
                     }
                 });
             }
         };
         AudioProcessor pitchProcessor = new PitchProcessor(
+                // arg 1 == pitch est algorithm
+                // arg 2 == sample rate
+                // arg 3 == buffer size
+                // arg 4 == 
                 PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 22050, 1024, pdh);
         pitchProcessorModel.getDispatcher().addAudioProcessor(pitchProcessor);
 
         Thread audioThread = new Thread(pitchProcessorModel.getDispatcher(), "Audio Thread");
         audioThread.start();
     }
+
+//    public void runThread
 
     /**
      * Get key finder model.
@@ -233,9 +244,46 @@ public class DroneModel {
      */
     private void monitorActiveKey() {
         if (keyFinderModel.getKeyFinder().getActiveKeyHasChanged()) {
+            prevActiveKeyIx = curActiveKeyIx;
             playActiveKeyNote();
             droneActivity.printActiveKeyToScreen();
             keyFinderModel.getKeyFinder().setActiveKeyHasChanged(false);
         }
+    }
+
+    /**
+     * Set all note/key indices to -1.
+     */
+    private void cleanseDrone() {
+        prevActiveKeyIx = Constants.NULL_KEY_IX;
+        curActiveKeyIx = Constants.NULL_KEY_IX;
+        pitchProcessorModel.setLastAdded(Constants.NULL_NOTE_IX);
+        pitchProcessorModel.setLastHeard(Constants.NULL_NOTE_IX);
+        midiDriverModel.setCurVoicing(null);
+        prevVoicing = null;
+    }
+
+    /**
+     * Get previous voicing.
+     * @return      Voicing; previous voicing.
+     */
+    public Voicing getPrevVoicing() {
+        return prevVoicing;
+    }
+
+    /**
+     * Set previous voicing.
+     * @param       voicing Voicing; previous voicing.
+     */
+    public void setPrevVoicing(Voicing voicing) {
+        this.prevVoicing = voicing;
+    }
+
+    /**
+     * Check if there is an active key.
+     * @return      boolean; true if no active key.
+     */
+    private boolean noActiveKey() {
+        return keyFinderModel.getKeyFinder().getActiveKey() == null;
     }
 }

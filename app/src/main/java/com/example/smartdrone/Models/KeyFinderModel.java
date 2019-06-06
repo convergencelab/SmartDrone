@@ -10,7 +10,7 @@ public class KeyFinderModel {
     /**
      * Handles note/key relationship.
      */
-    public KeyFinder keyFinder; //todo make private
+    private KeyFinder keyFinder;
 
     /**
      * Length of key timer.
@@ -22,7 +22,7 @@ public class KeyFinderModel {
     /**
      * Constructor.
      */
-    public KeyFinderModel() {
+    KeyFinderModel() {
         keyFinder = new KeyFinder();
         keyFinder.setNoteTimerLength(Constants.NOTE_TIMER_LEN);
     }
@@ -39,7 +39,7 @@ public class KeyFinderModel {
      * Add note to Active Note list based on the given ix.
      * @param       noteIx int; index of note.
      */
-    public void addNote(int noteIx) {
+    void addNote(int noteIx) {
         Note curNote = keyFinder.getAllNotes().getNoteAtIndex(noteIx);
         keyFinder.addNoteToList(curNote);
         Log.d(Constants.MESSAGE_LOG_ADD, curNote.getName());
@@ -60,5 +60,25 @@ public class KeyFinderModel {
      */
     public void setKeyTimerLength(int seconds) {
         this.keyTimerLength = seconds;
+    }
+
+    /**
+     * Starts timer for note.
+     * Timer will remove note from active notes.
+     * @param       noteIx int; index of note.
+     */
+    void startNoteTimer(int noteIx) {
+        keyFinder.getAllNotes().getNoteAtIndex(noteIx)
+                .startNoteTimer(keyFinder, Constants.NOTE_TIMER_LEN);
+    }
+
+    /**
+     * Cancels timer for note.
+     * Will stop the scheduled task of removing note from active note list.
+     * @param       noteIx int; index of note.
+     */
+    void cancelNoteTimer(int noteIx) {
+        keyFinder.getAllNotes().getNoteAtIndex(noteIx)
+                .cancelNoteTimer();
     }
 }
