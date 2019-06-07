@@ -188,11 +188,9 @@ public class DroneModel implements Serializable {
                 droneActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Log.d("speed_test", "*speed test*");
                         //todo optimize. No need to run these if drone is inactive
                         processPitch(pitchInHz, droneActivity, keyFinderModel);
                         monitorActiveKey();
-
                     }
                 });
             }
@@ -203,13 +201,14 @@ public class DroneModel implements Serializable {
                 // arg 3 == buffer size
                 // arg 4 == pitch detection handler
                 PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 22050, 1024, pdh);
+        if (pitchProcessorModel.getDispatcher() == null) {
+            pitchProcessorModel.setDispatcher(pitchProcessorModel.constructDispatcher());
+        }
         pitchProcessorModel.getDispatcher().addAudioProcessor(pitchProcessor);
 
         Thread audioThread = new Thread(pitchProcessorModel.getDispatcher(), "Audio Thread");
         audioThread.start();
     }
-
-//    public void runThread
 
     /**
      * Get key finder model.
@@ -287,4 +286,5 @@ public class DroneModel implements Serializable {
     private boolean noActiveKey() {
         return keyFinderModel.getKeyFinder().getActiveKey() == null;
     }
+
 }

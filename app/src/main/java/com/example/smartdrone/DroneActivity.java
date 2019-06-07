@@ -46,7 +46,9 @@ import com.example.smartdrone.Models.DroneModel;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
+import java.sql.Time;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 
 public class DroneActivity extends AppCompatActivity
@@ -208,9 +210,16 @@ public class DroneActivity extends AppCompatActivity
 
         if (droneModel.isActive()) {
             controlButton.setImageResource(R.drawable.ic_stop_drone);
+            activeKeyButton.setTextSize(64);
+            activeKeyButton.setText("...");
+            activeKeyButton.setBackground(getDrawable(R.drawable.active_key_background_active));
         }
         else {
             controlButton.setImageResource(R.drawable.ic_play_drone);
+            activeKeyButton.setTextSize(48);
+            activeKeyButton.setText("Start");
+            activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
+//            activeKeyButton.setBackground(getDrawable(R.drawable.active_key_background_active));
         }
     }
 
@@ -243,5 +252,20 @@ public class DroneActivity extends AppCompatActivity
             int resID = getResources().getIdentifier(pianoImgName, "drawable", getPackageName());
             noteToPianoImgId.put(Constants.NOTES_SHARP[i], resID);
         }
+    }
+
+    /**
+     * Controls click functionality of active key button.
+     * Starts drone if drone stopped.
+     * Sustains chord if drone active.
+     * @param view
+     */
+    public void activeKeyClick(View view) {
+        // Start drone
+        //todo: add some sort of visual feedback that active key button has been clicked
+        if (!droneModel.isActive()) {
+            toggleDroneState(view);
+        }
+        //todo: else -> sustain drone
     }
 }
