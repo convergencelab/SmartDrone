@@ -56,8 +56,7 @@ public class PitchProcessorModel {
      * Constructor.
       */
     PitchProcessorModel() {
-        dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
-                Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
+        dispatcher = constructDispatcher();
         lastHeard = -1;
         lastAdded = -1;
         noteHasChanged = false;
@@ -123,7 +122,22 @@ public class PitchProcessorModel {
      * @return      AudioDispatcher; audio dispatcher.
      */
     AudioDispatcher getDispatcher() {
+        if (dispatcher == null) {
+            dispatcher = constructDispatcher();
+        }
+//        return dispatcher;
+        //todo experimental line of code
         return dispatcher;
+    }
+
+    public void setDispatcher(AudioDispatcher dis) {
+        dispatcher = dis;
+    }
+
+    AudioDispatcher constructDispatcher() {
+        AudioDispatcher curDispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
+                Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
+        return curDispatcher;
     }
 
     /**

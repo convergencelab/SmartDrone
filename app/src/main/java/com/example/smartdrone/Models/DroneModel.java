@@ -258,7 +258,10 @@ public class DroneModel implements Serializable {
         pitchProcessorModel.setLastHeard(Constants.NULL_NOTE_IX);
         midiDriverModel.setCurVoicing(null);
         prevVoicing = null;
-        pitchProcessorModel.getDispatcher().stop();
+        if (pitchProcessorModel.getDispatcher() != null) {
+            pitchProcessorModel.getDispatcher().stop();
+        }
+        pitchProcessorModel.setDispatcher(null);
     }
 
     /**

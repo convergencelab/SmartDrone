@@ -236,6 +236,7 @@ public class DroneActivity extends AppCompatActivity
         for (int i = 0; i < 12; i++) {
             pianoImgName = "piano_";
             pianoImgName += Character.toLowerCase(Constants.NOTES_SHARP[i].charAt(0));
+            // Note name has accidental.
             if (Constants.NOTES_SHARP[i].length() == 2) {
                 pianoImgName += "_sharp";
             }
