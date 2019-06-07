@@ -14,6 +14,8 @@
  */
 
 //todo:
+// REFACTOR CODE SO THAT CODE PASSES NOTE OBJECTS INSTEAD OF INDICES
+// WRITE WRAPPER METHODS TO AVOID DEEP CALLS
 // SAVE DRONE STATE ON DRONE SETTINGS ACTIVITY STARTED
 // MOVE NOTE/PITCH DISPLAY TO ABSTRACT PIANO
 
@@ -50,12 +52,32 @@ import java.util.HashMap;
 public class DroneActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
 
-    private HashMap<String, String> nameToResIdName;
+    /**
+     * Map note name to piano image file name.
+     * Key: Note Name.
+     * Value: Name of piano image file.
+     */
+    private HashMap<String, Integer> noteToPianoImgId;
 
+    /**
+     * Handles all drone logic.
+     */
     private DroneModel droneModel;
 
+    /**
+     * Button for toggling state of drone.
+     */
     ImageButton controlButton;
+
+    /**
+     * Image of piano on drone main screen.
+     */
     ImageView piano;
+
+    /**
+     * Button that displays active key.
+     * Click function will sustain playback of the active drone. //todo make it so this comment isn't a lie
+     */
     Button activeKeyButton;
 
     @Override
@@ -64,7 +86,7 @@ public class DroneActivity extends AppCompatActivity
         Log.d(Constants.MESSAGE_LOG_ACTV, "create");
         setContentView(R.layout.activity_drone_main);
 
-        nameToResIdName = new HashMap<>();
+        noteToPianoImgId = new HashMap<>();
 
         // Handles drone logic.
         droneModel = new DroneModel(this);
@@ -72,13 +94,10 @@ public class DroneActivity extends AppCompatActivity
         droneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
 
         // Builds hashmap for note name to piano image name.
-        createPianoMap();
+        buildPianoMap();
 
-        // Activate/Deactivate Drone toggle button.
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
-
-        // Text Views.
         piano = findViewById(R.id.image_piano);
 
         android.support.v7.preference.PreferenceManager
@@ -121,8 +140,6 @@ public class DroneActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         Log.d(Constants.MESSAGE_LOG_ACTV, "resume");
-
-//        droneModel.startDroneProcess();
     }
 
     @Override
@@ -158,9 +175,7 @@ public class DroneActivity extends AppCompatActivity
             piano.setImageResource(R.drawable.piano_null);
         }
         else {
-            String piano_text = nameToResIdName.get(Constants.NOTES_SHARP[noteIx]);
-            int resID = getResources().getIdentifier(piano_text, "drawable", getPackageName());
-            piano.setImageResource(resID);
+            piano.setImageResource(noteToPianoImgId.get(Constants.NOTES_SHARP[noteIx]));
         }
     }
 
@@ -216,15 +231,16 @@ public class DroneActivity extends AppCompatActivity
     /**
      * Builds hash map for (note name -> piano image file name).
      */
-    public void createPianoMap() {
-        String str;
+    public void buildPianoMap() {
+        String pianoImgName;
         for (int i = 0; i < 12; i++) {
-            str = "piano_";
-            str += Character.toLowerCase(Constants.NOTES_SHARP[i].charAt(0));
+            pianoImgName = "piano_";
+            pianoImgName += Character.toLowerCase(Constants.NOTES_SHARP[i].charAt(0));
             if (Constants.NOTES_SHARP[i].length() == 2) {
-                str += "_sharp";
+                pianoImgName += "_sharp";
             }
-            nameToResIdName.put(Constants.NOTES_SHARP[i], str);
+            int resID = getResources().getIdentifier(pianoImgName, "drawable", getPackageName());
+            noteToPianoImgId.put(Constants.NOTES_SHARP[i], resID);
         }
     }
 }
