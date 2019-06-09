@@ -34,7 +34,9 @@ package com.example.smartdrone;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -59,7 +61,7 @@ public class DroneActivity extends AppCompatActivity
      * Key: Note Name.
      * Value: Name of piano image file.
      */
-    private HashMap<String, Integer> noteToPianoImgId;
+    private HashMap<String, String> noteToResIdName;
 
     /**
      * Handles all drone logic.
@@ -88,7 +90,7 @@ public class DroneActivity extends AppCompatActivity
         Log.d(Constants.MESSAGE_LOG_ACTV, "create");
         setContentView(R.layout.activity_drone_main);
 
-        noteToPianoImgId = new HashMap<>();
+        noteToResIdName = new HashMap<>();
 
         // Handles drone logic.
         droneModel = new DroneModel(this);
@@ -96,7 +98,7 @@ public class DroneActivity extends AppCompatActivity
         droneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
 
         // Builds hashmap for note name to piano image name.
-        buildPianoMap();
+        createPianoMap();
 
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
@@ -177,7 +179,9 @@ public class DroneActivity extends AppCompatActivity
             piano.setImageResource(R.drawable.piano_null);
         }
         else {
-            piano.setImageResource(noteToPianoImgId.get(Constants.NOTES_SHARP[noteIx]));
+            String piano_text = noteToResIdName.get(Constants.NOTES_SHARP[noteIx]);
+            int resID = getResources().getIdentifier(piano_text, "drawable", getPackageName());
+            piano.setImageResource(resID);
         }
     }
 
@@ -205,6 +209,7 @@ public class DroneActivity extends AppCompatActivity
      * Toggle state of drone; active or inactive.
      * Updates drawable on toggle button.
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void toggleDroneState(View view) {
         droneModel.toggleDroneState();
 
@@ -212,14 +217,13 @@ public class DroneActivity extends AppCompatActivity
             controlButton.setImageResource(R.drawable.ic_stop_drone);
             activeKeyButton.setTextSize(64);
             activeKeyButton.setText("...");
-            activeKeyButton.setBackground(getDrawable(R.drawable.active_key_background_active));
+            activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_active)); //todo find better way to do this
         }
         else {
             controlButton.setImageResource(R.drawable.ic_play_drone);
             activeKeyButton.setTextSize(48);
             activeKeyButton.setText("Start");
-            activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
-//            activeKeyButton.setBackground(getDrawable(R.drawable.active_key_background_active));
+            activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive)); //todo find better way to do this
         }
     }
 
@@ -240,17 +244,15 @@ public class DroneActivity extends AppCompatActivity
     /**
      * Builds hash map for (note name -> piano image file name).
      */
-    public void buildPianoMap() {
-        String pianoImgName;
+    public void createPianoMap() {
+        String str;
         for (int i = 0; i < 12; i++) {
-            pianoImgName = "piano_";
-            pianoImgName += Character.toLowerCase(Constants.NOTES_SHARP[i].charAt(0));
-            // Note name has accidental.
+            str = "piano_";
+            str += Character.toLowerCase(Constants.NOTES_SHARP[i].charAt(0));
             if (Constants.NOTES_SHARP[i].length() == 2) {
-                pianoImgName += "_sharp";
+                str += "_sharp";
             }
-            int resID = getResources().getIdentifier(pianoImgName, "drawable", getPackageName());
-            noteToPianoImgId.put(Constants.NOTES_SHARP[i], resID);
+            noteToResIdName.put(Constants.NOTES_SHARP[i], str);
         }
     }
 
@@ -260,6 +262,7 @@ public class DroneActivity extends AppCompatActivity
      * Sustains chord if drone active.
      * @param view
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void activeKeyClick(View view) {
         // Start drone
         //todo: add some sort of visual feedback that active key button has been clicked

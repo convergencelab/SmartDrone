@@ -200,7 +200,7 @@ public class DroneModel implements Serializable {
                 // arg 2 == sample rate
                 // arg 3 == buffer size
                 // arg 4 == pitch detection handler
-                PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 22050, 1024, pdh);
+                PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, pdh);
         if (pitchProcessorModel.getDispatcher() == null) {
             pitchProcessorModel.setDispatcher(pitchProcessorModel.constructDispatcher());
         }
