@@ -142,6 +142,8 @@ public class DroneActivity extends AppCompatActivity
                 .getString(DroneSoundActivity.USER_MODE_KEY, "0");
         String userPluginPref = sharedPref
                 .getString(DroneSoundActivity.USER_PLUGIN_KEY, "52"); // 52 == plugin choir
+        boolean userBassNotePref = sharedPref
+                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, false);
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
@@ -152,6 +154,7 @@ public class DroneActivity extends AppCompatActivity
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
         droneModel.setUserModeIx(userModeIx);
         droneModel.getMidiDriverModel().setPlugin(userPlugin);
+        droneModel.setBassNoteEnabled(userBassNotePref);
     }
 
     @Override

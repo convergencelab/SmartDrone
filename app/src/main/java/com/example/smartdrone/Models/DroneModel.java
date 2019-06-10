@@ -73,6 +73,12 @@ public class DroneModel implements Serializable {
     private boolean isActive;
 
     /**
+     * Boolean for bass note playback.
+     * If true, a bass note will be played with voicing.
+     */
+    private boolean bassNoteEnabled;
+
+    /**
      * Constructor.
      */
     public DroneModel(DroneActivity droneActivity) {
@@ -87,6 +93,7 @@ public class DroneModel implements Serializable {
         isActive = false;
         userVoicingIx = 0;
         prevVoicing = null;
+        bassNoteEnabled = false;
     }
 
     /**
@@ -134,8 +141,8 @@ public class DroneModel implements Serializable {
         if (prevActiveKeyIx != curActiveKeyIx) {
             // Stop chord.
             Voicing v = voicingModel.getVoicingTemplateCollection()
-                    .getVoicingTemplate("7th (Drop II)")
-                    .generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), userModeIx, 4);
+                    .getVoicingTemplate("Triad (Open)")
+                    .generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), userModeIx, 4, bassNoteEnabled);
             midiDriverModel.playVoicing(v);
         }
     }
@@ -307,5 +314,13 @@ public class DroneModel implements Serializable {
      */
     public void setUserModeIx(int userModeIx) {
         this.userModeIx = userModeIx;
+    }
+
+    /**
+     * Sets boolean for bass note playback.
+     * @param       bassNoteEnabled boolean; true if bass note.
+     */
+    public void setBassNoteEnabled(boolean bassNoteEnabled) {
+        this.bassNoteEnabled = bassNoteEnabled;
     }
 }

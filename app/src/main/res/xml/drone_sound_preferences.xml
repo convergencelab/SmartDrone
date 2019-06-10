@@ -15,4 +15,9 @@
         android:key="userPlugin"
         android:summary="Choose the sound of the drone."
         android:title="Drone Plugin" />
+    <SwitchPreference
+        android:defaultValue="false"
+        android:key="bassNoteEnabled"
+        android:title="Play Bass Note"
+        android:summary="Play bass note in drone."/>
 </PreferenceScreen>
