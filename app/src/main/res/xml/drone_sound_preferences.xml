@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <ListPreference
+        android:defaultValue="Ionian (Default)"
+        android:entries="@array/sound_mode_names"
+        android:entryValues="@array/sound_mode_indices"
+        android:key="userModeIx"
+        android:summary="@string/user_mode_summary"
+        android:title="@string/user_mode_title" />
 </PreferenceScreen>

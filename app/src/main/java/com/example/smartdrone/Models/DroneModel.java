@@ -62,6 +62,12 @@ public class DroneModel implements Serializable {
     private int userVoicingIx;
 
     /**
+     * Mode for drone playback.
+     * Refers to mode in musical context (Ionian, Dorian, Phrygian, ... )
+     */
+    private int userModeIx;
+
+    /**
      * True if drone has just been started without an active key or is producing output.
      */
     private boolean isActive;
@@ -129,7 +135,7 @@ public class DroneModel implements Serializable {
             // Stop chord.
             Voicing v = voicingModel.getVoicingTemplateCollection()
                     .getVoicingTemplate("7th (Drop II)")
-                    .generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), 0, 4);
+                    .generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), userModeIx, 4);
             midiDriverModel.playVoicing(v);
         }
     }
@@ -287,4 +293,19 @@ public class DroneModel implements Serializable {
         return keyFinderModel.getKeyFinder().getActiveKey() == null;
     }
 
+    /**
+     * Get user mode index.
+     * @return      int; user mode index.
+     */
+    public int getUserModeIx() {
+        return userModeIx;
+    }
+
+    /**
+     * Set user mode index.
+     * @param       userModeIx int; user mode index.
+     */
+    public void setUserModeIx(int userModeIx) {
+        this.userModeIx = userModeIx;
+    }
 }

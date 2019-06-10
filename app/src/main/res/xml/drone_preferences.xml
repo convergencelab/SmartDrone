@@ -3,7 +3,7 @@
 
     <!-- Note Length Filter Setting -->
     <ListPreference
-        android:defaultValue="false"
+        android:defaultValue="Medium (Default)"
         android:entries="@array/note_length_filter_name_array"
         android:entryValues="@array/note_length_filter_values_array"
         android:key="noteLen"

@@ -102,26 +102,6 @@ public class DroneActivity extends AppCompatActivity
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
         piano = findViewById(R.id.image_piano);
-
-        android.support.v7.preference.PreferenceManager
-                .setDefaultValues(this, R.xml.drone_preferences, false);
-
-        //todo: magic code that controls and saves user preferences
-        SharedPreferences sharedPref =
-                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-
-        //todo: make ints by default so no conversion is necessary
-        String noteLenPref = sharedPref.
-                getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
-        String keySensPref = sharedPref.
-                getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
-
-        // Update fields to match user saved preferences.
-        int noteLengthRequirement = Integer.parseInt(noteLenPref);
-        int keyTimerLength = Integer.parseInt(keySensPref);
-        droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
-        droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
-
     }
 
     @Override
@@ -143,6 +123,31 @@ public class DroneActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         Log.d(Constants.MESSAGE_LOG_ACTV, "resume");
+
+        /* Moved code here in case activity is not destroyed after changing preferences. */
+
+//        android.support.v7.preference.PreferenceManager
+//                .setDefaultValues(this, R.xml.drone_preferences, false);
+
+        //todo: magic code that controls and saves user preferences
+        SharedPreferences sharedPref =
+                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
+
+        //todo: make ints by default so no conversion is necessary
+        String noteLenPref = sharedPref
+                .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
+        String keySensPref = sharedPref
+                .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
+        String userModePref = sharedPref
+                .getString(DroneSoundActivity.USER_MODE_KEY, "0");
+
+        // Update fields to match user saved preferences.
+        int noteLengthRequirement = Integer.parseInt(noteLenPref);
+        int keyTimerLength = Integer.parseInt(keySensPref);
+        int userModeIx = Integer.parseInt(userModePref);
+        droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
+        droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
+        droneModel.setUserModeIx(userModeIx);
     }
 
     @Override
@@ -246,6 +251,7 @@ public class DroneActivity extends AppCompatActivity
             controlButton.setImageResource(R.drawable.ic_play_drone);
         }
         Intent intent = new Intent(this, DroneSoundActivity.class); //todo finish activity
+        startActivity(intent);
     }
 
     /**
