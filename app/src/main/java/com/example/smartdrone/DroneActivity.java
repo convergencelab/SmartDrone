@@ -140,14 +140,18 @@ public class DroneActivity extends AppCompatActivity
                 .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
         String userModePref = sharedPref
                 .getString(DroneSoundActivity.USER_MODE_KEY, "0");
+        String userPluginPref = sharedPref
+                .getString(DroneSoundActivity.USER_PLUGIN_KEY, "52"); // 52 == plugin choir
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
         int keyTimerLength = Integer.parseInt(keySensPref);
         int userModeIx = Integer.parseInt(userModePref);
+        int userPlugin = Integer.parseInt(userPluginPref);
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
         droneModel.setUserModeIx(userModeIx);
+        droneModel.getMidiDriverModel().setPlugin(userPlugin);
     }
 
     @Override

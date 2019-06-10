@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Drone Sound Fragment.
  */
 public class DroneSoundFragment extends PreferenceFragmentCompat {
     @Override
