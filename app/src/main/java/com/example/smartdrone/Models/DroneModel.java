@@ -141,7 +141,7 @@ public class DroneModel implements Serializable {
         if (prevActiveKeyIx != curActiveKeyIx) {
             // Stop chord.
             Voicing v = voicingModel.getVoicingTemplateCollection()
-                    .getVoicingTemplate("Triad (Open)")
+                    .getVoicingTemplate("V Major / I")
                     .generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), userModeIx, 4, bassNoteEnabled);
             midiDriverModel.playVoicing(v);
         }
