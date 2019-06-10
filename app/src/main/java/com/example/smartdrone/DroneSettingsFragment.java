@@ -6,7 +6,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.preference.PreferenceFragmentCompat;
 
 /**
- * A simple {@link Fragment} subclass.
+ * Drone preferences fragment.
  */
 public class DroneSettingsFragment extends PreferenceFragmentCompat {
 
