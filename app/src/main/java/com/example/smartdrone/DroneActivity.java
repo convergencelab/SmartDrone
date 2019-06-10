@@ -91,14 +91,13 @@ public class DroneActivity extends AppCompatActivity
         setContentView(R.layout.activity_drone_main);
 
         noteToResIdName = new HashMap<>();
+        createPianoMap();
 
         // Handles drone logic.
         droneModel = new DroneModel(this);
         // Construct Midi Driver.
         droneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
 
-        // Builds hashmap for note name to piano image name.
-        createPianoMap();
 
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
@@ -239,6 +238,14 @@ public class DroneActivity extends AppCompatActivity
         }
         Intent droneSettingsIntent = new Intent(this, DroneSettingsActivity.class);
         startActivity(droneSettingsIntent);
+    }
+
+    public void openSoundSettings(View view) {
+        if (droneModel.isActive()) {
+            droneModel.deactivateDrone();
+            controlButton.setImageResource(R.drawable.ic_play_drone);
+        }
+        Intent intent = new Intent(this, DroneSoundActivity.class); //todo finish activity
     }
 
     /**
