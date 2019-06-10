@@ -6,6 +6,7 @@ import com.example.smartdrone.Constants;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
+import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.util.PitchConverter;
 
 
@@ -56,8 +57,7 @@ public class PitchProcessorModel {
      * Constructor.
       */
     PitchProcessorModel() {
-        dispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
-                Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
+        dispatcher = null;
         lastHeard = -1;
         lastAdded = -1;
         noteHasChanged = false;
@@ -123,7 +123,19 @@ public class PitchProcessorModel {
      * @return      AudioDispatcher; audio dispatcher.
      */
     AudioDispatcher getDispatcher() {
+//        return dispatcher;
+        //todo experimental line of code
         return dispatcher;
+    }
+
+    public void setDispatcher(AudioDispatcher dis) {
+        dispatcher = dis;
+    }
+
+    public AudioDispatcher constructDispatcher() {
+        AudioDispatcher newDispatcher = AudioDispatcherFactory.fromDefaultMicrophone(
+                Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, Constants.BUFFER_OVERLAP);
+        return newDispatcher;
     }
 
     /**
@@ -184,4 +196,8 @@ public class PitchProcessorModel {
     private boolean noteCanBeAdded(int ix) {
         return ix != Constants.NULL_NOTE_IX && ix != lastAdded && noteFilterLengthMet();
     }
+
+//    private PitchDetectionHandler constructPitchDetectionHandler() {
+//
+//    }
 }

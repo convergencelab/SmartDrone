@@ -188,14 +188,9 @@ public class DroneModel implements Serializable {
                 droneActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        if (isActive) {
-                            Log.d("speed_test", "*speed test*");
-                            //todo optimize. No need to run these if drone is inactive
-                            processPitch(pitchInHz, droneActivity, keyFinderModel);
-                            monitorActiveKey();
-                        } else {
-                            Log.d(Constants.DEBUG_TAG, "here I am");
-                        }
+                        //todo optimize. No need to run these if drone is inactive
+                        processPitch(pitchInHz, droneActivity, keyFinderModel);
+                        monitorActiveKey();
                     }
                 });
             }
@@ -204,15 +199,16 @@ public class DroneModel implements Serializable {
                 // arg 1 == pitch est algorithm
                 // arg 2 == sample rate
                 // arg 3 == buffer size
-                // arg 4 == 
-                PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, 22050, 1024, pdh);
+                // arg 4 == pitch detection handler
+                PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, pdh);
+        if (pitchProcessorModel.getDispatcher() == null) {
+            pitchProcessorModel.setDispatcher(pitchProcessorModel.constructDispatcher());
+        }
         pitchProcessorModel.getDispatcher().addAudioProcessor(pitchProcessor);
 
         Thread audioThread = new Thread(pitchProcessorModel.getDispatcher(), "Audio Thread");
         audioThread.start();
     }
-
-//    public void runThread
 
     /**
      * Get key finder model.
@@ -261,6 +257,10 @@ public class DroneModel implements Serializable {
         pitchProcessorModel.setLastHeard(Constants.NULL_NOTE_IX);
         midiDriverModel.setCurVoicing(null);
         prevVoicing = null;
+        if (pitchProcessorModel.getDispatcher() != null) {
+            pitchProcessorModel.getDispatcher().stop();
+        }
+        pitchProcessorModel.setDispatcher(null);
     }
 
     /**
@@ -286,4 +286,5 @@ public class DroneModel implements Serializable {
     private boolean noActiveKey() {
         return keyFinderModel.getKeyFinder().getActiveKey() == null;
     }
+
 }

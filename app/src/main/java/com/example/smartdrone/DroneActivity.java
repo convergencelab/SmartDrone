@@ -14,6 +14,8 @@
  */
 
 //todo:
+// REFACTOR CODE SO THAT CODE PASSES NOTE OBJECTS INSTEAD OF INDICES
+// WRITE WRAPPER METHODS TO AVOID DEEP CALLS
 // SAVE DRONE STATE ON DRONE SETTINGS ACTIVITY STARTED
 // MOVE NOTE/PITCH DISPLAY TO ABSTRACT PIANO
 
@@ -32,7 +34,9 @@ package com.example.smartdrone;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -44,18 +48,40 @@ import com.example.smartdrone.Models.DroneModel;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
+import java.sql.Time;
 import java.util.HashMap;
+import java.util.concurrent.TimeUnit;
 
 
 public class DroneActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
 
-    private HashMap<String, String> nameToResIdName;
+    /**
+     * Map note name to piano image file name.
+     * Key: Note Name.
+     * Value: Name of piano image file.
+     */
+    private HashMap<String, String> noteToResIdName;
 
+    /**
+     * Handles all drone logic.
+     */
     private DroneModel droneModel;
 
+    /**
+     * Button for toggling state of drone.
+     */
     ImageButton controlButton;
+
+    /**
+     * Image of piano on drone main screen.
+     */
     ImageView piano;
+
+    /**
+     * Button that displays active key.
+     * Click function will sustain playback of the active drone. //todo make it so this comment isn't a lie
+     */
     Button activeKeyButton;
 
     @Override
@@ -64,7 +90,7 @@ public class DroneActivity extends AppCompatActivity
         Log.d(Constants.MESSAGE_LOG_ACTV, "create");
         setContentView(R.layout.activity_drone_main);
 
-        nameToResIdName = new HashMap<>();
+        noteToResIdName = new HashMap<>();
 
         // Handles drone logic.
         droneModel = new DroneModel(this);
@@ -74,11 +100,8 @@ public class DroneActivity extends AppCompatActivity
         // Builds hashmap for note name to piano image name.
         createPianoMap();
 
-        // Activate/Deactivate Drone toggle button.
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
-
-        // Text Views.
         piano = findViewById(R.id.image_piano);
 
         android.support.v7.preference.PreferenceManager
@@ -121,8 +144,6 @@ public class DroneActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         Log.d(Constants.MESSAGE_LOG_ACTV, "resume");
-
-//        droneModel.startDroneProcess();
     }
 
     @Override
@@ -158,7 +179,7 @@ public class DroneActivity extends AppCompatActivity
             piano.setImageResource(R.drawable.piano_null);
         }
         else {
-            String piano_text = nameToResIdName.get(Constants.NOTES_SHARP[noteIx]);
+            String piano_text = noteToResIdName.get(Constants.NOTES_SHARP[noteIx]);
             int resID = getResources().getIdentifier(piano_text, "drawable", getPackageName());
             piano.setImageResource(resID);
         }
@@ -188,14 +209,21 @@ public class DroneActivity extends AppCompatActivity
      * Toggle state of drone; active or inactive.
      * Updates drawable on toggle button.
      */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void toggleDroneState(View view) {
         droneModel.toggleDroneState();
 
         if (droneModel.isActive()) {
             controlButton.setImageResource(R.drawable.ic_stop_drone);
+            activeKeyButton.setTextSize(64);
+            activeKeyButton.setText("...");
+            activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_active)); //todo find better way to do this
         }
         else {
             controlButton.setImageResource(R.drawable.ic_play_drone);
+            activeKeyButton.setTextSize(48);
+            activeKeyButton.setText("Start");
+            activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive)); //todo find better way to do this
         }
     }
 
@@ -224,7 +252,23 @@ public class DroneActivity extends AppCompatActivity
             if (Constants.NOTES_SHARP[i].length() == 2) {
                 str += "_sharp";
             }
-            nameToResIdName.put(Constants.NOTES_SHARP[i], str);
+            noteToResIdName.put(Constants.NOTES_SHARP[i], str);
         }
+    }
+
+    /**
+     * Controls click functionality of active key button.
+     * Starts drone if drone stopped.
+     * Sustains chord if drone active.
+     * @param view
+     */
+    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+    public void activeKeyClick(View view) {
+        // Start drone
+        //todo: add some sort of visual feedback that active key button has been clicked
+        if (!droneModel.isActive()) {
+            toggleDroneState(view);
+        }
+        //todo: else -> sustain drone
     }
 }
