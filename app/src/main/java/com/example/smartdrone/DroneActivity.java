@@ -136,7 +136,7 @@ public class DroneActivity extends AppCompatActivity
                 android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
 
         SharedPreferences.Editor edit =  sharedPref.edit();
-//        edit.remove(DroneSoundActivity.USER_MODE_KEY);
+//        edit.remove(DroneSoundActivity.USER_PLUGIN_KEY);
 //        edit.apply();
 
 
@@ -147,19 +147,19 @@ public class DroneActivity extends AppCompatActivity
                 .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
         int userModeIx = sharedPref
                 .getInt(DroneSoundActivity.USER_MODE_KEY, 0);
-        String userPluginPref = sharedPref
-                .getString(DroneSoundActivity.USER_PLUGIN_KEY, "52"); // 52 == plugin choir
+        int userPluginIx = sharedPref
+                .getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0); // 52 == plugin choir
         boolean userBassNotePref = sharedPref
                 .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
         int keyTimerLength = Integer.parseInt(keySensPref);
-        int userPlugin = Integer.parseInt(userPluginPref);
+//        int userPlugin = Integer.parseInt(userPluginPref);
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
         droneModel.setUserModeIx(userModeIx);
-        droneModel.getMidiDriverModel().setPlugin(userPlugin);
+        droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         droneModel.setBassNoteEnabled(userBassNotePref);
     }
 

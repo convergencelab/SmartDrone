@@ -16,8 +16,10 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
 
     private Switch bassSwitch;
     private TextView curModeText;
+    private TextView userPluginText;
 
     private int userModeIx;
+    private int userPluginIx;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +43,18 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         });
     }
 
+    /**
+     * Attaches variables to views in activity.
+     */
     private void findViews() {
         bassSwitch = findViewById(R.id.root_bass_switch);
-        curModeText = findViewById(R.id.mode_text_mode);
+        curModeText = findViewById(R.id.mode_text_name);
+        userPluginText = findViewById(R.id.user_plugin_name);
     }
 
+    /**
+     * Loads all user saved preferences.
+     */
     private void loadSavedDate() {
         sp = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
         editor = sp.edit();
@@ -53,14 +62,30 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         bassSwitch.setChecked(sp.getBoolean(DroneSoundActivity.BASSNOTE_KEY, true));
         // Load user mode data.
         userModeIx = sp.getInt(DroneSoundActivity.USER_MODE_KEY, 0);
-        String curMode = MusicTheory.MAJOR_MODE_NAMES[sp.getInt(DroneSoundActivity.USER_MODE_KEY, 0)];
+        String curMode = MusicTheory.MAJOR_MODE_NAMES[userModeIx];
         curModeText.setText(curMode);
+        // Load user plugin data
+        userPluginIx = sp.getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0);
+        String userPlugin = Constants.PLUGIN_NAMES[userPluginIx];
+        userPluginText.setText(userPlugin);
     }
 
+    /**
+     * Changes user mode.
+     * Click changes mode to the next mode, in order from Ionian to Locrian.
+     * @param       view View; button on top of text view.
+     */
     public void getNextMode(View view) {
         userModeIx = (userModeIx + 1) % 7;
         curModeText.setText(MusicTheory.MAJOR_MODE_NAMES[userModeIx]);
-        editor.putInt(DroneSoundActivity.USER_MODE_KEY, userModeIx); //todo refactor to put ints instead of strings
+        editor.putInt(DroneSoundActivity.USER_MODE_KEY, userModeIx);
+        editor.apply();
+    }
+
+    public void getNextPlugin(View view) {
+        userPluginIx = (userPluginIx + 1) % Constants.PLUGIN_INDICES.length;
+        userPluginText.setText(Constants.PLUGIN_NAMES[userPluginIx]);
+        editor.putInt(DroneSoundActivity.USER_PLUGIN_KEY, userPluginIx);
         editor.apply();
     }
 }

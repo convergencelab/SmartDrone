@@ -52,7 +52,22 @@ public class Constants {
     public static final int VOLUME_OFF     = 0;
 
     // Plugin Constants
-    public static final int PLUGIN_CHOIR   = 52;
+    private static final int PLUGIN_CHOIR    = 52;
+    private static final int PLUGIN_CHOIR_2 = 53;
+    private static final int BRASS_SECTION  = 61;
+    private static final int STRING_SECTION = 48;
+    public static final int[] PLUGIN_INDICES  = {
+            PLUGIN_CHOIR,
+            PLUGIN_CHOIR_2,
+            BRASS_SECTION,
+            STRING_SECTION,
+    };
+    public static final String[] PLUGIN_NAMES = {
+            "Choir 1",
+            "Choir 2",
+            "Brass",
+            "Strings"
+    };
 
     // Default Constants
     public static final int NOTE_FILTER_LENGTH_DEFAULT = 60;
@@ -69,4 +84,5 @@ public class Constants {
      * Key index for null.
      */
     public static final int NULL_KEY_IX = -1;
+
 }
