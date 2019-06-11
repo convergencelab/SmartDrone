@@ -224,4 +224,12 @@ public class MidiDriverModel {
     public void setIsActive(boolean active) {
         isActive = active;
     }
+
+    /**
+     * Set plugin for midi.
+     * @param       pluginIx int; plugin index.
+     */
+    public void setPlugin(int pluginIx) {
+        plugin = pluginIx;
+    }
 }

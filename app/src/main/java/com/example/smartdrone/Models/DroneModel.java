@@ -62,9 +62,21 @@ public class DroneModel implements Serializable {
     private int userVoicingIx;
 
     /**
+     * Mode for drone playback.
+     * Refers to mode in musical context (Ionian, Dorian, Phrygian, ... )
+     */
+    private int userModeIx;
+
+    /**
      * True if drone has just been started without an active key or is producing output.
      */
     private boolean isActive;
+
+    /**
+     * Boolean for bass note playback.
+     * If true, a bass note will be played with voicing.
+     */
+    private boolean bassNoteEnabled;
 
     /**
      * Constructor.
@@ -81,6 +93,7 @@ public class DroneModel implements Serializable {
         isActive = false;
         userVoicingIx = 0;
         prevVoicing = null;
+        bassNoteEnabled = false;
     }
 
     /**
@@ -128,8 +141,8 @@ public class DroneModel implements Serializable {
         if (prevActiveKeyIx != curActiveKeyIx) {
             // Stop chord.
             Voicing v = voicingModel.getVoicingTemplateCollection()
-                    .getVoicingTemplate("7th (Drop II)")
-                    .generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), 0, 4);
+                    .getVoicingTemplate("V Major / I")
+                    .generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), userModeIx, 4, bassNoteEnabled);
             midiDriverModel.playVoicing(v);
         }
     }
@@ -287,4 +300,27 @@ public class DroneModel implements Serializable {
         return keyFinderModel.getKeyFinder().getActiveKey() == null;
     }
 
+    /**
+     * Get user mode index.
+     * @return      int; user mode index.
+     */
+    public int getUserModeIx() {
+        return userModeIx;
+    }
+
+    /**
+     * Set user mode index.
+     * @param       userModeIx int; user mode index.
+     */
+    public void setUserModeIx(int userModeIx) {
+        this.userModeIx = userModeIx;
+    }
+
+    /**
+     * Sets boolean for bass note playback.
+     * @param       bassNoteEnabled boolean; true if bass note.
+     */
+    public void setBassNoteEnabled(boolean bassNoteEnabled) {
+        this.bassNoteEnabled = bassNoteEnabled;
+    }
 }

@@ -11,17 +11,16 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-
+        <activity android:name=".DroneSoundActivity"></activity>
         <!-- Drone Settings Activity -->
-        <activity android:name=".DroneSettingsActivity"
+        <activity
+            android:name=".DroneSettingsActivity"
             android:label="Settings"
             android:parentActivityName=".DroneActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DroneActivity"/>
-        </activity>
-
-        <!-- Main Activity -->
+                android:value=".DroneActivity" />
+        </activity> <!-- Main Activity -->
         <activity
             android:name=".DroneActivity"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">

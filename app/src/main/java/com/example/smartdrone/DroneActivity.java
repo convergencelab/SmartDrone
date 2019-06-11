@@ -38,6 +38,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -91,38 +93,17 @@ public class DroneActivity extends AppCompatActivity
         setContentView(R.layout.activity_drone_main);
 
         noteToResIdName = new HashMap<>();
+        createPianoMap();
 
         // Handles drone logic.
         droneModel = new DroneModel(this);
         // Construct Midi Driver.
         droneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
 
-        // Builds hashmap for note name to piano image name.
-        createPianoMap();
 
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
         piano = findViewById(R.id.image_piano);
-
-        android.support.v7.preference.PreferenceManager
-                .setDefaultValues(this, R.xml.drone_preferences, false);
-
-        //todo: magic code that controls and saves user preferences
-        SharedPreferences sharedPref =
-                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-
-        //todo: make ints by default so no conversion is necessary
-        String noteLenPref = sharedPref.
-                getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
-        String keySensPref = sharedPref.
-                getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
-
-        // Update fields to match user saved preferences.
-        int noteLengthRequirement = Integer.parseInt(noteLenPref);
-        int keyTimerLength = Integer.parseInt(keySensPref);
-        droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
-        droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
-
     }
 
     @Override
@@ -144,6 +125,38 @@ public class DroneActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         Log.d(Constants.MESSAGE_LOG_ACTV, "resume");
+
+        /* Moved code here in case activity is not destroyed after changing preferences. */
+
+//        android.support.v7.preference.PreferenceManager
+//                .setDefaultValues(this, R.xml.drone_preferences, false);
+
+        //todo: magic code that controls and saves user preferences
+        SharedPreferences sharedPref =
+                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
+
+        //todo: make ints by default so no conversion is necessary
+        String noteLenPref = sharedPref
+                .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
+        String keySensPref = sharedPref
+                .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
+        String userModePref = sharedPref
+                .getString(DroneSoundActivity.USER_MODE_KEY, "0");
+        String userPluginPref = sharedPref
+                .getString(DroneSoundActivity.USER_PLUGIN_KEY, "52"); // 52 == plugin choir
+        boolean userBassNotePref = sharedPref
+                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, false);
+
+        // Update fields to match user saved preferences.
+        int noteLengthRequirement = Integer.parseInt(noteLenPref);
+        int keyTimerLength = Integer.parseInt(keySensPref);
+        int userModeIx = Integer.parseInt(userModePref);
+        int userPlugin = Integer.parseInt(userPluginPref);
+        droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
+        droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
+        droneModel.setUserModeIx(userModeIx);
+        droneModel.getMidiDriverModel().setPlugin(userPlugin);
+        droneModel.setBassNoteEnabled(userBassNotePref);
     }
 
     @Override
@@ -200,9 +213,14 @@ public class DroneActivity extends AppCompatActivity
      * Update the text view that displays the current active key.
      */
     public void printActiveKeyToScreen() {
-        activeKeyButton.setTextSize(64);
-        activeKeyButton.setText(Constants.NOTES_FLAT[droneModel
-                .getKeyFinderModel().getKeyFinder().getActiveKey().getIx()]);
+        activeKeyButton.setTextSize(22);
+        String activeKey = "";
+        //todo refactor line below
+        activeKey += MusicTheory.CHROMATIC_SCALE_FLAT[droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getNotes()[droneModel.getUserModeIx()].getIx()];
+        String fullName = activeKey + "\n" + MusicTheory.MAJOR_MODE_NAMES[droneModel.getUserModeIx()];
+        SpannableString ss = new SpannableString(fullName);
+        ss.setSpan(new RelativeSizeSpan(3f), 0, activeKey.length(), 0);
+        activeKeyButton.setText(ss);
     }
 
     /**
@@ -239,6 +257,15 @@ public class DroneActivity extends AppCompatActivity
         }
         Intent droneSettingsIntent = new Intent(this, DroneSettingsActivity.class);
         startActivity(droneSettingsIntent);
+    }
+
+    public void openSoundSettings(View view) {
+        if (droneModel.isActive()) {
+            droneModel.deactivateDrone();
+            controlButton.setImageResource(R.drawable.ic_play_drone);
+        }
+        Intent intent = new Intent(this, DroneSoundActivity.class); //todo finish activity
+        startActivity(intent);
     }
 
     /**

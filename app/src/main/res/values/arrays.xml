@@ -1,61 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- foreground color names array -->
-    <string-array name="foreground_color_names_array">
-        <item>Aqua</item>
-        <!--item>#00FFFF</item-->
-
-        <item>Azure</item>
-        <!--item>#F0FFFF</item-->
-
-        <item>Beige</item>
-        <!--item>#F5F5DC</item-->
-
-        <item>Cornsilk</item>
-        <!--item>#FFF8DC</item-->
-
-        <item>Ivory</item>
-        <!--item>#FFFFF0</item-->
-    </string-array>
-
     <!-- Note Length Filter Names-->
     <string-array name="note_length_filter_name_array">
         <item>Short</item>
-
         <item>Medium (Default)</item>
-
         <item>Long</item>
-
         <item>Very Long</item>
     </string-array>
-
     <!-- TODO convert to integers-->
     <!-- Note Length Filter Values-->
     <string-array name="note_length_filter_values_array">
         <item>30</item>
-
         <item>60</item>
-
         <item>100</item>
-
         <item>150</item>
     </string-array>
 
     <!-- Active Key Sensitivity Names-->
     <string-array name="active_key_sensitivity_names">
         <item>High</item>
-
         <item>Medium (Default)</item>
-
         <item>Low</item>
     </string-array>
-
+    <!-- TODO convert to integers -->
     <!-- Active Key Sensitivity Values-->
     <string-array name="active_key_sensitivity_values">
         <item>2</item>
-
         <item>3</item>
-
         <item>4</item>
     </string-array>
+
+    <!-- Mode Names -->
+    <string-array name="sound_mode_names">
+        <item>Ionian (Major)</item>
+        <item>Dorian</item>
+        <item>Phrygian</item>
+        <item>Lydian</item>
+        <item>Mixolydian</item>
+        <item>Aeolian</item>
+        <item>Locrian</item>
+    </string-array>
+    <!-- Mode Indices -->
+    <string-array name="sound_mode_indices">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+        <item>6</item>
+    </string-array>
+
+    <!-- Plugin Names -->
+    <string-array name="sound_plugin_names">
+        <item>Choir Aahs</item>
+        <item>Voice Oohs</item>
+        <item>Brass Section</item>
+        <item>Pad Warm</item>
+        <item>Strings</item>
+    </string-array>
+    <!-- Plugin Indices -->
+    <string-array name="sound_plugin_indices">
+        <item>52</item>
+        <item>53</item>
+        <item>61</item>
+        <item>89</item>
+        <item>48</item>
+    </string-array>
+
 </resources>

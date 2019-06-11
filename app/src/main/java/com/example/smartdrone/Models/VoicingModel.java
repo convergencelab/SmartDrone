@@ -15,11 +15,12 @@ class VoicingModel {
 //    private int[] LYDIAN      = { 5, 12, 19, 26, 33, 40 };
 //    private int[] MIXOLYDIAN  = { 7, 17, 21, 24, 28, 33 };
 //    private int[] PHRYGIAN    = { 4, 17, 21, 23, 28     };
-    private int[] DRONE           = { 1            };
-    private int[] TRIAD_CLOSED    = { 1, 3,  5     };
-    private int[] TRIAD_OPEN      = { 1, 5, 10     };
-    private int[] SEVENTH_CLOSED  = { 1, 3,  5, 7  };
-    private int[] SEVENTH_DROP_II = { 1, 5,  7, 10 };
+    private int[] DRONE           = { 1             };
+    private int[] TRIAD_CLOSED    = { 1,  3,  5     };
+    private int[] TRIAD_OPEN      = { 1,  5, 10     };
+    private int[] SEVENTH_CLOSED  = { 1,  3,  5, 7  };
+    private int[] SEVENTH_DROP_II = { 1,  5,  7, 10 };
+    private int[] V_MAJOR_OVER_I  = { 5,  7,  9     };
 
     //todo create database for all current names.
     /**
@@ -38,6 +39,7 @@ class VoicingModel {
             "Triad (Open)",
             "7th (Closed)",
             "7th (Drop II)",
+            "V Major / I"
     };
 
     /**
@@ -55,7 +57,8 @@ class VoicingModel {
             TRIAD_CLOSED,
             TRIAD_OPEN,
             SEVENTH_CLOSED,
-            SEVENTH_DROP_II
+            SEVENTH_DROP_II,
+            V_MAJOR_OVER_I,
     };
 
     /**

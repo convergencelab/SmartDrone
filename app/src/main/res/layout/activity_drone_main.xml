@@ -61,7 +61,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
-            android:onClick="changeVoicing"
+            android:onClick="openSoundSettings"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/drone_control_button"
             app:srcCompat="@drawable/ic_drone_sound" />
@@ -95,6 +95,7 @@
             app:srcCompat="@drawable/ic_settings" />
 
     </LinearLayout>
+
 
 
 </android.support.constraint.ConstraintLayout>
