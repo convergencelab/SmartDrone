@@ -145,7 +145,7 @@ public class DroneActivity extends AppCompatActivity
         String userPluginPref = sharedPref
                 .getString(DroneSoundActivity.USER_PLUGIN_KEY, "52"); // 52 == plugin choir
         boolean userBassNotePref = sharedPref
-                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, false);
+                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
