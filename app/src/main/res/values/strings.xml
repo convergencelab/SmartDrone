@@ -26,4 +26,5 @@
     <string name="active_key_button">Start</string>
     <string name="user_mode_summary">Mode for drone.</string>
     <string name="user_mode_title">Mode</string>
+    <string name="root_bass_switch_text">Play Root In Bass</string>
 </resources>

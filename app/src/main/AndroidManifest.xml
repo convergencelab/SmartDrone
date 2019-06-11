@@ -11,8 +11,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".DroneSoundActivity"></activity>
-        <!-- Drone Settings Activity -->
+        <activity android:name=".DroneSoundActivityExperiment"></activity>
+        <activity android:name=".DroneSoundActivity" /> <!-- Drone Settings Activity -->
         <activity
             android:name=".DroneSettingsActivity"
             android:label="Settings"

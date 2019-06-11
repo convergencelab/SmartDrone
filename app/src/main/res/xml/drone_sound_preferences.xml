@@ -21,7 +21,7 @@
     <SwitchPreference
         android:defaultValue="false"
         android:key="bassNoteEnabled"
-        android:title="Play Bass Note"
+        android:title="@string/root_bass_switch_text"
         android:summary="Play bass note in drone."
         app:iconSpaceReserved="false" />
 

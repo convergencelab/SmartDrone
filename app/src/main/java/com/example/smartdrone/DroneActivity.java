@@ -264,7 +264,7 @@ public class DroneActivity extends AppCompatActivity
             droneModel.deactivateDrone();
             controlButton.setImageResource(R.drawable.ic_play_drone);
         }
-        Intent intent = new Intent(this, DroneSoundActivity.class); //todo finish activity
+        Intent intent = new Intent(this, DroneSoundActivityExperiment.class); //todo finish activity
         startActivity(intent);
     }
 
