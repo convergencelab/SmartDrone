@@ -24,4 +24,5 @@
         android:title="Play Bass Note"
         android:summary="Play bass note in drone."
         app:iconSpaceReserved="false" />
+
 </PreferenceScreen>
