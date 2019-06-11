@@ -6,4 +6,5 @@
 
     <color name="active">#169200</color>
     <color name="inactive">#665858</color>
+    <color name="textline_color">#B9B9B9</color>
 </resources>
