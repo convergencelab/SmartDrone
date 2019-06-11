@@ -20,7 +20,7 @@ class VoicingModel {
     private int[] TRIAD_OPEN      = { 1,  5, 10     };
     private int[] SEVENTH_CLOSED  = { 1,  3,  5, 7  };
     private int[] SEVENTH_DROP_II = { 1,  5,  7, 10 };
-    private int[] V_MAJOR_OVER_I  = { 7, 11, 14     };
+    private int[] V_MAJOR_OVER_I  = { 5,  7,  9     };
 
     //todo create database for all current names.
     /**

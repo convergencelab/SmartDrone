@@ -38,6 +38,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableString;
+import android.text.style.RelativeSizeSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -211,9 +213,14 @@ public class DroneActivity extends AppCompatActivity
      * Update the text view that displays the current active key.
      */
     public void printActiveKeyToScreen() {
-        activeKeyButton.setTextSize(64);
-        activeKeyButton.setText(Constants.NOTES_FLAT[droneModel
-                .getKeyFinderModel().getKeyFinder().getActiveKey().getIx()]);
+        activeKeyButton.setTextSize(22);
+        String activeKey = "";
+        //todo refactor line below
+        activeKey += MusicTheory.CHROMATIC_SCALE_FLAT[droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getNotes()[droneModel.getUserModeIx()].getIx()];
+        String fullName = activeKey + "\n" + MusicTheory.MAJOR_MODE_NAMES[droneModel.getUserModeIx()];
+        SpannableString ss = new SpannableString(fullName);
+        ss.setSpan(new RelativeSizeSpan(3f), 0, activeKey.length(), 0);
+        activeKeyButton.setText(ss);
     }
 
     /**
