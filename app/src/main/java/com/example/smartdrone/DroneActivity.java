@@ -51,6 +51,7 @@ import com.example.smartdrone.Models.DroneModel;
 import org.billthefarmer.mididriver.MidiDriver;
 
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
@@ -142,9 +143,6 @@ public class DroneActivity extends AppCompatActivity
 
         /* Moved code here in case activity is not destroyed after changing preferences. */
 
-//        android.support.v7.preference.PreferenceManager
-//                .setDefaultValues(this, R.xml.drone_preferences, false);
-
         //todo: magic code that controls and saves user preferences
         SharedPreferences sharedPref =
                 android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
@@ -165,6 +163,9 @@ public class DroneActivity extends AppCompatActivity
                 .getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0); // 52 == plugin choir
         boolean userBassNotePref = sharedPref
                 .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
+        ArrayList<String> templatesFlattened = droneModel.getVoicingModel().getDefaultVoicings();
+        VoicingTemplate defTemplate = VoicingHelper.restoreVoicingTemplate(templatesFlattened.get(2));
+
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
@@ -175,6 +176,7 @@ public class DroneActivity extends AppCompatActivity
         droneModel.setUserModeIx(userModeIx);
         droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         droneModel.sethasBassNote(userBassNotePref);
+        droneModel.setCurTemplate(defTemplate); //todo this is template code
     }
 
     @Override

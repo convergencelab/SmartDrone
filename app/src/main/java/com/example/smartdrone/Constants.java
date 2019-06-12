@@ -1,6 +1,6 @@
 package com.example.smartdrone;
 
-import com.example.smartdrone.Models.DroneModel;
+import java.util.ArrayList;
 
 public class Constants {
     /**
@@ -84,5 +84,15 @@ public class Constants {
      * Key index for null.
      */
     public static final int NULL_KEY_IX = -1;
+
+    /**
+     * Flattened strings of default voicing templates.
+     */
+    public static final String[] DEFAULT_TEMPLATES = {
+            "Drone,0",
+            "Triad (Closed),0,2,4",
+            "Triad (Open),0,4,9",
+            "Drop II,0,4,6,9"
+    };
 
 }

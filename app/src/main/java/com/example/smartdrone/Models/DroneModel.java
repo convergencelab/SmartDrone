@@ -346,4 +346,8 @@ public class DroneModel implements Serializable {
     public void setCurTemplate(VoicingTemplate curTemplate) {
         this.curTemplate = curTemplate;
     }
+
+    public VoicingModel getVoicingModel() {
+        return voicingModel;
+    }
 }

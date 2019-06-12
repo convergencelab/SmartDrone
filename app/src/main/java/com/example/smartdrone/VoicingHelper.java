@@ -1,5 +1,7 @@
 package com.example.smartdrone;
 
+import java.util.ArrayList;
+
 public class VoicingHelper {
 
     //todo do not allow users to put commas in their voicing name, it could mess everything up
@@ -18,6 +20,11 @@ public class VoicingHelper {
         return templateStr;
     }
 
+    /**
+     * Constructs a voicing template from a flattened template string.
+     * @param       flattenedTemplate String; flattened template.
+     * @return      VoicingTemplate; voicing template.
+     */
     public static VoicingTemplate restoreVoicingTemplate(String flattenedTemplate) {
         String[] str = flattenedTemplate.split(",");
         String name = str[0];
