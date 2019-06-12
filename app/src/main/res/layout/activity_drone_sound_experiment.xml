@@ -144,6 +144,7 @@
             android:layout_below="@id/user_voicing_label">
 
             <LinearLayout
+                android:id="@+id/user_voicing_linear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">

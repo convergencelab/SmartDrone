@@ -61,8 +61,8 @@ import java.util.concurrent.TimeUnit;
 public class DroneActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
 
-    private static final String CUR_TEMP_KEY = "curTemplate";
-    private static final String ALL_TEMP_KEY = "allTemplates";
+    public static final String CUR_TEMP_KEY = "curTemplate";
+    public static final String ALL_TEMP_KEY = "allTemplates";
 
     /**
      * Map note name to piano image file name.

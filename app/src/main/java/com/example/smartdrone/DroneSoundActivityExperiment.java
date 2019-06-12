@@ -6,8 +6,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class DroneSoundActivityExperiment extends AppCompatActivity {
 
@@ -17,6 +20,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
     private Switch bassSwitch;
     private TextView curModeText;
     private TextView userPluginText;
+    private LinearLayout voicingLinear;
 
     private int userModeIx;
     private int userPluginIx;
@@ -26,7 +30,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drone_sound_experiment);
         findViews();
-        loadSavedDate();
+        loadSavedData();
 
         bassSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -50,12 +54,13 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         bassSwitch = findViewById(R.id.root_bass_switch);
         curModeText = findViewById(R.id.mode_text_name);
         userPluginText = findViewById(R.id.user_plugin_name);
+        voicingLinear = findViewById(R.id.user_voicing_linear);
     }
 
     /**
      * Loads all user saved preferences.
      */
-    private void loadSavedDate() {
+    private void loadSavedData() {
         sp = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
         editor = sp.edit();
         // Load bass root switch data.
@@ -68,6 +73,21 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         userPluginIx = sp.getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0);
         String userPlugin = Constants.PLUGIN_NAMES[userPluginIx];
         userPluginText.setText(userPlugin);
+
+        loadVoicingData();
+    }
+
+    private void loadVoicingData() {
+        String tempsStr = sp.getString(DroneActivity.ALL_TEMP_KEY, null);
+        if (tempsStr == null) {
+            tempsStr = Constants.DEFAULT_TEMPLATES;
+        }
+        ArrayList<String> tempsList = VoicingHelper.inflateTemplateList(tempsStr);
+        for (String temp : tempsList) {
+            TextView tv = new TextView(this);
+            tv.setText(temp);
+            voicingLinear.addView(tv);
+        }
     }
 
     /**
