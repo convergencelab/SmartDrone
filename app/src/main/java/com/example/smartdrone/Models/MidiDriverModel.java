@@ -103,7 +103,6 @@ public class MidiDriverModel {
         midiDriver.write(msg);
     }
 
-    //todo new method; delete old one
     /**
      * Sends multiple messages to be synthesized by midi driver.
      * Each note is given specifically.
