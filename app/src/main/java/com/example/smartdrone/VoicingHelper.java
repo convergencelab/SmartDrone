@@ -78,4 +78,20 @@ public class VoicingHelper {
         }
         return flattenedTemplates;
     }
+
+    /**
+     * Get the name of a flattened template.
+     * @param       flattenedTemplate String; flattened template.
+     * @return      String; name of template.
+     */
+    public static String getTemplateName(String flattenedTemplate) {
+        String name = "";
+        int i = 1;
+        name += flattenedTemplate.charAt(0);
+        while (flattenedTemplate.charAt(i) != ',') {
+            name += flattenedTemplate.charAt(i);
+            i++;
+        }
+        return name;
+    }
 }

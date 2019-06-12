@@ -3,6 +3,7 @@ package com.example.smartdrone;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -14,6 +15,8 @@ import java.util.ArrayList;
 
 public class DroneSoundActivityExperiment extends AppCompatActivity {
 
+    private static final String CUR_TEMP_TAG_KEY = "cur_temp_tag";
+
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
 
@@ -21,6 +24,8 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
     private TextView curModeText;
     private TextView userPluginText;
     private LinearLayout voicingLinear;
+
+    int curTempTag;
 
     private int userModeIx;
     private int userPluginIx;
@@ -103,13 +108,45 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         if (tempsStr == null) {
             tempsStr = Constants.DEFAULT_TEMPLATES;
         }
-        ArrayList<String> tempsList = VoicingHelper.inflateTemplateList(tempsStr);
+        curTempTag = prefs.getInt(CUR_TEMP_TAG_KEY, 0);
+        final ArrayList<String> tempsList = VoicingHelper.inflateTemplateList(tempsStr);
         // Inflate scroll view
+        int i = 0;
         for (String temp : tempsList) {
-            TextView tv = new TextView(this);
-            tv.setText(temp);
-            tv.setTextSize(64);
+            final TextView tv = new TextView(getApplicationContext());
+            // Set attributes of text view.
+            if (i == curTempTag) {
+                tv.setTextColor(getResources().getColor(R.color.green_test));
+            }
+            else {
+                tv.setTextColor(getResources().getColor(R.color.blackish_test));
+            }
+            tv.setText(VoicingHelper.getTemplateName(temp));
+            tv.setTextSize(18); //todo refactor: hard coded string
+            tv.setPadding(0, 40, 0, 40);
+            //todo mkae drawable transparent
+            //todo make ripple effect on click
+            tv.setBackgroundResource(R.drawable.textline_bottom);
+            tv.setTag((int)i);
+            tv.setClickable(true);
+            tv.setOnClickListener(new View.OnClickListener() {
+                //todo works correctly, but needs to be refactored
+                @Override
+                public void onClick(View v) {
+                    View prevTemp = (View) v.getParent();
+                    TextView prevCur = prevTemp.findViewWithTag(curTempTag);
+                    prevCur.setTextColor(getResources().getColor(R.color.blackish_test));
+                    tv.setTextColor(getResources().getColor(R.color.green_test));
+                    int tag = (int) v.getTag();
+                    String curTemplate = tempsList.get(tag);
+                    curTempTag = tag;
+                    editor.putString(DroneActivity.CUR_TEMP_KEY, curTemplate);
+                    editor.putInt(CUR_TEMP_TAG_KEY, tag);
+                    editor.apply();
+                }
+            });
             voicingLinear.addView(tv);
+            i++;
         }
     }
 
