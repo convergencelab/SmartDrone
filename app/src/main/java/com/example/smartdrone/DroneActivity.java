@@ -135,27 +135,31 @@ public class DroneActivity extends AppCompatActivity
         SharedPreferences sharedPref =
                 android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
 
+        SharedPreferences.Editor edit =  sharedPref.edit();
+//        edit.remove(DroneSoundActivity.USER_PLUGIN_KEY);
+//        edit.apply();
+
+
         //todo: make ints by default so no conversion is necessary
         String noteLenPref = sharedPref
                 .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
         String keySensPref = sharedPref
                 .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
-        String userModePref = sharedPref
-                .getString(DroneSoundActivity.USER_MODE_KEY, "0");
-        String userPluginPref = sharedPref
-                .getString(DroneSoundActivity.USER_PLUGIN_KEY, "52"); // 52 == plugin choir
+        int userModeIx = sharedPref
+                .getInt(DroneSoundActivity.USER_MODE_KEY, 0);
+        int userPluginIx = sharedPref
+                .getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0); // 52 == plugin choir
         boolean userBassNotePref = sharedPref
-                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, false);
+                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
         int keyTimerLength = Integer.parseInt(keySensPref);
-        int userModeIx = Integer.parseInt(userModePref);
-        int userPlugin = Integer.parseInt(userPluginPref);
+//        int userPlugin = Integer.parseInt(userPluginPref);
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
         droneModel.setUserModeIx(userModeIx);
-        droneModel.getMidiDriverModel().setPlugin(userPlugin);
+        droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         droneModel.setBassNoteEnabled(userBassNotePref);
     }
 
@@ -264,7 +268,7 @@ public class DroneActivity extends AppCompatActivity
             droneModel.deactivateDrone();
             controlButton.setImageResource(R.drawable.ic_play_drone);
         }
-        Intent intent = new Intent(this, DroneSoundActivity.class); //todo finish activity
+        Intent intent = new Intent(this, DroneSoundActivityExperiment.class); //todo finish activity
         startActivity(intent);
     }
 

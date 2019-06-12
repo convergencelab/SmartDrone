@@ -46,9 +46,9 @@ public class MidiDriverModel {
     MidiDriverModel() {
         midiDriver = new MidiDriver();
         volume = DEFAULT_VOLUME;
-        plugin = Constants.PLUGIN_CHOIR;
         curVoicing = null;
         isActive = false;
+//        plugin = 65;       //todo test to see if works without this line on a fresh device
     }
 
     /**
@@ -103,26 +103,6 @@ public class MidiDriverModel {
         midiDriver.write(msg);
     }
 
-//    //todo this is old method; create new one
-//    //todo clean up. refactor, make an improved ui for using this method.
-//    /**
-//     * Sends multiple messages to be synthesized by midi driver.
-//     * Each note is given specifically.
-//     * @param       event int; type of event.
-//     * @param       midiKeys int[]; indexes of notes (uses octaves).
-//     * @param       volume int; volume of notes.
-//     */
-//    public void sendMidiChord(int event, int[] midiKeys, int volume, int rootIx) {
-//        int octaveAdjustment = 0;
-//        if (midiKeys[0] + rootIx > 47) {
-//            octaveAdjustment = -12;
-//        }
-//        for (int key : midiKeys) {
-//            sendMidiNote(event, key + rootIx + octaveAdjustment, volume);
-//        }
-//    }
-
-    //todo new method; delete old one
     /**
      * Sends multiple messages to be synthesized by midi driver.
      * Each note is given specifically.
@@ -148,20 +128,6 @@ public class MidiDriverModel {
         isActive = true;
     }
 
-//    //todo old methods; create new ones.
-//    /**
-//     * Stop voicing.
-//     * @param voiceIxs
-//     * @param keyIx
-//     */
-//    public void stopVoicing(int[] voiceIxs, int keyIx) {
-//        sendMidiChord(Constants.STOP_NOTE, voiceIxs, Constants.VOLUME_OFF, keyIx);
-//    }
-//
-//    private void startVoicing(int[] voiceIxs, int keyIx) {
-//        sendMidiChord(Constants.START_NOTE, voiceIxs, volume, keyIx);
-//    }
-
     /**
      * Stops voicing that
      * @param       toStop Voicing; voicing to stop playing.
@@ -182,14 +148,6 @@ public class MidiDriverModel {
         curVoicing = toStart;
     }
 
-//    /**
-//     * Get current voicing.
-//     * @return      Voicing; current voicing.
-//     */
-//    public Voicing getCurVoicingTransposed() {
-//        return curVoicingTransposed;
-//    }
-
     /**
      * Set current voicing.
      * @param       voicing Voicing; current voicing.
@@ -198,24 +156,6 @@ public class MidiDriverModel {
         curVoicing = voicing;
     }
 
-//    /**
-//     * Get current voicing template.
-//     * @return      Voicing; voicing template.
-//     */
-//    public Voicing getCurVoicingTemplate() {
-//        return curVoicingTemplate;
-//    }
-
-//    /**
-//     * Set the current voicing template.
-//     * @param       voicingTemplate Voicing; voicing template.
-//     */
-//    public void setCurVoicingTemplate(Voicing voicingTemplate) {
-//        curVoicingTemplate = voicingTemplate;
-//        if (isActive) {
-//            //todo: some code that will properly transpose the current voicing being output
-//        }
-//    }
 
     public boolean isActive() {
         return isActive;
