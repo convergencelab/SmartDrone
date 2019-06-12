@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.DroneActivity;
 import com.example.smartdrone.Voicing;
+import com.example.smartdrone.VoicingTemplate;
 
 import java.io.Serializable;
 
@@ -25,6 +26,11 @@ public class DroneModel implements Serializable {
      * Activity class that the model communicates with.
      */
     private DroneActivity droneActivity;
+
+    /**
+     * Current active voicing template.
+     */
+    private VoicingTemplate curTemplate;
 
     /**
      * Handles Voicing objects.
@@ -76,7 +82,7 @@ public class DroneModel implements Serializable {
      * Boolean for bass note playback.
      * If true, a bass note will be played with voicing.
      */
-    private boolean bassNoteEnabled;
+    private boolean hasBassNote;
 
     /**
      * Constructor.
@@ -87,13 +93,15 @@ public class DroneModel implements Serializable {
         midiDriverModel = new MidiDriverModel();
         pitchProcessorModel = new PitchProcessorModel();
         voicingModel = new VoicingModel();
+        curTemplate = voicingModel.getVoicingTemplateCollection()
+                .getVoicingTemplate("V Major / I"); //todo hardcoded for now because testing, but make dynamic later
 
         prevActiveKeyIx = -1;
         curActiveKeyIx = -1;
         isActive = false;
         userVoicingIx = 0;
         prevVoicing = null;
-        bassNoteEnabled = false;
+        hasBassNote = false;
     }
 
     /**
@@ -140,15 +148,14 @@ public class DroneModel implements Serializable {
         curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx();
         if (prevActiveKeyIx != curActiveKeyIx) {
             // Stop chord.
-            Voicing v = voicingModel.getVoicingTemplateCollection()
-                    .getVoicingTemplate("V Major / I")
-                    .generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), userModeIx, 4, bassNoteEnabled);
+            Voicing v = curTemplate.generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), 
+                    userModeIx, 4, hasBassNote);
             midiDriverModel.playVoicing(v);
         }
     }
 
     /**
-     * Switches drone state from active and inactive.
+     * Toggles drone state between active and inactive.
      */
     public void toggleDroneState() {
         if (isActive) {
@@ -318,9 +325,25 @@ public class DroneModel implements Serializable {
 
     /**
      * Sets boolean for bass note playback.
-     * @param       bassNoteEnabled boolean; true if bass note.
+     * @param       hasBassNote boolean; true if bass note.
      */
-    public void setBassNoteEnabled(boolean bassNoteEnabled) {
-        this.bassNoteEnabled = bassNoteEnabled;
+    public void sethasBassNote(boolean hasBassNote) {
+        this.hasBassNote = hasBassNote;
+    }
+
+    /**
+     * Get voicing template.
+     * @return      VoicingTemplate; voicing template.
+     */
+    public VoicingTemplate getCurTemplate() {
+        return curTemplate;
+    }
+
+    /**
+     * Set voicing template.
+     * @param       curTemplate VoicingTemplate; voicing template.
+     */
+    public void setCurTemplate(VoicingTemplate curTemplate) {
+        this.curTemplate = curTemplate;
     }
 }

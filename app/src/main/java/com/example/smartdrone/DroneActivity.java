@@ -104,6 +104,20 @@ public class DroneActivity extends AppCompatActivity
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
         piano = findViewById(R.id.image_piano);
+
+        //todo delete test code
+        String testStr = VoicingHelper.flattenVoicingTemplate(droneModel.getCurTemplate());
+        Log.d("template", testStr);
+
+        VoicingTemplate vt = VoicingHelper.restoreVoicingTemplate(testStr);
+        Log.d("template", vt.toString());
+
+        //todo delete test code
+        String testStr2 = VoicingHelper.flattenVoicingTemplate(vt);
+        Log.d("template", testStr2);
+
+        VoicingTemplate vt2 = VoicingHelper.restoreVoicingTemplate(testStr2);
+        Log.d("template", vt2.toString());
     }
 
     @Override
@@ -160,7 +174,7 @@ public class DroneActivity extends AppCompatActivity
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
         droneModel.setUserModeIx(userModeIx);
         droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
-        droneModel.setBassNoteEnabled(userBassNotePref);
+        droneModel.sethasBassNote(userBassNotePref);
     }
 
     @Override

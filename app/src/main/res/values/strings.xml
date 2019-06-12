@@ -2,7 +2,6 @@
     <string name="app_name">SmartDrone</string>
     <string name="simulationButtonText_main">Sim</string>
     <string name="noteText">inactive</string>
-    <string name="pitchText"></string>
     <string name="activeKeyString">Active</string>
 
     <string name="expirationText" />
@@ -29,4 +28,5 @@
     <string name="root_bass_switch_text">Play Root In Bass</string>
     <string name="mode_text_title">Mode</string>
     <string name="user_plugin_title">Plugin</string>
+    <string name="user_voicing_label">Voicing</string>
 </resources>
