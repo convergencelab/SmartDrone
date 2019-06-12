@@ -14,7 +14,7 @@ import java.util.ArrayList;
 
 public class DroneSoundActivityExperiment extends AppCompatActivity {
 
-    private SharedPreferences sp;
+    private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
 
     private Switch bassSwitch;
@@ -29,6 +29,8 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drone_sound_experiment);
+        prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        editor = prefs.edit();
         findViews();
         loadSavedData();
 
@@ -48,7 +50,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
     }
 
     /**
-     * Attaches variables to views in activity.
+     * Initializes views fields with their corresponding views.
      */
     private void findViews() {
         bassSwitch = findViewById(R.id.root_bass_switch);
@@ -61,31 +63,52 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
      * Loads all user saved preferences.
      */
     private void loadSavedData() {
-        sp = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        editor = sp.edit();
-        // Load bass root switch data.
-        bassSwitch.setChecked(sp.getBoolean(DroneSoundActivity.BASSNOTE_KEY, true));
-        // Load user mode data.
-        userModeIx = sp.getInt(DroneSoundActivity.USER_MODE_KEY, 0);
-        String curMode = MusicTheory.MAJOR_MODE_NAMES[userModeIx];
-        curModeText.setText(curMode);
-        // Load user plugin data
-        userPluginIx = sp.getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0);
-        String userPlugin = Constants.PLUGIN_NAMES[userPluginIx];
-        userPluginText.setText(userPlugin);
-
+        loadBassSwitchData();
+        loadModeData();
+        loadPluginData();
         loadVoicingData();
     }
 
+    /**
+     * Load bass switch data from shared preferences.
+     */
+    private void loadBassSwitchData() {
+        bassSwitch.setChecked(prefs.getBoolean(DroneSoundActivity.BASSNOTE_KEY, true));
+    }
+
+    /**
+     * Load mode data from shared preferences.
+     */
+    private void loadModeData() {
+        userModeIx = prefs.getInt(DroneSoundActivity.USER_MODE_KEY, 0);
+        String curMode = MusicTheory.MAJOR_MODE_NAMES[userModeIx];
+        curModeText.setText(curMode);
+    }
+
+    /**
+     * Load plugin data from shared preferences.
+     */
+    private void loadPluginData() {
+        userPluginIx = prefs.getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0);
+        String userPlugin = Constants.PLUGIN_NAMES[userPluginIx];
+        userPluginText.setText(userPlugin);
+    }
+
+    /**
+     * Load voicing data from shared preferences.
+     * Inflates scroll view with all voicings.
+     */
     private void loadVoicingData() {
-        String tempsStr = sp.getString(DroneActivity.ALL_TEMP_KEY, null);
+        String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, null);
         if (tempsStr == null) {
             tempsStr = Constants.DEFAULT_TEMPLATES;
         }
         ArrayList<String> tempsList = VoicingHelper.inflateTemplateList(tempsStr);
+        // Inflate scroll view
         for (String temp : tempsList) {
             TextView tv = new TextView(this);
             tv.setText(temp);
+            tv.setTextSize(64);
             voicingLinear.addView(tv);
         }
     }
