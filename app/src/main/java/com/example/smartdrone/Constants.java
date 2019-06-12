@@ -88,11 +88,7 @@ public class Constants {
     /**
      * Flattened strings of default voicing templates.
      */
-    public static final String[] DEFAULT_TEMPLATES = {
-            "Drone,0",
-            "Triad (Closed),0,2,4",
-            "Triad (Open),0,4,9",
-            "Drop II,0,4,6,9"
-    };
+    public static final String DEFAULT_TEMPLATES =
+            "Drone,0|Triad (Closed),0,2,4|Triad (Open),0,4,9|Drop II,0,4,6,9";
 
 }

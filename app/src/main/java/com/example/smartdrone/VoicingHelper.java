@@ -1,6 +1,7 @@
 package com.example.smartdrone;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class VoicingHelper {
 
@@ -11,7 +12,7 @@ public class VoicingHelper {
      * @param       template VoicingTemplate; voicing template.
      * @return      String; flattened string of voicing template.
      */
-    public static String flattenVoicingTemplate(VoicingTemplate template) {
+    public static String flattenTemplate(VoicingTemplate template) {
         String templateStr = "";
         templateStr += template.getName();
         for (int i = 0; i < template.size(); i++) {
@@ -25,7 +26,7 @@ public class VoicingHelper {
      * @param       flattenedTemplate String; flattened template.
      * @return      VoicingTemplate; voicing template.
      */
-    public static VoicingTemplate restoreVoicingTemplate(String flattenedTemplate) {
+    public static VoicingTemplate inflateTemplate(String flattenedTemplate) {
         String[] str = flattenedTemplate.split(",");
         String name = str[0];
         int[] chordTones = new int[str.length - 1];
@@ -50,5 +51,31 @@ public class VoicingHelper {
             }
         }
         return voicingStr;
+    }
+
+    /**
+     * Turns string of all flattened voicings into array list of flattened voicings.
+     * @param       flattenedList String; string with all flattened templates.
+     * @return      ArrayList; list of all flattened templates.
+     */
+    public static ArrayList<String> inflateTemplateList(String flattenedList) {
+        String[] strArr = flattenedList.split("\\|");
+        return new ArrayList(Arrays.asList(strArr));
+    }
+
+    /**
+     * Constructs string of all contents of array list containing flattened voicing templates.
+     * @param       templateList ArrayList; flattened voicing templates.
+     * @return      String; flattened voicing templates.
+     */
+    public static String flattenTemplateList(ArrayList<String> templateList) {
+        if (templateList.isEmpty()) { //todo replace with exception
+            return null;
+        }
+        String flattenedTemplates = templateList.get(0); //todo error check; but should work for meantime IF must have one voicing rule imposed
+        for (int i = 1; i < templateList.size(); i++) {
+            flattenedTemplates += "|" + templateList.get(i);
+        }
+        return flattenedTemplates;
     }
 }

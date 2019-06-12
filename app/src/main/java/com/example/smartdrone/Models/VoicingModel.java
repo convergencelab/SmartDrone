@@ -71,14 +71,4 @@ public class VoicingModel {
     VoicingTemplateCollection getVoicingTemplateCollection() {
         return voicingTemplateCollection;
     }
-
-    /**
-     * Inflates string list with flattened template strings.
-     * @return      ArrayList; list of flattened templates.
-     */
-    public ArrayList<String> getDefaultVoicings() {
-        ArrayList<String> defs = new ArrayList<>();
-        Collections.addAll(defs, Constants.DEFAULT_TEMPLATES);
-        return defs;
-    }
 }
