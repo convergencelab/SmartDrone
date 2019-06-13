@@ -47,16 +47,22 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.example.smartdrone.Models.DroneModel;
+import com.google.gson.Gson;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
+import java.lang.reflect.Type;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
 
 
 public class DroneActivity extends AppCompatActivity
         implements MidiDriver.OnMidiStartListener {
+
+    public static final String CUR_TEMP_KEY = "curTemplate";
+    public static final String ALL_TEMP_KEY = "allTemplates";
 
     /**
      * Map note name to piano image file name.
@@ -104,6 +110,20 @@ public class DroneActivity extends AppCompatActivity
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
         piano = findViewById(R.id.image_piano);
+
+        //todo delete test code
+        String testStr = VoicingHelper.flattenTemplate(droneModel.getCurTemplate());
+        Log.d("template", testStr);
+
+        VoicingTemplate vt = VoicingHelper.inflateTemplate(testStr);
+        Log.d("template", vt.toString());
+
+        //todo delete test code
+        String testStr2 = VoicingHelper.flattenTemplate(vt);
+        Log.d("template", testStr2);
+
+        VoicingTemplate vt2 = VoicingHelper.inflateTemplate(testStr2);
+        Log.d("template", vt2.toString());
     }
 
     @Override
@@ -128,9 +148,6 @@ public class DroneActivity extends AppCompatActivity
 
         /* Moved code here in case activity is not destroyed after changing preferences. */
 
-//        android.support.v7.preference.PreferenceManager
-//                .setDefaultValues(this, R.xml.drone_preferences, false);
-
         //todo: magic code that controls and saves user preferences
         SharedPreferences sharedPref =
                 android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
@@ -151,6 +168,17 @@ public class DroneActivity extends AppCompatActivity
                 .getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0); // 52 == plugin choir
         boolean userBassNotePref = sharedPref
                 .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
+        String defTemplate = sharedPref
+                .getString(CUR_TEMP_KEY, "Drone,0");
+
+
+//        //todo test code, remove when ready
+//        // Get all templates.
+//        ArrayList<String> templatesFlattened = VoicingHelper.inflateTemplateList(Constants.DEFAULT_TEMPLATES);
+//        templatesFlattened.add("Bob's Voicing,0,3,6,9");
+//        VoicingTemplate defTemplate = VoicingHelper.inflateTemplate(templatesFlattened.get(2));
+//        Log.d("template", VoicingHelper.flattenTemplateList(templatesFlattened));
+
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
@@ -160,7 +188,8 @@ public class DroneActivity extends AppCompatActivity
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
         droneModel.setUserModeIx(userModeIx);
         droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
-        droneModel.setBassNoteEnabled(userBassNotePref);
+        droneModel.sethasBassNote(userBassNotePref);
+        droneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate)); //todo this is template code
     }
 
     @Override

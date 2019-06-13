@@ -2,6 +2,7 @@
 <resources>
     <!-- Note Length Filter Names-->
     <string-array name="note_length_filter_name_array">
+        <item>Off</item>
         <item>Short</item>
         <item>Medium (Default)</item>
         <item>Long</item>
@@ -10,6 +11,7 @@
     <!-- TODO convert to integers-->
     <!-- Note Length Filter Values-->
     <string-array name="note_length_filter_values_array">
+        <item>0</item>
         <item>30</item>
         <item>60</item>
         <item>100</item>

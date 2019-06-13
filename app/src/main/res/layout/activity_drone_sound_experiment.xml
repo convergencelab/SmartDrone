@@ -112,4 +112,59 @@
             android:text=""
             android:textSize="14sp" />
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/user_voicing_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="@dimen/sound_settings_lr"
+        android:paddingLeft="@dimen/sound_settings_lr"
+        android:paddingTop="18dp"
+        android:paddingEnd="@dimen/sound_settings_lr"
+        android:paddingRight="@dimen/sound_settings_lr"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_plugin_layout">
+
+        <TextView
+            android:id="@+id/user_voicing_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/user_voicing_label"
+            android:textColor="@android:color/black"
+            android:textSize="18sp" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/voicing_scroll_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:paddingStart="@dimen/sound_settings_lr"
+        android:paddingLeft="@dimen/sound_settings_lr"
+        android:paddingTop="8dp"
+        android:paddingEnd="@dimen/sound_settings_lr"
+        android:paddingRight="@dimen/sound_settings_lr"
+        android:paddingBottom="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/user_voicing_layout"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <ScrollView
+            android:id="@+id/user_voicing_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/user_voicing_linear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+            </LinearLayout>
+        </ScrollView>
+    </RelativeLayout>
+
 </android.support.constraint.ConstraintLayout>
