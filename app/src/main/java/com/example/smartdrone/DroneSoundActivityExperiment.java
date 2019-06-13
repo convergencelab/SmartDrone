@@ -1,5 +1,6 @@
 package com.example.smartdrone;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -99,6 +100,8 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         userPluginText.setText(userPlugin);
     }
 
+    //todo refactor to highlight based on text rather than Tag; I think tag will create bugs when adding/removing voices
+    //todo refactor giant function
     /**
      * Load voicing data from shared preferences.
      * Inflates scroll view with all voicings.
@@ -127,7 +130,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
             //todo mkae drawable transparent
             //todo make ripple effect on click
             tv.setBackgroundResource(R.drawable.textline_bottom);
-            tv.setTag((int)i);
+            tv.setTag(i);
             tv.setClickable(true);
             tv.setOnClickListener(new View.OnClickListener() {
                 //todo works correctly, but needs to be refactored
@@ -167,5 +170,14 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         userPluginText.setText(Constants.PLUGIN_NAMES[userPluginIx]);
         editor.putInt(DroneSoundActivity.USER_PLUGIN_KEY, userPluginIx);
         editor.apply();
+    }
+
+    /**
+     * Opens the voicing creator activity.
+     * @param       view View; American Talk Show on the ABC network.
+     */
+    public void openVoicingCreator(View view) {
+        Intent intent = new Intent(this, VoicingCreatorActivity.class);
+        startActivity(intent);
     }
 }

@@ -29,4 +29,6 @@
     <string name="mode_text_title">Mode</string>
     <string name="user_plugin_title">Plugin</string>
     <string name="user_voicing_label">Voicing</string>
+    <string name="new_voicing">New Voicing</string>
+    <string name="voicing_name">Voicing Name</string>
 </resources>
