@@ -153,7 +153,8 @@ public class DroneActivity extends AppCompatActivity
                 android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
 
         SharedPreferences.Editor edit =  sharedPref.edit();
-//        edit.remove(DroneSoundActivity.USER_PLUGIN_KEY);
+//        edit.remove(ALL_TEMP_KEY);
+//        edit.remove(CUR_TEMP_KEY);
 //        edit.apply();
 
 

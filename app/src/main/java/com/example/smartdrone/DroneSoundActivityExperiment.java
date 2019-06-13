@@ -20,6 +20,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
+    private ArrayList<String> templateList;
 
     private Switch bassSwitch;
     private TextView curModeText;
@@ -27,6 +28,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
     private LinearLayout voicingLinear;
 
     int curTempTag;
+    int i;
 
     private int userModeIx;
     private int userPluginIx;
@@ -53,6 +55,11 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /**
@@ -110,12 +117,16 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, null);
         if (tempsStr == null) {
             tempsStr = Constants.DEFAULT_TEMPLATES;
+            editor.putString(DroneActivity.ALL_TEMP_KEY, tempsStr);
+            editor.apply();
         }
         curTempTag = prefs.getInt(CUR_TEMP_TAG_KEY, 0);
-        final ArrayList<String> tempsList = VoicingHelper.inflateTemplateList(tempsStr);
+        templateList = VoicingHelper.inflateTemplateList(tempsStr);
+        Log.d("d_bug", "List: " + tempsStr);
+
         // Inflate scroll view
-        int i = 0;
-        for (String temp : tempsList) {
+        i = 0;
+        for (String temp : templateList) {
             final TextView tv = new TextView(getApplicationContext());
             // Set attributes of text view.
             if (i == curTempTag) {
@@ -141,7 +152,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
                     prevCur.setTextColor(getResources().getColor(R.color.blackish_test));
                     tv.setTextColor(getResources().getColor(R.color.green_test));
                     int tag = (int) v.getTag();
-                    String curTemplate = tempsList.get(tag);
+                    String curTemplate = templateList.get(tag);
                     curTempTag = tag;
                     editor.putString(DroneActivity.CUR_TEMP_KEY, curTemplate);
                     editor.putInt(CUR_TEMP_TAG_KEY, tag);
@@ -178,6 +189,59 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
      */
     public void openVoicingCreator(View view) {
         Intent intent = new Intent(this, VoicingCreatorActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                String newTemplate = data.getStringExtra(VoicingCreatorActivity.SAVED_VOICING);
+                if (newTemplate != "null") {
+                    String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, null);
+                    tempsStr += '|' + newTemplate; //todo write method to do this.
+                    Log.d("d_bug", tempsStr);
+                    editor.putString(DroneActivity.ALL_TEMP_KEY, tempsStr);
+                    editor.apply();
+                    Log.d("d_bug", newTemplate + "aonetuha");
+                    addVoicingToList(newTemplate);
+                }
+            }
+        }
+    }
+
+    private void addVoicingToList(String newTemplate) {
+        templateList.add(newTemplate);
+        final TextView tv = new TextView(getApplicationContext());
+        // Set attributes of text view.
+        tv.setTextColor(getResources().getColor(R.color.blackish_test));
+
+        tv.setText(VoicingHelper.getTemplateName(newTemplate));
+        tv.setTextSize(18); //todo refactor: hard coded string
+        tv.setPadding(0, 40, 0, 40);
+        //todo mkae drawable transparent
+        //todo make ripple effect on click
+        tv.setBackgroundResource(R.drawable.textline_bottom);
+        tv.setTag(i);
+        i++;
+        tv.setClickable(true);
+        tv.setOnClickListener(new View.OnClickListener() {
+            //todo works correctly, but needs to be refactored
+            @Override
+            public void onClick(View v) {
+                View prevTemp = (View) v.getParent();
+                TextView prevCur = prevTemp.findViewWithTag(curTempTag);
+                prevCur.setTextColor(getResources().getColor(R.color.blackish_test));
+                tv.setTextColor(getResources().getColor(R.color.green_test));
+                int tag = (int) v.getTag();
+                String curTemplate = templateList.get(tag);
+                curTempTag = tag;
+                editor.putString(DroneActivity.CUR_TEMP_KEY, curTemplate);
+                editor.putInt(CUR_TEMP_TAG_KEY, tag);
+                editor.apply();
+            }
+        });
+        voicingLinear.addView(tv);
     }
 }
