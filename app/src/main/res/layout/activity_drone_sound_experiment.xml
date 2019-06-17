@@ -135,6 +135,15 @@
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/user_voicing_label"
+            android:layout_toEndOf="@id/user_voicing_label"
+            android:text="@string/new_voicing"
+            android:onClick="openVoicingCreator"/>
+
+
     </RelativeLayout>
 
     <RelativeLayout

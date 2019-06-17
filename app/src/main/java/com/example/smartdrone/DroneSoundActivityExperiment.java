@@ -1,5 +1,6 @@
 package com.example.smartdrone;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,6 +20,8 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
+    private ArrayList<String> templateList;
+    private TextView curSelectedTemplate;
 
     private Switch bassSwitch;
     private TextView curModeText;
@@ -26,6 +29,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
     private LinearLayout voicingLinear;
 
     int curTempTag;
+    int i;
 
     private int userModeIx;
     private int userPluginIx;
@@ -52,6 +56,11 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
     }
 
     /**
@@ -99,6 +108,8 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         userPluginText.setText(userPlugin);
     }
 
+    //todo refactor to highlight based on text rather than Tag; I think tag will create bugs when adding/removing voices
+    //todo refactor giant function
     /**
      * Load voicing data from shared preferences.
      * Inflates scroll view with all voicings.
@@ -107,12 +118,17 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, null);
         if (tempsStr == null) {
             tempsStr = Constants.DEFAULT_TEMPLATES;
+            editor.putString(DroneActivity.ALL_TEMP_KEY, tempsStr);
+            editor.apply();
         }
         curTempTag = prefs.getInt(CUR_TEMP_TAG_KEY, 0);
-        final ArrayList<String> tempsList = VoicingHelper.inflateTemplateList(tempsStr);
+        templateList = VoicingHelper.inflateTemplateList(tempsStr);
+        Log.d("d_bug", "List: " + tempsStr);
+
         // Inflate scroll view
-        int i = 0;
-        for (String temp : tempsList) {
+        i = 0;
+        for (String temp : templateList) {
+            // Get text view
             final TextView tv = new TextView(getApplicationContext());
             // Set attributes of text view.
             if (i == curTempTag) {
@@ -127,7 +143,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
             //todo mkae drawable transparent
             //todo make ripple effect on click
             tv.setBackgroundResource(R.drawable.textline_bottom);
-            tv.setTag((int)i);
+            tv.setTag(i);
             tv.setClickable(true);
             tv.setOnClickListener(new View.OnClickListener() {
                 //todo works correctly, but needs to be refactored
@@ -138,16 +154,26 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
                     prevCur.setTextColor(getResources().getColor(R.color.blackish_test));
                     tv.setTextColor(getResources().getColor(R.color.green_test));
                     int tag = (int) v.getTag();
-                    String curTemplate = tempsList.get(tag);
+                    String curTemplate = templateList.get(tag);
                     curTempTag = tag;
                     editor.putString(DroneActivity.CUR_TEMP_KEY, curTemplate);
                     editor.putInt(CUR_TEMP_TAG_KEY, tag);
                     editor.apply();
                 }
             });
+            tv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    voicingLinear.removeView(tv); //todo create fragment dialog. Edit, delete, cancel
+                    return true;
+                }
+            });
             voicingLinear.addView(tv);
             i++;
         }
+    }
+
+    public void reloadVoicingData() {
     }
 
     /**
@@ -167,5 +193,67 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         userPluginText.setText(Constants.PLUGIN_NAMES[userPluginIx]);
         editor.putInt(DroneSoundActivity.USER_PLUGIN_KEY, userPluginIx);
         editor.apply();
+    }
+
+    /**
+     * Opens the voicing creator activity.
+     * @param       view View; American Talk Show on the ABC network.
+     */
+    public void openVoicingCreator(View view) {
+        Intent intent = new Intent(this, VoicingCreatorActivity.class);
+        startActivityForResult(intent, 1);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 1) {
+            if (resultCode == RESULT_OK) {
+                String newTemplate = data.getStringExtra(VoicingCreatorActivity.SAVED_VOICING_KEY);
+                if (newTemplate != "null") {
+                    String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, null);
+                    tempsStr += '|' + newTemplate; //todo write method to do this.
+                    Log.d("d_bug", tempsStr);
+                    editor.putString(DroneActivity.ALL_TEMP_KEY, tempsStr);
+                    editor.apply();
+                    Log.d("d_bug", newTemplate + "aonetuha");
+                    addVoicingToList(newTemplate);
+                }
+            }
+        }
+    }
+
+    private void addVoicingToList(String newTemplate) {
+        templateList.add(newTemplate);
+        final TextView tv = new TextView(getApplicationContext());
+        // Set attributes of text view.
+        tv.setTextColor(getResources().getColor(R.color.blackish_test));
+
+        tv.setText(VoicingHelper.getTemplateName(newTemplate));
+        tv.setTextSize(18); //todo refactor: hard coded string
+        tv.setPadding(0, 40, 0, 40);
+        //todo mkae drawable transparent
+        //todo make ripple effect on click
+        tv.setBackgroundResource(R.drawable.textline_bottom);
+        tv.setTag(i);
+        i++;
+        tv.setClickable(true);
+        tv.setOnClickListener(new View.OnClickListener() {
+            //todo works correctly, but needs to be refactored
+            @Override
+            public void onClick(View v) {
+                View prevTemp = (View) v.getParent();
+                TextView prevCur = prevTemp.findViewWithTag(curTempTag);
+                prevCur.setTextColor(getResources().getColor(R.color.blackish_test));
+                tv.setTextColor(getResources().getColor(R.color.green_test));
+                int tag = (int) v.getTag();
+                String curTemplate = templateList.get(tag);
+                curTempTag = tag;
+                editor.putString(DroneActivity.CUR_TEMP_KEY, curTemplate);
+                editor.putInt(CUR_TEMP_TAG_KEY, tag);
+                editor.apply();
+            }
+        });
+        voicingLinear.addView(tv);
     }
 }

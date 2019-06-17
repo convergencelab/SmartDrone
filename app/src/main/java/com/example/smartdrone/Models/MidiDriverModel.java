@@ -43,12 +43,11 @@ public class MidiDriverModel {
     /**
      * Constructor
      */
-    MidiDriverModel() {
+    public MidiDriverModel() {
         midiDriver = new MidiDriver();
         volume = DEFAULT_VOLUME;
         curVoicing = null;
         isActive = false;
-//        plugin = 65;       //todo test to see if works without this line on a fresh device
     }
 
     /**
