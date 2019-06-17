@@ -21,6 +21,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
     private ArrayList<String> templateList;
+    private TextView curSelectedTemplate;
 
     private Switch bassSwitch;
     private TextView curModeText;
@@ -127,6 +128,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         // Inflate scroll view
         i = 0;
         for (String temp : templateList) {
+            // Get text view
             final TextView tv = new TextView(getApplicationContext());
             // Set attributes of text view.
             if (i == curTempTag) {
@@ -159,9 +161,19 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
                     editor.apply();
                 }
             });
+            tv.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    voicingLinear.removeView(tv); //todo create fragment dialog. Edit, delete, cancel
+                    return true;
+                }
+            });
             voicingLinear.addView(tv);
             i++;
         }
+    }
+
+    public void reloadVoicingData() {
     }
 
     /**
@@ -197,7 +209,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
-                String newTemplate = data.getStringExtra(VoicingCreatorActivity.SAVED_VOICING);
+                String newTemplate = data.getStringExtra(VoicingCreatorActivity.SAVED_VOICING_KEY);
                 if (newTemplate != "null") {
                     String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, null);
                     tempsStr += '|' + newTemplate; //todo write method to do this.

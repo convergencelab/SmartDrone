@@ -157,7 +157,6 @@ public class DroneActivity extends AppCompatActivity
 //        edit.remove(CUR_TEMP_KEY);
 //        edit.apply();
 
-
         //todo: make ints by default so no conversion is necessary
         String noteLenPref = sharedPref
                 .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");

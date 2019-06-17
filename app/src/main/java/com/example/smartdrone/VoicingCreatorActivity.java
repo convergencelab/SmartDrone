@@ -8,18 +8,28 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.smartdrone.Models.MidiDriverModel;
+import com.example.smartdrone.Models.VoicingModel;
+
 public class VoicingCreatorActivity extends AppCompatActivity {
 
     private static final int NUM_BUTTONS = 14;
-    public static final String SAVED_VOICING = "saved_voicing_key";
+    public static final String SAVED_VOICING_KEY = "saved_voicing_key";
 
     private boolean[] chordTones;
     private EditText templateName;
+
+    private MidiDriverModel midiDriverModel; //todo add in playback for chord voicing
+    private VoicingModel voicingModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voicing_creator);
+
+        midiDriverModel = new MidiDriverModel(); //todo: add playback to voicing creator activity
+        voicingModel = new VoicingModel();
+
 
         chordTones = new boolean[NUM_BUTTONS];
         // Initialize root to true
@@ -97,14 +107,14 @@ public class VoicingCreatorActivity extends AppCompatActivity {
     public void saveVoicing(View view) {
         String flattenedVoicing = returnFlattenedTemplate();
         Intent newTemplate = new Intent();
-        newTemplate.putExtra(SAVED_VOICING, flattenedVoicing);
+        newTemplate.putExtra(SAVED_VOICING_KEY, flattenedVoicing);
         setResult(RESULT_OK, newTemplate);
         finish();
     }
 
     public void cancelVoicing(View view) {
         Intent newTemplate = new Intent();
-        newTemplate.putExtra(SAVED_VOICING, "null");
+        newTemplate.putExtra(SAVED_VOICING_KEY, "null");
         setResult(RESULT_OK, newTemplate); //todo find better way to do this
         finish();
     }

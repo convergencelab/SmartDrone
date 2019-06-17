@@ -1,5 +1,7 @@
 package com.example.smartdrone;
 
+import android.content.SharedPreferences;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -93,5 +95,12 @@ public class VoicingHelper {
             i++;
         }
         return name;
+    }
+
+    public static void addTemplateToPref(SharedPreferences prefs, SharedPreferences.Editor editor, String toAdd) {
+        String allTemplates = prefs.getString(DroneActivity.ALL_TEMP_KEY, null);
+        allTemplates += '|' + toAdd;
+        editor.putString(DroneActivity.ALL_TEMP_KEY, allTemplates);
+        editor.apply();
     }
 }
