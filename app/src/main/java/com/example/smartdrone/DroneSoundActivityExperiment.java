@@ -12,27 +12,43 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import com.example.smartdrone.Models.DroneSoundModel;
+import com.example.smartdrone.Models.MidiDriverModel;
+import com.example.smartdrone.Models.VoicingModel;
+
+import org.billthefarmer.mididriver.MidiDriver;
+
 import java.util.ArrayList;
 
-public class DroneSoundActivityExperiment extends AppCompatActivity {
+public class DroneSoundActivityExperiment extends AppCompatActivity
+    implements VoicingPlayer {
 
-    private static final String CUR_TEMP_TAG_KEY = "cur_temp_tag";
+    public static final String USER_MODE_KEY = "userModeIx"; //todo extract to string resource
+    public static final String USER_PLUGIN_KEY = "userPlugin"; //todo extract to string resource
+    public static final String BASSNOTE_KEY = "bassNoteEnabled"; //todo extract to string resource
+
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
+
     private ArrayList<String> templateList;
-    private TextView curSelectedTemplate;
+    private TextView curSelectedTemplateView;
 
     private Switch bassSwitch;
     private TextView curModeText;
     private TextView userPluginText;
     private LinearLayout voicingLinear;
 
-    int curTempTag;
-    int i;
+    String curTemplateString;
 
     private int userModeIx;
     private int userPluginIx;
+    private boolean hasBassNote;
+
+//    private MidiDriverModel midiDriverModel;
+//    private VoicingModel voicingModel;
+//    private NoteCollection noteCollection;
+    private DroneSoundModel droneSoundModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,27 +56,39 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
         setContentView(R.layout.activity_drone_sound_experiment);
         prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
         editor = prefs.edit();
-        findViews();
-        loadSavedData();
 
-        bassSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    editor.putBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
-                    editor.apply();
-                }
-                else {
-                    editor.putBoolean(DroneSoundActivity.BASSNOTE_KEY, false);
-                    editor.apply();
-                }
-            }
-        });
+//        midiDriverModel = new MidiDriverModel();
+//        noteCollection = new NoteCollection();
+//        voicingModel = new VoicingModel();
+
+        findViews();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        loadSavedData();
+
+        droneSoundModel = new DroneSoundModel(Constants.PLUGIN_INDICES[userPluginIx], userModeIx, hasBassNote, VoicingHelper.inflateTemplate(curTemplateString));
+        droneSoundModel.initializePlayback();
+//        droneSoundModel.getMidiDriverModel().getMidiDriver().start();
+//        droneSoundModel.getMidiDriverModel().sendMidiSetup();
+        droneSoundModel.changePlayBack();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        saveTemplateData();
+//        midiDriverModel.getMidiDriver().stop();
+        droneSoundModel.stopPlayback();
+    }
+
+    private void saveTemplateData() {
+        String flattenedTemplateList = VoicingHelper.flattenTemplateList(templateList);
+        editor.putString(DroneActivity.ALL_TEMP_KEY, flattenedTemplateList);
+        editor.putString(DroneActivity.CUR_TEMP_KEY, curTemplateString);
+        editor.apply();
     }
 
     /**
@@ -87,14 +115,32 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
      * Load bass switch data from shared preferences.
      */
     private void loadBassSwitchData() {
-        bassSwitch.setChecked(prefs.getBoolean(DroneSoundActivity.BASSNOTE_KEY, true));
+        hasBassNote = prefs.getBoolean(BASSNOTE_KEY, true);
+        bassSwitch.setChecked(hasBassNote);
+        bassSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    editor.putBoolean(BASSNOTE_KEY, true);
+                    hasBassNote = true;
+                    editor.apply();
+                }
+                else {
+                    editor.putBoolean(BASSNOTE_KEY, false);
+                    hasBassNote = false;
+                    editor.apply();
+                }
+//                changePlayBack();
+                droneSoundModel.setHasBassNote(hasBassNote);
+            }
+        });
     }
 
     /**
      * Load mode data from shared preferences.
      */
     private void loadModeData() {
-        userModeIx = prefs.getInt(DroneSoundActivity.USER_MODE_KEY, 0);
+        userModeIx = prefs.getInt(USER_MODE_KEY, 0);
         String curMode = MusicTheory.MAJOR_MODE_NAMES[userModeIx];
         curModeText.setText(curMode);
     }
@@ -103,9 +149,17 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
      * Load plugin data from shared preferences.
      */
     private void loadPluginData() {
-        userPluginIx = prefs.getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0);
-        String userPlugin = Constants.PLUGIN_NAMES[userPluginIx];
-        userPluginText.setText(userPlugin);
+        userPluginIx = prefs.getInt(USER_PLUGIN_KEY, 0);
+        //todo remove when debugged
+        if (userPluginIx >= Constants.PLUGIN_INDICES.length) {
+            userPluginIx = 0;
+        }
+        String pluginName = Constants.PLUGIN_NAMES[userPluginIx];
+        userPluginText.setText(pluginName);
+//        droneSoundModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
+//        midiDriverModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
+//        droneSoundModel.updatePlaybackPlugin();
+//        midiDriverModel.sendMidiSetup();
     }
 
     //todo refactor to highlight based on text rather than Tag; I think tag will create bugs when adding/removing voices
@@ -115,24 +169,24 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
      * Inflates scroll view with all voicings.
      */
     private void loadVoicingData() {
-        String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, null);
-        if (tempsStr == null) {
-            tempsStr = Constants.DEFAULT_TEMPLATES;
-            editor.putString(DroneActivity.ALL_TEMP_KEY, tempsStr);
-            editor.apply();
+        if (voicingLinear.getChildCount() != 0) {
+            voicingLinear.removeAllViews();
         }
-        curTempTag = prefs.getInt(CUR_TEMP_TAG_KEY, 0);
+        String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, Constants.DEFAULT_TEMPLATE_LIST);
+//        curTempTag = prefs.getInt(CUR_TEMP_TAG_KEY, 0);
+        curTemplateString = prefs.getString(DroneActivity.CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
+        /// List of flattened templates
         templateList = VoicingHelper.inflateTemplateList(tempsStr);
         Log.d("d_bug", "List: " + tempsStr);
 
         // Inflate scroll view
-        i = 0;
         for (String temp : templateList) {
             // Get text view
             final TextView tv = new TextView(getApplicationContext());
             // Set attributes of text view.
-            if (i == curTempTag) {
+            if (temp.equals(curTemplateString)) {
                 tv.setTextColor(getResources().getColor(R.color.green_test));
+                curSelectedTemplateView = tv;
             }
             else {
                 tv.setTextColor(getResources().getColor(R.color.blackish_test));
@@ -140,40 +194,50 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
             tv.setText(VoicingHelper.getTemplateName(temp));
             tv.setTextSize(18); //todo refactor: hard coded string
             tv.setPadding(0, 40, 0, 40);
-            //todo mkae drawable transparent
+            //todo make drawable transparent
             //todo make ripple effect on click
             tv.setBackgroundResource(R.drawable.textline_bottom);
-            tv.setTag(i);
+            tv.setTag(temp);
             tv.setClickable(true);
             tv.setOnClickListener(new View.OnClickListener() {
                 //todo works correctly, but needs to be refactored
                 @Override
                 public void onClick(View v) {
-                    View prevTemp = (View) v.getParent();
-                    TextView prevCur = prevTemp.findViewWithTag(curTempTag);
-                    prevCur.setTextColor(getResources().getColor(R.color.blackish_test));
+                    // Set old template text black.
+                    curSelectedTemplateView.setTextColor(getResources().getColor(R.color.blackish_test));
+                    // Set new template text green.
                     tv.setTextColor(getResources().getColor(R.color.green_test));
-                    int tag = (int) v.getTag();
-                    String curTemplate = templateList.get(tag);
-                    curTempTag = tag;
-                    editor.putString(DroneActivity.CUR_TEMP_KEY, curTemplate);
-                    editor.putInt(CUR_TEMP_TAG_KEY, tag);
-                    editor.apply();
+                    // Update flattened template.
+                    curTemplateString = (String) tv.getTag();
+                    // Update current template variable.
+                    curSelectedTemplateView = tv;
+                    //todo testing line of code
+//                    droneSoundModel.setCurTemplate(VoicingHelper.inflateTemplate(curTemplateString));
+//                    midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
+//                            new Key(0, noteCollection), userModeIx, 4, hasBassNote));
+                    droneSoundModel.setCurTemplate(VoicingHelper.inflateTemplate(curTemplateString));
                 }
             });
             tv.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View v) {
-                    voicingLinear.removeView(tv); //todo create fragment dialog. Edit, delete, cancel
+                    if (templateList.size() > 1) {
+                        voicingLinear.removeView(tv); //todo create fragment dialog. Edit, delete, cancel
+                        templateList.remove(tv.getTag());
+                        if (tv == curSelectedTemplateView) {
+                            TextView temp = (TextView) voicingLinear.getChildAt(0);
+                            curSelectedTemplateView = temp;
+                            temp.setTextColor(getResources().getColor(R.color.green_test));
+                        }
+                    }
                     return true;
                 }
             });
             voicingLinear.addView(tv);
-            i++;
         }
-    }
-
-    public void reloadVoicingData() {
+//        //todo testing line of code
+//        midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
+//                new Key(0, noteCollection), userModeIx, 4, hasBassNote));
     }
 
     /**
@@ -184,16 +248,29 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
     public void getNextMode(View view) {
         userModeIx = (userModeIx + 1) % 7;
         curModeText.setText(MusicTheory.MAJOR_MODE_NAMES[userModeIx]);
-        editor.putInt(DroneSoundActivity.USER_MODE_KEY, userModeIx);
+        editor.putInt(USER_MODE_KEY, userModeIx);
         editor.apply();
+//        changePlayBack();
+        droneSoundModel.setModeIx(userModeIx);
     }
 
     public void getNextPlugin(View view) {
         userPluginIx = (userPluginIx + 1) % Constants.PLUGIN_INDICES.length;
         userPluginText.setText(Constants.PLUGIN_NAMES[userPluginIx]);
-        editor.putInt(DroneSoundActivity.USER_PLUGIN_KEY, userPluginIx);
+        droneSoundModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
+//        midiDriverModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
+        editor.putInt(USER_PLUGIN_KEY, userPluginIx);
         editor.apply();
+//        changePlayBack();
+//        droneSoundModel.setPlugin();
+        droneSoundModel.changePlayBack();
     }
+
+//    private void changePlayBack() {
+//        midiDriverModel.sendMidiSetup();
+//        midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
+//                new Key(0, noteCollection), userModeIx, 4, hasBassNote));
+//    }
 
     /**
      * Opens the voicing creator activity.
@@ -201,59 +278,26 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
      */
     public void openVoicingCreator(View view) {
         Intent intent = new Intent(this, VoicingCreatorActivity.class);
-        startActivityForResult(intent, 1);
+        startActivity(intent);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 1) {
-            if (resultCode == RESULT_OK) {
-                String newTemplate = data.getStringExtra(VoicingCreatorActivity.SAVED_VOICING_KEY);
-                if (newTemplate != "null") {
-                    String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, null);
-                    tempsStr += '|' + newTemplate; //todo write method to do this.
-                    Log.d("d_bug", tempsStr);
-                    editor.putString(DroneActivity.ALL_TEMP_KEY, tempsStr);
-                    editor.apply();
-                    Log.d("d_bug", newTemplate + "aonetuha");
-                    addVoicingToList(newTemplate);
-                }
-            }
-        }
+    public void changeVoicing(Voicing toPlay) {
+
     }
 
-    private void addVoicingToList(String newTemplate) {
-        templateList.add(newTemplate);
-        final TextView tv = new TextView(getApplicationContext());
-        // Set attributes of text view.
-        tv.setTextColor(getResources().getColor(R.color.blackish_test));
+    @Override
+    public void changeMode() {
 
-        tv.setText(VoicingHelper.getTemplateName(newTemplate));
-        tv.setTextSize(18); //todo refactor: hard coded string
-        tv.setPadding(0, 40, 0, 40);
-        //todo mkae drawable transparent
-        //todo make ripple effect on click
-        tv.setBackgroundResource(R.drawable.textline_bottom);
-        tv.setTag(i);
-        i++;
-        tv.setClickable(true);
-        tv.setOnClickListener(new View.OnClickListener() {
-            //todo works correctly, but needs to be refactored
-            @Override
-            public void onClick(View v) {
-                View prevTemp = (View) v.getParent();
-                TextView prevCur = prevTemp.findViewWithTag(curTempTag);
-                prevCur.setTextColor(getResources().getColor(R.color.blackish_test));
-                tv.setTextColor(getResources().getColor(R.color.green_test));
-                int tag = (int) v.getTag();
-                String curTemplate = templateList.get(tag);
-                curTempTag = tag;
-                editor.putString(DroneActivity.CUR_TEMP_KEY, curTemplate);
-                editor.putInt(CUR_TEMP_TAG_KEY, tag);
-                editor.apply();
-            }
-        });
-        voicingLinear.addView(tv);
+    }
+
+    @Override
+    public void changePlugin() {
+
+    }
+
+    @Override
+    public void changeBassNote() {
+
     }
 }

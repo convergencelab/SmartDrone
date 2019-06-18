@@ -46,16 +46,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 
-import com.example.smartdrone.Models.DroneModel;
-import com.google.gson.Gson;
+import com.example.smartdrone.Models.SmartDroneModel;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
-import java.lang.reflect.Type;
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.TimeUnit;
 
 
 public class DroneActivity extends AppCompatActivity
@@ -63,6 +58,7 @@ public class DroneActivity extends AppCompatActivity
 
     public static final String CUR_TEMP_KEY = "curTemplate";
     public static final String ALL_TEMP_KEY = "allTemplates";
+    public static final String ACTIVE_KEY_IX_KEY = "active_key_ix";
 
     /**
      * Map note name to piano image file name.
@@ -74,7 +70,7 @@ public class DroneActivity extends AppCompatActivity
     /**
      * Handles all drone logic.
      */
-    private DroneModel droneModel;
+    private SmartDroneModel smartDroneModel;
 
     /**
      * Button for toggling state of drone.
@@ -102,9 +98,9 @@ public class DroneActivity extends AppCompatActivity
         createPianoMap();
 
         // Handles drone logic.
-        droneModel = new DroneModel(this);
+        smartDroneModel = new SmartDroneModel(this);
         // Construct Midi Driver.
-        droneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
+        smartDroneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
 
 
         controlButton = findViewById(R.id.drone_control_button);
@@ -112,7 +108,7 @@ public class DroneActivity extends AppCompatActivity
         piano = findViewById(R.id.image_piano);
 
         //todo delete test code
-        String testStr = VoicingHelper.flattenTemplate(droneModel.getCurTemplate());
+        String testStr = VoicingHelper.flattenTemplate(smartDroneModel.getCurTemplate());
         Log.d("template", testStr);
 
         VoicingTemplate vt = VoicingHelper.inflateTemplate(testStr);
@@ -130,8 +126,8 @@ public class DroneActivity extends AppCompatActivity
     protected void onStop() {
         super.onStop();
         Log.d(Constants.MESSAGE_LOG_ACTV, "stop");
-        if (droneModel.isActive()) {
-            droneModel.deactivateDrone();
+        if (smartDroneModel.isActive()) {
+            smartDroneModel.deactivateDrone();
         }
     }
 
@@ -163,33 +159,27 @@ public class DroneActivity extends AppCompatActivity
         String keySensPref = sharedPref
                 .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
         int userModeIx = sharedPref
-                .getInt(DroneSoundActivity.USER_MODE_KEY, 0);
+                .getInt(DroneSoundActivityExperiment.USER_MODE_KEY, 0);
         int userPluginIx = sharedPref
-                .getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0); // 52 == plugin choir
+                .getInt(DroneSoundActivityExperiment.USER_PLUGIN_KEY, 0); // 52 == plugin choir
         boolean userBassNotePref = sharedPref
-                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
+                .getBoolean(DroneSoundActivityExperiment.BASSNOTE_KEY, true);
         String defTemplate = sharedPref
                 .getString(CUR_TEMP_KEY, "Drone,0");
 
 
-//        //todo test code, remove when ready
-//        // Get all templates.
-//        ArrayList<String> templatesFlattened = VoicingHelper.inflateTemplateList(Constants.DEFAULT_TEMPLATES);
-//        templatesFlattened.add("Bob's Voicing,0,3,6,9");
-//        VoicingTemplate defTemplate = VoicingHelper.inflateTemplate(templatesFlattened.get(2));
-//        Log.d("template", VoicingHelper.flattenTemplateList(templatesFlattened));
-
+        //todo test code, remove when ready
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
         int keyTimerLength = Integer.parseInt(keySensPref);
 //        int userPlugin = Integer.parseInt(userPluginPref);
-        droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
-        droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
-        droneModel.setUserModeIx(userModeIx);
-        droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
-        droneModel.sethasBassNote(userBassNotePref);
-        droneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate)); //todo this is template code
+        smartDroneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
+        smartDroneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
+        smartDroneModel.setUserModeIx(userModeIx);
+        smartDroneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
+        smartDroneModel.sethasBassNote(userBassNotePref);
+        smartDroneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate)); //todo this is template code
     }
 
     @Override
@@ -239,7 +229,7 @@ public class DroneActivity extends AppCompatActivity
      */
     @Override
     public void onMidiStart() {
-        droneModel.getMidiDriverModel().sendMidiSetup();
+        smartDroneModel.getMidiDriverModel().sendMidiSetup();
     }
 
     /**
@@ -249,8 +239,8 @@ public class DroneActivity extends AppCompatActivity
         activeKeyButton.setTextSize(22);
         String activeKey = "";
         //todo refactor line below
-        activeKey += MusicTheory.CHROMATIC_SCALE_FLAT[droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getNotes()[droneModel.getUserModeIx()].getIx()];
-        String fullName = activeKey + "\n" + MusicTheory.MAJOR_MODE_NAMES[droneModel.getUserModeIx()];
+        activeKey += MusicTheory.CHROMATIC_SCALE_FLAT[smartDroneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getNotes()[smartDroneModel.getUserModeIx()].getIx()];
+        String fullName = activeKey + "\n" + MusicTheory.MAJOR_MODE_NAMES[smartDroneModel.getUserModeIx()];
         SpannableString ss = new SpannableString(fullName);
         ss.setSpan(new RelativeSizeSpan(3f), 0, activeKey.length(), 0);
         activeKeyButton.setText(ss);
@@ -262,9 +252,9 @@ public class DroneActivity extends AppCompatActivity
      */
     @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void toggleDroneState(View view) {
-        droneModel.toggleDroneState();
+        smartDroneModel.toggleDroneState();
 
-        if (droneModel.isActive()) {
+        if (smartDroneModel.isActive()) {
             controlButton.setImageResource(R.drawable.ic_stop_drone);
             activeKeyButton.setTextSize(64);
             activeKeyButton.setText("...");
@@ -284,8 +274,8 @@ public class DroneActivity extends AppCompatActivity
      */
     public void openDroneSettings(View view) {
         // Deactivate drone if active.
-        if (droneModel.isActive()) {
-            droneModel.deactivateDrone();
+        if (smartDroneModel.isActive()) {
+            smartDroneModel.deactivateDrone();
             controlButton.setImageResource(R.drawable.ic_play_drone);
         }
         Intent droneSettingsIntent = new Intent(this, DroneSettingsActivity.class);
@@ -293,8 +283,8 @@ public class DroneActivity extends AppCompatActivity
     }
 
     public void openSoundSettings(View view) {
-        if (droneModel.isActive()) {
-            droneModel.deactivateDrone();
+        if (smartDroneModel.isActive()) {
+            smartDroneModel.deactivateDrone();
             controlButton.setImageResource(R.drawable.ic_play_drone);
         }
         Intent intent = new Intent(this, DroneSoundActivityExperiment.class); //todo finish activity
@@ -326,7 +316,7 @@ public class DroneActivity extends AppCompatActivity
     public void activeKeyClick(View view) {
         // Start drone
         //todo: add some sort of visual feedback that active key button has been clicked
-        if (!droneModel.isActive()) {
+        if (!smartDroneModel.isActive()) {
             toggleDroneState(view);
         }
         //todo: else -> sustain drone

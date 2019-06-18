@@ -1,5 +1,6 @@
 package com.example.smartdrone.Models;
 
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.smartdrone.Constants;
@@ -16,7 +17,7 @@ import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
 
 
-public class DroneModel implements Serializable {
+public class SmartDroneModel implements Serializable {
     /**
      * Previous voicing for drone.
      */
@@ -87,7 +88,7 @@ public class DroneModel implements Serializable {
     /**
      * Constructor.
      */
-    public DroneModel(DroneActivity droneActivity) {
+    public SmartDroneModel(DroneActivity droneActivity) {
         this.droneActivity = droneActivity;
         keyFinderModel = new KeyFinderModel();
         midiDriverModel = new MidiDriverModel();
@@ -175,7 +176,6 @@ public class DroneModel implements Serializable {
             isActive = true;
             midiDriverModel.getMidiDriver().start();
             startDroneProcess();
-
         }
     }
 
@@ -199,7 +199,6 @@ public class DroneModel implements Serializable {
      * Process notes & monitor active key.
      */
     public void startDroneProcess() {
-        // get pitch of event           // interface
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
                         // interface method
@@ -216,10 +215,6 @@ public class DroneModel implements Serializable {
             }
         };
         AudioProcessor pitchProcessor = new PitchProcessor(
-                // arg 1 == pitch est algorithm
-                // arg 2 == sample rate
-                // arg 3 == buffer size
-                // arg 4 == pitch detection handler
                 PitchProcessor.PitchEstimationAlgorithm.FFT_YIN, Constants.SAMPLE_RATE, Constants.AUDIO_BUFFER_SIZE, pdh);
         if (pitchProcessorModel.getDispatcher() == null) {
             pitchProcessorModel.setDispatcher(pitchProcessorModel.constructDispatcher());

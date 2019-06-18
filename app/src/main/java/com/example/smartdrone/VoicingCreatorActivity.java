@@ -2,12 +2,14 @@ package com.example.smartdrone;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.provider.SyncStateContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.example.smartdrone.Models.DroneSoundModel;
 import com.example.smartdrone.Models.MidiDriverModel;
 import com.example.smartdrone.Models.VoicingModel;
 
@@ -19,24 +21,46 @@ public class VoicingCreatorActivity extends AppCompatActivity {
     private boolean[] chordTones;
     private EditText templateName;
 
-    private MidiDriverModel midiDriverModel; //todo add in playback for chord voicing
-    private VoicingModel voicingModel;
+    ScaleTemplateCollection stc = new ScaleTemplateCollection();
+    private DroneSoundModel droneSoundModel;
+
+    private SharedPreferences sharedPrefs;
+    private SharedPreferences.Editor editor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voicing_creator);
 
-        midiDriverModel = new MidiDriverModel(); //todo: add playback to voicing creator activity
-        voicingModel = new VoicingModel();
 
 
         chordTones = new boolean[NUM_BUTTONS];
         // Initialize root to true
         chordTones[0] = true;
 
+        sharedPrefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        editor =  sharedPrefs.edit();
+
         templateName = findViewById(R.id.voicing_name_edit_text);
         loadButtonData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        droneSoundModel = new DroneSoundModel(
+                Constants.PLUGIN_INDICES[sharedPrefs.getInt(DroneSoundActivityExperiment.USER_PLUGIN_KEY, 0)],
+                sharedPrefs.getInt(DroneSoundActivityExperiment.USER_MODE_KEY, 0),
+                sharedPrefs.getBoolean(DroneSoundActivityExperiment.BASSNOTE_KEY, true),
+                VoicingHelper.inflateTemplate("throwaway,0"));
+        droneSoundModel.initializePlayback();
+        droneSoundModel.changePlayBack();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        droneSoundModel.getMidiDriverModel().getMidiDriver().stop();
     }
 
     /**
@@ -65,9 +89,14 @@ public class VoicingCreatorActivity extends AppCompatActivity {
                     chordTones[tone] = !chordTones[tone];
                     if (chordTones[tone]) {
                         v.setBackground(getResources().getDrawable(R.drawable.active_key_background_active)); //todo find better way to do this
+                        droneSoundModel.getMidiDriverModel().sendMidiNote(Constants.START_NOTE,
+                                calcInterval((int) v.getTag()), MidiDriverModel.DEFAULT_VOLUME);
                     }
                     else {
                         v.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive)); //todo find better way to do this
+                        droneSoundModel.getMidiDriverModel().sendMidiNote(Constants.STOP_NOTE,
+                                calcInterval((int) v.getTag()), MidiDriverModel.DEFAULT_VOLUME);
+
                     }
                 }
             });
@@ -106,16 +135,24 @@ public class VoicingCreatorActivity extends AppCompatActivity {
 
     public void saveVoicing(View view) {
         String flattenedVoicing = returnFlattenedTemplate();
-        Intent newTemplate = new Intent();
-        newTemplate.putExtra(SAVED_VOICING_KEY, flattenedVoicing);
-        setResult(RESULT_OK, newTemplate);
+        VoicingHelper.addTemplateToPref(sharedPrefs, editor, flattenedVoicing);
+        System.out.println(sharedPrefs.getString(DroneActivity.ALL_TEMP_KEY, null));
         finish();
     }
 
     public void cancelVoicing(View view) {
-        Intent newTemplate = new Intent();
-        newTemplate.putExtra(SAVED_VOICING_KEY, "null");
-        setResult(RESULT_OK, newTemplate); //todo find better way to do this
         finish();
+    }
+
+    public int calcInterval(int tag) {
+        int toReturn = 48;
+        toReturn += MusicTheory.MAJOR_SCALE_SEQUENCE[droneSoundModel.getModeIx()];
+        if (tag >= MusicTheory.DIATONIC_SCALE_SIZE) {
+            tag -= 7;
+            toReturn += 12;
+        }
+//        toReturn += MusicTheory.MAJOR_SCALE_SEQUENCE[tag];
+        toReturn += stc.getScaleTemplateForMode(droneSoundModel.getModeIx()).getIntervals()[tag];
+        return toReturn;
     }
 }
