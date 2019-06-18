@@ -19,7 +19,7 @@ public class MidiDriverModel {
     /**
      * Default midi driver volume.
      */
-    private final int DEFAULT_VOLUME = 65; //todo move to constants
+    public static final int DEFAULT_VOLUME = 65; //todo move to constants
 
     /**
      * Midi driver.
@@ -48,6 +48,14 @@ public class MidiDriverModel {
         volume = DEFAULT_VOLUME;
         curVoicing = null;
         isActive = false;
+    }
+
+    public MidiDriverModel(int volume, int pluginIx) {
+        midiDriver = new MidiDriver();
+        this.volume = volume;
+        curVoicing = null;
+        isActive = false;
+        this.plugin = pluginIx;
     }
 
     /**
@@ -81,7 +89,7 @@ public class MidiDriverModel {
      */
     public void sendMidiSetup() {
         byte msg[] = new byte[2];
-        msg[0] = (byte) Constants.PROGRAM_CHANGE;    // 0XC0 == PROGRAM CHANGE
+        msg[0] = (byte) Constants.PROGRAM_CHANGE;
         msg[1] = (byte) plugin;
         midiDriver.write(msg);
     }
