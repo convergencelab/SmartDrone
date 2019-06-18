@@ -72,7 +72,7 @@ public class PitchProcessorModel {
      */
     int processPitch(float pitchInHz, KeyFinderModel keyFinderModel) {
         int curHeard = convertPitchToIx((double) pitchInHz);
-        if (noteChangeDetected(curHeard)) {
+        if (noteChangeDetected(curHeard) && noteFilterLength != 0) {
             lastHeard = curHeard;
             noteHasChanged = true;
             timeOfChange = System.currentTimeMillis();

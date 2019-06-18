@@ -117,7 +117,7 @@ public class MidiDriverModel {
      * @param       midiKeys int[]; indexes of notes (uses octaves).
      * @param       volume int; volume of notes.
      */
-    private void sendMidiChord(int event, int[] midiKeys, int volume) {
+    public void sendMidiChord(int event, int[] midiKeys, int volume) {
         for (int key : midiKeys) {
             sendMidiNote(event, key, volume);
         }

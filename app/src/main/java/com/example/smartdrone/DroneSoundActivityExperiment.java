@@ -45,9 +45,10 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
     private int userPluginIx;
     private boolean hasBassNote;
 
-    private MidiDriverModel midiDriverModel;
-    private VoicingModel voicingModel;
-    private NoteCollection noteCollection;
+//    private MidiDriverModel midiDriverModel;
+//    private VoicingModel voicingModel;
+//    private NoteCollection noteCollection;
+    private DroneSoundModel droneSoundModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,9 +57,9 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
         prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
         editor = prefs.edit();
 
-        midiDriverModel = new MidiDriverModel();
-        noteCollection = new NoteCollection();
-        voicingModel = new VoicingModel();
+//        midiDriverModel = new MidiDriverModel();
+//        noteCollection = new NoteCollection();
+//        voicingModel = new VoicingModel();
 
         findViews();
     }
@@ -66,16 +67,21 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        midiDriverModel.getMidiDriver().start();
-        midiDriverModel.sendMidiSetup();
         loadSavedData();
+
+        droneSoundModel = new DroneSoundModel(Constants.PLUGIN_INDICES[userPluginIx], userModeIx, hasBassNote, VoicingHelper.inflateTemplate(curTemplateString));
+        droneSoundModel.initializePlayback();
+//        droneSoundModel.getMidiDriverModel().getMidiDriver().start();
+//        droneSoundModel.getMidiDriverModel().sendMidiSetup();
+        droneSoundModel.changePlayBack();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         saveTemplateData();
-        midiDriverModel.getMidiDriver().stop();
+//        midiDriverModel.getMidiDriver().stop();
+        droneSoundModel.stopPlayback();
     }
 
     private void saveTemplateData() {
@@ -124,7 +130,8 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
                     hasBassNote = false;
                     editor.apply();
                 }
-                changePlayBack();
+//                changePlayBack();
+                droneSoundModel.setHasBassNote(hasBassNote);
             }
         });
     }
@@ -144,13 +151,15 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
     private void loadPluginData() {
         userPluginIx = prefs.getInt(USER_PLUGIN_KEY, 0);
         //todo remove when debugged
-        if (userPluginIx >= 4) {
+        if (userPluginIx >= Constants.PLUGIN_INDICES.length) {
             userPluginIx = 0;
         }
         String pluginName = Constants.PLUGIN_NAMES[userPluginIx];
         userPluginText.setText(pluginName);
-        midiDriverModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
-        midiDriverModel.sendMidiSetup();
+//        droneSoundModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
+//        midiDriverModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
+//        droneSoundModel.updatePlaybackPlugin();
+//        midiDriverModel.sendMidiSetup();
     }
 
     //todo refactor to highlight based on text rather than Tag; I think tag will create bugs when adding/removing voices
@@ -203,8 +212,10 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
                     // Update current template variable.
                     curSelectedTemplateView = tv;
                     //todo testing line of code
-                    midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
-                            new Key(0, noteCollection), userModeIx, 4, hasBassNote));
+//                    droneSoundModel.setCurTemplate(VoicingHelper.inflateTemplate(curTemplateString));
+//                    midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
+//                            new Key(0, noteCollection), userModeIx, 4, hasBassNote));
+                    droneSoundModel.setCurTemplate(VoicingHelper.inflateTemplate(curTemplateString));
                 }
             });
             tv.setOnLongClickListener(new View.OnLongClickListener() {
@@ -224,9 +235,9 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
             });
             voicingLinear.addView(tv);
         }
-        //todo testing line of code
-        midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
-                new Key(0, noteCollection), userModeIx, 4, hasBassNote));
+//        //todo testing line of code
+//        midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
+//                new Key(0, noteCollection), userModeIx, 4, hasBassNote));
     }
 
     /**
@@ -239,23 +250,27 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
         curModeText.setText(MusicTheory.MAJOR_MODE_NAMES[userModeIx]);
         editor.putInt(USER_MODE_KEY, userModeIx);
         editor.apply();
-        changePlayBack();
+//        changePlayBack();
+        droneSoundModel.setModeIx(userModeIx);
     }
 
     public void getNextPlugin(View view) {
         userPluginIx = (userPluginIx + 1) % Constants.PLUGIN_INDICES.length;
         userPluginText.setText(Constants.PLUGIN_NAMES[userPluginIx]);
-        midiDriverModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
+        droneSoundModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
+//        midiDriverModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         editor.putInt(USER_PLUGIN_KEY, userPluginIx);
         editor.apply();
-        changePlayBack();
+//        changePlayBack();
+//        droneSoundModel.setPlugin();
+        droneSoundModel.changePlayBack();
     }
 
-    private void changePlayBack() {
-        midiDriverModel.sendMidiSetup();
-        midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
-                new Key(0, noteCollection), userModeIx, 4, hasBassNote));
-    }
+//    private void changePlayBack() {
+//        midiDriverModel.sendMidiSetup();
+//        midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
+//                new Key(0, noteCollection), userModeIx, 4, hasBassNote));
+//    }
 
     /**
      * Opens the voicing creator activity.
