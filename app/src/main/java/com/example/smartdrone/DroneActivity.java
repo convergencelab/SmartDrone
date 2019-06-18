@@ -174,7 +174,7 @@ public class DroneActivity extends AppCompatActivity
 
 //        //todo test code, remove when ready
 //        // Get all templates.
-//        ArrayList<String> templatesFlattened = VoicingHelper.inflateTemplateList(Constants.DEFAULT_TEMPLATES);
+//        ArrayList<String> templatesFlattened = VoicingHelper.inflateTemplateList(Constants.DEFAULT_TEMPLATE_LIST);
 //        templatesFlattened.add("Bob's Voicing,0,3,6,9");
 //        VoicingTemplate defTemplate = VoicingHelper.inflateTemplate(templatesFlattened.get(2));
 //        Log.d("template", VoicingHelper.flattenTemplateList(templatesFlattened));

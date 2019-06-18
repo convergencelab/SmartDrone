@@ -22,6 +22,9 @@ public class VoicingCreatorActivity extends AppCompatActivity {
     private MidiDriverModel midiDriverModel; //todo add in playback for chord voicing
     private VoicingModel voicingModel;
 
+    private SharedPreferences sharedPrefs;
+    private SharedPreferences.Editor editor;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,6 +37,9 @@ public class VoicingCreatorActivity extends AppCompatActivity {
         chordTones = new boolean[NUM_BUTTONS];
         // Initialize root to true
         chordTones[0] = true;
+
+        sharedPrefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        editor =  sharedPrefs.edit();
 
         templateName = findViewById(R.id.voicing_name_edit_text);
         loadButtonData();
@@ -106,16 +112,12 @@ public class VoicingCreatorActivity extends AppCompatActivity {
 
     public void saveVoicing(View view) {
         String flattenedVoicing = returnFlattenedTemplate();
-        Intent newTemplate = new Intent();
-        newTemplate.putExtra(SAVED_VOICING_KEY, flattenedVoicing);
-        setResult(RESULT_OK, newTemplate);
+        VoicingHelper.addTemplateToPref(sharedPrefs, editor, flattenedVoicing);
+        System.out.println(sharedPrefs.getString(DroneActivity.ALL_TEMP_KEY, null));
         finish();
     }
 
     public void cancelVoicing(View view) {
-        Intent newTemplate = new Intent();
-        newTemplate.putExtra(SAVED_VOICING_KEY, "null");
-        setResult(RESULT_OK, newTemplate); //todo find better way to do this
         finish();
     }
 }
