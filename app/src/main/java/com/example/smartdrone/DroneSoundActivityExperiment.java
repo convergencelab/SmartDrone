@@ -6,22 +6,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.smartdrone.Models.DroneSoundModel;
-import com.example.smartdrone.Models.MidiDriverModel;
-import com.example.smartdrone.Models.VoicingModel;
-
-import org.billthefarmer.mididriver.MidiDriver;
 
 import java.util.ArrayList;
 
-public class DroneSoundActivityExperiment extends AppCompatActivity
-    implements VoicingPlayer {
+public class DroneSoundActivityExperiment extends AppCompatActivity {
 
     public static final String USER_MODE_KEY = "userModeIx"; //todo extract to string resource
     public static final String USER_PLUGIN_KEY = "userPlugin"; //todo extract to string resource
@@ -45,9 +39,6 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
     private int userPluginIx;
     private boolean hasBassNote;
 
-//    private MidiDriverModel midiDriverModel;
-//    private VoicingModel voicingModel;
-//    private NoteCollection noteCollection;
     private DroneSoundModel droneSoundModel;
 
     @Override
@@ -56,10 +47,6 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
         setContentView(R.layout.activity_drone_sound_experiment);
         prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
         editor = prefs.edit();
-
-//        midiDriverModel = new MidiDriverModel();
-//        noteCollection = new NoteCollection();
-//        voicingModel = new VoicingModel();
 
         findViews();
     }
@@ -71,8 +58,6 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
 
         droneSoundModel = new DroneSoundModel(Constants.PLUGIN_INDICES[userPluginIx], userModeIx, hasBassNote, VoicingHelper.inflateTemplate(curTemplateString));
         droneSoundModel.initializePlayback();
-//        droneSoundModel.getMidiDriverModel().getMidiDriver().start();
-//        droneSoundModel.getMidiDriverModel().sendMidiSetup();
         droneSoundModel.changePlayBack();
     }
 
@@ -80,7 +65,6 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
     protected void onPause() {
         super.onPause();
         saveTemplateData();
-//        midiDriverModel.getMidiDriver().stop();
         droneSoundModel.stopPlayback();
     }
 
@@ -130,7 +114,6 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
                     hasBassNote = false;
                     editor.apply();
                 }
-//                changePlayBack();
                 droneSoundModel.setHasBassNote(hasBassNote);
             }
         });
@@ -156,10 +139,6 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
         }
         String pluginName = Constants.PLUGIN_NAMES[userPluginIx];
         userPluginText.setText(pluginName);
-//        droneSoundModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
-//        midiDriverModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
-//        droneSoundModel.updatePlaybackPlugin();
-//        midiDriverModel.sendMidiSetup();
     }
 
     //todo refactor to highlight based on text rather than Tag; I think tag will create bugs when adding/removing voices
@@ -173,7 +152,6 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
             voicingLinear.removeAllViews();
         }
         String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, Constants.DEFAULT_TEMPLATE_LIST);
-//        curTempTag = prefs.getInt(CUR_TEMP_TAG_KEY, 0);
         curTemplateString = prefs.getString(DroneActivity.CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
         /// List of flattened templates
         templateList = VoicingHelper.inflateTemplateList(tempsStr);
@@ -212,9 +190,6 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
                     // Update current template variable.
                     curSelectedTemplateView = tv;
                     //todo testing line of code
-//                    droneSoundModel.setCurTemplate(VoicingHelper.inflateTemplate(curTemplateString));
-//                    midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
-//                            new Key(0, noteCollection), userModeIx, 4, hasBassNote));
                     droneSoundModel.setCurTemplate(VoicingHelper.inflateTemplate(curTemplateString));
                 }
             });
@@ -235,9 +210,6 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
             });
             voicingLinear.addView(tv);
         }
-//        //todo testing line of code
-//        midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
-//                new Key(0, noteCollection), userModeIx, 4, hasBassNote));
     }
 
     /**
@@ -250,7 +222,6 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
         curModeText.setText(MusicTheory.MAJOR_MODE_NAMES[userModeIx]);
         editor.putInt(USER_MODE_KEY, userModeIx);
         editor.apply();
-//        changePlayBack();
         droneSoundModel.setModeIx(userModeIx);
     }
 
@@ -258,19 +229,11 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
         userPluginIx = (userPluginIx + 1) % Constants.PLUGIN_INDICES.length;
         userPluginText.setText(Constants.PLUGIN_NAMES[userPluginIx]);
         droneSoundModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
-//        midiDriverModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         editor.putInt(USER_PLUGIN_KEY, userPluginIx);
         editor.apply();
-//        changePlayBack();
-//        droneSoundModel.setPlugin();
         droneSoundModel.changePlayBack();
     }
 
-//    private void changePlayBack() {
-//        midiDriverModel.sendMidiSetup();
-//        midiDriverModel.playVoicing(VoicingHelper.inflateTemplate(curTemplateString).generateVoicing(
-//                new Key(0, noteCollection), userModeIx, 4, hasBassNote));
-//    }
 
     /**
      * Opens the voicing creator activity.
@@ -279,25 +242,5 @@ public class DroneSoundActivityExperiment extends AppCompatActivity
     public void openVoicingCreator(View view) {
         Intent intent = new Intent(this, VoicingCreatorActivity.class);
         startActivity(intent);
-    }
-
-    @Override
-    public void changeVoicing(Voicing toPlay) {
-
-    }
-
-    @Override
-    public void changeMode() {
-
-    }
-
-    @Override
-    public void changePlugin() {
-
-    }
-
-    @Override
-    public void changeBassNote() {
-
     }
 }

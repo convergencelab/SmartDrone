@@ -202,7 +202,6 @@ public class VoicingCreatorActivity extends AppCompatActivity {
             tag -= 7;
             toReturn += 12;
         }
-//        toReturn += MusicTheory.MAJOR_SCALE_SEQUENCE[tag];
         toReturn += stc.getScaleTemplateForMode(droneSoundModel.getModeIx()).getIntervals()[tag];
         return toReturn;
     }

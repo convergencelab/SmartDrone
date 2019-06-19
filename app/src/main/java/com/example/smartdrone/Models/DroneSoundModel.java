@@ -1,9 +1,6 @@
 package com.example.smartdrone.Models;
 
-import com.example.smartdrone.Constants;
-import com.example.smartdrone.Key;
 import com.example.smartdrone.KeyFinder;
-import com.example.smartdrone.VoicingHelper;
 import com.example.smartdrone.VoicingTemplate;
 
 public class DroneSoundModel {
@@ -22,20 +19,10 @@ public class DroneSoundModel {
         keyFinder = new KeyFinder();
 
         midiDriverModel.setPlugin(pluginIx);
-//        this.pluginIx = pluginIx;
         this.modeIx = modeIx;
         this.hasBassNote = hasBassNote;
         this.curTemplate = voicingTemplate;
     }
-
-
-//    public int getPluginIx() {
-//        return pluginIx;
-//    }
-
-//    public void setPluginIx(int pluginIx) {
-//        this.pluginIx = pluginIx;
-//    }
 
     public int getModeIx() {
         return modeIx;

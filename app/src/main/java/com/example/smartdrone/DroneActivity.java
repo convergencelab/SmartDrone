@@ -32,11 +32,18 @@
 
 package com.example.smartdrone;
 
+import android.Manifest;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
@@ -45,6 +52,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.example.smartdrone.Models.SmartDroneModel;
 
@@ -59,6 +67,8 @@ public class DroneActivity extends AppCompatActivity
     public static final String CUR_TEMP_KEY = "curTemplate";
     public static final String ALL_TEMP_KEY = "allTemplates";
     public static final String ACTIVE_KEY_IX_KEY = "active_key_ix";
+
+    private int MICROPHONE_PERMISSION_CODE = 1;
 
     /**
      * Map note name to piano image file name.
@@ -93,6 +103,10 @@ public class DroneActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Log.d(Constants.MESSAGE_LOG_ACTV, "create");
         setContentView(R.layout.activity_drone_main);
+
+        if (ContextCompat.checkSelfPermission(DroneActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestMicrophonePermission();
+        }
 
         noteToResIdName = new HashMap<>();
         inflatePianoMap();
@@ -237,21 +251,23 @@ public class DroneActivity extends AppCompatActivity
      * Toggle state of drone; active or inactive.
      * Updates drawable on toggle button.
      */
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void toggleDroneState(View view) {
-        smartDroneModel.toggleDroneState();
-
-        if (smartDroneModel.isActive()) {
-            controlButton.setImageResource(R.drawable.ic_stop_drone);
-            activeKeyButton.setTextSize(64);
-            activeKeyButton.setText("...");
-            activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_active)); //todo find better way to do this
+        if (ContextCompat.checkSelfPermission(DroneActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+            requestMicrophonePermission();
         }
         else {
-            controlButton.setImageResource(R.drawable.ic_play_drone);
-            activeKeyButton.setTextSize(48);
-            activeKeyButton.setText("Start");
-            activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive)); //todo find better way to do this
+            smartDroneModel.toggleDroneState();
+            if (smartDroneModel.isActive()) {
+                controlButton.setImageResource(R.drawable.ic_stop_drone);
+                activeKeyButton.setTextSize(64);
+                activeKeyButton.setText("...");
+                activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_active)); //todo find better way to do this
+            } else {
+                controlButton.setImageResource(R.drawable.ic_play_drone);
+                activeKeyButton.setTextSize(48);
+                activeKeyButton.setText("Start");
+                activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive)); //todo find better way to do this
+            }
         }
     }
 
@@ -299,7 +315,6 @@ public class DroneActivity extends AppCompatActivity
      * Sustains chord if drone active.
      * @param view
      */
-    @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
     public void activeKeyClick(View view) {
         // Start drone
         //todo: add some sort of visual feedback that active key button has been clicked
@@ -318,5 +333,43 @@ public class DroneActivity extends AppCompatActivity
         activeKeyButton.setTextSize(48);
         activeKeyButton.setText("Start");
         activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive)); //todo find better way to do this
+    }
+
+    public void requestMicrophonePermission() {
+        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.RECORD_AUDIO)) {
+            new AlertDialog.Builder(this)
+                    .setTitle("Permission Needed")
+                    .setMessage("This permission is needed for drone.")
+                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            ActivityCompat.requestPermissions(DroneActivity.this, new String[] {Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
+
+                        }
+                    })
+                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .create().show();
+        }
+        else {
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
+        }
+
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == MICROPHONE_PERMISSION_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }
