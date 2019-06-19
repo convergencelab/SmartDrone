@@ -5,12 +5,16 @@ import android.content.SharedPreferences;
 
 public class DronePreferences {
 
-    private static final String BASS_NOTE_KEY = "bassNoteEnabled"; //todo extract to string resource
+    private static final String BASS_NOTE_KEY = "bassNoteEnabled";
 
+    /**
+     * Construct and return shared preferences object.
+     * @param       context Context; context.
+     * @return      SharedPreferences; shared preferences object.
+     */
     private static SharedPreferences getSharedPrefs(Context context) {
         return android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context);
     }
-//    private static SharedPreferences sharedPrefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences();
 
     /**
      * Get boolean for bass switch.

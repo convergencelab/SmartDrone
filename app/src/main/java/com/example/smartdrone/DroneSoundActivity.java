@@ -12,6 +12,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.example.smartdrone.Models.DroneSoundModel;
+import com.example.smartdrone.Utility.DronePreferences;
 
 import java.util.ArrayList;
 
@@ -19,7 +20,7 @@ public class DroneSoundActivity extends AppCompatActivity {
 
     public static final String USER_MODE_KEY = "userModeIx"; //todo extract to string resource
     public static final String USER_PLUGIN_KEY = "userPlugin"; //todo extract to string resource
-    public static final String BASSNOTE_KEY = "bassNoteEnabled"; //todo extract to string resource
+//    public static final String BASSNOTE_KEY = "bassNoteEnabled"; //todo extract to string resource
 
 
     private SharedPreferences prefs;
@@ -99,22 +100,23 @@ public class DroneSoundActivity extends AppCompatActivity {
      * Load bass switch data from shared preferences.
      */
     private void loadBassSwitchData() {
-        hasBassNote = prefs.getBoolean(BASSNOTE_KEY, true);
+        hasBassNote = DronePreferences.getStoredBassPref(this);
         bassSwitch.setChecked(hasBassNote);
         bassSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    editor.putBoolean(BASSNOTE_KEY, true);
                     hasBassNote = true;
-                    editor.apply();
+                    DronePreferences.setStoredBassPref(DroneSoundActivity.this, true);
+//                    editor.apply();
                 }
                 else {
-                    editor.putBoolean(BASSNOTE_KEY, false);
+//                    editor.putBoolean(BASSNOTE_KEY, false);
                     hasBassNote = false;
-                    editor.apply();
+//                    editor.apply();
+                    DronePreferences.setStoredBassPref(DroneSoundActivity.this, false);
                 }
-                droneSoundModel.setHasBassNote(hasBassNote);
+                droneSoundModel.setHasBassNote(hasBassNote); // todo refactor
             }
         });
     }
