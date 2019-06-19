@@ -95,31 +95,16 @@ public class DroneActivity extends AppCompatActivity
         setContentView(R.layout.activity_drone_main);
 
         noteToResIdName = new HashMap<>();
-        createPianoMap();
+        inflatePianoMap();
 
         // Handles drone logic.
         smartDroneModel = new SmartDroneModel(this);
         // Construct Midi Driver.
         smartDroneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
 
-
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
         piano = findViewById(R.id.image_piano);
-
-        //todo delete test code
-        String testStr = VoicingHelper.flattenTemplate(smartDroneModel.getCurTemplate());
-        Log.d("template", testStr);
-
-        VoicingTemplate vt = VoicingHelper.inflateTemplate(testStr);
-        Log.d("template", vt.toString());
-
-        //todo delete test code
-        String testStr2 = VoicingHelper.flattenTemplate(vt);
-        Log.d("template", testStr2);
-
-        VoicingTemplate vt2 = VoicingHelper.inflateTemplate(testStr2);
-        Log.d("template", vt2.toString());
     }
 
     @Override
@@ -148,7 +133,7 @@ public class DroneActivity extends AppCompatActivity
         SharedPreferences sharedPref =
                 android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
 
-        SharedPreferences.Editor edit =  sharedPref.edit();
+        SharedPreferences.Editor edit = sharedPref.edit();
 //        edit.remove(ALL_TEMP_KEY);
 //        edit.remove(CUR_TEMP_KEY);
 //        edit.apply();
@@ -180,6 +165,8 @@ public class DroneActivity extends AppCompatActivity
         smartDroneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         smartDroneModel.sethasBassNote(userBassNotePref);
         smartDroneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate)); //todo this is template code
+
+        resetDroneScreen();
     }
 
     @Override
@@ -294,7 +281,7 @@ public class DroneActivity extends AppCompatActivity
     /**
      * Builds hash map for (note name -> piano image file name).
      */
-    public void createPianoMap() {
+    public void inflatePianoMap() {
         String str;
         for (int i = 0; i < 12; i++) {
             str = "piano_";
@@ -320,5 +307,16 @@ public class DroneActivity extends AppCompatActivity
             toggleDroneState(view);
         }
         //todo: else -> sustain drone
+    }
+
+    private void resetDroneScreen() {
+        if (smartDroneModel.isActive()) {
+            smartDroneModel.toggleDroneState();
+        }
+        piano.setImageResource(R.drawable.piano_null);
+        controlButton.setImageResource(R.drawable.ic_play_drone);
+        activeKeyButton.setTextSize(48);
+        activeKeyButton.setText("Start");
+        activeKeyButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive)); //todo find better way to do this
     }
 }

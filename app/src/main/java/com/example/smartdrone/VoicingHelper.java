@@ -4,6 +4,7 @@ import android.content.SharedPreferences;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 
 public class VoicingHelper {
 
@@ -102,5 +103,27 @@ public class VoicingHelper {
         allTemplates += '|' + toAdd;
         editor.putString(DroneActivity.ALL_TEMP_KEY, allTemplates);
         editor.apply();
+    }
+
+    public static HashSet<String> getSetOfAllTemplateNames(String flattenedTemplateList) {
+        HashSet<String> allNames = new HashSet<>();
+        boolean nameFound = false;
+        String curString = "";
+        char curChar;
+        for (int i = 0; i < flattenedTemplateList.length(); i++) {
+            curChar = flattenedTemplateList.charAt(i);
+            if (!nameFound && curChar != ',') {
+                curString += curChar;
+            }
+            else if (!nameFound && curChar == ',') {
+                nameFound = true;
+                allNames.add(curString);
+                curString = "";
+            }
+            else if (nameFound && curChar == '|') {
+                nameFound = false;
+            }
+        }
+        return allNames;
     }
 }

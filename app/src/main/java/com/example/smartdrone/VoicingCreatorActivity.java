@@ -1,17 +1,18 @@
 package com.example.smartdrone;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.provider.SyncStateContract;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.example.smartdrone.Models.DroneSoundModel;
 import com.example.smartdrone.Models.MidiDriverModel;
-import com.example.smartdrone.Models.VoicingModel;
+
+import java.util.HashSet;
 
 public class VoicingCreatorActivity extends AppCompatActivity {
 
@@ -26,12 +27,12 @@ public class VoicingCreatorActivity extends AppCompatActivity {
 
     private SharedPreferences sharedPrefs;
     private SharedPreferences.Editor editor;
+    private HashSet<String> nameSet;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voicing_creator);
-
 
 
         chordTones = new boolean[NUM_BUTTONS];
@@ -40,6 +41,8 @@ public class VoicingCreatorActivity extends AppCompatActivity {
 
         sharedPrefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
         editor =  sharedPrefs.edit();
+        nameSet = VoicingHelper.getSetOfAllTemplateNames(sharedPrefs.getString(DroneActivity.ALL_TEMP_KEY, Constants.DEFAULT_TEMPLATE_LIST));
+        Log.d("d_bug", nameSet.toString());
 
         templateName = findViewById(R.id.voicing_name_edit_text);
         loadButtonData();
@@ -134,10 +137,58 @@ public class VoicingCreatorActivity extends AppCompatActivity {
     }
 
     public void saveVoicing(View view) {
-        String flattenedVoicing = returnFlattenedTemplate();
-        VoicingHelper.addTemplateToPref(sharedPrefs, editor, flattenedVoicing);
+        if (!validateName(templateName.getText().toString())) {
+            return;
+        }
+        if (!validateVoicing(chordTones)) {
+            Toast t = Toast.makeText(this, "Voicing must have at least one voice.", Toast.LENGTH_LONG);
+            t.show();
+            return;
+        }
+
+        String flattenedTemplate = returnFlattenedTemplate();
+
+        if (nameSet.contains(VoicingHelper.getTemplateName(flattenedTemplate))) {
+            Toast t = Toast.makeText(this, "Name already taken: Please choose another name.", Toast.LENGTH_SHORT);
+            t.show();
+            return;
+        }
+
+        else if (VoicingHelper.getTemplateName(flattenedTemplate).contains("|") || VoicingHelper.getTemplateName(flattenedTemplate).contains(",") ||
+                flattenedTemplate.contains(",,")) {
+            Toast t = Toast.makeText(this, "Name cannot contain characters '|' or ','.", Toast.LENGTH_SHORT);
+            t.show();
+            return;
+        }
+
+        VoicingHelper.addTemplateToPref(sharedPrefs, editor, flattenedTemplate);
         System.out.println(sharedPrefs.getString(DroneActivity.ALL_TEMP_KEY, null));
         finish();
+    }
+
+    private boolean validateVoicing(boolean[] chordTones) {
+        for (int i = 0; i < chordTones.length; i++) {
+            if (chordTones[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean validateName(String name) {
+        if (nameSet.contains(name)) {
+            Toast t = Toast.makeText(this, "Name already taken: Please choose another name.", Toast.LENGTH_LONG);
+            t.show();
+            return false;
+        }
+
+        if (name.contains("|") || name.contains(",")) {
+            Toast t = Toast.makeText(this, "Name cannot contain characters ' | ' or ' , '", Toast.LENGTH_LONG);
+            t.show();
+            return false;
+        }
+
+        return true;
     }
 
     public void cancelVoicing(View view) {
