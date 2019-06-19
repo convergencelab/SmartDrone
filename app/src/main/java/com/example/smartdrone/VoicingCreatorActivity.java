@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.example.smartdrone.Models.DroneSoundModel;
 import com.example.smartdrone.Models.MidiDriverModel;
+import com.example.smartdrone.Utility.DronePreferences;
 
 import java.util.HashSet;
 
@@ -53,8 +54,10 @@ public class VoicingCreatorActivity extends AppCompatActivity {
         super.onResume();
         droneSoundModel = new DroneSoundModel(
                 Constants.PLUGIN_INDICES[sharedPrefs.getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0)],
-                sharedPrefs.getInt(DroneSoundActivity.USER_MODE_KEY, 0),
-                sharedPrefs.getBoolean(DroneSoundActivity.BASSNOTE_KEY, true),
+//                sharedPrefs.getInt(DroneSoundActivity.USER_MODE_KEY, 0),
+                DronePreferences.getStoredModePref(this),
+//                sharedPrefs.getBoolean(DroneSoundActivity.BASSNOTE_KEY, true),
+                DronePreferences.getStoredBassPref(this),
                 VoicingHelper.inflateTemplate("throwaway,0"));
         droneSoundModel.initializePlayback();
         droneSoundModel.changePlayBack();

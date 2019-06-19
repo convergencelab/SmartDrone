@@ -53,6 +53,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.smartdrone.Models.SmartDroneModel;
+import com.example.smartdrone.Utility.DronePreferences;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
@@ -157,12 +158,14 @@ public class DroneActivity extends AppCompatActivity
                 .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
         String keySensPref = sharedPref
                 .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
-        int userModeIx = sharedPref
-                .getInt(DroneSoundActivity.USER_MODE_KEY, 0);
+//        int userModeIx = sharedPref
+//                .getInt(DroneSoundActivity.USER_MODE_KEY, 0);
+        int userModeIx = DronePreferences.getStoredModePref(this);
         int userPluginIx = sharedPref
                 .getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0);
-        boolean userBassNotePref = sharedPref
-                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
+//        boolean userBassNotePref = sharedPref
+//                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
+        boolean userBassNotePref = DronePreferences.getStoredBassPref(this);
         String defTemplate = sharedPref
                 .getString(CUR_TEMP_KEY, "Drone,0");
 
