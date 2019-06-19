@@ -52,9 +52,9 @@ public class VoicingCreatorActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         droneSoundModel = new DroneSoundModel(
-                Constants.PLUGIN_INDICES[sharedPrefs.getInt(DroneSoundActivityExperiment.USER_PLUGIN_KEY, 0)],
-                sharedPrefs.getInt(DroneSoundActivityExperiment.USER_MODE_KEY, 0),
-                sharedPrefs.getBoolean(DroneSoundActivityExperiment.BASSNOTE_KEY, true),
+                Constants.PLUGIN_INDICES[sharedPrefs.getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0)],
+                sharedPrefs.getInt(DroneSoundActivity.USER_MODE_KEY, 0),
+                sharedPrefs.getBoolean(DroneSoundActivity.BASSNOTE_KEY, true),
                 VoicingHelper.inflateTemplate("throwaway,0"));
         droneSoundModel.initializePlayback();
         droneSoundModel.changePlayBack();
@@ -184,6 +184,12 @@ public class VoicingCreatorActivity extends AppCompatActivity {
 
         if (name.contains("|") || name.contains(",")) {
             Toast t = Toast.makeText(this, "Name cannot contain characters ' | ' or ' , '", Toast.LENGTH_LONG);
+            t.show();
+            return false;
+        }
+
+        if (name.length() == 0) {
+            Toast t = Toast.makeText(this, "Please enter a name.", Toast.LENGTH_LONG);
             t.show();
             return false;
         }

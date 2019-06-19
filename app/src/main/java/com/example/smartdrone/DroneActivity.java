@@ -37,10 +37,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
@@ -98,6 +96,8 @@ public class DroneActivity extends AppCompatActivity
      */
     Button activeKeyButton;
 
+    private SharedPreferences.Editor edit;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -147,10 +147,10 @@ public class DroneActivity extends AppCompatActivity
         SharedPreferences sharedPref =
                 android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
 
-        SharedPreferences.Editor edit = sharedPref.edit();
-//        edit.remove(ALL_TEMP_KEY);
-//        edit.remove(CUR_TEMP_KEY);
+        edit = sharedPref.edit();
+//        edit.clear();
 //        edit.apply();
+
 
         //todo: make ints by default so no conversion is necessary
         String noteLenPref = sharedPref
@@ -158,11 +158,11 @@ public class DroneActivity extends AppCompatActivity
         String keySensPref = sharedPref
                 .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
         int userModeIx = sharedPref
-                .getInt(DroneSoundActivityExperiment.USER_MODE_KEY, 0);
+                .getInt(DroneSoundActivity.USER_MODE_KEY, 0);
         int userPluginIx = sharedPref
-                .getInt(DroneSoundActivityExperiment.USER_PLUGIN_KEY, 0); // 52 == plugin choir
+                .getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0);
         boolean userBassNotePref = sharedPref
-                .getBoolean(DroneSoundActivityExperiment.BASSNOTE_KEY, true);
+                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
         String defTemplate = sharedPref
                 .getString(CUR_TEMP_KEY, "Drone,0");
 
@@ -290,7 +290,7 @@ public class DroneActivity extends AppCompatActivity
             smartDroneModel.deactivateDrone();
             controlButton.setImageResource(R.drawable.ic_play_drone);
         }
-        Intent intent = new Intent(this, DroneSoundActivityExperiment.class); //todo finish activity
+        Intent intent = new Intent(this, DroneSoundActivity.class); //todo finish activity
         startActivity(intent);
     }
 
@@ -371,5 +371,6 @@ public class DroneActivity extends AppCompatActivity
                 Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
             }
         }
+
     }
 }

@@ -15,7 +15,7 @@ import com.example.smartdrone.Models.DroneSoundModel;
 
 import java.util.ArrayList;
 
-public class DroneSoundActivityExperiment extends AppCompatActivity {
+public class DroneSoundActivity extends AppCompatActivity {
 
     public static final String USER_MODE_KEY = "userModeIx"; //todo extract to string resource
     public static final String USER_PLUGIN_KEY = "userPlugin"; //todo extract to string resource
@@ -44,7 +44,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_drone_sound_experiment);
+        setContentView(R.layout.activity_drone_sound);
         prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
         editor = prefs.edit();
 
@@ -202,6 +202,7 @@ public class DroneSoundActivityExperiment extends AppCompatActivity {
                         if (tv == curSelectedTemplateView) {
                             TextView temp = (TextView) voicingLinear.getChildAt(0);
                             curSelectedTemplateView = temp;
+                            curTemplateString = (String) curSelectedTemplateView.getTag();
                             temp.setTextColor(getResources().getColor(R.color.green_test));
                         }
                     }
