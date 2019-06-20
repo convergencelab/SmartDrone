@@ -3,7 +3,7 @@
 
     <!-- Note Length Filter Setting -->
     <ListPreference
-        android:defaultValue="Medium (Default)"
+        android:defaultValue="60"
         android:entries="@array/note_length_filter_name_array"
         android:entryValues="@array/note_length_filter_values_array"
         android:key="noteLen"
@@ -13,7 +13,7 @@
 
     <!-- Active Key Sensitivity -->
     <ListPreference
-        android:defaultValue="Medium (Default)"
+        android:defaultValue="3"
         android:entries="@array/active_key_sensitivity_names"
         android:entryValues="@array/active_key_sensitivity_values"
         android:key="keySens"
