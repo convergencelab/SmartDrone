@@ -85,6 +85,9 @@ public class Constants {
      */
     public static final int NULL_KEY_IX = -1;
 
+    public static final Note NULL_NOTE = null;
+    public static final Key NULL_KEY = null;
+
     /**
      * Flattened strings of default voicing templates.
      */

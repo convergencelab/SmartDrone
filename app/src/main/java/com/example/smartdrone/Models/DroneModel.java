@@ -1,10 +1,10 @@
 package com.example.smartdrone.Models;
 
-import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.DroneActivity;
+import com.example.smartdrone.Note;
 import com.example.smartdrone.Voicing;
 import com.example.smartdrone.VoicingTemplate;
 
@@ -17,7 +17,7 @@ import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
 
 
-public class SmartDroneModel implements Serializable {
+public class DroneModel implements Serializable {
     /**
      * Previous voicing for drone.
      */
@@ -87,8 +87,9 @@ public class SmartDroneModel implements Serializable {
 
     /**
      * Constructor.
+     * @param       droneActivity DroneActivity; drone activity.
      */
-    public SmartDroneModel(DroneActivity droneActivity) {
+    public DroneModel(DroneActivity droneActivity) {
         this.droneActivity = droneActivity;
         keyFinderModel = new KeyFinderModel();
         midiDriverModel = new MidiDriverModel();
@@ -123,7 +124,9 @@ public class SmartDroneModel implements Serializable {
      * @param keyFinderModel  KeyFinderModel; object control note processing.
      */
     private void processPitch(float pitchInHz, DroneActivity droneActivity, KeyFinderModel keyFinderModel) {
-        int noteIx = pitchProcessorModel.processPitch(pitchInHz, keyFinderModel);
+//        int noteIx = pitchProcessorModel.processPitch(pitchInHz, keyFinderModel);
+        Note curNote = pitchProcessorModel.processPitch(pitchInHz, keyFinderModel);
+
 
         // Note removal detected.
         if (keyFinderModel.getKeyFinder().getNoteHasBeenRemoved()) {
@@ -132,7 +135,12 @@ public class SmartDroneModel implements Serializable {
             Log.d(Constants.MESSAGE_LOG_LIST, keyFinderModel.getKeyFinder().getActiveNotes().toString());
         }
         if (pitchProcessorModel.noteHasChanged()) {
-            droneActivity.setPianoImage(noteIx);
+            if (curNote == null) {
+                droneActivity.setPianoImage(-1);
+            }
+            else {
+                droneActivity.setPianoImage(curNote.getIx());
+            }
             pitchProcessorModel.setNoteHasChanged(false);
         }
     }
@@ -175,6 +183,7 @@ public class SmartDroneModel implements Serializable {
         if (midiDriverModel.getMidiDriver() != null) {
             isActive = true;
             midiDriverModel.getMidiDriver().start();
+            midiDriverModel.sendMidiSetup();
             startDroneProcess();
         }
     }
@@ -268,8 +277,8 @@ public class SmartDroneModel implements Serializable {
     private void cleanseDrone() {
         prevActiveKeyIx = Constants.NULL_KEY_IX;
         curActiveKeyIx = Constants.NULL_KEY_IX;
-        pitchProcessorModel.setLastAdded(Constants.NULL_NOTE_IX);
-        pitchProcessorModel.setLastHeard(Constants.NULL_NOTE_IX);
+        pitchProcessorModel.setLastAdded(null);
+        pitchProcessorModel.setLastHeard(null);
         midiDriverModel.setCurVoicing(null);
         prevVoicing = null;
         if (pitchProcessorModel.getDispatcher() != null) {

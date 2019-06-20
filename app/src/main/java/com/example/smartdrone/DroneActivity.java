@@ -52,7 +52,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.example.smartdrone.Models.SmartDroneModel;
+import com.example.smartdrone.Models.DroneModel;
 import com.example.smartdrone.Utility.DronePreferences;
 
 import org.billthefarmer.mididriver.MidiDriver;
@@ -60,8 +60,7 @@ import org.billthefarmer.mididriver.MidiDriver;
 import java.util.HashMap;
 
 
-public class DroneActivity extends AppCompatActivity
-        implements MidiDriver.OnMidiStartListener {
+public class DroneActivity extends AppCompatActivity {
 
     public static final String CUR_TEMP_KEY = "curTemplate";
     public static final String ALL_TEMP_KEY = "allTemplates";
@@ -79,7 +78,7 @@ public class DroneActivity extends AppCompatActivity
     /**
      * Handles all drone logic.
      */
-    private SmartDroneModel smartDroneModel;
+    private DroneModel droneModel;
 
     /**
      * Button for toggling state of drone.
@@ -89,7 +88,7 @@ public class DroneActivity extends AppCompatActivity
     /**
      * Image of piano on drone main screen.
      */
-    ImageView piano;
+    ImageView pianoImage;
 
     /**
      * Button that displays active key.
@@ -113,21 +112,19 @@ public class DroneActivity extends AppCompatActivity
         inflatePianoMap();
 
         // Handles drone logic.
-        smartDroneModel = new SmartDroneModel(this);
-        // Construct Midi Driver.
-        smartDroneModel.getMidiDriverModel().getMidiDriver().setOnMidiStartListener(this);
+        droneModel = new DroneModel(this);
 
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
-        piano = findViewById(R.id.image_piano);
+        pianoImage = findViewById(R.id.image_piano);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         Log.d(Constants.MESSAGE_LOG_ACTV, "stop");
-        if (smartDroneModel.isActive()) {
-            smartDroneModel.deactivateDrone();
+        if (droneModel.isActive()) {
+            droneModel.deactivateDrone();
         }
     }
 
@@ -152,7 +149,6 @@ public class DroneActivity extends AppCompatActivity
 //        edit.clear();
 //        edit.apply();
 
-
         //todo: make ints by default so no conversion is necessary
         String noteLenPref = sharedPref
                 .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
@@ -176,12 +172,12 @@ public class DroneActivity extends AppCompatActivity
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
         int keyTimerLength = Integer.parseInt(keySensPref);
 //        int userPlugin = Integer.parseInt(userPluginPref);
-        smartDroneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
-        smartDroneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
-        smartDroneModel.setUserModeIx(userModeIx);
-        smartDroneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
-        smartDroneModel.sethasBassNote(userBassNotePref);
-        smartDroneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate)); //todo this is template code
+        droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
+        droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
+        droneModel.setUserModeIx(userModeIx);
+        droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
+        droneModel.sethasBassNote(userBassNotePref);
+        droneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate)); //todo this is template code
 
         resetDroneScreen();
     }
@@ -216,24 +212,13 @@ public class DroneActivity extends AppCompatActivity
      */
     public void setPianoImage(int noteIx) {
         if (noteIx == Constants.NULL_NOTE_IX) {
-            piano.setImageResource(R.drawable.piano_null);
+            pianoImage.setImageResource(R.drawable.piano_null);
         }
         else {
             String piano_text = noteToResIdName.get(Constants.NOTES_SHARP[noteIx]);
             int resID = getResources().getIdentifier(piano_text, "drawable", getPackageName());
-            piano.setImageResource(resID);
+            pianoImage.setImageResource(resID);
         }
-    }
-
-    /**
-     * https://github.com/billthefarmer/mididriver/blob/master/app/src/main/java/org/billthefarmer/miditest/MainActivity.java
-     *
-     * Listener for sending initial midi messages when the Sonivox
-     * synthesizer has been started, such as program change.
-     */
-    @Override
-    public void onMidiStart() {
-        smartDroneModel.getMidiDriverModel().sendMidiSetup();
     }
 
     /**
@@ -241,12 +226,13 @@ public class DroneActivity extends AppCompatActivity
      */
     public void printActiveKeyToScreen() {
         activeKeyButton.setTextSize(22);
-        String activeKey = "";
+        String activeKeyStr = "";
         //todo refactor line below
-        activeKey += MusicTheory.CHROMATIC_SCALE_FLAT[smartDroneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getNotes()[smartDroneModel.getUserModeIx()].getIx()];
-        String fullName = activeKey + "\n" + MusicTheory.MAJOR_MODE_NAMES[smartDroneModel.getUserModeIx()];
+        int spellingCode = droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getSpellingCode();
+        activeKeyStr = droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getDegree(droneModel.getUserModeIx()).getName(spellingCode);
+        String fullName = activeKeyStr + "\n" + MusicTheory.MAJOR_MODE_NAMES[droneModel.getUserModeIx()];
         SpannableString ss = new SpannableString(fullName);
-        ss.setSpan(new RelativeSizeSpan(3f), 0, activeKey.length(), 0);
+        ss.setSpan(new RelativeSizeSpan(3f), 0, activeKeyStr.length(), 0);
         activeKeyButton.setText(ss);
     }
 
@@ -259,8 +245,8 @@ public class DroneActivity extends AppCompatActivity
             requestMicrophonePermission();
         }
         else {
-            smartDroneModel.toggleDroneState();
-            if (smartDroneModel.isActive()) {
+            droneModel.toggleDroneState();
+            if (droneModel.isActive()) {
                 controlButton.setImageResource(R.drawable.ic_stop_drone);
                 activeKeyButton.setTextSize(64);
                 activeKeyButton.setText("...");
@@ -280,8 +266,8 @@ public class DroneActivity extends AppCompatActivity
      */
     public void openDroneSettings(View view) {
         // Deactivate drone if active.
-        if (smartDroneModel.isActive()) {
-            smartDroneModel.deactivateDrone();
+        if (droneModel.isActive()) {
+            droneModel.deactivateDrone();
             controlButton.setImageResource(R.drawable.ic_play_drone);
         }
         Intent droneSettingsIntent = new Intent(this, DroneSettingsActivity.class);
@@ -289,8 +275,8 @@ public class DroneActivity extends AppCompatActivity
     }
 
     public void openSoundSettings(View view) {
-        if (smartDroneModel.isActive()) {
-            smartDroneModel.deactivateDrone();
+        if (droneModel.isActive()) {
+            droneModel.deactivateDrone();
             controlButton.setImageResource(R.drawable.ic_play_drone);
         }
         Intent intent = new Intent(this, DroneSoundActivity.class); //todo finish activity
@@ -321,17 +307,17 @@ public class DroneActivity extends AppCompatActivity
     public void activeKeyClick(View view) {
         // Start drone
         //todo: add some sort of visual feedback that active key button has been clicked
-        if (!smartDroneModel.isActive()) {
+        if (!droneModel.isActive()) {
             toggleDroneState(view);
         }
         //todo: else -> sustain drone
     }
 
     private void resetDroneScreen() {
-        if (smartDroneModel.isActive()) {
-            smartDroneModel.toggleDroneState();
+        if (droneModel.isActive()) {
+            droneModel.toggleDroneState();
         }
-        piano.setImageResource(R.drawable.piano_null);
+        pianoImage.setImageResource(R.drawable.piano_null);
         controlButton.setImageResource(R.drawable.ic_play_drone);
         activeKeyButton.setTextSize(48);
         activeKeyButton.setText("Start");

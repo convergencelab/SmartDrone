@@ -36,13 +36,12 @@ public class KeyFinderModel {
     }
 
     /**
-     * Add note to Active Note list based on the given ix.
-     * @param       noteIx int; index of note.
+     * Add note to Active Note list.
+     * @param       toAdd Note; note to add.
      */
-    void addNote(int noteIx) {
-        Note curNote = keyFinder.getAllNotes().getNoteAtIndex(noteIx);
-        keyFinder.addNoteToList(curNote);
-        Log.d(Constants.MESSAGE_LOG_ADD, curNote.getName());
+    void addNote(Note toAdd) {
+        keyFinder.addNoteToList(toAdd);
+        Log.d(Constants.MESSAGE_LOG_ADD, toAdd.getName());
         Log.d(Constants.MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
     }
 
@@ -63,22 +62,19 @@ public class KeyFinderModel {
     }
 
     /**
-     * Starts timer for note.
-     * Timer will remove note from active notes.
-     * @param       noteIx int; index of note.
+     * Start timer for note.
+     * @param       toStart Note; note to start.
      */
-    void startNoteTimer(int noteIx) {
-        keyFinder.getAllNotes().getNoteAtIndex(noteIx)
-                .startNoteTimer(keyFinder, Constants.NOTE_TIMER_LEN);
+    void startNoteTimer(Note toStart) {
+        toStart.startNoteTimer(keyFinder, Constants.NOTE_TIMER_LEN); // todo refactor library. Timers should be a method of KeyFinder class.
     }
 
     /**
      * Cancels timer for note.
      * Will stop the scheduled task of removing note from active note list.
-     * @param       noteIx int; index of note.
+     * @param       toCancel Note; note to cancel.
      */
-    void cancelNoteTimer(int noteIx) {
-        keyFinder.getAllNotes().getNoteAtIndex(noteIx)
-                .cancelNoteTimer();
+    void cancelNoteTimer(Note toCancel) {
+        toCancel.cancelNoteTimer();
     }
 }
