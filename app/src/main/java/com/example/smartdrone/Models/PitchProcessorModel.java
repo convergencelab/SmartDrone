@@ -73,7 +73,14 @@ public class PitchProcessorModel {
      * @param       keyFinderModel KeyFinderModel; handles key finder.
      */
     public Note processPitch(float pitchInHz, KeyFinderModel keyFinderModel) {
-        Note curHeard = keyFinderModel.getKeyFinder().getNote(convertPitchToIx((double) pitchInHz));
+        int curHeardIx = convertPitchToIx((double) pitchInHz);
+        Note curHeard;
+        if (curHeardIx == -1) {
+            curHeard = NULL_NOTE;
+        }
+        else {
+            curHeard = keyFinderModel.getKeyFinder().getNote(curHeardIx);
+        }
         if (noteChangeDetected(curHeard)) {
             lastHeard = curHeard;
             noteHasChanged = true;

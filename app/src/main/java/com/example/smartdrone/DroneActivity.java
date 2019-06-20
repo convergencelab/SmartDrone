@@ -149,7 +149,6 @@ public class DroneActivity extends AppCompatActivity {
 //        edit.clear();
 //        edit.apply();
 
-
         //todo: make ints by default so no conversion is necessary
         String noteLenPref = sharedPref
                 .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
@@ -221,18 +220,19 @@ public class DroneActivity extends AppCompatActivity {
             pianoImage.setImageResource(resID);
         }
     }
-    
+
     /**
      * Update the text view that displays the current active key.
      */
     public void printActiveKeyToScreen() {
         activeKeyButton.setTextSize(22);
-        String activeKey = "";
+        String activeKeyStr = "";
         //todo refactor line below
-        activeKey += MusicTheory.CHROMATIC_SCALE_FLAT[droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getNotes()[droneModel.getUserModeIx()].getIx()];
-        String fullName = activeKey + "\n" + MusicTheory.MAJOR_MODE_NAMES[droneModel.getUserModeIx()];
+        int spellingCode = droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getSpellingCode();
+        activeKeyStr = droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getDegree(droneModel.getUserModeIx()).getName(spellingCode);
+        String fullName = activeKeyStr + "\n" + MusicTheory.MAJOR_MODE_NAMES[droneModel.getUserModeIx()];
         SpannableString ss = new SpannableString(fullName);
-        ss.setSpan(new RelativeSizeSpan(3f), 0, activeKey.length(), 0);
+        ss.setSpan(new RelativeSizeSpan(3f), 0, activeKeyStr.length(), 0);
         activeKeyButton.setText(ss);
     }
 

@@ -36,28 +36,14 @@ public class KeyFinderModel {
     }
 
     /**
-     * Add note to Active Note list based on the given ix.
-     * @param       noteIx int; index of note.
-     */
-    void addNote(int noteIx) {
-        Note curNote = keyFinder.getAllNotes().getNoteAtIndex(noteIx);
-        keyFinder.addNoteToList(curNote);
-        Log.d(Constants.MESSAGE_LOG_ADD, curNote.getName());
-        Log.d(Constants.MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
-    }
-
-    /**
      * Add note to Active Note list.
      * @param       toAdd Note; note to add.
      */
     void addNote(Note toAdd) {
-//        Note curNote = keyFinder.getAllNotes().getNoteAtIndex(noteIx);
         keyFinder.addNoteToList(toAdd);
         Log.d(Constants.MESSAGE_LOG_ADD, toAdd.getName());
         Log.d(Constants.MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
     }
-
-
 
     /**
      * Get key timer length.
@@ -75,31 +61,12 @@ public class KeyFinderModel {
         this.keyTimerLength = seconds;
     }
 
-    // todo old code.
     /**
-     * Starts timer for note.
-     * Timer will remove note from active notes.
-     * @param       noteIx int; index of note.
+     * Start timer for note.
+     * @param       toStart Note; note to start.
      */
-    void startNoteTimer(int noteIx) {
-        keyFinder.getAllNotes().getNoteAtIndex(noteIx)
-                .startNoteTimer(keyFinder, Constants.NOTE_TIMER_LEN);
-    }
-
-    //todo new code
     void startNoteTimer(Note toStart) {
         toStart.startNoteTimer(keyFinder, Constants.NOTE_TIMER_LEN); // todo refactor library. Timers should be a method of KeyFinder class.
-    }
-
-    //todo old code
-    /**
-     * Cancels timer for note.
-     * Will stop the scheduled task of removing note from active note list.
-     * @param       noteIx int; index of note.
-     */
-    void cancelNoteTimer(int noteIx) {
-        keyFinder.getAllNotes().getNoteAtIndex(noteIx)
-                .cancelNoteTimer();
     }
 
     /**
@@ -108,8 +75,6 @@ public class KeyFinderModel {
      * @param       toCancel Note; note to cancel.
      */
     void cancelNoteTimer(Note toCancel) {
-//        keyFinder.getAllNotes().getNoteAtIndex(noteIx)
-//                .cancelNoteTimer();
         toCancel.cancelNoteTimer();
     }
 }
