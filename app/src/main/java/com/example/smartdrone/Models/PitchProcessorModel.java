@@ -1,7 +1,5 @@
 package com.example.smartdrone.Models;
 
-import android.util.Log;
-
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.Note;
 
@@ -11,6 +9,9 @@ import be.tarsos.dsp.util.PitchConverter;
 
 
 public class PitchProcessorModel {
+    /**
+     * Null note.
+     */
     private static final Note NULL_NOTE = null;
 
     /**
@@ -57,7 +58,7 @@ public class PitchProcessorModel {
 
     /**
      * Constructor.
-      */
+     */
     PitchProcessorModel() {
         dispatcher = null;
         lastAdded = NULL_NOTE;

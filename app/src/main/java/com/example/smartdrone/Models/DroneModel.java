@@ -17,7 +17,7 @@ import be.tarsos.dsp.pitch.PitchDetectionResult;
 import be.tarsos.dsp.pitch.PitchProcessor;
 
 
-public class SmartDroneModel implements Serializable {
+public class DroneModel implements Serializable {
     /**
      * Previous voicing for drone.
      */
@@ -87,8 +87,9 @@ public class SmartDroneModel implements Serializable {
 
     /**
      * Constructor.
+     * @param       droneActivity DroneActivity; drone activity.
      */
-    public SmartDroneModel(DroneActivity droneActivity) {
+    public DroneModel(DroneActivity droneActivity) {
         this.droneActivity = droneActivity;
         keyFinderModel = new KeyFinderModel();
         midiDriverModel = new MidiDriverModel();
@@ -182,6 +183,7 @@ public class SmartDroneModel implements Serializable {
         if (midiDriverModel.getMidiDriver() != null) {
             isActive = true;
             midiDriverModel.getMidiDriver().start();
+            midiDriverModel.sendMidiSetup();
             startDroneProcess();
         }
     }
