@@ -61,20 +61,44 @@ public class KeyFinderModel {
         this.keyTimerLength = seconds;
     }
 
+//    //todo old method: replace with new one
+//    /**
+//     * Start timer for note.
+//     * @param       toStart Note; note to start.
+//     */
+//    void startNoteTimer(Note toStart) {
+//        toStart.startNoteTimer(keyFinder, Constants.NOTE_TIMER_LEN); // todo refactor library. Timers should be a method of KeyFinder class.
+//    }
+
+    //todo new method
     /**
      * Start timer for note.
      * @param       toStart Note; note to start.
      */
-    void startNoteTimer(Note toStart) {
-        toStart.startNoteTimer(keyFinder, Constants.NOTE_TIMER_LEN); // todo refactor library. Timers should be a method of KeyFinder class.
+    void startNoteTimerRefac(Note toStart) {
+        keyFinder.scheduleNoteRemoval(toStart); //todo refactor library, has hard coded value right now
     }
 
+//    //todo old method: replace with new one
+//    /**
+//     * Cancels timer for note.
+//     * Will stop the scheduled task of removing note from active note list.
+//     * @param       toCancel Note; note to cancel.
+//     */
+//    void cancelNoteTimer(Note toCancel) {
+//        toCancel.cancelNoteTimer();
+//    }
+
+    //todo new method
     /**
      * Cancels timer for note.
      * Will stop the scheduled task of removing note from active note list.
      * @param       toCancel Note; note to cancel.
      */
-    void cancelNoteTimer(Note toCancel) {
-        toCancel.cancelNoteTimer();
+    void cancelNoteTimerRefac(Note toCancel) {
+        // Perform null check
+        if (keyFinder.noteIsScheduled(toCancel)) {
+            keyFinder.cancelNoteRemoval(toCancel);
+        }
     }
 }
