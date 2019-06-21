@@ -91,6 +91,7 @@ public class DroneModel implements Serializable {
     public DroneModel(DroneActivity droneActivity) {
         this.droneActivity = droneActivity;
         keyFinderModel = new KeyFinderModel();
+
         midiDriverModel = new MidiDriverModel();
         pitchProcessorModel = new PitchProcessorModel();
         voicingModel = new VoicingModel();
