@@ -87,7 +87,7 @@ public class PitchProcessorModel {
             timeFirstHeard = System.currentTimeMillis();
             lastAdded = NULL_NOTE;
             if (noteTimerIsQueued) {
-                keyFinderModel.startNoteTimer(noteToStart);
+                keyFinderModel.startNoteTimerRefac(noteToStart);
                 noteTimerIsQueued = false;
             }
         }
@@ -95,7 +95,7 @@ public class PitchProcessorModel {
             lastAdded = curHeard;
             keyFinderModel.addNote(curHeard);
             queueNoteTimer(curHeard);
-            keyFinderModel.cancelNoteTimer(curHeard);
+            keyFinderModel.cancelNoteTimerRefac(curHeard);
         }
         return curHeard;
     }

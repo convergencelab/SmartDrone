@@ -1,10 +1,9 @@
 package com.example.smartdrone.Models;
 
-import android.util.Log;
-
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.DroneActivity;
 import com.example.smartdrone.Note;
+import com.example.smartdrone.Utility.DroneLog;
 import com.example.smartdrone.Voicing;
 import com.example.smartdrone.VoicingTemplate;
 
@@ -92,6 +91,7 @@ public class DroneModel implements Serializable {
     public DroneModel(DroneActivity droneActivity) {
         this.droneActivity = droneActivity;
         keyFinderModel = new KeyFinderModel();
+
         midiDriverModel = new MidiDriverModel();
         pitchProcessorModel = new PitchProcessorModel();
         voicingModel = new VoicingModel();
@@ -124,15 +124,14 @@ public class DroneModel implements Serializable {
      * @param keyFinderModel  KeyFinderModel; object control note processing.
      */
     private void processPitch(float pitchInHz, DroneActivity droneActivity, KeyFinderModel keyFinderModel) {
-//        int noteIx = pitchProcessorModel.processPitch(pitchInHz, keyFinderModel);
         Note curNote = pitchProcessorModel.processPitch(pitchInHz, keyFinderModel);
-
 
         // Note removal detected.
         if (keyFinderModel.getKeyFinder().getNoteHasBeenRemoved()) {
             keyFinderModel.getKeyFinder().setNoteHasBeenRemoved(false);
-            Log.d(Constants.MESSAGE_LOG_REMOVE, keyFinderModel.getKeyFinder().getRemovedNote().getName());
-            Log.d(Constants.MESSAGE_LOG_LIST, keyFinderModel.getKeyFinder().getActiveNotes().toString());
+            DroneLog.noteRemoved(keyFinderModel.getKeyFinder().getRemovedNote().getName());
+            DroneLog.noteList(keyFinderModel.getKeyFinder().getActiveNotesString());
+            DroneLog.noteThreads(keyFinderModel.getKeyFinder().getNoteThreadCount());
         }
         if (pitchProcessorModel.noteHasChanged()) {
             if (curNote == null) {

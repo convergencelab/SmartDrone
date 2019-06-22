@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:keepScreenOn="true"
     tools:context=".DroneActivity">
 
     <ImageView
@@ -31,9 +32,9 @@
         android:layout_marginBottom="32dp"
         android:background="@drawable/active_key_background_inactive"
         android:gravity="center"
+        android:onClick="activeKeyClick"
         android:text="@string/active_key_button"
         android:textSize="48sp"
-        android:onClick="activeKeyClick"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
@@ -95,7 +96,6 @@
             app:srcCompat="@drawable/ic_settings" />
 
     </LinearLayout>
-
 
 
 </android.support.constraint.ConstraintLayout>

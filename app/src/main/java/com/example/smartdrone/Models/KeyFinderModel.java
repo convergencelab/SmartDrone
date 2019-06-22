@@ -1,10 +1,9 @@
 package com.example.smartdrone.Models;
 
-import android.util.Log;
-
 import com.example.smartdrone.Constants;
 import com.example.smartdrone.KeyFinder;
 import com.example.smartdrone.Note;
+import com.example.smartdrone.Utility.DroneLog;
 
 public class KeyFinderModel {
     /**
@@ -41,8 +40,9 @@ public class KeyFinderModel {
      */
     void addNote(Note toAdd) {
         keyFinder.addNoteToList(toAdd);
-        Log.d(Constants.MESSAGE_LOG_ADD, toAdd.getName());
-        Log.d(Constants.MESSAGE_LOG_LIST, keyFinder.getActiveNotes().toString());
+        DroneLog.noteAdded(toAdd.getName());
+        DroneLog.noteList(keyFinder.getActiveNotesString());
+        DroneLog.noteThreads(keyFinder.getNoteThreadCount());
     }
 
     /**
@@ -65,8 +65,8 @@ public class KeyFinderModel {
      * Start timer for note.
      * @param       toStart Note; note to start.
      */
-    void startNoteTimer(Note toStart) {
-        toStart.startNoteTimer(keyFinder, Constants.NOTE_TIMER_LEN); // todo refactor library. Timers should be a method of KeyFinder class.
+    void startNoteTimerRefac(Note toStart) {
+        keyFinder.scheduleNoteRemoval(toStart); //todo refactor library, has hard coded value right now
     }
 
     /**
@@ -74,7 +74,10 @@ public class KeyFinderModel {
      * Will stop the scheduled task of removing note from active note list.
      * @param       toCancel Note; note to cancel.
      */
-    void cancelNoteTimer(Note toCancel) {
-        toCancel.cancelNoteTimer();
+    void cancelNoteTimerRefac(Note toCancel) {
+        // Perform null check
+        if (keyFinder.noteIsScheduled(toCancel)) {
+            keyFinder.cancelNoteRemoval(toCancel);
+        }
     }
 }
