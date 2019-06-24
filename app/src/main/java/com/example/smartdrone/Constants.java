@@ -35,15 +35,7 @@ public class Constants {
             { "C", "Db", "D", "Eb", "E", "F", "Gb", "G", "Ab", "A", "Bb", "B" };
 
     // Message Log Constants
-    public static final String MESSAGE_LOG_ADD        = "note_add";
-    public static final String MESSAGE_LOG_REMOVE     = "note_remove";
-    public static final String MESSAGE_LOG_LIST       = "note_list";
-    public static final String MESSAGE_LOG_SPEED      = "process_speed";
-    public static final String MESSAGE_LOG_NOTE_TIMER = "note_timer";
-    public static final String MESSAGE_LOG_VOICING    = "voicing_test";
-    public static final String MESSAGE_LOG_PREF       = "drone_pref";
     public static final String MESSAGE_LOG_ACTV       = "drone_lifecycle";
-    public static final String DEBUG_TAG              = "drone_debug";
 
     // Midi driver Constants
     public static final int START_NOTE     = 0X90;
@@ -52,21 +44,18 @@ public class Constants {
     public static final int VOLUME_OFF     = 0;
 
     // Plugin Constants
-    private static final int PLUGIN_CHOIR    = 52;
-    private static final int PLUGIN_CHOIR_2 = 53;
-    private static final int BRASS_SECTION  = 61;
     private static final int STRING_SECTION = 48;
+    private static final int PLUGIN_CHOIR   = 52;
+    private static final int BRASS_SECTION  = 61;
     public static final int[] PLUGIN_INDICES  = {
-            PLUGIN_CHOIR,
-            PLUGIN_CHOIR_2,
-            BRASS_SECTION,
             STRING_SECTION,
+            PLUGIN_CHOIR,
+            BRASS_SECTION,
     };
     public static final String[] PLUGIN_NAMES = {
+            "Strings",
             "Choir 1",
-            "Choir 2",
-            "Brass",
-            "Strings"
+            "Brass"
     };
 
     // Default Constants
