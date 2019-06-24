@@ -163,7 +163,7 @@ public class DroneActivity extends AppCompatActivity {
 //                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
         boolean userBassNotePref = DronePreferences.getStoredBassPref(this);
         String defTemplate = sharedPref
-                .getString(CUR_TEMP_KEY, "Drone,0");
+                .getString(CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
 
 
         //todo test code, remove when ready
