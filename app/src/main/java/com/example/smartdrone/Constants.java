@@ -54,7 +54,7 @@ public class Constants {
     };
     public static final String[] PLUGIN_NAMES = {
             "Strings",
-            "Choir 1",
+            "Choir",
             "Brass"
     };
 
@@ -81,9 +81,9 @@ public class Constants {
      * Flattened strings of default voicing templates.
      */
     public static final String DEFAULT_TEMPLATE_LIST =
-            "Drone,0|Triad (Closed),0,2,4|Triad (Open),0,4,9|Drop II,0,4,6,9";
+            "Drone,0,4|Triad (Closed),0,2,4|Triad (Open),0,4,9|Drop II,0,4,6,9|Holdsworth,2,7,8,11";
 
     public static final String DEFAULT_TEMPLATE =
-            "Drone,0";
+            "Drone,0,4";
 
 }
