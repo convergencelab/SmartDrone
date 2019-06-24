@@ -13,7 +13,5 @@ public class DroneSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getSupportFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new DroneSettingsFragment()).commit();
-
-
     }
 }
