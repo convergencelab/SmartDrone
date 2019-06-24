@@ -20,13 +20,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <!-- Voicing Creator Activity -->
         <activity
             android:name=".VoicingCreatorActivity"
-            android:screenOrientation="portrait"></activity> <!-- Drone Sound Settings Activity -->
+            android:screenOrientation="portrait" />
+
+        <!-- Drone Sound Settings Activity -->
         <activity
             android:name=".DroneSoundActivity"
-            android:screenOrientation="portrait"></activity> <!-- Drone Performance Settings Activity -->
+            android:screenOrientation="portrait" />
+
+        <!-- Drone Performance Settings Activity -->
         <activity
             android:name=".DroneSettingsActivity"
             android:label="Settings"
@@ -35,12 +40,13 @@
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".DroneActivity" />
-        </activity> <!-- Main Drone Activity Activity -->
+        </activity>
+
+        <!-- Main Drone Activity Activity -->
         <activity
             android:name=".DroneActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
     </application>
 
 </manifest>
