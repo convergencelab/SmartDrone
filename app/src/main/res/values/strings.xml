@@ -36,12 +36,12 @@
     <string name="about_button">about_button</string>
     <string name="about_heading">About SmartDrone</string>
     <string name="about_description">
-        \nSmartDrone was made to improve musicians ability hear chord-scale relationships.
+        SmartDrone was made to improve musicians ability hear chord-scale relationships.
         \n\nThis app was developed by Travis MacDonald as part of a research assistant position for Convergence Lab.
         \n\nConvergence Lab is a funded research program establish by James Hughes Ph.D., assistant professor at St. Francis Xavier University.\n
     </string>
     <string name="libraries_heading">Libraries</string>
     <string name="libraries_tarsosdsp"><a href="https://github.com/JorenSix/TarsosDSP">TarsosDSP</a> for real time audio processing.</string>
     <string name="libraries_mididriver"><a href="https://github.com/billthefarmer/mididriver">MidiDriver</a> for midi synthesis.</string>
-    <string name="libraries_description">This app was made possible by these libraries:</string>
+    <string name="libraries_description">This app was made possible by the following libraries:</string>
 </resources>
