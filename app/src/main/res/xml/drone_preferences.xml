@@ -7,9 +7,11 @@
         android:entries="@array/note_length_filter_name_array"
         android:entryValues="@array/note_length_filter_values_array"
         android:key="noteLen"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
         android:summary="@string/note_length_filter_summary"
         android:title="@string/note_length_filter_title"
-        app:iconSpaceReserved="false"/>
+        app:iconSpaceReserved="false" />
 
     <!-- Active Key Sensitivity -->
     <ListPreference
@@ -19,6 +21,16 @@
         android:key="keySens"
         android:summary="@string/active_key_sensitivity_summary"
         android:title="@string/active_key_sensitivity_title"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
+        app:iconSpaceReserved="false"/>
+
+    <!-- About Activity Launcher -->
+    <Preference
+        android:title="About"
+        android:key="@string/about_button"
+        app:allowDividerAbove="true"
+        app:allowDividerBelow="true"
         app:iconSpaceReserved="false"/>
 
 </PreferenceScreen>
