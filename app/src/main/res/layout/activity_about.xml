@@ -16,6 +16,30 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <!-- Version -->
+            <TextView
+                android:id="@+id/version_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/version_heading"
+                android:textColor="@android:color/black"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/about_year"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/version_year"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/version_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="16sp" />
+
             <!-- About SmartDrone -->
             <TextView
                 android:id="@+id/about_heading"
