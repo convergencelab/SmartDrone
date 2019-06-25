@@ -36,7 +36,7 @@
     <string name="about_button">about_button</string>
     <string name="about_heading">About SmartDrone</string>
     <string name="about_description">
-        SmartDrone was made to improve musicians ability hear chord-scale relationships.
+        SmartDrone was created to improve musicians ability hear chord-scale relationships.
         \n\nThis app was developed by Travis MacDonald as part of a research assistant position for Convergence Lab.
         \n\nConvergence Lab is a funded research program establish by James Hughes Ph.D., assistant professor at St. Francis Xavier University.\n
     </string>
@@ -47,14 +47,15 @@
     <string name="manual_heading">How to Use</string>
     <string name="manual_description">
         This app is best used for practicing static harmony (scales, modal music).
+        Best used with headphones, other wise the app may receive its own output as input.
 
         \n\nThe delay in key change allows for users to play passing tones without changing the key.
-        This can adjusted in the settings under Active Key Sensitivity. A higher sensitivity makes quicker changes with less accuracy, while a lower sensitivity makes fewer changes with more accuracy.
+        This can adjusted in the settings under Active Key Sensitivity. A higher sensitivity makes
+        quicker changes with less accuracy, while a lower sensitivity makes fewer changes with more accuracy.
 
-        \n\nThe Note Filter Length sets how long a note must be heard before it is recognized. A higher filter can help filter out invalid frequencies in noisy
-        environments, but will subsequently require the user to play longer tones when changing key.
-
-        \n\nBest used with headphones, other wise it may receive its own output as input.
+        \n\nThe Note Filter Length sets how long a note must be heard before it is recognized.
+        A longer filter can help filter out invalid frequencies in noisy environments, but will
+        subsequently require the user to play longer tones in order to be recognized.
 
         \n\nChange voicings with the voicing selector and the app will transpose it to any mode.
         Select a voicing by tapping it, and delete a voicing by holding it.
