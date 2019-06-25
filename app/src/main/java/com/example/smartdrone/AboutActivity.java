@@ -1,5 +1,7 @@
 package com.example.smartdrone;
 
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.LinkMovementMethod;
@@ -12,6 +14,7 @@ public class AboutActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
+        loadVersionName();
         loadHyperlinks();
     }
 
@@ -24,5 +27,16 @@ public class AboutActivity extends AppCompatActivity {
 
         TextView midiDriverLink = findViewById(R.id.libraries_mididriver);
         midiDriverLink.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private void loadVersionName() {
+        try {
+            PackageInfo pInfo = getApplicationContext().getPackageManager().getPackageInfo(getPackageName(), 0);
+            String versionName = pInfo.versionName;
+            TextView versionView = findViewById(R.id.version_name);
+            versionView.setText("Version: " + versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
     }
 }

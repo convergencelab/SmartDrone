@@ -31,19 +31,27 @@
     <string name="user_voicing_label">Voicing</string>
     <string name="new_voicing">New Voicing</string>
     <string name="voicing_name">Voicing Name</string>
+    <string name="about_button">about_button</string>
 
     <!-- AboutActivity -->
-    <string name="about_button">about_button</string>
-    <string name="about_heading">About SmartDrone</string>
+
+    <!-- Version -->
+    <string name="version_heading">Version</string>
+    <string name="version_year">Convergence Lab, 2019</string>
+    <!-- About SmartDrone -->
+    <string name="about_heading">\nAbout SmartDrone</string>
     <string name="about_description">
         SmartDrone was created to improve musicians ability hear chord-scale relationships.
         \n\nThis app was developed by Travis MacDonald as part of a research assistant position for Convergence Lab.
         \n\nConvergence Lab is a funded research program establish by James Hughes Ph.D., assistant professor at St. Francis Xavier University.\n
     </string>
+    <!-- Libraries -->
     <string name="libraries_heading">Libraries</string>
     <string name="libraries_tarsosdsp"><a href="https://github.com/JorenSix/TarsosDSP">TarsosDSP</a> for real time audio processing.</string>
     <string name="libraries_mididriver"><a href="https://github.com/billthefarmer/mididriver">MidiDriver</a> for midi synthesis.\n</string>
     <string name="libraries_description">This app was made possible by the following libraries:</string>
+
+    <!-- How to Use -->
     <string name="manual_heading">How to Use</string>
     <string name="manual_summary">
         This app is best used for practicing static harmony (scales, modal music).
