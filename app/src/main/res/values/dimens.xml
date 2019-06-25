@@ -3,4 +3,5 @@
     <dimen name="sound_settings_lr">20dp</dimen>
     <dimen name="voice_button_height">60dp</dimen>
     <dimen name="library_padding">14dp</dimen>
+    <dimen name="manual_steps">10dp</dimen>
 </resources>
