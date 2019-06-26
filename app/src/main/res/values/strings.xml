@@ -43,7 +43,7 @@
     <string name="about_description">
         SmartDrone was created to improve musicians ability hear chord-scale relationships.
         \n\nThis app was developed by Travis MacDonald as part of a research assistant position for Convergence Lab.
-        \n\nConvergence Lab is a funded research program establish by James Hughes Ph.D., assistant professor at St. Francis Xavier University.\n
+        \n\nConvergence Lab is a funded research program established by James Hughes Ph.D., assistant professor at St. Francis Xavier University.\n
     </string>
     <!-- Libraries -->
     <string name="libraries_heading">Libraries</string>
@@ -61,7 +61,7 @@
         \n<a href="https://www.youtube.com/watch?v=8_woyE8PgA8&amp;t=">Demonstration Video</a>
     </string>
     <string name="manual_steps">
-        \n1) Press <b>START</b> on the main screen and place your phones microphone by your instruments output.
+        \n1) Press <b>START</b> on the main screen and place your phone\'s microphone by your instrument\'s output.
         \n2) Play a scale until SmartDrone recognizes what key you are in.
         \n3) Change keys and SmartDrone will hear it.
     </string>
