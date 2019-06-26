@@ -27,6 +27,9 @@ public class AboutActivity extends AppCompatActivity {
 
         TextView midiDriverLink = findViewById(R.id.libraries_mididriver);
         midiDriverLink.setMovementMethod(LinkMovementMethod.getInstance());
+
+        TextView demoVideoLink = findViewById(R.id.manual_demovideo);
+        demoVideoLink.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     private void loadVersionName() {
