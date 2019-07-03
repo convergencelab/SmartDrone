@@ -19,7 +19,7 @@ public class SplashScreenActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
         ImageView background = findViewById(R.id.convergence_lab_iv);
-        background.setImageResource(R.drawable.convergence_lab_splash_resized);
+        background.setImageResource(R.drawable.convergence_lab_1080);
 
         new Timer().schedule(new TimerTask() {
             @Override
