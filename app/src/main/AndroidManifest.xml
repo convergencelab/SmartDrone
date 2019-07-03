@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.smartdrone">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.convergencelab.smartdrone">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
@@ -10,10 +11,11 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_sd_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".AboutActivity"></activity>
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name="com.convergencelab.smartdrone.AboutActivity" />
         <activity
-            android:name=".SplashScreenActivity"
+            android:name="com.convergencelab.smartdrone.SplashScreenActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -22,22 +24,22 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".VoicingCreatorActivity"
+            android:name="com.convergencelab.smartdrone.VoicingCreatorActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DroneSoundActivity"
+            android:name="com.convergencelab.smartdrone.DroneSoundActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DroneSettingsActivity"
+            android:name="com.convergencelab.smartdrone.DroneSettingsActivity"
             android:label="Settings"
-            android:parentActivityName=".DroneActivity"
+            android:parentActivityName="com.convergencelab.smartdrone.DroneActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".DroneActivity" />
+                android:value="com.convergencelab.smartdrone.DroneActivity" />
         </activity>
         <activity
-            android:name=".DroneActivity"
+            android:name="com.convergencelab.smartdrone.DroneActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
         </activity>
