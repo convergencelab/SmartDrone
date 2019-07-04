@@ -3,7 +3,6 @@ package com.convergencelab.smartdrone;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -45,7 +44,6 @@ public class VoicingCreatorActivity extends AppCompatActivity {
         sharedPrefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
         editor =  sharedPrefs.edit();
         nameSet = VoicingHelper.getSetOfAllTemplateNames(sharedPrefs.getString(DroneActivity.ALL_TEMP_KEY, Constants.DEFAULT_TEMPLATE_LIST));
-        Log.d("d_bug", nameSet.toString());
 
         templateName = findViewById(R.id.voicing_name_edit_text);
         loadButtonData();

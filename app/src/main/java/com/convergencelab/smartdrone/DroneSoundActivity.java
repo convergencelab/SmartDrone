@@ -109,12 +109,9 @@ public class DroneSoundActivity extends AppCompatActivity {
                 if (isChecked) {
                     hasBassNote = true;
                     DronePreferences.setStoredBassPref(DroneSoundActivity.this, true);
-//                    editor.apply();
                 }
                 else {
-//                    editor.putBoolean(BASSNOTE_KEY, false);
                     hasBassNote = false;
-//                    editor.apply();
                     DronePreferences.setStoredBassPref(DroneSoundActivity.this, false);
                 }
                 droneSoundModel.setHasBassNote(hasBassNote); // todo refactor
@@ -126,7 +123,6 @@ public class DroneSoundActivity extends AppCompatActivity {
      * Load mode data from shared preferences.
      */
     private void loadModeData() {
-//        userModeIx = prefs.getInt(USER_MODE_KEY, 0);
         userModeIx = DronePreferences.getStoredModePref(this);
         String curMode = MusicTheory.MAJOR_MODE_NAMES[userModeIx];
         curModeText.setText(curMode);
@@ -159,7 +155,6 @@ public class DroneSoundActivity extends AppCompatActivity {
         curTemplateString = prefs.getString(DroneActivity.CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
         /// List of flattened templates
         templateList = VoicingHelper.inflateTemplateList(tempsStr);
-        Log.d("d_bug", "List: " + tempsStr);
 
         // Inflate scroll view
         for (String temp : templateList) {
@@ -225,8 +220,6 @@ public class DroneSoundActivity extends AppCompatActivity {
     public void getNextMode(View view) {
         userModeIx = (userModeIx + 1) % 7;
         curModeText.setText(MusicTheory.MAJOR_MODE_NAMES[userModeIx]);
-//        editor.putInt(USER_MODE_KEY, userModeIx);
-//        editor.apply();
         DronePreferences.setStoredModePref(this, userModeIx);
         droneSoundModel.setModeIx(userModeIx);
     }
