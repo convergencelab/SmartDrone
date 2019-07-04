@@ -1,6 +1,5 @@
-package com.convergencelab.smartdrone;
+package com.convergencelabstfx.smartdrone;
 
-import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,11 +7,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.convergencelab.smartdrone.Models.DroneSoundModel;
-import com.convergencelab.smartdrone.Models.MidiDriverModel;
+import com.convergencelabstfx.smartdrone.Models.DroneSoundModel;
+import com.convergencelabstfx.smartdrone.Models.MidiDriverModel;
 import com.example.smartdrone.ModeTemplateCollection;
 import com.example.smartdrone.MusicTheory;
-import com.convergencelab.smartdrone.Utility.DronePreferences;
+import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
 
 import java.util.HashSet;
 

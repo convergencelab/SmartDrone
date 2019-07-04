@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone;
+package com.convergencelabstfx.smartdrone;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

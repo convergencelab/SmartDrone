@@ -1,9 +1,8 @@
-package com.convergencelab.smartdrone;
+package com.convergencelabstfx.smartdrone;
 
 import android.content.Context;
-import android.content.SharedPreferences;
 
-import com.convergencelab.smartdrone.Utility.DronePreferences;
+import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
 import com.example.smartdrone.Voicing;
 import com.example.smartdrone.VoicingTemplate;
 
