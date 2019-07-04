@@ -60,10 +60,6 @@ import java.util.HashMap;
 
 public class DroneActivity extends AppCompatActivity {
 
-//    public static final String CUR_TEMP_KEY = "curTemplate";
-//    public static final String ALL_TEMP_KEY = "allTemplates";
-//    public static final String ACTIVE_KEY_IX_KEY = "active_key_ix";
-
     private int MICROPHONE_PERMISSION_CODE = 1;
 
     /**
@@ -133,29 +129,22 @@ public class DroneActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-        //todo: magic code that controls and saves user preferences
-        SharedPreferences sharedPref =
-                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-
-        edit = sharedPref.edit();
-//        edit.clear();
-//        edit.apply();
+//        SharedPreferences sharedPref =
+//                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
+//
+//        edit = sharedPref.edit();
 
         //todo: make ints by default so no conversion is necessary
-        String noteLenPref = sharedPref
-                .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
+//        String noteLenPref = sharedPref
+//                .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
+        String noteLenPref = DronePreferences.getNoteFilterLenPref(getApplicationContext());
         String keySensPref = sharedPref
                 .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
-//        int userModeIx = sharedPref
-//                .getInt(DroneSoundActivity.USER_MODE_KEY, 0);
+
         int userModeIx = DronePreferences.getStoredModePref(this);
-        int userPluginIx = sharedPref
-                .getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0);
-//        boolean userBassNotePref = sharedPref
-//                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
+        int userPluginIx = DronePreferences.getStoredPluginPref(getApplicationContext());
         boolean userBassNotePref = DronePreferences.getStoredBassPref(this);
-        String defTemplate = sharedPref
-                .getString(CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
+        String defTemplate = DronePreferences.getCurTemplatePref(getApplicationContext());
 
 
         //todo test code, remove when ready
@@ -163,7 +152,6 @@ public class DroneActivity extends AppCompatActivity {
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
         int keyTimerLength = Integer.parseInt(keySensPref);
-//        int userPlugin = Integer.parseInt(userPluginPref);
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
         droneModel.setUserModeIx(userModeIx);

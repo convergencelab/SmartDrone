@@ -19,7 +19,6 @@ import java.util.HashSet;
 public class VoicingCreatorActivity extends AppCompatActivity {
 
     private static final int NUM_BUTTONS = 14;
-    public static final String SAVED_VOICING_KEY = "saved_voicing_key";
 
     private boolean[] chordTones;
     private EditText templateName;
@@ -27,8 +26,6 @@ public class VoicingCreatorActivity extends AppCompatActivity {
     ModeTemplateCollection mtc = new ModeTemplateCollection();
     private DroneSoundModel droneSoundModel;
 
-    private SharedPreferences sharedPrefs;
-    private SharedPreferences.Editor editor;
     private HashSet<String> nameSet;
 
     @Override
@@ -41,9 +38,7 @@ public class VoicingCreatorActivity extends AppCompatActivity {
         // Initialize root to true
         chordTones[0] = true;
 
-        sharedPrefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        editor =  sharedPrefs.edit();
-        nameSet = VoicingHelper.getSetOfAllTemplateNames(sharedPrefs.getString(DroneActivity.ALL_TEMP_KEY, Constants.DEFAULT_TEMPLATE_LIST));
+        nameSet = VoicingHelper.getSetOfAllTemplateNames(DronePreferences.getAllTemplatePref(getApplicationContext()));
 
         templateName = findViewById(R.id.voicing_name_edit_text);
         loadButtonData();
@@ -53,10 +48,8 @@ public class VoicingCreatorActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         droneSoundModel = new DroneSoundModel(
-                Constants.PLUGIN_INDICES[sharedPrefs.getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0)],
-//                sharedPrefs.getInt(DroneSoundActivity.USER_MODE_KEY, 0),
+                Constants.PLUGIN_INDICES[DronePreferences.getStoredPluginPref(getApplicationContext())],
                 DronePreferences.getStoredModePref(this),
-//                sharedPrefs.getBoolean(DroneSoundActivity.BASSNOTE_KEY, true),
                 DronePreferences.getStoredBassPref(this),
                 VoicingHelper.inflateTemplate("throwaway,0"));
         droneSoundModel.initializePlayback();
@@ -164,8 +157,7 @@ public class VoicingCreatorActivity extends AppCompatActivity {
             return;
         }
 
-        VoicingHelper.addTemplateToPref(sharedPrefs, editor, flattenedTemplate);
-        System.out.println(sharedPrefs.getString(DroneActivity.ALL_TEMP_KEY, null));
+        VoicingHelper.addTemplateToPref(getApplicationContext(), flattenedTemplate);
         finish();
     }
 

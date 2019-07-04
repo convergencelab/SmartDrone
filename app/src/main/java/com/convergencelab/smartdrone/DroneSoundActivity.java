@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.LinearLayout;
@@ -18,14 +17,6 @@ import com.convergencelab.smartdrone.Utility.DronePreferences;
 import java.util.ArrayList;
 
 public class DroneSoundActivity extends AppCompatActivity {
-
-//    public static final String USER_MODE_KEY = "userModeIx"; //todo extract to string resource
-    public static final String USER_PLUGIN_KEY = "userPlugin"; //todo extract to string resource
-//    public static final String BASSNOTE_KEY = "bassNoteEnabled"; //todo extract to string resource
-
-
-    private SharedPreferences prefs;
-    private SharedPreferences.Editor editor;
 
     private ArrayList<String> templateList;
     private TextView curSelectedTemplateView;
@@ -47,8 +38,6 @@ public class DroneSoundActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_drone_sound);
-        prefs = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        editor = prefs.edit();
 
         findViews();
     }
@@ -72,9 +61,8 @@ public class DroneSoundActivity extends AppCompatActivity {
 
     private void saveTemplateData() {
         String flattenedTemplateList = VoicingHelper.flattenTemplateList(templateList);
-        editor.putString(DroneActivity.ALL_TEMP_KEY, flattenedTemplateList);
-        editor.putString(DroneActivity.CUR_TEMP_KEY, curTemplateString);
-        editor.apply();
+        DronePreferences.setAllTemplatePref(getApplicationContext(), flattenedTemplateList);
+        DronePreferences.setCurTemplatePref(getApplicationContext(), curTemplateString);
     }
 
     /**
@@ -132,7 +120,8 @@ public class DroneSoundActivity extends AppCompatActivity {
      * Load plugin data from shared preferences.
      */
     private void loadPluginData() {
-        userPluginIx = prefs.getInt(USER_PLUGIN_KEY, 0);
+        userPluginIx = DronePreferences.getStoredPluginPref(getApplicationContext());
+
         //todo remove when debugged
         if (userPluginIx >= Constants.PLUGIN_INDICES.length) {
             userPluginIx = 0;
@@ -151,8 +140,9 @@ public class DroneSoundActivity extends AppCompatActivity {
         if (voicingLinear.getChildCount() != 0) {
             voicingLinear.removeAllViews();
         }
-        String tempsStr = prefs.getString(DroneActivity.ALL_TEMP_KEY, Constants.DEFAULT_TEMPLATE_LIST);
-        curTemplateString = prefs.getString(DroneActivity.CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
+        String tempsStr = DronePreferences.getAllTemplatePref(getApplicationContext());
+        curTemplateString = DronePreferences.getCurTemplatePref(getApplicationContext());
+
         /// List of flattened templates
         templateList = VoicingHelper.inflateTemplateList(tempsStr);
 
@@ -228,8 +218,7 @@ public class DroneSoundActivity extends AppCompatActivity {
         userPluginIx = (userPluginIx + 1) % Constants.PLUGIN_INDICES.length;
         userPluginText.setText(Constants.PLUGIN_NAMES[userPluginIx]);
         droneSoundModel.setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
-        editor.putInt(USER_PLUGIN_KEY, userPluginIx);
-        editor.apply();
+        DronePreferences.setStoredPluginPref(getApplicationContext(), userPluginIx);
         droneSoundModel.changePlayBack();
     }
 
