@@ -1,6 +1,6 @@
-package com.convergencelab.smartdrone.Models;
+package com.convergencelabstfx.smartdrone.Models;
 
-import com.convergencelab.smartdrone.Constants;
+import com.convergencelabstfx.smartdrone.Constants;
 import com.example.smartdrone.Voicing;
 
 import org.billthefarmer.mididriver.MidiDriver;
