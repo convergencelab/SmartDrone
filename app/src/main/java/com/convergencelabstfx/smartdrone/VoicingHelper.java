@@ -1,6 +1,9 @@
 package com.convergencelabstfx.smartdrone;
 
-import android.content.SharedPreferences;
+
+import android.content.Context;
+
+import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
 
 import com.example.smartdrone.Voicing;
 import com.example.smartdrone.VoicingTemplate;
@@ -101,11 +104,11 @@ public class VoicingHelper {
         return name;
     }
 
-    public static void addTemplateToPref(SharedPreferences prefs, SharedPreferences.Editor editor, String toAdd) {
-        String allTemplates = prefs.getString(DroneActivity.ALL_TEMP_KEY, null);
+
+    public static void addTemplateToPref(Context context, String toAdd) {
+        String allTemplates = DronePreferences.getAllTemplatePref(context);
         allTemplates += '|' + toAdd;
-        editor.putString(DroneActivity.ALL_TEMP_KEY, allTemplates);
-        editor.apply();
+        DronePreferences.setAllTemplatePref(context, allTemplates);
     }
 
     public static HashSet<String> getSetOfAllTemplateNames(String flattenedTemplateList) {

@@ -35,7 +35,6 @@ package com.convergencelabstfx.smartdrone;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -45,7 +44,6 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -60,10 +58,6 @@ import java.util.HashMap;
 
 
 public class DroneActivity extends AppCompatActivity {
-
-    public static final String CUR_TEMP_KEY = "curTemplate";
-    public static final String ALL_TEMP_KEY = "allTemplates";
-    public static final String ACTIVE_KEY_IX_KEY = "active_key_ix";
 
     private int MICROPHONE_PERMISSION_CODE = 1;
 
@@ -95,12 +89,10 @@ public class DroneActivity extends AppCompatActivity {
      */
     Button activeKeyButton;
 
-    private SharedPreferences.Editor edit;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d(Constants.MESSAGE_LOG_ACTV, "create");
+
         setContentView(R.layout.activity_drone_main);
 
         if (ContextCompat.checkSelfPermission(DroneActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -121,7 +113,6 @@ public class DroneActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         super.onStop();
-        Log.d(Constants.MESSAGE_LOG_ACTV, "stop");
         if (droneModel.isActive()) {
             droneModel.deactivateDrone();
         }
@@ -130,53 +121,31 @@ public class DroneActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(Constants.MESSAGE_LOG_ACTV, "pause");
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(Constants.MESSAGE_LOG_ACTV, "resume");
 
-        /* Moved code here in case activity is not destroyed after changing preferences. */
-
-        //todo: magic code that controls and saves user preferences
-        SharedPreferences sharedPref =
-                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-
-        edit = sharedPref.edit();
-//        edit.clear();
-//        edit.apply();
-
-        //todo: make ints by default so no conversion is necessary
-        String noteLenPref = sharedPref
-                .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
-        String keySensPref = sharedPref
-                .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
-//        int userModeIx = sharedPref
-//                .getInt(DroneSoundActivity.USER_MODE_KEY, 0);
+        String noteLenPref = DronePreferences.getNoteFilterLenPref(getApplicationContext());
+        String keySensPref = DronePreferences.getActiveKeySensPref(getApplicationContext());
         int userModeIx = DronePreferences.getStoredModePref(this);
-        int userPluginIx = sharedPref
-                .getInt(DroneSoundActivity.USER_PLUGIN_KEY, 0);
-//        boolean userBassNotePref = sharedPref
-//                .getBoolean(DroneSoundActivity.BASSNOTE_KEY, true);
+        int userPluginIx = DronePreferences.getStoredPluginPref(getApplicationContext());
         boolean userBassNotePref = DronePreferences.getStoredBassPref(this);
-        String defTemplate = sharedPref
-                .getString(CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
-
-
-        //todo test code, remove when ready
+        String defTemplate = DronePreferences.getCurTemplatePref(getApplicationContext());
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
         int keyTimerLength = Integer.parseInt(keySensPref);
-//        int userPlugin = Integer.parseInt(userPluginPref);
+
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
         droneModel.setUserModeIx(userModeIx);
         droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         droneModel.sethasBassNote(userBassNotePref);
-        droneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate)); //todo this is template code
+
+        droneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate));
+
 
         resetDroneScreen();
     }
@@ -184,19 +153,18 @@ public class DroneActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d(Constants.MESSAGE_LOG_ACTV, "destroy");
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        Log.d(Constants.MESSAGE_LOG_ACTV, "start");
+
     }
 
     @Override
     public void onRestart() {
         super.onRestart();
-        Log.d(Constants.MESSAGE_LOG_ACTV, "restart");
     }
 
     //todo: save state of drone model when screen is rotated.
@@ -301,11 +269,10 @@ public class DroneActivity extends AppCompatActivity {
      * Controls click functionality of active key button.
      * Starts drone if drone stopped.
      * Sustains chord if drone active.
-     * @param view
+     * @param       view View; active key button.
      */
     public void activeKeyClick(View view) {
-        // Start drone
-        //todo: add some sort of visual feedback that active key button has been clicked
+
         if (!droneModel.isActive()) {
             toggleDroneState(view);
         }
@@ -356,7 +323,8 @@ public class DroneActivity extends AppCompatActivity {
                 Toast.makeText(this, "Permission Granted", Toast.LENGTH_SHORT).show();
             }
             else {
-                Toast.makeText(this, "Permission DENIED", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+
             }
         }
 
