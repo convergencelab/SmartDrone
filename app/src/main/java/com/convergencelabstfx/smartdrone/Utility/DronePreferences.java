@@ -114,16 +114,16 @@ public class DronePreferences {
      * Get active key sensitivity from shared preferences.
      * @param       context Context; activity making function call.
      */
-    public static void getActiveKeySensPref(Context context) {
-        getSharedPrefs(context).getString(KEY_SENS_KEY, "3"); //todo refactor hardcoded AND change over to integers
+    public static String getActiveKeySensPref(Context context) {
+        return getSharedPrefs(context).getString(KEY_SENS_KEY, "3"); //todo refactor hardcoded AND change over to integers
     }
 
     /**
      * Get length of note filter from shared preferences.
      * @param       context Context; activity making function call.
      */
-    public static void getNoteFilterLenPref(Context context) {
-        getSharedPrefs(context).getString(NOTE_LEN_KEY, "60"); //todo refactor hardcoded AND change over to integers
+    public static String getNoteFilterLenPref(Context context) {
+        return getSharedPrefs(context).getString(NOTE_LEN_KEY, "60"); //todo refactor hardcoded AND change over to integers
     }
 
     /**

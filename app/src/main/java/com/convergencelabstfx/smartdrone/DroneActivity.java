@@ -35,7 +35,6 @@ package com.convergencelabstfx.smartdrone;
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -90,8 +89,6 @@ public class DroneActivity extends AppCompatActivity {
      */
     Button activeKeyButton;
 
-    private SharedPreferences.Editor edit;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -129,25 +126,12 @@ public class DroneActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
-//        SharedPreferences sharedPref =
-//                android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
-//
-//        edit = sharedPref.edit();
-
-        //todo: make ints by default so no conversion is necessary
-//        String noteLenPref = sharedPref
-//                .getString(DroneSettingsActivity.NOTE_LEN_KEY, "60");
         String noteLenPref = DronePreferences.getNoteFilterLenPref(getApplicationContext());
-        String keySensPref = sharedPref
-                .getString(DroneSettingsActivity.KEY_SENS_KEY, "3");
-
+        String keySensPref = DronePreferences.getActiveKeySensPref(getApplicationContext());
         int userModeIx = DronePreferences.getStoredModePref(this);
         int userPluginIx = DronePreferences.getStoredPluginPref(getApplicationContext());
         boolean userBassNotePref = DronePreferences.getStoredBassPref(this);
         String defTemplate = DronePreferences.getCurTemplatePref(getApplicationContext());
-
-
-        //todo test code, remove when ready
 
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
@@ -157,7 +141,7 @@ public class DroneActivity extends AppCompatActivity {
         droneModel.setUserModeIx(userModeIx);
         droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         droneModel.sethasBassNote(userBassNotePref);
-        droneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate)); //todo this is template code
+        droneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate));
 
         resetDroneScreen();
     }
