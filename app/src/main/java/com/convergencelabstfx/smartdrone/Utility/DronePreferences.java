@@ -22,8 +22,9 @@ public class DronePreferences {
 
     /**
      * Get bass switch status from shared preferences.
-     * @param       context Context; context.
-     * @return      boolean; bass switch boolean.
+     *
+     * @param context Context; context.
+     * @return boolean; bass switch boolean.
      */
     public static boolean getStoredBassPref(Context context) {
         return getSharedPrefs(context).getBoolean(BASS_NOTE_KEY, true);
@@ -31,8 +32,9 @@ public class DronePreferences {
 
     /**
      * Put bass switch status in shared preferences.
-     * @param       context Context, context.
-     * @param       bool boolean; bass switch boolean.
+     *
+     * @param context Context, context.
+     * @param bool    boolean; bass switch boolean.
      */
     public static void setStoredBassPref(Context context, boolean bool) {
         getSharedPrefs(context).edit().putBoolean(BASS_NOTE_KEY, bool).apply();
@@ -40,8 +42,9 @@ public class DronePreferences {
 
     /**
      * Get mode index from shared preferences.
-     * @param       context Context; context.
-     * @return      int; mode index.
+     *
+     * @param context Context; context.
+     * @return int; mode index.
      */
     public static int getStoredModePref(Context context) {
         return getSharedPrefs(context).getInt(USER_MODE_KEY, 0);
@@ -49,8 +52,9 @@ public class DronePreferences {
 
     /**
      * Put mode index in shared preferences.
-     * @param       context Context; context.
-     * @param       modeIx int; mode index.
+     *
+     * @param context Context; context.
+     * @param modeIx  int; mode index.
      */
     public static void setStoredModePref(Context context, int modeIx) {
         getSharedPrefs(context).edit().putInt(USER_MODE_KEY, modeIx).apply();
@@ -58,8 +62,9 @@ public class DronePreferences {
 
     /**
      * Get plugin index from shared preferences.
-     * @param       context Context; context.
-     * @return      int; plugin index.
+     *
+     * @param context Context; context.
+     * @return int; plugin index.
      */
     public static int getStoredPluginPref(Context context) {
         return getSharedPrefs(context).getInt(USER_PLUGIN_KEY, 0);
@@ -67,8 +72,9 @@ public class DronePreferences {
 
     /**
      * Put plugin index in shared preferences.
-     * @param       context Context; context.
-     * @param       pluginIx int; plugin index.
+     *
+     * @param context  Context; context.
+     * @param pluginIx int; plugin index.
      */
     public static void setStoredPluginPref(Context context, int pluginIx) {
         getSharedPrefs(context).edit().putInt(USER_PLUGIN_KEY, pluginIx).apply();
@@ -76,8 +82,9 @@ public class DronePreferences {
 
     /**
      * Get current voicing template from shared preferences.
-     * @param       context Context; context.
-     * @return      String; flattened template.
+     *
+     * @param context Context; context.
+     * @return String; flattened template.
      */
     public static String getCurTemplatePref(Context context) {
         return getSharedPrefs(context).getString(CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
@@ -85,8 +92,9 @@ public class DronePreferences {
 
     /**
      * Store current voicing template in shared preferences.
-     * @param       context Context; context.
-     * @param       flattenedTemplate String; flattened template.
+     *
+     * @param context           Context; context.
+     * @param flattenedTemplate String; flattened template.
      */
     public static void setCurTemplatePref(Context context, String flattenedTemplate) {
         getSharedPrefs(context).edit().putString(CUR_TEMP_KEY, flattenedTemplate).apply();
@@ -94,8 +102,9 @@ public class DronePreferences {
 
     /**
      * Get current voicing template from shared preferences.
-     * @param       context Context; context.
-     * @return      String; flattened template list.
+     *
+     * @param context Context; context.
+     * @return String; flattened template list.
      */
     public static String getAllTemplatePref(Context context) {
         return getSharedPrefs(context).getString(ALL_TEMP_KEY, Constants.DEFAULT_TEMPLATE_LIST);
@@ -103,8 +112,9 @@ public class DronePreferences {
 
     /**
      * Store all voicing templates in shared preferences.
-     * @param       context Context; context.
-     * @param       flattenedTemplateList String; list of flattened templates.
+     *
+     * @param context               Context; context.
+     * @param flattenedTemplateList String; list of flattened templates.
      */
     public static void setAllTemplatePref(Context context, String flattenedTemplateList) {
         getSharedPrefs(context).edit().putString(ALL_TEMP_KEY, flattenedTemplateList).apply();
@@ -112,7 +122,8 @@ public class DronePreferences {
 
     /**
      * Get active key sensitivity from shared preferences.
-     * @param       context Context; activity making function call.
+     *
+     * @param context Context; activity making function call.
      */
     public static String getActiveKeySensPref(Context context) {
         return getSharedPrefs(context).getString(KEY_SENS_KEY, "3"); //todo refactor hardcoded AND change over to integers
@@ -120,7 +131,8 @@ public class DronePreferences {
 
     /**
      * Get length of note filter from shared preferences.
-     * @param       context Context; activity making function call.
+     *
+     * @param context Context; activity making function call.
      */
     public static String getNoteFilterLenPref(Context context) {
         return getSharedPrefs(context).getString(NOTE_LEN_KEY, "60"); //todo refactor hardcoded AND change over to integers
@@ -128,9 +140,11 @@ public class DronePreferences {
 
     /**
      * Return shared preferences object.
-     * @param       context Context; context.
-     * @return      SharedPreferences; shared preferences object.
+     *
+     * @param context Context; context.
+     * @return SharedPreferences; shared preferences object.
      */
     private static SharedPreferences getSharedPrefs(Context context) {
         return android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context);
     }
+}
