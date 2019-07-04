@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone;
+package com.convergencelabstfx.smartdrone;
 
 import android.content.SharedPreferences;
 
