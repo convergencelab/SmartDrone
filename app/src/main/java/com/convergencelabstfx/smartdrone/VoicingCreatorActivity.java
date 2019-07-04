@@ -1,7 +1,9 @@
 package com.convergencelabstfx.smartdrone;
 
+
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,7 +38,7 @@ public class VoicingCreatorActivity extends AppCompatActivity {
         chordTones = new boolean[NUM_BUTTONS];
         // Initialize root to true
         chordTones[0] = true;
-
+      
         nameSet = VoicingHelper.getSetOfAllTemplateNames(DronePreferences.getAllTemplatePref(getApplicationContext()));
 
         templateName = findViewById(R.id.voicing_name_edit_text);

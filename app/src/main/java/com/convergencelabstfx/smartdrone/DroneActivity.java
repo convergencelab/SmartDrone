@@ -92,6 +92,7 @@ public class DroneActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_drone_main);
 
         if (ContextCompat.checkSelfPermission(DroneActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -136,12 +137,15 @@ public class DroneActivity extends AppCompatActivity {
         // Update fields to match user saved preferences.
         int noteLengthRequirement = Integer.parseInt(noteLenPref);
         int keyTimerLength = Integer.parseInt(keySensPref);
+
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
         droneModel.setUserModeIx(userModeIx);
         droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         droneModel.sethasBassNote(userBassNotePref);
+
         droneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate));
+
 
         resetDroneScreen();
     }
@@ -149,11 +153,13 @@ public class DroneActivity extends AppCompatActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
     }
 
     @Override
     public void onStart() {
         super.onStart();
+
     }
 
     @Override
@@ -266,6 +272,7 @@ public class DroneActivity extends AppCompatActivity {
      * @param       view View; active key button.
      */
     public void activeKeyClick(View view) {
+
         if (!droneModel.isActive()) {
             toggleDroneState(view);
         }
@@ -317,6 +324,7 @@ public class DroneActivity extends AppCompatActivity {
             }
             else {
                 Toast.makeText(this, "Permission Denied", Toast.LENGTH_SHORT).show();
+
             }
         }
 

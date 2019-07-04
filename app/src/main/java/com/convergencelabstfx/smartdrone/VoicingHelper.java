@@ -1,8 +1,10 @@
 package com.convergencelabstfx.smartdrone;
 
+
 import android.content.Context;
 
 import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
+
 import com.example.smartdrone.Voicing;
 import com.example.smartdrone.VoicingTemplate;
 
@@ -102,13 +104,12 @@ public class VoicingHelper {
         return name;
     }
 
+
     public static void addTemplateToPref(Context context, String toAdd) {
         String allTemplates = DronePreferences.getAllTemplatePref(context);
         allTemplates += '|' + toAdd;
         DronePreferences.setAllTemplatePref(context, allTemplates);
     }
-
-
 
     public static HashSet<String> getSetOfAllTemplateNames(String flattenedTemplateList) {
         HashSet<String> allNames = new HashSet<>();

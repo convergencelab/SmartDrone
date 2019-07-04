@@ -16,7 +16,6 @@ import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
 import java.util.ArrayList;
 
 public class DroneSoundActivity extends AppCompatActivity {
-
     private ArrayList<String> templateList;
     private TextView curSelectedTemplateView;
 
@@ -120,7 +119,6 @@ public class DroneSoundActivity extends AppCompatActivity {
      */
     private void loadPluginData() {
         userPluginIx = DronePreferences.getStoredPluginPref(getApplicationContext());
-
         //todo remove when debugged
         if (userPluginIx >= Constants.PLUGIN_INDICES.length) {
             userPluginIx = 0;
@@ -139,11 +137,13 @@ public class DroneSoundActivity extends AppCompatActivity {
         if (voicingLinear.getChildCount() != 0) {
             voicingLinear.removeAllViews();
         }
+
         String tempsStr = DronePreferences.getAllTemplatePref(getApplicationContext());
         curTemplateString = DronePreferences.getCurTemplatePref(getApplicationContext());
 
         /// List of flattened templates
         templateList = VoicingHelper.inflateTemplateList(tempsStr);
+
 
         // Inflate scroll view
         for (String temp : templateList) {
