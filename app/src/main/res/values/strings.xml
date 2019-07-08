@@ -80,4 +80,5 @@
         Select a voicing by tapping it, and delete a voicing by holding it.
         Create a new voicing with the <b>New Voicing</b> button.
     </string>
+    <string name="parentscale_text_title">Parent Scale</string>
 </resources>

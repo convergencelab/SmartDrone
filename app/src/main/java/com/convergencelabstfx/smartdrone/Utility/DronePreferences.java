@@ -12,8 +12,9 @@ public class DronePreferences {
     private static final String CUR_TEMP_KEY = "curTemplate";
     private static final String ALL_TEMP_KEY = "allTemplates";
     private static final String USER_PLUGIN_KEY = "userPlugin";
-    public static final String NOTE_LEN_KEY = "noteLen";
-    public static final String KEY_SENS_KEY = "keySens"; // TODO: refactor drone_preferences; has hardcoded key
+    public static final String NOTE_LEN_KEY = "noteLen"; //todo change to private later?
+    public static final String KEY_SENS_KEY = "keySens"; //todo change to private later?
+    private static final String PARENT_SCALE_KEY = "parentScale";
 
 
     //todo refactor in these keys
@@ -58,6 +59,24 @@ public class DronePreferences {
      */
     public static void setStoredModePref(Context context, int modeIx) {
         getSharedPrefs(context).edit().putInt(USER_MODE_KEY, modeIx).apply();
+    }
+
+    /**
+     * Get parent scale code from shared preferences.
+     * @param       context Context; context.
+     * @return      int; parent scale code.
+     */
+    public static int getStoredParentScalePref(Context context) {
+        return getSharedPrefs(context).getInt(PARENT_SCALE_KEY, 0);
+    }
+
+    /**
+     * Put parent scale code in shared preferences.
+     * @param       context Context; context.
+     * @param       parentScaleCode int; parent scale code.
+     */
+    public static void setStoredParentScalePref(Context context, int parentScaleCode) {
+        getSharedPrefs(context).edit().putInt(PARENT_SCALE_KEY, parentScaleCode).apply();
     }
 
     /**

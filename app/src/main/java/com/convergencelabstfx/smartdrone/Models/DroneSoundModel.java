@@ -1,5 +1,7 @@
 package com.convergencelabstfx.smartdrone.Models;
 
+import com.convergencelabstfx.smartdrone.DroneSoundActivity;
+import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
 import com.example.smartdrone.KeyFinder;
 import com.example.smartdrone.VoicingTemplate;
 
@@ -71,7 +73,7 @@ public class DroneSoundModel {
     public void changePlayBack() {
         midiDriverModel.sendMidiSetup();
         midiDriverModel.playVoicing(curTemplate.generateVoicing(
-                keyFinder.getAllKeys().getMajorKeyAtIndex(0), modeIx, 4, hasBassNote)); // Default C major for now
+                keyFinder.getKeyAtIndex(0), modeIx, 4, hasBassNote)); // Default C major for now
     }
 
     public void setHasBassNote(boolean hasBassNote) {

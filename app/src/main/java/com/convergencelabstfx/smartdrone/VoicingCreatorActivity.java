@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 import com.convergencelabstfx.smartdrone.Models.DroneSoundModel;
 import com.convergencelabstfx.smartdrone.Models.MidiDriverModel;
+import com.example.smartdrone.KeyFinder;
+import com.example.smartdrone.ModeTemplate;
 import com.example.smartdrone.ModeTemplateCollection;
 import com.example.smartdrone.MusicTheory;
 import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
@@ -28,11 +30,16 @@ public class VoicingCreatorActivity extends AppCompatActivity {
     private DroneSoundModel droneSoundModel;
 
     private HashSet<String> nameSet;
+    int[] parentSequence;
+
+    ModeTemplate[] mtArr;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_voicing_creator);
+
 
 
         chordTones = new boolean[NUM_BUTTONS];
@@ -53,6 +60,14 @@ public class VoicingCreatorActivity extends AppCompatActivity {
                 DronePreferences.getStoredModePref(this),
                 DronePreferences.getStoredBassPref(this),
                 VoicingHelper.inflateTemplate("throwaway,0"));
+        int parentCode = DronePreferences.getStoredParentScalePref(getApplicationContext());
+        if (parentCode == KeyFinder.CODE_MAJOR) {
+            parentSequence = MusicTheory.MAJOR_SCALE_SEQUENCE;
+        } else {
+            parentSequence = MusicTheory.MELODIC_MINOR_SCALE_SEQUENCE;
+        }
+        setMtc(parentCode);
+        droneSoundModel.getKeyFinder().setActiveKeyList(parentCode);
         droneSoundModel.initializePlayback();
         droneSoundModel.changePlayBack();
     }
@@ -199,12 +214,21 @@ public class VoicingCreatorActivity extends AppCompatActivity {
 
     public int calcInterval(int tag) {
         int toReturn = 48;
-        toReturn += MusicTheory.MAJOR_SCALE_SEQUENCE[droneSoundModel.getModeIx()];
+        toReturn += parentSequence[droneSoundModel.getModeIx()];
         if (tag >= MusicTheory.DIATONIC_SCALE_SIZE) {
             tag -= 7;
             toReturn += 12;
         }
-        toReturn += mtc.getModeTemplateForMode(droneSoundModel.getModeIx()).getIntervals()[tag];
+        toReturn += mtArr[droneSoundModel.getModeIx()].getIntervals()[tag];
+//        toReturn += mtc.getModeTemplateForMode(droneSoundModel.getModeIx()).getIntervals()[tag];
         return toReturn;
+    }
+
+    private void setMtc(int code) {
+        if (code == KeyFinder.CODE_MAJOR) {
+            mtArr = mtc.getMajorModeTemplates();
+        } else {
+            mtArr = mtc.getMelodicMinorModeTemplates();
+        }
     }
 }

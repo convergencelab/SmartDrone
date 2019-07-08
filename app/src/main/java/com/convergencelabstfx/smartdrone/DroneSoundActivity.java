@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.convergencelabstfx.smartdrone.Models.DroneSoundModel;
+import com.example.smartdrone.KeyFinder;
 import com.example.smartdrone.MusicTheory;
 import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
 
@@ -21,16 +22,19 @@ public class DroneSoundActivity extends AppCompatActivity {
 
     private Switch bassSwitch;
     private TextView curModeText;
+    private TextView curParentScaleTv;
     private TextView userPluginText;
     private LinearLayout voicingLinear;
 
     String curTemplateString;
 
     private int userModeIx;
+    private int userParentScaleCode;
     private int userPluginIx;
     private boolean hasBassNote;
 
     private DroneSoundModel droneSoundModel;
+    private String[] curModeNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +50,7 @@ public class DroneSoundActivity extends AppCompatActivity {
         loadSavedData();
 
         droneSoundModel = new DroneSoundModel(Constants.PLUGIN_INDICES[userPluginIx], userModeIx, hasBassNote, VoicingHelper.inflateTemplate(curTemplateString));
+        droneSoundModel.getKeyFinder().setActiveKeyList(userParentScaleCode);
         droneSoundModel.initializePlayback();
         droneSoundModel.changePlayBack();
     }
@@ -69,6 +74,7 @@ public class DroneSoundActivity extends AppCompatActivity {
     private void findViews() {
         bassSwitch = findViewById(R.id.root_bass_switch);
         curModeText = findViewById(R.id.mode_text_name);
+        curParentScaleTv = findViewById(R.id.parentscale_text_name);
         userPluginText = findViewById(R.id.user_plugin_name);
         voicingLinear = findViewById(R.id.user_voicing_linear);
     }
@@ -78,6 +84,7 @@ public class DroneSoundActivity extends AppCompatActivity {
      */
     private void loadSavedData() {
         loadBassSwitchData();
+        loadParentScaleData();
         loadModeData();
         loadPluginData();
         loadVoicingData();
@@ -105,12 +112,20 @@ public class DroneSoundActivity extends AppCompatActivity {
         });
     }
 
+    private void loadParentScaleData() {
+        userParentScaleCode = DronePreferences.getStoredParentScalePref(getApplicationContext());
+        String curParentScale = MusicTheory.PARENT_SCALE_NAMES[userParentScaleCode];
+        setModeNamesList(userParentScaleCode);
+        curParentScaleTv.setText(curParentScale);
+    }
+
     /**
      * Load mode data from shared preferences.
      */
     private void loadModeData() {
+
         userModeIx = DronePreferences.getStoredModePref(this);
-        String curMode = MusicTheory.MAJOR_MODE_NAMES[userModeIx];
+        String curMode = curModeNames[userModeIx];
         curModeText.setText(curMode);
     }
 
@@ -208,7 +223,7 @@ public class DroneSoundActivity extends AppCompatActivity {
      */
     public void getNextMode(View view) {
         userModeIx = (userModeIx + 1) % 7;
-        curModeText.setText(MusicTheory.MAJOR_MODE_NAMES[userModeIx]);
+        curModeText.setText(curModeNames[userModeIx]);
         DronePreferences.setStoredModePref(this, userModeIx);
         droneSoundModel.setModeIx(userModeIx);
     }
@@ -229,5 +244,31 @@ public class DroneSoundActivity extends AppCompatActivity {
     public void openVoicingCreator(View view) {
         Intent intent = new Intent(this, VoicingCreatorActivity.class);
         startActivity(intent);
+    }
+
+    public void getNextParentScale(View view) {
+        userParentScaleCode = (userParentScaleCode + 1) % MusicTheory.PARENT_SCALE_NAMES.length;
+        DronePreferences.setStoredParentScalePref(getApplicationContext(), userParentScaleCode);
+        droneSoundModel.getKeyFinder().setActiveKeyList(userParentScaleCode);
+        droneSoundModel.changePlayBack();
+        //todo change playback
+
+        String curParentScale = MusicTheory.PARENT_SCALE_NAMES[userParentScaleCode];
+        setModeNamesList(userParentScaleCode);
+        curParentScaleTv.setText(curParentScale);
+        updateModeNamesView(userModeIx);
+    }
+
+    private void setModeNamesList(int parentScaleCode) {
+        if (parentScaleCode == KeyFinder.CODE_MAJOR) {
+            curModeNames = MusicTheory.MAJOR_MODE_NAMES;
+        }
+        else {
+            curModeNames = MusicTheory.MELODIC_MINOR_MODE_NAMES;
+        }
+    }
+
+    private void updateModeNamesView(int modeIx) {
+        curModeText.setText(curModeNames[userModeIx]);
     }
 }
