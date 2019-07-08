@@ -192,12 +192,12 @@ public class DroneActivity extends AppCompatActivity {
      * Update the text view that displays the current active key.
      */
     public void printActiveKeyToScreen() {
-        activeKeyButton.setTextSize(22);
+        activeKeyButton.setTextSize(14);
         String activeKeyStr = "";
         //todo refactor line below
         int spellingCode = droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getSpellingCode();
         activeKeyStr = droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getDegree(droneModel.getUserModeIx()).getName(spellingCode);
-        String fullName = activeKeyStr + "\n" + MusicTheory.MAJOR_MODE_NAMES[droneModel.getUserModeIx()];
+        String fullName = activeKeyStr + "\n" + MusicTheory.MELODIC_MINOR_MODE_NAMES[droneModel.getUserModeIx()]; //todo make this line dynamic
         SpannableString ss = new SpannableString(fullName);
         ss.setSpan(new RelativeSizeSpan(3f), 0, activeKeyStr.length(), 0);
         activeKeyButton.setText(ss);

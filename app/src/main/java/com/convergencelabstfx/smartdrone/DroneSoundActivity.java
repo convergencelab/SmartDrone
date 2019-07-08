@@ -105,6 +105,10 @@ public class DroneSoundActivity extends AppCompatActivity {
         });
     }
 
+    private void loadParentScaleData() {
+        
+    }
+
     /**
      * Load mode data from shared preferences.
      */
