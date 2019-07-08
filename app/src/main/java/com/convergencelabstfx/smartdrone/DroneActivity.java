@@ -52,6 +52,7 @@ import android.widget.Toast;
 
 import com.convergencelabstfx.smartdrone.Models.DroneModel;
 import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
+import com.example.smartdrone.KeyFinder;
 import com.example.smartdrone.MusicTheory;
 
 import java.util.HashMap;
@@ -88,6 +89,8 @@ public class DroneActivity extends AppCompatActivity {
      * Click function will sustain playback of the active drone. //todo make it so this comment isn't a lie
      */
     Button activeKeyButton;
+
+    String[] modeNames;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,9 +132,10 @@ public class DroneActivity extends AppCompatActivity {
 
         String noteLenPref = DronePreferences.getNoteFilterLenPref(getApplicationContext());
         String keySensPref = DronePreferences.getActiveKeySensPref(getApplicationContext());
-        int userModeIx = DronePreferences.getStoredModePref(this);
+        int userParentScaleCode = DronePreferences.getStoredParentScalePref(getApplicationContext());
+        int userModeIx = DronePreferences.getStoredModePref(getApplicationContext());
         int userPluginIx = DronePreferences.getStoredPluginPref(getApplicationContext());
-        boolean userBassNotePref = DronePreferences.getStoredBassPref(this);
+        boolean userBassNotePref = DronePreferences.getStoredBassPref(getApplicationContext());
         String defTemplate = DronePreferences.getCurTemplatePref(getApplicationContext());
 
         // Update fields to match user saved preferences.
@@ -140,6 +144,7 @@ public class DroneActivity extends AppCompatActivity {
 
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
+        droneModel.getKeyFinderModel().getKeyFinder().setActiveKeyList(userParentScaleCode);
         droneModel.setUserModeIx(userModeIx);
         droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         droneModel.sethasBassNote(userBassNotePref);
@@ -148,6 +153,8 @@ public class DroneActivity extends AppCompatActivity {
 
 
         resetDroneScreen();
+
+        updateModeNames();
     }
 
     @Override
@@ -197,7 +204,7 @@ public class DroneActivity extends AppCompatActivity {
         //todo refactor line below
         int spellingCode = droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getSpellingCode();
         activeKeyStr = droneModel.getKeyFinderModel().getKeyFinder().getActiveKey().getDegree(droneModel.getUserModeIx()).getName(spellingCode);
-        String fullName = activeKeyStr + "\n" + MusicTheory.MELODIC_MINOR_MODE_NAMES[droneModel.getUserModeIx()]; //todo make this line dynamic
+        String fullName = activeKeyStr + "\n" + modeNames[droneModel.getUserModeIx()]; //todo make this line dynamic
         SpannableString ss = new SpannableString(fullName);
         ss.setSpan(new RelativeSizeSpan(3f), 0, activeKeyStr.length(), 0);
         activeKeyButton.setText(ss);
@@ -328,5 +335,15 @@ public class DroneActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    private void updateModeNames() {
+        int code = DronePreferences.getStoredParentScalePref(getApplicationContext());
+        if (code == KeyFinder.CODE_MAJOR) {
+            modeNames = MusicTheory.MAJOR_MODE_NAMES;
+        }
+        else {
+            modeNames = MusicTheory.MELODIC_MINOR_MODE_NAMES;
+        }
     }
 }

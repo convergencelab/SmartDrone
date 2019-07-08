@@ -23,7 +23,6 @@ public class KeyFinderModel {
      */
     KeyFinderModel() {
         keyFinder = new KeyFinder();
-        keyFinder.setActiveKeyList(keyFinder.CODE_MELODIC_MINOR); // todo remove this line when working
         keyFinder.setNoteTimerLength(Constants.NOTE_TIMER_LEN);
     }
 

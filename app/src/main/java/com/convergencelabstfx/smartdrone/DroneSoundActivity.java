@@ -50,6 +50,7 @@ public class DroneSoundActivity extends AppCompatActivity {
         loadSavedData();
 
         droneSoundModel = new DroneSoundModel(Constants.PLUGIN_INDICES[userPluginIx], userModeIx, hasBassNote, VoicingHelper.inflateTemplate(curTemplateString));
+        droneSoundModel.getKeyFinder().setActiveKeyList(userParentScaleCode);
         droneSoundModel.initializePlayback();
         droneSoundModel.changePlayBack();
     }
@@ -246,7 +247,10 @@ public class DroneSoundActivity extends AppCompatActivity {
     }
 
     public void getNextParentScale(View view) {
-        userParentScaleCode = (userParentScaleCode + 1) % 2; //todo fix hardcoded 2; num of parent scales
+        userParentScaleCode = (userParentScaleCode + 1) % MusicTheory.PARENT_SCALE_NAMES.length;
+        DronePreferences.setStoredParentScalePref(getApplicationContext(), userParentScaleCode);
+        droneSoundModel.getKeyFinder().setActiveKeyList(userParentScaleCode);
+        droneSoundModel.changePlayBack();
         //todo change playback
 
         String curParentScale = MusicTheory.PARENT_SCALE_NAMES[userParentScaleCode];

@@ -1,5 +1,7 @@
 package com.convergencelabstfx.smartdrone.Models;
 
+import com.convergencelabstfx.smartdrone.DroneSoundActivity;
+import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
 import com.example.smartdrone.KeyFinder;
 import com.example.smartdrone.VoicingTemplate;
 
