@@ -17,7 +17,13 @@ public class DroneLog {
      * @param       noteString String; string of notes.
      */
     public static void noteList(String noteString) {
-        Log.d(NOTE_LIST, noteString);
+        try {
+            Log.d(NOTE_LIST, noteString);
+        }
+        catch(java.util.ConcurrentModificationException exception) {
+            System.out.println(exception.toString());
+        }
+
     }
 
     /**
