@@ -1,4 +1,4 @@
-package com.convergencelabstfx.smartdrone;
+package com.convergencelab.smartdrone;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;

@@ -1,4 +1,4 @@
-package com.convergencelabstfx.smartdrone;
+package com.convergencelab.smartdrone;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -9,10 +9,10 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.convergencelabstfx.smartdrone.Models.DroneSoundModel;
+import com.convergencelab.smartdrone.Models.DroneSoundModel;
 import com.example.smartdrone.KeyFinder;
 import com.example.smartdrone.MusicTheory;
-import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
+import com.convergencelab.smartdrone.Utility.DronePreferences;
 
 import java.util.ArrayList;
 

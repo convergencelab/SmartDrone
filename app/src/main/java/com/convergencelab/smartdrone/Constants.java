@@ -1,4 +1,4 @@
-package com.convergencelabstfx.smartdrone;
+package com.convergencelab.smartdrone;
 
 import com.example.smartdrone.Key;
 import com.example.smartdrone.MusicTheory;

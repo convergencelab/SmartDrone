@@ -1,9 +1,9 @@
-package com.convergencelabstfx.smartdrone.Utility;
+package com.convergencelab.smartdrone.Utility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.convergencelabstfx.smartdrone.Constants;
+import com.convergencelab.smartdrone.Constants;
 
 public class DronePreferences {
 

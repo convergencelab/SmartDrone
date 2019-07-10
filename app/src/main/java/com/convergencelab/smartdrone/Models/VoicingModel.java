@@ -1,4 +1,4 @@
-package com.convergencelabstfx.smartdrone.Models;
+package com.convergencelab.smartdrone.Models;
 
 import com.example.smartdrone.VoicingTemplateCollection;
 
