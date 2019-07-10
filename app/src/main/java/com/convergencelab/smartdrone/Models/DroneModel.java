@@ -1,9 +1,9 @@
-package com.convergencelabstfx.smartdrone.Models;
+package com.convergencelab.smartdrone.Models;
 
-import com.convergencelabstfx.smartdrone.Constants;
-import com.convergencelabstfx.smartdrone.DroneActivity;
+import com.convergencelab.smartdrone.Constants;
+import com.convergencelab.smartdrone.DroneActivity;
 import com.example.smartdrone.Note;
-import com.convergencelabstfx.smartdrone.Utility.DroneLog;
+import com.convergencelab.smartdrone.Utility.DroneLog;
 import com.example.smartdrone.Voicing;
 import com.example.smartdrone.VoicingTemplate;
 

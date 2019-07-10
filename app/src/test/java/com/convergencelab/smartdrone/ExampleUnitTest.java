@@ -1,4 +1,4 @@
-package com.convergencelabstfx.smartdrone;
+package com.convergencelab.smartdrone;
 
 import org.junit.Test;
 

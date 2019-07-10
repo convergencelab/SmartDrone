@@ -1,6 +1,6 @@
-package com.convergencelabstfx.smartdrone.Models;
+package com.convergencelab.smartdrone.Models;
 
-import com.convergencelabstfx.smartdrone.Constants;
+import com.convergencelab.smartdrone.Constants;
 import com.example.smartdrone.Note;
 
 import be.tarsos.dsp.AudioDispatcher;

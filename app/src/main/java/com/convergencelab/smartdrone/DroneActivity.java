@@ -30,7 +30,7 @@
 // request user permission for audio recording
 // user preference for screen staying on during use
 
-package com.convergencelabstfx.smartdrone;
+package com.convergencelab.smartdrone;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -50,8 +50,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.convergencelabstfx.smartdrone.Models.DroneModel;
-import com.convergencelabstfx.smartdrone.Utility.DronePreferences;
+import com.convergencelab.smartdrone.Models.DroneModel;
+import com.convergencelab.smartdrone.Utility.DronePreferences;
 import com.example.smartdrone.KeyFinder;
 import com.example.smartdrone.MusicTheory;
 
