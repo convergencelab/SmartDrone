@@ -8,6 +8,7 @@ public class DroneLog {
     private static final String NOTE_ADD = "note_add";
     private static final String NOTE_REMOVE = "note_remove";
     private static final String NOTE_THREADS = "note_threads";
+    private static final String GENERAL_DEBUG = "general_debug";
 
     /* Activity and Lifecycle log keys */
     private static final String ACTIVITY_LIFECYCLE = "activity_lifecycle";
@@ -57,5 +58,9 @@ public class DroneLog {
      */
     public static void activityLifecycle(String activity, String lifecycle) {
         Log.d(ACTIVITY_LIFECYCLE, activity + ": " + lifecycle);
+    }
+
+    public static void debugLog(String toShow) {
+        Log.d(GENERAL_DEBUG, toShow);
     }
 }

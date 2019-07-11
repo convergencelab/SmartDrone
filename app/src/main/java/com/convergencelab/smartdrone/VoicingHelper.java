@@ -3,6 +3,7 @@ package com.convergencelab.smartdrone;
 
 import android.content.Context;
 
+import com.convergencelab.smartdrone.Utility.DroneLog;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
 
 import com.example.keyfinder.HarmonyGenerator;
@@ -88,15 +89,24 @@ public class VoicingHelper {
             }
         }
 
-        int[] bassIxs = new int[templateStrs[1].length()];
+        // Todo: fix bug where empty indices adds '0' as chord tone
+        String[] bassStr = templateStrs[1].split(",");
+        int[] bassIxs = new int[bassStr.length];
         for (int i = 0; i < bassIxs.length; i++) {
-            bassIxs[i] = templateStrs[1].charAt(i) - '0';
+            if (!bassStr[i].equals("")) {
+                bassIxs[i] = Integer.parseInt(bassStr[i]);
+            }
         }
+        DroneLog.debugLog("Bass: " + Arrays.toString(bassIxs));
 
-        int[] chordIxs = new int[templateStrs[2].length()];
+        String[] chordStr = templateStrs[2].split(",");
+        int[] chordIxs = new int[chordStr.length];
         for (int i = 0; i < chordIxs.length; i++) {
-            chordIxs[i] = templateStrs[2].charAt(i) - '0';
+            if (!chordStr[i].equals("")) {
+                chordIxs[i] = Integer.parseInt(chordStr[i]);
+            }
         }
+        DroneLog.debugLog("Chords: " + Arrays.toString(chordIxs));
 
         return new VoicingTemplate(chordIxs, bassIxs);
 
