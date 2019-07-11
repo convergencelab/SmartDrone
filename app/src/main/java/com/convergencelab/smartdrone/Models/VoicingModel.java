@@ -1,6 +1,6 @@
 package com.convergencelab.smartdrone.Models;
 
-import com.example.smartdrone.VoicingTemplateCollection;
+import com.example.keyfinder.VoicingTemplateCollection;
 
 import java.util.ArrayList;
 
@@ -53,9 +53,9 @@ public class VoicingModel {
     public VoicingModel() {
         this.voicingTemplateCollection = new VoicingTemplateCollection();
         // Load stock voicings into voicing collection. // todo: refactor for persistent data
-        for (int i = 0; i < STOCK_VOICINGS_NAMES.length ; i++) {
-            this.voicingTemplateCollection.addVoicingTemplate(STOCK_VOICINGS_NAMES[i], STOCK_VOICINGS_INDICES[i]);
-        }
+//        for (int i = 0; i < STOCK_VOICINGS_NAMES.length ; i++) {
+//            this.voicingTemplateCollection.addVoicingTemplate(STOCK_VOICINGS_NAMES[i], STOCK_VOICINGS_INDICES[i]);
+//        }
     }
 
     /**

@@ -11,10 +11,10 @@ import android.widget.Toast;
 
 import com.convergencelab.smartdrone.Models.DroneSoundModel;
 import com.convergencelab.smartdrone.Models.MidiDriverModel;
-import com.example.smartdrone.KeyFinder;
-import com.example.smartdrone.ModeTemplate;
-import com.example.smartdrone.ModeTemplateCollection;
-import com.example.smartdrone.MusicTheory;
+import com.example.keyfinder.KeyFinder;
+import com.example.keyfinder.ModeTemplate;
+import com.example.keyfinder.ModeTemplateCollection;
+import com.example.keyfinder.MusicTheory;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
 
 import java.util.HashSet;
@@ -67,7 +67,7 @@ public class VoicingCreatorActivity extends AppCompatActivity {
             parentSequence = MusicTheory.MELODIC_MINOR_SCALE_SEQUENCE;
         }
         setMtc(parentCode);
-        droneSoundModel.getKeyFinder().setActiveKeyList(parentCode);
+        droneSoundModel.getKeyFinder().setParentKeyList(parentCode);
         droneSoundModel.initializePlayback();
         droneSoundModel.changePlayBack();
     }
@@ -166,9 +166,9 @@ public class VoicingCreatorActivity extends AppCompatActivity {
             return;
         }
 
-        else if (VoicingHelper.getTemplateName(flattenedTemplate).contains("|") || VoicingHelper.getTemplateName(flattenedTemplate).contains(",") ||
-                flattenedTemplate.contains(",,")) {
-            Toast t = Toast.makeText(this, "Name cannot contain characters '|' or ','.", Toast.LENGTH_SHORT);
+        else if (VoicingHelper.getTemplateName(flattenedTemplate).contains("{") || VoicingHelper.getTemplateName(flattenedTemplate).contains("}")
+                || VoicingHelper.getTemplateName(flattenedTemplate).contains("|")) {
+            Toast t = Toast.makeText(this, "Name cannot contain characters '{', '}' or '|'.", Toast.LENGTH_SHORT);
             t.show();
             return;
         }

@@ -1,7 +1,7 @@
 package com.convergencelab.smartdrone.Models;
 
 import com.convergencelab.smartdrone.Constants;
-import com.example.smartdrone.Note;
+import com.example.keyfinder.Note;
 
 import be.tarsos.dsp.AudioDispatcher;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;

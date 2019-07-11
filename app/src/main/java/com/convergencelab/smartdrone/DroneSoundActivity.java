@@ -10,8 +10,8 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.convergencelab.smartdrone.Models.DroneSoundModel;
-import com.example.smartdrone.KeyFinder;
-import com.example.smartdrone.MusicTheory;
+import com.example.keyfinder.KeyFinder;
+import com.example.keyfinder.MusicTheory;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
 
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class DroneSoundActivity extends AppCompatActivity {
         loadSavedData();
 
         droneSoundModel = new DroneSoundModel(Constants.PLUGIN_INDICES[userPluginIx], userModeIx, hasBassNote, VoicingHelper.inflateTemplate(curTemplateString));
-        droneSoundModel.getKeyFinder().setActiveKeyList(userParentScaleCode);
+        droneSoundModel.getKeyFinder().setParentKeyList(userParentScaleCode);
         droneSoundModel.initializePlayback();
         droneSoundModel.changePlayBack();
     }
@@ -249,7 +249,7 @@ public class DroneSoundActivity extends AppCompatActivity {
     public void getNextParentScale(View view) {
         userParentScaleCode = (userParentScaleCode + 1) % MusicTheory.PARENT_SCALE_NAMES.length;
         DronePreferences.setStoredParentScalePref(getApplicationContext(), userParentScaleCode);
-        droneSoundModel.getKeyFinder().setActiveKeyList(userParentScaleCode);
+        droneSoundModel.getKeyFinder().setParentKeyList(userParentScaleCode);
         droneSoundModel.changePlayBack();
         //todo change playback
 

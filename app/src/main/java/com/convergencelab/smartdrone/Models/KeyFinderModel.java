@@ -2,8 +2,8 @@ package com.convergencelab.smartdrone.Models;
 
 import com.convergencelab.smartdrone.Constants;
 import com.convergencelab.smartdrone.Utility.DroneLog;
-import com.example.smartdrone.KeyFinder;
-import com.example.smartdrone.Note;
+import com.example.keyfinder.KeyFinder;
+import com.example.keyfinder.Note;
 
 public class KeyFinderModel {
     /**

@@ -1,8 +1,9 @@
 package com.convergencelab.smartdrone;
 
-import com.example.smartdrone.Key;
-import com.example.smartdrone.MusicTheory;
-import com.example.smartdrone.Note;
+import com.example.keyfinder.AbstractKey;
+import com.example.keyfinder.Key;
+import com.example.keyfinder.MusicTheory;
+import com.example.keyfinder.Note;
 
 public class Constants {
     /**
@@ -77,15 +78,15 @@ public class Constants {
     public static final int NULL_KEY_IX = -1;
 
     public static final Note NULL_NOTE = null;
-    public static final Key NULL_KEY = null;
+    public static final AbstractKey NULL_KEY = null;
 
     /**
      * Flattened strings of default voicing templates.
      */
     public static final String DEFAULT_TEMPLATE_LIST =
-            "Drone,0,4|Triad (Closed),0,2,4|Triad (Open),0,4,9|Drop II,0,4,6,9|Holdsworth,2,7,8,11";
+            "Drone{0}{0,4}|Bass Only{0,4}{}|Triad{0}{0,4,9}|Triad (No Bass){}{0,4,9}|Drop II{0}{0,4,6,9}|Holdsworth{0,4}{2,7,8,11}";
 
     public static final String DEFAULT_TEMPLATE =
-            "Drone,0,4";
+            "Drone{0}{0,4}";
 
 }

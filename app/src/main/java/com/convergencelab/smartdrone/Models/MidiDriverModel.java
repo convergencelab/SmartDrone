@@ -1,7 +1,9 @@
 package com.convergencelab.smartdrone.Models;
 
 import com.convergencelab.smartdrone.Constants;
-import com.example.smartdrone.Voicing;
+import com.example.keyfinder.HarmonyGenerator;
+import com.example.keyfinder.Note;
+import com.example.keyfinder.Voicing;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
@@ -140,7 +142,11 @@ public class MidiDriverModel {
      * @param       toStop Voicing; voicing to stop playing.
      */
     public void stopVoicing(Voicing toStop) {
-        int[] voiceIxs = toStop.getVoiceIxs();
+        int[] voiceIxs = new int[toStop.numVoices()];
+        for (int i = 0; i < toStop.numVoices(); i++) {
+            voiceIxs[i] = toStop.getVoice(i).getIx();
+        }
+//        int[] voiceIxs = toStop.getVoiceIxs();
         sendMidiChord(Constants.STOP_NOTE, voiceIxs, Constants.VOLUME_OFF); //todo new sendmidichord method
     }
 
@@ -150,7 +156,11 @@ public class MidiDriverModel {
      * @param       toStart Voicing; voicing to be played.
      */
     public void startVoicing(Voicing toStart) {
-        int[] voiceIxs = toStart.getVoiceIxs();
+        int[] voiceIxs = new int[toStart.numVoices()];
+        for (int i = 0; i < toStart.numVoices(); i++) {
+            voiceIxs[i] = toStart.getVoice(i).getIx();
+        }
+//        int[] voiceIxs = toStart.getVoiceIxs();
         sendMidiChord(Constants.START_NOTE, voiceIxs, volume); //todo new sendmidichordmethod
         curVoicing = toStart;
     }
