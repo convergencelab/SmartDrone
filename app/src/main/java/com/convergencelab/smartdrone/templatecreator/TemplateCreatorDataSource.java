@@ -7,8 +7,8 @@ public interface TemplateCreatorDataSource {
     // Initial tones sent for playback.
     VoicingTemplate INIT_TEMP = new VoicingTemplate(
             new int[]{0}, new int[]{0});
-    
-    void initializePlayback();
+
+    void initialize();
 
     void playNote();
 

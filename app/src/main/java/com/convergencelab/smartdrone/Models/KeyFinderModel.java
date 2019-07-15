@@ -21,7 +21,7 @@ public class KeyFinderModel {
     /**
      * Constructor.
      */
-    KeyFinderModel() {
+    public KeyFinderModel() {
         keyFinder = new KeyFinder();
         keyFinder.setNoteTimerLength(Constants.NOTE_TIMER_LEN);
     }
