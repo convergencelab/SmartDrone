@@ -2,10 +2,11 @@ package com.convergencelab.smartdrone.Models;
 
 import com.convergencelab.smartdrone.Constants;
 import com.convergencelab.smartdrone.DroneActivity;
-import com.example.smartdrone.Note;
+import com.example.keyfinder.HarmonyGenerator;
+import com.example.keyfinder.Note;
 import com.convergencelab.smartdrone.Utility.DroneLog;
-import com.example.smartdrone.Voicing;
-import com.example.smartdrone.VoicingTemplate;
+import com.example.keyfinder.Voicing;
+import com.example.keyfinder.VoicingTemplate;
 
 import java.io.Serializable;
 
@@ -17,6 +18,7 @@ import be.tarsos.dsp.pitch.PitchProcessor;
 
 
 public class DroneModel implements Serializable {
+    private HarmonyGenerator generator;
     /**
      * Previous voicing for drone.
      */
@@ -51,6 +53,8 @@ public class DroneModel implements Serializable {
      * Handles PitchProcessor object.
      */
     private PitchProcessorModel pitchProcessorModel;
+
+    private HarmonyGeneratorModel generatorModel;
 
     /**
      * Index of current active key.
@@ -94,9 +98,11 @@ public class DroneModel implements Serializable {
 
         midiDriverModel = new MidiDriverModel();
         pitchProcessorModel = new PitchProcessorModel();
-        voicingModel = new VoicingModel();
-        curTemplate = voicingModel.getVoicingTemplateCollection()
-                .getVoicingTemplate("V Major / I"); //todo hardcoded for now because testing, but make dynamic later
+//        voicingModel = new VoicingModel();
+        generator = new HarmonyGenerator();
+        generatorModel = new HarmonyGeneratorModel();
+//        curTemplate = voicingModel.getVoicingTemplateCollection()
+//                .getVoicingTemplate("V Major / I"); //todo hardcoded for now because testing, but make dynamic later
 
         prevActiveKeyIx = -1;
         curActiveKeyIx = -1;
@@ -156,8 +162,11 @@ public class DroneModel implements Serializable {
         curActiveKeyIx = keyFinderModel.getKeyFinder().getActiveKey().getIx();
         if (prevActiveKeyIx != curActiveKeyIx) {
             // Stop chord.
-            Voicing v = curTemplate.generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(), 
-                    userModeIx, 4, hasBassNote);
+            Voicing v = generatorModel.getGenerator().generateVoicing(curTemplate, keyFinderModel.getKeyFinder().getModeTemplate(userModeIx),
+                    keyFinderModel.getKeyFinder().getActiveKey());
+
+//            Voicing v = curTemplate.generateVoicing(keyFinderModel.getKeyFinder().getActiveKey(),
+//                    userModeIx, 4, hasBassNote);
             midiDriverModel.playVoicing(v);
         }
     }

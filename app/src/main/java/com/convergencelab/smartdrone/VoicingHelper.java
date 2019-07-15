@@ -3,10 +3,10 @@ package com.convergencelab.smartdrone;
 
 import android.content.Context;
 
+import com.convergencelab.smartdrone.Utility.DroneLog;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
 
-import com.example.smartdrone.Voicing;
-import com.example.smartdrone.VoicingTemplate;
+import com.example.keyfinder.VoicingTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,12 +21,35 @@ public class VoicingHelper {
      * @param       template VoicingTemplate; voicing template.
      * @return      String; flattened string of voicing template.
      */
+    //todo needs refactoring
     public static String flattenTemplate(VoicingTemplate template) {
         String templateStr = "";
         templateStr += template.getName();
-        for (int i = 0; i < template.size(); i++) {
-            templateStr += ',' + Integer.toString(template.getChordTone(i));
+
+        // Add Bass Tones.
+        templateStr += "{";
+        for (int i = 0; i < template.getBassTones().length; i++) {
+            // So string only has comma in between values,
+            // not before first or after last.
+            if (i > 0) {
+                templateStr += ',';
+            }
+            templateStr += Integer.toString(template.getBassTones()[i].getDegree());
         }
+        templateStr += "}";
+
+        // Add Chord Tones.
+        templateStr += "{";
+        for (int i = 0; i < template.getChordTones().length; i++) {
+            // So string only has comma in between values,
+            // not before first or after last.
+            if (i > 0) {
+                templateStr += ',';
+            }
+            templateStr += Integer.toString(template.getChordTones()[i].getDegree());
+        }
+        templateStr += "}";
+
         return templateStr;
     }
 
@@ -35,32 +58,89 @@ public class VoicingHelper {
      * @param       flattenedTemplate String; flattened template.
      * @return      VoicingTemplate; voicing template.
      */
+    //todo needs refactoring
     public static VoicingTemplate inflateTemplate(String flattenedTemplate) {
-        String[] str = flattenedTemplate.split(",");
-        String name = str[0];
-        int[] chordTones = new int[str.length - 1];
-        for (int i = 1; i < str.length; i++) {
-            chordTones[i - 1] = Integer.parseInt(str[i]);
-        }
-        return new VoicingTemplate(name, chordTones);
-    }
+        // 0) Name, 1) BassTones, 2) ChordTones
+        String[] templateStrs = new String[]{"","",""};
+        int templateStrIx = 0;
 
-    /**
-     * Makes a flattened string copy of a voicing.
-     * @param       voicing Voicing; voicing.
-     * @return      String; flattened string of voicing.
-     */
-    public static String flattenVoicing(Voicing voicing) {
-        String voicingStr = "";
-        //todo refactor voicing class to be consistent with template class
-        for (int i = 0; i < voicing.getVoiceIxs().length; i++) {
-            voicingStr += voicing.getVoiceIxs()[i];
-            if (i != voicing.getVoiceIxs().length) {
-                voicingStr += ',';
+        for (int i = 0; i < flattenedTemplate.length(); i++) {
+            char curChar = flattenedTemplate.charAt(i);
+            if (templateStrIx == 0) {
+                // Start of bass tones found.
+                if (curChar == '{') {
+                    templateStrIx++;
+                }
+                else {
+                    templateStrs[templateStrIx] += curChar;
+                }
+            }
+            else {
+                // Start of chord tones found.
+                if (curChar == '{') {
+                    templateStrIx++;
+                }
+                else if (curChar != '}') {
+                    templateStrs[templateStrIx] += curChar;
+                }
             }
         }
-        return voicingStr;
+
+        // Todo: fix bug where empty indices adds '0' as chord tone
+        String[] bassStr = templateStrs[1].split(",");
+        int[] bassIxs;
+        if (!templateStrs[1].isEmpty()) {
+            bassIxs = new int[bassStr.length];
+            for (int i = 0; i < bassIxs.length; i++) {
+                bassIxs[i] = Integer.parseInt(bassStr[i]);
+            }
+            DroneLog.debugLog("Bass: " + Arrays.toString(bassIxs));
+        }
+        else {
+            bassIxs = new int[]{};
+        }
+
+        String[] chordStr = templateStrs[2].split(",");
+        int[] chordIxs;
+        if (!templateStrs[2].isEmpty()) {
+            chordIxs = new int[chordStr.length];
+            for (int i = 0; i < chordIxs.length; i++) {
+                chordIxs[i] = Integer.parseInt(chordStr[i]);
+            }
+            DroneLog.debugLog("Chords: " + Arrays.toString(chordIxs));
+        }
+        else {
+            chordIxs = new int[]{};
+        }
+
+        return new VoicingTemplate(bassIxs, chordIxs);
+
+
+//        String[] str = flattenedTemplate.split(",");
+//        String name = str[0];
+//        int[] chordTones = new int[str.length - 1];
+//        for (int i = 1; i < str.length; i++) {
+//            chordTones[i - 1] = Integer.parseInt(str[i]);
+//        }
+//        return new VoicingTemplate(name, chordTones);
     }
+
+//    /**
+//     * Makes a flattened string copy of a voicing.
+//     * @param       voicing Voicing; voicing.
+//     * @return      String; flattened string of voicing.
+//     */
+//    public static String flattenVoicing(Voicing voicing) {
+//        String voicingStr = "";
+//        //todo refactor voicing class to be consistent with template class
+//        for (int i = 0; i < voicing.getVoiceIxs().length; i++) {
+//            voicingStr += voicing.getVoiceIxs()[i];
+//            if (i != voicing.getVoiceIxs().length) {
+//                voicingStr += ',';
+//            }
+//        }
+//        return voicingStr;
+//    }
 
     /**
      * Turns string of all flattened voicings into array list of flattened voicings.
@@ -79,7 +159,7 @@ public class VoicingHelper {
      */
     public static String flattenTemplateList(ArrayList<String> templateList) {
         if (templateList.isEmpty()) { //todo replace with exception
-            return null;
+            return Constants.DEFAULT_TEMPLATE_LIST;
         }
         String flattenedTemplates = templateList.get(0); //todo error check; but should work for meantime IF must have one voicing rule imposed
         for (int i = 1; i < templateList.size(); i++) {
@@ -95,9 +175,10 @@ public class VoicingHelper {
      */
     public static String getTemplateName(String flattenedTemplate) {
         String name = "";
-        int i = 1;
         name += flattenedTemplate.charAt(0);
-        while (flattenedTemplate.charAt(i) != ',') {
+        // todo why the f is this 1?
+        int i = 1;
+        while (flattenedTemplate.charAt(i) != '{') {
             name += flattenedTemplate.charAt(i);
             i++;
         }
@@ -121,7 +202,7 @@ public class VoicingHelper {
             if (!nameFound && curChar != ',') {
                 curString += curChar;
             }
-            else if (!nameFound && curChar == ',') {
+            else if (!nameFound && curChar == '{') {
                 nameFound = true;
                 allNames.add(curString);
                 curString = "";

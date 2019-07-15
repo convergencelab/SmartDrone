@@ -52,8 +52,8 @@ import android.widget.Toast;
 
 import com.convergencelab.smartdrone.Models.DroneModel;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
-import com.example.smartdrone.KeyFinder;
-import com.example.smartdrone.MusicTheory;
+import com.example.keyfinder.KeyFinder;
+import com.example.keyfinder.MusicTheory;
 
 import java.util.HashMap;
 
@@ -144,7 +144,7 @@ public class DroneActivity extends AppCompatActivity {
 
         droneModel.getKeyFinderModel().getKeyFinder().setKeyTimerLength(keyTimerLength);
         droneModel.getPitchProcessorModel().noteFilterLength = noteLengthRequirement;
-        droneModel.getKeyFinderModel().getKeyFinder().setActiveKeyList(userParentScaleCode);
+        droneModel.getKeyFinderModel().getKeyFinder().setParentKeyList(userParentScaleCode);
         droneModel.setUserModeIx(userModeIx);
         droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         droneModel.sethasBassNote(userBassNotePref);

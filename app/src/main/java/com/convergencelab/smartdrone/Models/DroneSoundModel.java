@@ -1,9 +1,12 @@
 package com.convergencelab.smartdrone.Models;
 
-import com.example.smartdrone.KeyFinder;
-import com.example.smartdrone.VoicingTemplate;
+import com.example.keyfinder.HarmonyGenerator;
+import com.example.keyfinder.KeyFinder;
+import com.example.keyfinder.Voicing;
+import com.example.keyfinder.VoicingTemplate;
 
 public class DroneSoundModel {
+    private HarmonyGenerator generator;
     private VoicingModel voicingModel;
     private MidiDriverModel midiDriverModel;
     private KeyFinder keyFinder;
@@ -17,6 +20,7 @@ public class DroneSoundModel {
         voicingModel = new VoicingModel();
         midiDriverModel = new MidiDriverModel();
         keyFinder = new KeyFinder();
+        generator = new HarmonyGenerator();
 
         midiDriverModel.setPlugin(pluginIx);
         this.modeIx = modeIx;
@@ -70,8 +74,12 @@ public class DroneSoundModel {
 
     public void changePlayBack() {
         midiDriverModel.sendMidiSetup();
-        midiDriverModel.playVoicing(curTemplate.generateVoicing(
-                keyFinder.getKeyAtIndex(0), modeIx, 4, hasBassNote)); // Default C major for now
+        //todo comeback to this later
+        Voicing voicing = generator.generateVoicing(curTemplate, keyFinder.getModeTemplate(modeIx), keyFinder.getKeyAtIndex(0)); // todo: default c major for now
+        midiDriverModel.playVoicing(voicing);
+
+//        midiDriverModel.playVoicing(curTemplate.generateVoicing(
+//                keyFinder.getKeyAtIndex(0), modeIx, 4, hasBassNote)); // Default C major for now
     }
 
     public void setHasBassNote(boolean hasBassNote) {

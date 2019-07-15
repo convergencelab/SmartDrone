@@ -11,10 +11,10 @@ import android.widget.Toast;
 
 import com.convergencelab.smartdrone.Models.DroneSoundModel;
 import com.convergencelab.smartdrone.Models.MidiDriverModel;
-import com.example.smartdrone.KeyFinder;
-import com.example.smartdrone.ModeTemplate;
-import com.example.smartdrone.ModeTemplateCollection;
-import com.example.smartdrone.MusicTheory;
+import com.example.keyfinder.KeyFinder;
+import com.example.keyfinder.ModeTemplate;
+import com.example.keyfinder.ModeTemplateCollection;
+import com.example.keyfinder.MusicTheory;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
 
 import java.util.HashSet;
@@ -33,7 +33,6 @@ public class VoicingCreatorActivity extends AppCompatActivity {
     int[] parentSequence;
 
     ModeTemplate[] mtArr;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +58,7 @@ public class VoicingCreatorActivity extends AppCompatActivity {
                 Constants.PLUGIN_INDICES[DronePreferences.getStoredPluginPref(getApplicationContext())],
                 DronePreferences.getStoredModePref(this),
                 DronePreferences.getStoredBassPref(this),
-                VoicingHelper.inflateTemplate("throwaway,0"));
+                VoicingHelper.inflateTemplate("throwaway{0}{0}"));
         int parentCode = DronePreferences.getStoredParentScalePref(getApplicationContext());
         if (parentCode == KeyFinder.CODE_MAJOR) {
             parentSequence = MusicTheory.MAJOR_SCALE_SEQUENCE;
@@ -67,7 +66,7 @@ public class VoicingCreatorActivity extends AppCompatActivity {
             parentSequence = MusicTheory.MELODIC_MINOR_SCALE_SEQUENCE;
         }
         setMtc(parentCode);
-        droneSoundModel.getKeyFinder().setActiveKeyList(parentCode);
+        droneSoundModel.getKeyFinder().setParentKeyList(parentCode);
         droneSoundModel.initializePlayback();
         droneSoundModel.changePlayBack();
     }
@@ -95,6 +94,7 @@ public class VoicingCreatorActivity extends AppCompatActivity {
             curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive)); //todo find better way to do this
             if ((int) curButton.getTag() == 0) {
                 curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_active)); //todo find better way to do this
+
             }
             curButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -133,13 +133,18 @@ public class VoicingCreatorActivity extends AppCompatActivity {
         }
         flattenedTemplate += templateNameStr;
 
+        // Default bass tone is {0}
+        flattenedTemplate += "{0}";
+
         String chordTonesStr = "";
+        chordTonesStr += "{";
         for (int i = 0; i < NUM_BUTTONS; i++) {
             if (chordTones[i]) {
-                System.out.println(chordTonesStr);
-                chordTonesStr += ',' + Integer.toString(i);
+//                System.out.println(chordTonesStr);
+                chordTonesStr += Integer.toString(i) + ",";
             }
         }
+        chordTonesStr += "}";
         if (chordTonesStr.length() == 0) { //todo find better way to do this
             chordTonesStr = ",0";
         }
@@ -166,9 +171,9 @@ public class VoicingCreatorActivity extends AppCompatActivity {
             return;
         }
 
-        else if (VoicingHelper.getTemplateName(flattenedTemplate).contains("|") || VoicingHelper.getTemplateName(flattenedTemplate).contains(",") ||
-                flattenedTemplate.contains(",,")) {
-            Toast t = Toast.makeText(this, "Name cannot contain characters '|' or ','.", Toast.LENGTH_SHORT);
+        else if (VoicingHelper.getTemplateName(flattenedTemplate).contains("{") || VoicingHelper.getTemplateName(flattenedTemplate).contains("}")
+                || VoicingHelper.getTemplateName(flattenedTemplate).contains("|")) {
+            Toast t = Toast.makeText(this, "Name cannot contain characters '{', '}' or '|'.", Toast.LENGTH_SHORT);
             t.show();
             return;
         }
