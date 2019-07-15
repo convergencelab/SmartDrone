@@ -10,7 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.convergencelab.smartdrone.Models.DroneSoundModel;
-import com.convergencelab.smartdrone.voicingcreator.TemplateCreatorActivity;
+import com.convergencelab.smartdrone.templatecreator.TemplateCreatorActivity;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.MusicTheory;
 import com.convergencelab.smartdrone.Utility.DronePreferences;

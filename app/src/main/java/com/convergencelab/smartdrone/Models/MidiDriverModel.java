@@ -165,6 +165,7 @@ public class MidiDriverModel {
         curVoicing = toStart;
     }
 
+    //todo get rid of this method
     /**
      * Set current voicing.
      * @param       voicing Voicing; current voicing.

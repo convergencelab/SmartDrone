@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.voicingcreator;
+package com.convergencelab.smartdrone.templatecreator;
 
 
 import android.support.v7.app.AppCompatActivity;

@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.voicingcreator;
+package com.convergencelab.smartdrone.templatecreator;
 
 import com.convergencelab.smartdrone.BasePresenter;
 import com.convergencelab.smartdrone.BaseView;
