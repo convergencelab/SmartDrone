@@ -88,22 +88,30 @@ public class VoicingHelper {
 
         // Todo: fix bug where empty indices adds '0' as chord tone
         String[] bassStr = templateStrs[1].split(",");
-        int[] bassIxs = new int[bassStr.length];
-        for (int i = 0; i < bassIxs.length; i++) {
-            if (!bassStr[i].equals("")) {
+        int[] bassIxs;
+        if (!templateStrs[1].isEmpty()) {
+            bassIxs = new int[bassStr.length];
+            for (int i = 0; i < bassIxs.length; i++) {
                 bassIxs[i] = Integer.parseInt(bassStr[i]);
             }
+            DroneLog.debugLog("Bass: " + Arrays.toString(bassIxs));
         }
-        DroneLog.debugLog("Bass: " + Arrays.toString(bassIxs));
+        else {
+            bassIxs = new int[]{};
+        }
 
         String[] chordStr = templateStrs[2].split(",");
-        int[] chordIxs = new int[chordStr.length];
-        for (int i = 0; i < chordIxs.length; i++) {
-            if (!chordStr[i].equals("")) {
+        int[] chordIxs;
+        if (!templateStrs[2].isEmpty()) {
+            chordIxs = new int[chordStr.length];
+            for (int i = 0; i < chordIxs.length; i++) {
                 chordIxs[i] = Integer.parseInt(chordStr[i]);
             }
+            DroneLog.debugLog("Chords: " + Arrays.toString(chordIxs));
         }
-        DroneLog.debugLog("Chords: " + Arrays.toString(chordIxs));
+        else {
+            chordIxs = new int[]{};
+        }
 
         return new VoicingTemplate(bassIxs, chordIxs);
 
