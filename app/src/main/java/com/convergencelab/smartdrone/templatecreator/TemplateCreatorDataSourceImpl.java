@@ -10,9 +10,6 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
     private MidiDriver mMidiDriver;
     private KeyFinder mKeyFinder;
     private HarmonyGenerator mHarmonyGenerator;
-    // MidiDriver
-    // KeyFinder
-    // HarmonyGenerator
 
     @Override
     public void initializePlayback() {
