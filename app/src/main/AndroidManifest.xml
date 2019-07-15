@@ -24,7 +24,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.convergencelab.smartdrone.VoicingCreatorActivity"
+            android:name="com.convergencelab.smartdrone.voicingcreator.TemplateCreatorActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name="com.convergencelab.smartdrone.DroneSoundActivity"
