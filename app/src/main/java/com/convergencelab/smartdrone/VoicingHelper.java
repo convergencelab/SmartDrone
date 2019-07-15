@@ -6,9 +6,6 @@ import android.content.Context;
 import com.convergencelab.smartdrone.Utility.DroneLog;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
 
-import com.example.keyfinder.HarmonyGenerator;
-import com.example.keyfinder.Tone;
-import com.example.keyfinder.Voicing;
 import com.example.keyfinder.VoicingTemplate;
 
 import java.util.ArrayList;
@@ -108,7 +105,7 @@ public class VoicingHelper {
         }
         DroneLog.debugLog("Chords: " + Arrays.toString(chordIxs));
 
-        return new VoicingTemplate(chordIxs, bassIxs);
+        return new VoicingTemplate(bassIxs, chordIxs);
 
 
 //        String[] str = flattenedTemplate.split(",");
