@@ -34,7 +34,6 @@ public class VoicingCreatorActivity extends AppCompatActivity {
 
     ModeTemplate[] mtArr;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,7 +58,7 @@ public class VoicingCreatorActivity extends AppCompatActivity {
                 Constants.PLUGIN_INDICES[DronePreferences.getStoredPluginPref(getApplicationContext())],
                 DronePreferences.getStoredModePref(this),
                 DronePreferences.getStoredBassPref(this),
-                VoicingHelper.inflateTemplate("throwaway,0"));
+                VoicingHelper.inflateTemplate("throwaway{0}{0}"));
         int parentCode = DronePreferences.getStoredParentScalePref(getApplicationContext());
         if (parentCode == KeyFinder.CODE_MAJOR) {
             parentSequence = MusicTheory.MAJOR_SCALE_SEQUENCE;
@@ -95,6 +94,7 @@ public class VoicingCreatorActivity extends AppCompatActivity {
             curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive)); //todo find better way to do this
             if ((int) curButton.getTag() == 0) {
                 curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_active)); //todo find better way to do this
+
             }
             curButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -133,13 +133,18 @@ public class VoicingCreatorActivity extends AppCompatActivity {
         }
         flattenedTemplate += templateNameStr;
 
+        // Default bass tone is {0}
+        flattenedTemplate += "{0}";
+
         String chordTonesStr = "";
+        chordTonesStr += "{";
         for (int i = 0; i < NUM_BUTTONS; i++) {
             if (chordTones[i]) {
-                System.out.println(chordTonesStr);
-                chordTonesStr += ',' + Integer.toString(i);
+//                System.out.println(chordTonesStr);
+                chordTonesStr += Integer.toString(i) + ",";
             }
         }
+        chordTonesStr += "}";
         if (chordTonesStr.length() == 0) { //todo find better way to do this
             chordTonesStr = ",0";
         }
