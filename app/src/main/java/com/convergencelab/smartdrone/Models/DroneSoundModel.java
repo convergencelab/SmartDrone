@@ -1,6 +1,5 @@
 package com.convergencelab.smartdrone.Models;
 
-import com.convergencelab.smartdrone.Utility.DronePreferences;
 import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.Voicing;
