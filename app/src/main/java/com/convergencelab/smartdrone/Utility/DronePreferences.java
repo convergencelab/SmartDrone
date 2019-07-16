@@ -65,20 +65,20 @@ public class DronePreferences {
 
     /**
      * Get parent scale code from shared preferences.
-     * @param       context Context; context.
+     * @param       prefs SharedPreferences; shared preferences.
      * @return      int; parent scale code.
      */
-    public static int getStoredParentScalePref(Context context) {
-        return getSharedPrefs(context).getInt(PARENT_SCALE_KEY, 0);
+    public static int getStoredParentScalePref(SharedPreferences prefs) {
+        return prefs.getInt(PARENT_SCALE_KEY, 0);
     }
 
     /**
      * Put parent scale code in shared preferences.
-     * @param       context Context; context.
+     * @param       prefs SharedPreferences; shared preferences.
      * @param       parentScaleCode int; parent scale code.
      */
-    public static void setStoredParentScalePref(Context context, int parentScaleCode) {
-        getSharedPrefs(context).edit().putInt(PARENT_SCALE_KEY, parentScaleCode).apply();
+    public static void setStoredParentScalePref(SharedPreferences prefs, int parentScaleCode) {
+        prefs.edit().putInt(PARENT_SCALE_KEY, parentScaleCode).apply();
     }
 
     /**
@@ -124,21 +124,21 @@ public class DronePreferences {
     /**
      * Get current voicing template from shared preferences.
      *
-     * @param context Context; context.
+     * @param prefs SharedPreferences; shared preferences.
      * @return String; flattened template list.
      */
-    public static String getAllTemplatePref(Context context) {
-        return getSharedPrefs(context).getString(ALL_TEMP_KEY, Constants.DEFAULT_TEMPLATE_LIST);
+    public static String getAllTemplatePref(SharedPreferences prefs) {
+        return prefs.getString(ALL_TEMP_KEY, Constants.DEFAULT_TEMPLATE_LIST);
     }
 
     /**
      * Store all voicing templates in shared preferences.
      *
-     * @param context               Context; context.
+     * @param prefs SharedPreferences; shared preferences.
      * @param flattenedTemplateList String; list of flattened templates.
      */
-    public static void setAllTemplatePref(Context context, String flattenedTemplateList) {
-        getSharedPrefs(context).edit().putString(ALL_TEMP_KEY, flattenedTemplateList).apply();
+    public static void setAllTemplatePref(SharedPreferences prefs, String flattenedTemplateList) {
+        prefs.edit().putString(ALL_TEMP_KEY, flattenedTemplateList).apply();
     }
 
     /**
@@ -157,6 +157,48 @@ public class DronePreferences {
      */
     public static String getNoteFilterLenPref(Context context) {
         return getSharedPrefs(context).getString(NOTE_LEN_KEY, "60"); //todo refactor hardcoded AND change over to integers
+    }
+
+    /**
+     * Get current voicing template from shared preferences.
+     *
+     * @param context Context; context.
+     * @return String; flattened template list.
+     */
+    @Deprecated
+    public static String getAllTemplatePref(Context context) {
+        return getSharedPrefs(context).getString(ALL_TEMP_KEY, Constants.DEFAULT_TEMPLATE_LIST);
+    }
+
+    /**
+     * Store all voicing templates in shared preferences.
+     *
+     * @param context               Context; context.
+     * @param flattenedTemplateList String; list of flattened templates.
+     */
+    @Deprecated
+    public static void setAllTemplatePref(Context context, String flattenedTemplateList) {
+        getSharedPrefs(context).edit().putString(ALL_TEMP_KEY, flattenedTemplateList).apply();
+    }
+
+    /**
+     * Get parent scale code from shared preferences.
+     * @param       context Context; context.
+     * @return      int; parent scale code.
+     */
+    @Deprecated
+    public static int getStoredParentScalePref(Context context) {
+        return getSharedPrefs(context).getInt(PARENT_SCALE_KEY, 0);
+    }
+
+    /**
+     * Put parent scale code in shared preferences.
+     * @param       context Context; context.
+     * @param       parentScaleCode int; parent scale code.
+     */
+    @Deprecated
+    public static void setStoredParentScalePref(Context context, int parentScaleCode) {
+        getSharedPrefs(context).edit().putInt(PARENT_SCALE_KEY, parentScaleCode).apply();
     }
 
     /**

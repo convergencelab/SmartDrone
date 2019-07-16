@@ -21,7 +21,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     }
 
     @Override
-    public void saveTemplate() {
+    public void save(String name) {
 
     }
 

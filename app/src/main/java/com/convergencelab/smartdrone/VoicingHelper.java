@@ -199,10 +199,10 @@ public class VoicingHelper {
         char curChar;
         for (int i = 0; i < flattenedTemplateList.length(); i++) {
             curChar = flattenedTemplateList.charAt(i);
-            if (!nameFound && curChar != ',') {
+            if (!nameFound && curChar != '{') {
                 curString += curChar;
             }
-            else if (!nameFound && curChar == '{') {
+            else if (curChar == '{') {
                 nameFound = true;
                 allNames.add(curString);
                 curString = "";

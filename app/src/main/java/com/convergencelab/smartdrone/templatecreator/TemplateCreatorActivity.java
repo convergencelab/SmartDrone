@@ -22,7 +22,7 @@ import com.convergencelab.smartdrone.Utility.DronePreferences;
 
 import java.util.HashSet;
 
-public class TemplateCreatorActivity extends AppCompatActivity {
+public class    TemplateCreatorActivity extends AppCompatActivity {
 
     private static final int NUM_BUTTONS = 14;
 

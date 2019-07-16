@@ -20,7 +20,7 @@ public interface TemplateCreatorContract {
 
         void toggleNoteStatus(Note toToggle);
 
-        void saveTemplate();
+        void save(String name);
 
         void cancel();
 

@@ -8,6 +8,6 @@ public interface TemplateCreatorDataSource {
 
     void toggleTonePlayback(int toneIx);
 
-    void saveTemplate();
+    boolean saveTemplate(String name);
 
 }
