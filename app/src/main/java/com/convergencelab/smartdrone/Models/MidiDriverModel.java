@@ -1,7 +1,6 @@
 package com.convergencelab.smartdrone.Models;
 
 import com.convergencelab.smartdrone.Constants;
-import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.Note;
 import com.example.keyfinder.Voicing;
 
@@ -114,18 +113,18 @@ public class MidiDriverModel {
 
     /**
      * Adds note to playback. Used in TemplateCreator.
-     * @param       toAddIx int; index of note to add.
+     * @param       toAdd int; index of note to add.
      */
-    public void addNoteToPlayback(int toAddIx) {
-        sendMidiNote(Constants.START_NOTE, toAddIx, mCurVolume);
+    public void addNoteToPlayback(Note toAdd) {
+        sendMidiNote(Constants.START_NOTE, toAdd.getRawIx(), mCurVolume);
     }
 
     /**
      * Removes note from playback. Used in TemplateCreator.
-     * @param       toStopIx int; index of note to remove.
+     * @param       toStop int; index of note to remove.
      */
-    public void removeNoteFromPlayback(int toStopIx) {
-        sendMidiNote(Constants.STOP_NOTE, toStopIx, mCurVolume);
+    public void removeNoteFromPlayback(Note toStop) {
+        sendMidiNote(Constants.STOP_NOTE, toStop.getRawIx(), mCurVolume);
     }
 
 

@@ -21,6 +21,8 @@ public class DronePreferences {
     private static final String SAVED_VOICING_KEY = "saved_voicing_key"; //todo why tf does this one use different naming convention?
     private static final String ACTIVE_KEY_IX_KEY = "active_key_ix";
 
+    // TODO: deprecate all methods with 'context' as parameter
+
     /**
      * Get bass switch status from shared preferences.
      *
@@ -44,21 +46,21 @@ public class DronePreferences {
     /**
      * Get mode index from shared preferences.
      *
-     * @param context Context; context.
+     * @param prefs SharedPreferences; shared preferences.
      * @return int; mode index.
      */
-    public static int getStoredModePref(Context context) {
-        return getSharedPrefs(context).getInt(USER_MODE_KEY, 0);
+    public static int getStoredModePref(SharedPreferences prefs) {
+        return prefs.getInt(USER_MODE_KEY, 0);
     }
 
     /**
      * Put mode index in shared preferences.
      *
-     * @param context Context; context.
+     * @param prefs SharedPreferences; shared preferences.
      * @param modeIx  int; mode index.
      */
-    public static void setStoredModePref(Context context, int modeIx) {
-        getSharedPrefs(context).edit().putInt(USER_MODE_KEY, modeIx).apply();
+    public static void setStoredModePref(SharedPreferences prefs, int modeIx) {
+        prefs.edit().putInt(USER_MODE_KEY, modeIx).apply();
     }
 
     /**
@@ -158,11 +160,34 @@ public class DronePreferences {
     }
 
     /**
+     * Get mode index from shared preferences.
+     *
+     * @param context Context; context.
+     * @return int; mode index.
+     */
+    @Deprecated
+    public static int getStoredModePref(Context context) {
+        return getSharedPrefs(context).getInt(USER_MODE_KEY, 0);
+    }
+
+    /**
+     * Put mode index in shared preferences.
+     *
+     * @param context Context; context.
+     * @param modeIx  int; mode index.
+     */
+    @Deprecated
+    public static void setStoredModePref(Context context, int modeIx) {
+        getSharedPrefs(context).edit().putInt(USER_MODE_KEY, modeIx).apply();
+    }
+
+    /**
      * Return shared preferences object.
      *
      * @param context Context; context.
      * @return SharedPreferences; shared preferences object.
      */
+    @Deprecated
     private static SharedPreferences getSharedPrefs(Context context) {
         return android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context);
     }
