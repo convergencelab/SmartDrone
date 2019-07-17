@@ -19,8 +19,7 @@ import java.util.HashSet;
 public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource {
 
     // Initial tones sent for playback.
-    private VoicingTemplate INIT_TEMP = new VoicingTemplate(
-            new int[]{0}, new int[]{0});
+    private final VoicingTemplate INIT_TEMP = new VoicingTemplate(new int[]{0}, new int[]{0});
 
 //    private static final int NUM_TONES = 14;
 //    private static final int MAX_LEN_NAME = 20;
@@ -31,10 +30,10 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
 //    private static final int ILLEGAL_CHARACTERS = 2;
 //    private static final int INVALID_LENGTH = 3;
 
-    private MidiDriverModel mMidiDriverModel;
-    private KeyFinderModel mKeyFinderModel;
-    private HarmonyGenerator mHarmonyGenerator;
-    private SharedPreferences mPreferences;
+    private final MidiDriverModel mMidiDriverModel;
+    private final KeyFinderModel mKeyFinderModel;
+    private final HarmonyGenerator mHarmonyGenerator;
+    private final SharedPreferences mPreferences;
 
     private final HashSet<String> nameSet;
 
