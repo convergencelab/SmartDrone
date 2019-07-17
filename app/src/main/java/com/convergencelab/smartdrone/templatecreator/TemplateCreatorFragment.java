@@ -3,6 +3,7 @@ package com.convergencelab.smartdrone.templatecreator;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,10 +55,11 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.template_creator_frag, container, false);
         mName = root.findViewById(R.id.template_name_edit_text);
-        // Logic
+        InputFilter[] filterArray = new InputFilter[1];
+        filterArray[0] = new InputFilter.LengthFilter(MAX_LEN_NAME);
+        mName.setFilters(filterArray);
         drawLayout(root);
 
         return root;
@@ -79,8 +81,6 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                 final Button curButton = new Button(root.getContext());
                 LinearLayout.LayoutParams btnParames = new LinearLayout.LayoutParams(
                         (int) getResources().getDimension(R.dimen.voice_button_height), (int) getResources().getDimension(R.dimen.voice_button_height));
-//                curButton.setWidth(R.dimen.voice_button_height);
-//                curButton.setHeight(R.dimen.voice_button_height);
 
                 // +1 to display base 1 indexing for user.
                 curButton.setText(Integer.toString(toneDegree + 1));
@@ -90,16 +90,9 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                     @Override
                     public void onClick(View v) {
                         int degree = (int) curButton.getTag();
-                        mPresenter.toggleToneStatus(degree);
+                        mPresenter.toggleToneStatus(degree, Tone.TONE_CHORD);
                     }
                 });
-//                // Tone 0 is played by default.
-//                if (toneDegree != 0) {
-//                    curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
-//                }
-//                else {
-//                    curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
-//                }
                 toneButtons[(int) curButton.getTag()] = curButton;
                 totalCount++;
                 curLayout.addView(curButton, btnParames);

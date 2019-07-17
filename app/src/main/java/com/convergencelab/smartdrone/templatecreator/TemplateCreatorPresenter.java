@@ -12,10 +12,11 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
     private static final int NUM_TONES = 14;
 
-    private boolean[] mToneIsActive;
-    private Tone[] mTones;
-    private int numActiveTones = 0;
+    private boolean[] mChordToneIsActive;
+    private Tone[] mChordTones;
+    private int numActiveChordTones = 0;
 
+    private int numActiveBassTones = 0;
 
     public TemplateCreatorPresenter(TemplateCreatorDataSource templateCreatorDataSource,
                                     TemplateCreatorContract.View templateCreatorView) {
@@ -32,25 +33,33 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     }
 
     private void initTones() {
-        mTones = new Tone[NUM_TONES];
+        mChordTones = new Tone[NUM_TONES];
         for (int i = 0; i < NUM_TONES; i++) {
-            mTones[i] = new Tone(i, Tone.TONE_CHORD);
+            mChordTones[i] = new Tone(i, Tone.TONE_CHORD);
         }
 
-        mToneIsActive = new boolean[NUM_TONES];
-        playTone(mTones[0]);
+        mChordToneIsActive = new boolean[NUM_TONES];
 
-        mTemplateCreatorDataSource.playTone(new Tone(0, Tone.TONE_BASS)); // Todo: bad I know
+        activateTone(mChordTones[0]);
+        activateTone(new Tone(0, Tone.TONE_BASS));
     }
 
     @Override
-    public void toggleToneStatus(int toneDegree) {
-        Tone toToggle = mTones[toneDegree];
-        if (mToneIsActive[toneDegree]) {
-            stopTone(toToggle);
+    public void toggleToneStatus(int toneDegree, int toneType) {
+        Tone toToggle;
+        if (toneType == Tone.TONE_CHORD) {
+            toToggle = mChordTones[toneDegree];
         }
         else {
-            playTone(toToggle);
+            toToggle = new Tone(toneDegree, Tone.TONE_BASS);
+        }
+
+        // Play or Stop tone.
+        if (mChordToneIsActive[toneDegree]) {
+            deactivateTone(toToggle);
+        }
+        else {
+            activateTone(toToggle);
         }
     }
 
@@ -64,22 +73,32 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
      * Plays tone. Marks tone as active. Updates background on view.
      * @param toPlay tone to play.
      */
-    private void playTone(Tone toPlay) {
-        mToneIsActive[toPlay.getDegree()] = true;
+    private void activateTone(Tone toPlay) {
+        mChordToneIsActive[toPlay.getDegree()] = true;
         mTemplateCreatorDataSource.playTone(toPlay);
         mTemplateCreatorView.showToneActive(toPlay);
-        numActiveTones++;
+        if (toPlay.getCode() == Tone.TONE_CHORD) {
+            numActiveChordTones++;
+        }
+        else if (toPlay.getCode() == Tone.TONE_BASS) {
+            numActiveBassTones++;
+        }
     }
 
     /**
      * Stops tone. Marks tone as inactive. Updates background on view.
      * @param toStop tone to stop.
      */
-    private void stopTone(Tone toStop) {
-        mToneIsActive[toStop.getDegree()] = false;
+    private void deactivateTone(Tone toStop) {
+        mChordToneIsActive[toStop.getDegree()] = false;
         mTemplateCreatorDataSource.stopTone(toStop);
         mTemplateCreatorView.showToneInactive(toStop);
-        numActiveTones--;
+        if (toStop.getCode() == Tone.TONE_CHORD) {
+            numActiveChordTones--;
+        }
+        else if (toStop.getCode() == Tone.TONE_BASS) {
+            numActiveBassTones--;
+        }
     }
 
     // Todo: Refactor? make template at start of function instead of last condition
@@ -110,11 +129,11 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     }
 
     private Tone[] getChordTones() {
-        Tone[] chordTones = new Tone[numActiveTones];
+        Tone[] chordTones = new Tone[numActiveChordTones];
         int toneIx = 0;
-        for (int i = 0; i < mTones.length; i++) {
-            if (mToneIsActive[i]) {
-                chordTones[toneIx] = mTones[i];
+        for (int i = 0; i < mChordTones.length; i++) {
+            if (mChordToneIsActive[i]) {
+                chordTones[toneIx] = mChordTones[i];
                 toneIx++;
             }
         }

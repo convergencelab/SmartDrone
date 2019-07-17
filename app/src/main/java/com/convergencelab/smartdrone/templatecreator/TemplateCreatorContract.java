@@ -26,7 +26,7 @@ public interface TemplateCreatorContract {
 
     interface Presenter extends BasePresenter {
 
-        void toggleToneStatus(int toneDegree);
+        void toggleToneStatus(int toneDegree, int toneType);
 
         void cancel();
 
