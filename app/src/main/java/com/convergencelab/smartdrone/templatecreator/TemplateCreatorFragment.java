@@ -56,29 +56,35 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View root = inflater.inflate(R.layout.template_creator_frag, container, false);
+        mName = root.findViewById(R.id.template_name_edit_text);
         // Logic
-        drawLayout();
+        drawLayout(root);
 
         return root;
     }
 
-    private void drawLayout() {
+    private void drawLayout(View root) {
         LinearLayout curLayout;
+        int totalCount = 0;
         String layoutTemp = "tone_column_";
         for (int columnCount = 0; columnCount < 4; columnCount++) {
-            String curLayoutStr = layoutTemp + columnCount;
-            int resId = getResources().getIdentifier(curLayoutStr, "id", getActivity().getPackageName());
-            curLayout = getActivity().findViewById(resId);
+            String curLayoutStr = layoutTemp + Integer.toString(columnCount);
+            System.out.println(curLayoutStr);
+            int resId = getResources().getIdentifier(curLayoutStr, "id", root.getContext().getPackageName());
+            curLayout = root.findViewById(resId);
 
             for (int toneCount = 0; toneCount < TONE_COLUMNS[columnCount].length; toneCount++) {
                 int toneDegree = TONE_COLUMNS[columnCount][toneCount];
 
-                final Button curButton = new Button(getActivity().getApplicationContext());
-                curButton.setWidth(R.dimen.voice_button_height);
-                curButton.setHeight(R.dimen.voice_button_height);
+                final Button curButton = new Button(root.getContext());
+                LinearLayout.LayoutParams btnParames = new LinearLayout.LayoutParams(
+                        (int) getResources().getDimension(R.dimen.voice_button_height), (int) getResources().getDimension(R.dimen.voice_button_height));
+//                curButton.setWidth(R.dimen.voice_button_height);
+//                curButton.setHeight(R.dimen.voice_button_height);
 
                 // +1 to display base 1 indexing for user.
                 curButton.setText(Integer.toString(toneDegree + 1));
+                curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
                 curButton.setTag(toneDegree);
                 curButton.setOnClickListener(new View.OnClickListener() {
                     @Override
@@ -94,17 +100,18 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
 //                else {
 //                    curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
 //                }
-                toneButtons[columnCount * 4 + toneCount] = curButton;
-                curLayout.addView(curButton);
+                toneButtons[(int) curButton.getTag()] = curButton;
+                totalCount++;
+                curLayout.addView(curButton, btnParames);
             }
         }
-        getActivity().findViewById(R.id.template_save_button).setOnClickListener(new View.OnClickListener() {
+        root.findViewById(R.id.template_save_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mPresenter.saveTemplate(mName.getText().toString());
             }
         });
-        getActivity().findViewById(R.id.template_cancel_button).setOnClickListener(new View.OnClickListener() {
+        root.findViewById(R.id.template_cancel_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mPresenter.cancel();

@@ -83,7 +83,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/cancel_template"
-        android:onClick="showDroneSoundSettings"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -92,7 +91,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/save_template"
-        android:onClick="saveTemplate"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

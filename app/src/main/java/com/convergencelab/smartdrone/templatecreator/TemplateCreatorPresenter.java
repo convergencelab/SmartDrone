@@ -27,8 +27,8 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
     @Override
     public void start() {
-        initTones();
         mTemplateCreatorDataSource.initialize();
+        initTones();
     }
 
     private void initTones() {
@@ -39,6 +39,8 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
         mToneIsActive = new boolean[NUM_TONES];
         playTone(mTones[0]);
+
+        mTemplateCreatorDataSource.playTone(new Tone(0, Tone.TONE_BASS)); // Todo: bad I know
     }
 
     @Override
@@ -54,6 +56,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
     @Override
     public void cancel() {
+        mTemplateCreatorDataSource.endPlayback();
         mTemplateCreatorView.cancelTemplateCreator();
     }
 
@@ -86,11 +89,12 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
         VoicingTemplate template = new VoicingTemplate(name, new Tone[]{defBassTone}, getChordTones());
 
         // Validate name.
-        if (isDuplicateName(template.getName())) {
-            mTemplateCreatorView.showDuplicateNameError();
-        }
-        else if (isEmptyName(template.getName())) {
+        if (isEmptyName(template.getName())) {
             mTemplateCreatorView.showEmptyNameError();
+        }
+        else if (isDuplicateName(template.getName())) {
+            System.out.println("Name: " + template.getName());
+            mTemplateCreatorView.showDuplicateNameError();
         }
         else if (isEmptyTemplate(template.getChordTones())) {
             mTemplateCreatorView.showEmptyTemplateError();
@@ -100,6 +104,8 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
         }
         else {
             mTemplateCreatorDataSource.saveTemplate(template);
+            mTemplateCreatorDataSource.endPlayback();
+            mTemplateCreatorView.cancelTemplateCreator(); // Todo: make better name.
         }
     }
 
