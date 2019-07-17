@@ -2,6 +2,7 @@ package com.convergencelab.smartdrone;
 
 
 import android.content.Context;
+import android.content.SharedPreferences;
 
 import com.convergencelab.smartdrone.Utility.DroneLog;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
@@ -185,11 +186,11 @@ public class VoicingHelper {
         return name;
     }
 
-
-    public static void addTemplateToPref(Context context, String toAdd) {
-        String allTemplates = DronePreferences.getAllTemplatePref(context);
-        allTemplates += '|' + toAdd;
-        DronePreferences.setAllTemplatePref(context, allTemplates);
+    public static void addTemplateToPref(SharedPreferences preferences, VoicingTemplate template) {
+        String flattenedTemplate = flattenTemplate(template);
+        String allTemplates = DronePreferences.getAllTemplatePref(preferences);
+        allTemplates += '|' + flattenedTemplate;
+        DronePreferences.setAllTemplatePref(preferences, allTemplates);
     }
 
     public static HashSet<String> getSetOfAllTemplateNames(String flattenedTemplateList) {
@@ -212,5 +213,12 @@ public class VoicingHelper {
             }
         }
         return allNames;
+    }
+
+    @Deprecated
+    public static void addTemplateToPref(Context context, String toAdd) {
+        String allTemplates = DronePreferences.getAllTemplatePref(context);
+        allTemplates += '|' + toAdd;
+        DronePreferences.setAllTemplatePref(context, allTemplates);
     }
 }

@@ -1,6 +1,6 @@
 package com.convergencelab.smartdrone.templatecreator;
 
-import com.example.keyfinder.Note;
+import com.example.keyfinder.Tone;
 
 public class TemplateCreatorPresenter implements TemplateCreatorContract.Presenter {
 
@@ -16,17 +16,22 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     }
 
     @Override
-    public void toggleNoteStatus(Note toToggle) {
-
-    }
-
-    @Override
-    public void save(String name) {
-
-    }
-
-    @Override
     public void cancel() {
+
+    }
+
+    @Override
+    public void playTone(Tone toPlay) {
+
+    }
+
+    @Override
+    public void stopTone(Tone toStop) {
+
+    }
+
+    @Override
+    public void saveTemplate(String name, Tone[] chordTones) {
 
     }
 }

@@ -1,7 +1,6 @@
 package com.convergencelab.smartdrone.templatecreator;
 
 import android.content.SharedPreferences;
-import android.widget.Toast;
 
 import com.convergencelab.smartdrone.Models.KeyFinderModel;
 import com.convergencelab.smartdrone.Models.MidiDriverModel;
@@ -23,14 +22,14 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
     private VoicingTemplate INIT_TEMP = new VoicingTemplate(
             new int[]{0}, new int[]{0});
 
-    private static final int NUM_TONES = 14;
-    private static final int MAX_LEN_NAME = 20;
+//    private static final int NUM_TONES = 14;
+//    private static final int MAX_LEN_NAME = 20;
     private static final int DEFAULT_KEY_IX = 0;
 
-    private static final int VALID = 0;
-    private static final int DUPLICATE_NAME = 1;
-    private static final int ILLEGAL_CHARACTERS = 2;
-    private static final int INVALID_LENGTH = 3;
+//    private static final int VALID = 0;
+//    private static final int DUPLICATE_NAME = 1;
+//    private static final int ILLEGAL_CHARACTERS = 2;
+//    private static final int INVALID_LENGTH = 3;
 
     private MidiDriverModel mMidiDriverModel;
     private KeyFinderModel mKeyFinderModel;
@@ -42,8 +41,8 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
     private AbstractKey mCurKey;
     private ModeTemplate mCurMode;
 
-    private boolean[] mToneIsActive;
-    private Tone[] mTones;
+//    private boolean[] mToneIsActive;
+//    private Tone[] mTones;
 
     // Todo: Make private and create method getInstance()
     public TemplateCreatorDataSourceImpl (SharedPreferences preferences) {
@@ -52,11 +51,11 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
         mHarmonyGenerator = new HarmonyGenerator();
 
         mPreferences = preferences;
-        mToneIsActive = new boolean[NUM_TONES]; // Todo: Will have to make it work for bass notes as well
-        mToneIsActive[0] = true; // Todo: clean up,
+//        mToneIsActive = new boolean[NUM_TONES]; // Todo: Will have to make it work for bass notes as well
+//        mToneIsActive[0] = true; // Todo: clean up,
         nameSet = VoicingHelper
                 .getSetOfAllTemplateNames(DronePreferences.getAllTemplatePref(mPreferences));
-        initializeTones();
+//        initializeTones();
     }
 
     @Override
@@ -67,96 +66,116 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
         mMidiDriverModel.playVoicing(initVoicing);
     }
 
+//    @Override
+//    public void toggleTonePlayback(int toneIx) {
+//        if (mToneIsActive[toneIx]) {
+//            mToneIsActive[toneIx] = false;
+//            stopTone(toneIx);
+//        }
+//        else {
+//            mToneIsActive[toneIx] = true;
+//            playTone(toneIx);
+//        }
+//    }
+
+
     @Override
-    public void toggleTonePlayback(int toneIx) {
-        if (mToneIsActive[toneIx]) {
-            mToneIsActive[toneIx] = false;
-            stopTone(toneIx);
-        }
-        else {
-            mToneIsActive[toneIx] = true;
-            playTone(toneIx);
-        }
+    public void saveTemplate(VoicingTemplate template) {
+        String flattenedTemplate = VoicingHelper.flattenTemplate(template);
+        VoicingHelper.addTemplateToPref(mPreferences, template);
+
+//        // Todo write this method.
+//        boolean toneFound = false;
+//        // make string for flattened template
+//        // add name (parameter)
+////        String flattenedTemplate = name; // don't think the extra var is necessary
+//
+//        // Validate name
+////        int nameStatus = validateName(name);
+////        if (nameStatus != VALID) {
+////
+////        }
+//
+//        // add each tone to string
+//        String bassTonesStr = "{0}"; // Todo: Doesn't have bass options yet; default {0}
+//
+//        String templateTones = "";
+//        templateTones += '{';
+//        for (int i = 0; i < mToneIsActive.length; i++) {
+//            if (mToneIsActive[i]) {
+//                if (!toneFound) {
+//                    templateTones += Integer.toString(i);
+//                    toneFound = true;
+//                }
+//                else {
+//                    templateTones += ',' + Integer.toString(i);
+//                }
+//            }
+//        }
+//        templateTones += '}';
+//
+//        // No tones entered.
+//        if (templateTones.length() == 2) {
+//            return false;
+//        }
+//
+//
+//        // save newly made template as cur template.
+//
+//
+//
+//        return false; // Todo fix this when time comes
     }
 
-    /**
-     *
-     * @param name String; name entered for template.
-     * @return boolean; true if template is valid.
-     */
     @Override
-    public boolean saveTemplate(String name) {
-        // Todo write this method.
-        boolean toneFound = false;
-        // make string for flattened template
-        // add name (parameter)
-//        String flattenedTemplate = name; // don't think the extra var is necessary
+    public void playTone(Tone toPlay) {
+        mMidiDriverModel.addNoteToPlayback(convertToneToNote(toPlay));
 
-        // Validate name
-        int nameStatus = validateName(name);
-        if (nameStatus != VALID) {
-            
-        }
-
-        // add each tone to string
-        String templateTones = "{0}"; // Todo: Doesn't have bass options yet; default {0}
-        templateTones += '{';
-        for (int i = 0; i < mToneIsActive.length; i++) {
-            if (mToneIsActive[i]) {
-                if (!toneFound) {
-                    templateTones += Integer.toString(i);
-                    toneFound = true;
-                }
-                else {
-                    templateTones += ',' + Integer.toString(i);
-                }
-            }
-        }
-        templateTones += '}';
-
-
-        // save newly made template as cur template.
-
-
-
-        return false; // Todo fix this when time comes
     }
 
-    private int validateName(String name) {
-        if (checkDuplicate(name)) {
-            return DUPLICATE_NAME;
-        }
-        if (checkContainsIllegalCharacters(name)) {
-            return ILLEGAL_CHARACTERS;
-        }
-        if (checkLength(name)) {
-            return INVALID_LENGTH;
-        }
-        return VALID;
+    @Override
+    public void stopTone(Tone toStop) {
+        mMidiDriverModel.removeNoteFromPlayback(convertToneToNote(toStop));
     }
 
-    private boolean checkDuplicate(String name) {
+//    @Override
+//    public String validateName(String name) {
+//        if (checkDuplicate(name)) {
+//            return "Name '" + name + "' already taken. Please choose another name";
+//        }
+//        if (checkContainsIllegalCharacters(name)) {
+//            return "Name cannot contain characters '{', '}' or '|'.";
+//        }
+//        if (checkLength(name)) {
+//            return "Name must contain at least one character";
+//        }
+//        return null;
+//    }
+
+    @Override
+    public boolean isDuplicateName(String name) {
         return nameSet.contains(name);
     }
 
-    private boolean checkContainsIllegalCharacters(String name) {
-        return name.contains("{") || name.contains("}") || name.contains("|");
-    }
+//    private boolean checkContainsIllegalCharacters(String name) {
+//        return name.contains("{") || name.contains("}") || name.contains("|");
+//    }
 
-    private boolean checkLength(String name) {
-        return 0 == name.length() || name.length() > MAX_LEN_NAME;
-    }
+//    private boolean checkLength(String name) {
+//        return 0 == name.length();
+//    }
 
     // Todo: only chord tones for now.
 
-    /**
-     * Constructs tone list with object for each tone.
-     */
-    private void initializeTones() {
-        for (int i = 0; i < NUM_TONES; i++) {
-            mTones[i] = new Tone(i, Tone.TONE_CHORD);
-        }
-    }
+//    /**
+//     * Constructs tone list with object for each tone.
+//     */
+//    // Todo: move to activity
+//    private void initializeTones() {
+//        for (int i = 0; i < NUM_TONES; i++) {
+//            mTones[i] = new Tone(i, Tone.TONE_CHORD);
+//        }
+//    }
 
     /**
      * Loads KeyFinder data: parent key pref; mode pref.
@@ -164,22 +183,23 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
     private void loadKeyFinderData() {
         int parentScaleIx = DronePreferences.getStoredParentScalePref(mPreferences);
         int modeIx = DronePreferences.getStoredModePref(mPreferences);
-        int keyIx = DEFAULT_KEY_IX; // C
 
         mKeyFinderModel.getKeyFinder().setParentKeyList(parentScaleIx);
-        mCurKey = mKeyFinderModel.getKeyFinder().getKeyAtIndex(keyIx);
+        mCurKey = mKeyFinderModel.getKeyFinder().getKeyAtIndex(DEFAULT_KEY_IX);
         mCurMode = mKeyFinderModel.getKeyFinder().getModeTemplate(modeIx);
     }
 
+    // Todo: make this some sort of utility method
     private Note convertToneToNote(Tone toConvert) {
         return mHarmonyGenerator.generateNote(toConvert, mCurMode, mCurKey);
     }
 
-    private void playTone(int toPlay) {
-        mMidiDriverModel.addNoteToPlayback(convertToneToNote(mTones[toPlay]));
-    }
 
-    private void stopTone(int toStop) {
-        mMidiDriverModel.removeNoteFromPlayback(convertToneToNote(mTones[toStop]));
-    }
+//    private void playTone(int toPlay) {
+//        mMidiDriverModel.addNoteToPlayback(convertToneToNote(mTones[toPlay]));
+//    }
+//
+//    private void stopTone(int toStop) {
+//        mMidiDriverModel.removeNoteFromPlayback(convertToneToNote(mTones[toStop]));
+//    }
 }
