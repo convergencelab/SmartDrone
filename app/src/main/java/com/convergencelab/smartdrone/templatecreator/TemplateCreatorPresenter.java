@@ -10,6 +10,11 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
     private final TemplateCreatorContract.View mTemplateCreatorView;
 
+    private static final int NUM_TONES = 14;
+
+    private boolean[] mToneIsActive;
+    private Tone[] mTones;
+
 
     public TemplateCreatorPresenter(TemplateCreatorDataSource templateCreatorDataSource,
                                     TemplateCreatorContract.View templateCreatorView) {
@@ -25,23 +30,28 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     }
 
     @Override
+    public void toggleToneStatus(int toneDegree) {
+
+    }
+
+    @Override
     public void cancel() {
-        mTemplateCreatorView.showDroneSoundSettings();
+        mTemplateCreatorView.cancelTemplateCreator();
     }
-
-    @Override
-    public void playTone(Tone toPlay) {
-        mTemplateCreatorDataSource.playTone(toPlay);
-    }
-
-    @Override
-    public void stopTone(Tone toStop) {
-        mTemplateCreatorDataSource.stopTone(toStop);
-    }
+//
+//    @Override
+//    public void playTone(Tone toPlay) {
+//        mTemplateCreatorDataSource.playTone(toPlay);
+//    }
+//
+//    @Override
+//    public void stopTone(Tone toStop) {
+//        mTemplateCreatorDataSource.stopTone(toStop);
+//    }
 
     // Todo: Refactor? make template at start of function instead of last condition
     @Override
-    public void saveTemplate(String name, int[] chordTones) {
+    public void saveTemplate(String name) {
         if (isDuplicateName(name)) {
             mTemplateCreatorView.showDuplicateNameError();
         }

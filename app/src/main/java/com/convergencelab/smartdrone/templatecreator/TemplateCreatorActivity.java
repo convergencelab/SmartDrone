@@ -15,28 +15,28 @@ import com.example.keyfinder.Tone;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TemplateCreatorActivity extends AppCompatActivity
-        implements TemplateCreatorContract.View {
+public class TemplateCreatorActivity extends AppCompatActivity {
 
-    private static final int NUM_TONES = 14;
-    private static final int MAX_LEN_NAME = 20;
-    // Todo: probably a better way to do this.
-    private static final int[] TONE_COLUMN_ONE = { 6, 4, 2, 0 };
-    private static final int[] TONE_COLUMN_TWO = { 5, 3, 1 };
-    private static final int[] TONE_COLUMN_THREE = { 13, 11, 9, 7 };
-    private static final int[] TONE_COLUMN_FOUR = { 12, 10, 8 };
+//    private static final int NUM_TONES = 14;
+//    private static final int MAX_LEN_NAME = 20;
+//    // Todo: probably a better way to do this.
+//    private static final int[] TONE_COLUMN_ONE = { 6, 4, 2, 0 };
+//    private static final int[] TONE_COLUMN_TWO = { 5, 3, 1 };
+//    private static final int[] TONE_COLUMN_THREE = { 13, 11, 9, 7 };
+//    private static final int[] TONE_COLUMN_FOUR = { 12, 10, 8 };
+//
+//    private final int[][] TONE_COLUMNS = {
+//            TONE_COLUMN_ONE,
+//            TONE_COLUMN_TWO,
+//            TONE_COLUMN_THREE,
+//            TONE_COLUMN_FOUR
+//    };
 
-    private final int[][] TONE_COLUMNS = {
-            TONE_COLUMN_ONE,
-            TONE_COLUMN_TWO,
-            TONE_COLUMN_THREE,
-            TONE_COLUMN_FOUR
-    };
+//    private TemplateCreatorContract.Presenter mPresenter;
 
-    private TemplateCreatorContract.Presenter mPresenter;
-
-    private boolean[] mToneIsActive;
-    private Tone[] mTones;
+    // Create some sort of counter that's gets incremented/decremented
+//    private boolean[] mToneIsActive;
+//    private Tone[] mTones;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
