@@ -6,23 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.convergencelab.smartdrone.DroneSoundActivity">
 
-    <Switch
-        android:id="@+id/root_bass_switch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/textline_bottom"
-        android:paddingStart="@dimen/sound_settings_lr"
-        android:paddingLeft="@dimen/sound_settings_lr"
-        android:paddingTop="16dp"
-        android:paddingEnd="@dimen/sound_settings_lr"
-        android:paddingRight="@dimen/sound_settings_lr"
-        android:paddingBottom="16dp"
-        android:text="@string/root_bass_switch_text"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <RelativeLayout
         android:id="@+id/parentscale_layout"
@@ -37,7 +20,7 @@
         android:background="@drawable/textline_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/root_bass_switch"
+        app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="131dp">
 
