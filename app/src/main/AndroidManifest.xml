@@ -13,9 +13,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name="com.convergencelab.smartdrone.AboutActivity" />
+        <activity android:name=".templatecreator.TemplateCreatorActivity"></activity>
+        <activity android:name=".AboutActivity" />
         <activity
-            android:name="com.convergencelab.smartdrone.SplashScreenActivity"
+            android:name=".SplashScreenActivity"
             android:theme="@style/SplashTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,25 +25,24 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.convergencelab.smartdrone.VoicingCreatorActivity"
+            android:name=".templatecreator.TemplateCreatorActivityOld"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.convergencelab.smartdrone.DroneSoundActivity"
+            android:name=".DroneSoundActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.convergencelab.smartdrone.DroneSettingsActivity"
+            android:name=".DroneSettingsActivity"
             android:label="Settings"
-            android:parentActivityName="com.convergencelab.smartdrone.DroneActivity"
+            android:parentActivityName=".DroneActivity"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.convergencelab.smartdrone.DroneActivity" />
         </activity>
         <activity
-            android:name="com.convergencelab.smartdrone.DroneActivity"
+            android:name=".DroneActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" >
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
     </application>
 
 </manifest>

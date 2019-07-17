@@ -1,7 +1,6 @@
 package com.convergencelab.smartdrone.Models;
 
 import com.convergencelab.smartdrone.Constants;
-import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.Note;
 import com.example.keyfinder.Voicing;
 
@@ -19,7 +18,7 @@ public class MidiDriverModel {
     private boolean isActive;
 
     /**
-     * Default midi driver volume.
+     * Default midi driver mCurVolume.
      */
     public static final int DEFAULT_VOLUME = 65; //todo move to constants
 
@@ -37,24 +36,24 @@ public class MidiDriverModel {
     private int plugin;
 
     /**
-     * Midi driver volume.
+     * Midi driver mCurVolume.
      * MIN -> MAX; 0 -> 100.
      */
-    private int volume;
+    private int mCurVolume;
 
     /**
      * Constructor
      */
     public MidiDriverModel() {
         midiDriver = new MidiDriver();
-        volume = DEFAULT_VOLUME;
+        mCurVolume = DEFAULT_VOLUME;
         curVoicing = null;
         isActive = false;
     }
 
-    public MidiDriverModel(int volume, int pluginIx) {
+    public MidiDriverModel(int mCurVolume, int pluginIx) {
         midiDriver = new MidiDriver();
-        this.volume = volume;
+        this.mCurVolume = mCurVolume;
         curVoicing = null;
         isActive = false;
         this.plugin = pluginIx;
@@ -69,19 +68,19 @@ public class MidiDriverModel {
     }
 
     /**
-     * Set volume for midi driver.
-     * @param       volume int; volume for midi driver.
+     * Set mCurVolume for midi driver.
+     * @param       mCurVolume int; mCurVolume for midi driver.
      */
-    public void setVolume(int volume) {
-        this.volume = volume;
+    public void setVolume(int mCurVolume) {
+        this.mCurVolume = mCurVolume;
     }
 
     /**
-     * Get volume for midi driver.
-     * @return      int; volume of midi driver.
+     * Get mCurVolume for midi driver.
+     * @return      int; mCurVolume of midi driver.
      */
     public int getVolume() {
-        return volume;
+        return mCurVolume;
     }
 
     /**
@@ -102,29 +101,47 @@ public class MidiDriverModel {
      * Send data that is to be synthesized by midi driver.
      * @param       event int; type of event.
      * @param       midiKey int; index of note (uses octaves).
-     * @param       volume int; volume of note.
+     * @param       mCurVolume int; mCurVolume of note.
      */
-    public void sendMidiNote(int event, int midiKey, int volume) {
+    public void sendMidiNote(int event, int midiKey, int mCurVolume) {
         byte msg[] = new byte[3];
         msg[0] = (byte) event;
         msg[1] = (byte) midiKey;
-        msg[2] = (byte) volume;
+        msg[2] = (byte) mCurVolume;
         midiDriver.write(msg);
     }
+
+    /**
+     * Adds note to playback. Used in TemplateCreator.
+     * @param       toAdd int; index of note to add.
+     */
+    public void addNoteToPlayback(Note toAdd) {
+        sendMidiNote(Constants.START_NOTE, toAdd.getRawIx(), mCurVolume);
+    }
+
+    /**
+     * Removes note from playback. Used in TemplateCreator.
+     * @param       toStop int; index of note to remove.
+     */
+    public void removeNoteFromPlayback(Note toStop) {
+        sendMidiNote(Constants.STOP_NOTE, toStop.getRawIx(), mCurVolume);
+    }
+
 
     /**
      * Sends multiple messages to be synthesized by midi driver.
      * Each note is given specifically.
      * @param       event int; type of event.
      * @param       midiKeys int[]; indexes of notes (uses octaves).
-     * @param       volume int; volume of notes.
+     * @param       mCurVolume int; mCurVolume of notes.
      */
-    public void sendMidiChord(int event, int[] midiKeys, int volume) {
+    public void sendMidiChord(int event, int[] midiKeys, int mCurVolume) {
         for (int key : midiKeys) {
-            sendMidiNote(event, key, volume);
+            sendMidiNote(event, key, mCurVolume);
         }
     }
 
+    //todo better name; something like switchVoicing() ?
     /**
      * Stops playing previous voicing and starts playing new voicing.
      * @param       toPlay Voicing; voicing to play.
@@ -161,10 +178,11 @@ public class MidiDriverModel {
             voiceIxs[i] = toStart.getVoice(i).getRawIx(); // todo: Debug: changed from getIx to rawIx
         }
 //        int[] voiceIxs = toStart.getVoiceIxs();
-        sendMidiChord(Constants.START_NOTE, voiceIxs, volume); //todo new sendmidichordmethod
+        sendMidiChord(Constants.START_NOTE, voiceIxs, mCurVolume); //todo new sendmidichordmethod
         curVoicing = toStart;
     }
 
+    //todo get rid of this method
     /**
      * Set current voicing.
      * @param       voicing Voicing; current voicing.

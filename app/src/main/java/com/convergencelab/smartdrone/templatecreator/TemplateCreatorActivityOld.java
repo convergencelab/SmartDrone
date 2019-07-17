@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone;
+package com.convergencelab.smartdrone.templatecreator;
 
 
 import android.support.v7.app.AppCompatActivity;
@@ -9,8 +9,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.convergencelab.smartdrone.Constants;
 import com.convergencelab.smartdrone.Models.DroneSoundModel;
 import com.convergencelab.smartdrone.Models.MidiDriverModel;
+import com.convergencelab.smartdrone.R;
+import com.convergencelab.smartdrone.VoicingHelper;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.ModeTemplate;
 import com.example.keyfinder.ModeTemplateCollection;
@@ -19,7 +22,7 @@ import com.convergencelab.smartdrone.Utility.DronePreferences;
 
 import java.util.HashSet;
 
-public class VoicingCreatorActivity extends AppCompatActivity {
+public class TemplateCreatorActivityOld extends AppCompatActivity {
 
     private static final int NUM_BUTTONS = 14;
 

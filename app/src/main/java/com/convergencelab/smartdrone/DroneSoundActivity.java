@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.convergencelab.smartdrone.Models.DroneSoundModel;
+import com.convergencelab.smartdrone.templatecreator.TemplateCreatorActivityOld;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.MusicTheory;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
@@ -72,7 +73,7 @@ public class DroneSoundActivity extends AppCompatActivity {
      * Initializes views fields with their corresponding views.
      */
     private void findViews() {
-        bassSwitch = findViewById(R.id.root_bass_switch);
+//        bassSwitch = findViewById(R.id.root_bass_switch);
         curModeText = findViewById(R.id.mode_text_name);
         curParentScaleTv = findViewById(R.id.parentscale_text_name);
         userPluginText = findViewById(R.id.user_plugin_name);
@@ -83,34 +84,34 @@ public class DroneSoundActivity extends AppCompatActivity {
      * Loads all user saved preferences.
      */
     private void loadSavedData() {
-        loadBassSwitchData();
+//        loadBassSwitchData();
         loadParentScaleData();
         loadModeData();
         loadPluginData();
         loadVoicingData();
     }
 
-    /**
-     * Load bass switch data from shared preferences.
-     */
-    private void loadBassSwitchData() {
-        hasBassNote = DronePreferences.getStoredBassPref(this);
-        bassSwitch.setChecked(hasBassNote);
-        bassSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    hasBassNote = true;
-                    DronePreferences.setStoredBassPref(DroneSoundActivity.this, true);
-                }
-                else {
-                    hasBassNote = false;
-                    DronePreferences.setStoredBassPref(DroneSoundActivity.this, false);
-                }
-                droneSoundModel.setHasBassNote(hasBassNote); // todo refactor
-            }
-        });
-    }
+//    /**
+//     * Load bass switch data from shared preferences.
+//     */
+//    private void loadBassSwitchData() {
+//        hasBassNote = DronePreferences.getStoredBassPref(this);
+//        bassSwitch.setChecked(hasBassNote);
+//        bassSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    hasBassNote = true;
+//                    DronePreferences.setStoredBassPref(DroneSoundActivity.this, true);
+//                }
+//                else {
+//                    hasBassNote = false;
+//                    DronePreferences.setStoredBassPref(DroneSoundActivity.this, false);
+//                }
+//                droneSoundModel.setHasBassNote(hasBassNote); // todo refactor
+//            }
+//        });
+//    }
 
     private void loadParentScaleData() {
         userParentScaleCode = DronePreferences.getStoredParentScalePref(getApplicationContext());
@@ -242,7 +243,7 @@ public class DroneSoundActivity extends AppCompatActivity {
      * @param       view View; American Talk Show on the ABC network.
      */
     public void openVoicingCreator(View view) {
-        Intent intent = new Intent(this, VoicingCreatorActivity.class);
+        Intent intent = new Intent(this, TemplateCreatorActivityOld.class);
         startActivity(intent);
     }
 
