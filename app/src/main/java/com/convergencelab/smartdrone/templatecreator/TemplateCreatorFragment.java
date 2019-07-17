@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.convergencelab.smartdrone.R;
 import com.example.keyfinder.Tone;
@@ -33,6 +34,8 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
             TONE_COLUMN_THREE,
             TONE_COLUMN_FOUR
     };
+
+    private final Button[] toneButtons = new Button[NUM_TONES];
 
     private TemplateCreatorContract.Presenter mPresenter;
 
@@ -91,6 +94,7 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
 //                else {
 //                    curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
 //                }
+                toneButtons[columnCount * 4 + toneCount] = curButton;
                 curLayout.addView(curButton);
             }
         }
@@ -103,7 +107,7 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
         getActivity().findViewById(R.id.template_cancel_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                cancelTemplateCreator();
+                mPresenter.cancel();
             }
         });
     }
@@ -116,41 +120,41 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
 
     @Override
     public void showToneActive(Tone toShow) {
-
+        toneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
     }
 
     @Override
     public void showToneInactive(Tone toShow) {
-
+        toneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
     }
 
     @Override
     public void showEmptyNameError() {
-
+        Toast.makeText(getActivity().getApplicationContext(), "empty name", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showIllegalCharacterError() {
-
+        Toast.makeText(getActivity().getApplicationContext(), "illegal character", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showDuplicateNameError() {
-
+        Toast.makeText(getActivity().getApplicationContext(), "duplicate name", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showEmptyTemplateError() {
-
+        Toast.makeText(getActivity().getApplicationContext(), "empty template", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void cancelTemplateCreator() {
-
+        getActivity().finish(); // Todo: make sure correct
     }
 
     @Override
     public void setPresenter(TemplateCreatorContract.Presenter presenter) {
-
+        mPresenter = presenter;
     }
 }
