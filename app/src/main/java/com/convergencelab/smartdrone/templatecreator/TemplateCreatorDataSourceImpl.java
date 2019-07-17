@@ -60,9 +60,11 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
     @Override
     public void initialize() {
         loadKeyFinderData();
-        Voicing initVoicing = mHarmonyGenerator.generateVoicing(INIT_TEMP, mCurMode, mCurKey);
+//        Voicing initVoicing = mHarmonyGenerator.generateVoicing(INIT_TEMP, mCurMode, mCurKey);
+        mMidiDriverModel.setPlugin(48);
+        mMidiDriverModel.getMidiDriver().start();
         mMidiDriverModel.sendMidiSetup();
-        mMidiDriverModel.playVoicing(initVoicing);
+//        mMidiDriverModel.playVoicing(initVoicing);
     }
 
 //    @Override
@@ -129,7 +131,6 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
     @Override
     public void playTone(Tone toPlay) {
         mMidiDriverModel.addNoteToPlayback(convertToneToNote(toPlay));
-
     }
 
     @Override
@@ -201,4 +202,9 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
 //    private void stopTone(int toStop) {
 //        mMidiDriverModel.removeNoteFromPlayback(convertToneToNote(mTones[toStop]));
 //    }
+
+    @Override
+    public void endPlayback() {
+        mMidiDriverModel.getMidiDriver().stop();
+    }
 }

@@ -10,6 +10,12 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
     private final TemplateCreatorContract.View mTemplateCreatorView;
 
+    private static final int NUM_TONES = 14;
+
+    private boolean[] mToneIsActive;
+    private Tone[] mTones;
+    private int numActiveTones = 0;
+
 
     public TemplateCreatorPresenter(TemplateCreatorDataSource templateCreatorDataSource,
                                     TemplateCreatorContract.View templateCreatorView) {
@@ -22,42 +28,97 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     @Override
     public void start() {
         mTemplateCreatorDataSource.initialize();
+        initTones();
+    }
+
+    private void initTones() {
+        mTones = new Tone[NUM_TONES];
+        for (int i = 0; i < NUM_TONES; i++) {
+            mTones[i] = new Tone(i, Tone.TONE_CHORD);
+        }
+
+        mToneIsActive = new boolean[NUM_TONES];
+        playTone(mTones[0]);
+
+        mTemplateCreatorDataSource.playTone(new Tone(0, Tone.TONE_BASS)); // Todo: bad I know
+    }
+
+    @Override
+    public void toggleToneStatus(int toneDegree) {
+        Tone toToggle = mTones[toneDegree];
+        if (mToneIsActive[toneDegree]) {
+            stopTone(toToggle);
+        }
+        else {
+            playTone(toToggle);
+        }
     }
 
     @Override
     public void cancel() {
-        mTemplateCreatorView.showDroneSoundSettings();
+        mTemplateCreatorDataSource.endPlayback();
+        mTemplateCreatorView.cancelTemplateCreator();
     }
 
-    @Override
-    public void playTone(Tone toPlay) {
+    /**
+     * Plays tone. Marks tone as active. Updates background on view.
+     * @param toPlay tone to play.
+     */
+    private void playTone(Tone toPlay) {
+        mToneIsActive[toPlay.getDegree()] = true;
         mTemplateCreatorDataSource.playTone(toPlay);
+        mTemplateCreatorView.showToneActive(toPlay);
+        numActiveTones++;
     }
 
-    @Override
-    public void stopTone(Tone toStop) {
+    /**
+     * Stops tone. Marks tone as inactive. Updates background on view.
+     * @param toStop tone to stop.
+     */
+    private void stopTone(Tone toStop) {
+        mToneIsActive[toStop.getDegree()] = false;
         mTemplateCreatorDataSource.stopTone(toStop);
+        mTemplateCreatorView.showToneInactive(toStop);
+        numActiveTones--;
     }
 
     // Todo: Refactor? make template at start of function instead of last condition
     @Override
-    public void saveTemplate(String name, int[] chordTones) {
-        if (isDuplicateName(name)) {
-            mTemplateCreatorView.showDuplicateNameError();
-        }
-        else if (isEmptyName(name)) {
+    public void saveTemplate(String name) {
+        Tone defBassTone = new Tone(0, Tone.TONE_BASS);
+        VoicingTemplate template = new VoicingTemplate(name, new Tone[]{defBassTone}, getChordTones());
+
+        // Validate name.
+        if (isEmptyName(template.getName())) {
             mTemplateCreatorView.showEmptyNameError();
         }
-        else if (isEmptyTemplate(chordTones)) {
+        else if (isDuplicateName(template.getName())) {
+            System.out.println("Name: " + template.getName());
+            mTemplateCreatorView.showDuplicateNameError();
+        }
+        else if (isEmptyTemplate(template.getChordTones())) {
             mTemplateCreatorView.showEmptyTemplateError();
         }
-        else if (containsIllegalCharacter(name)) {
+        else if (containsIllegalCharacter(template.getName())) {
             mTemplateCreatorView.showIllegalCharacterError();
         }
         else {
-            VoicingTemplate template = new VoicingTemplate(name, new int[]{0}, chordTones);
             mTemplateCreatorDataSource.saveTemplate(template);
+            mTemplateCreatorDataSource.endPlayback();
+            mTemplateCreatorView.cancelTemplateCreator(); // Todo: make better name.
         }
+    }
+
+    private Tone[] getChordTones() {
+        Tone[] chordTones = new Tone[numActiveTones];
+        int toneIx = 0;
+        for (int i = 0; i < mTones.length; i++) {
+            if (mToneIsActive[i]) {
+                chordTones[toneIx] = mTones[i];
+                toneIx++;
+            }
+        }
+        return chordTones;
     }
 
     private boolean containsIllegalCharacter(String name) {
@@ -72,7 +133,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
         return name.length() == 0;
     }
 
-    private boolean isEmptyTemplate(int[] chordTones) {
+    private boolean isEmptyTemplate(Tone[] chordTones) {
         return chordTones.length == 0;
     }
 }

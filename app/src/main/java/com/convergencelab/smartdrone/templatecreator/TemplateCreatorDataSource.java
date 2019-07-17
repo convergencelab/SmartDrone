@@ -19,4 +19,5 @@ public interface TemplateCreatorDataSource {
 
     void stopTone(Tone toStop);
 
+    void endPlayback();
 }

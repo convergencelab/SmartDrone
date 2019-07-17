@@ -8,6 +8,10 @@ public interface TemplateCreatorContract {
 
     interface View extends BaseView<Presenter> {
 
+        void showToneActive(Tone toShow);
+
+        void showToneInactive(Tone toShow);
+
         void showEmptyNameError();
 
         void showIllegalCharacterError();
@@ -16,21 +20,17 @@ public interface TemplateCreatorContract {
 
         void showEmptyTemplateError();
 
-        void showDroneSoundSettings();
+        void cancelTemplateCreator();
 
     }
 
     interface Presenter extends BasePresenter {
 
+        void toggleToneStatus(int toneDegree);
+
         void cancel();
 
-        // These will be on click listeners
-        void playTone(Tone toPlay);
-
-        // These will be on click listeners
-        void stopTone(Tone toStop);
-
-        void saveTemplate(String name, int[] chordTones);
+        void saveTemplate(String name);
 
     }
 
