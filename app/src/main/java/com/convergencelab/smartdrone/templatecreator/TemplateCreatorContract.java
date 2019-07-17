@@ -4,8 +4,6 @@ import com.convergencelab.smartdrone.BasePresenter;
 import com.convergencelab.smartdrone.BaseView;
 import com.example.keyfinder.Tone;
 
-import java.util.List;
-
 public interface TemplateCreatorContract {
 
     interface View extends BaseView<Presenter> {
@@ -32,9 +30,7 @@ public interface TemplateCreatorContract {
         // These will be on click listeners
         void stopTone(Tone toStop);
 
-        void saveTemplate(String name, List<Tone> chordTones);
-
-        // Add error check methods, will be called when saveTemplate is called.
+        void saveTemplate(String name, int[] chordTones);
 
     }
 

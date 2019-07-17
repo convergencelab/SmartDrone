@@ -3,7 +3,6 @@ package com.convergencelab.smartdrone.templatecreator;
 import com.example.keyfinder.Tone;
 import com.example.keyfinder.VoicingTemplate;
 
-import java.util.List;
 
 public class TemplateCreatorPresenter implements TemplateCreatorContract.Presenter {
 
@@ -16,16 +15,13 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
                                     TemplateCreatorContract.View templateCreatorView) {
         mTemplateCreatorDataSource = templateCreatorDataSource;
         mTemplateCreatorView = templateCreatorView;
-    }
-    // Constructor
-        // model
-        // view
 
-        // view.setPresenter(this)
+        mTemplateCreatorView.setPresenter(this);
+    }
 
     @Override
     public void start() {
-        // Not sure yet
+        mTemplateCreatorDataSource.initialize();
     }
 
     @Override
@@ -43,8 +39,9 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
         mTemplateCreatorDataSource.stopTone(toStop);
     }
 
+    // Todo: Refactor? make template at start of function instead of last condition
     @Override
-    public void saveTemplate(String name, List<int> chordTones) {
+    public void saveTemplate(String name, int[] chordTones) {
         if (isDuplicateName(name)) {
             mTemplateCreatorView.showDuplicateNameError();
         }
@@ -58,8 +55,8 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
             mTemplateCreatorView.showIllegalCharacterError();
         }
         else {
-            VoicingTemplate template = new VoicingTemplate(name, new int[]{0}, chordTones.toArray());
-            mTemplateCreatorDataSource.saveTemplate();
+            VoicingTemplate template = new VoicingTemplate(name, new int[]{0}, chordTones);
+            mTemplateCreatorDataSource.saveTemplate(template);
         }
     }
 
@@ -75,7 +72,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
         return name.length() == 0;
     }
 
-    private boolean isEmptyTemplate(List<Tone> chordTones) {
-        return chordTones.size() == 0;
+    private boolean isEmptyTemplate(int[] chordTones) {
+        return chordTones.length == 0;
     }
 }
