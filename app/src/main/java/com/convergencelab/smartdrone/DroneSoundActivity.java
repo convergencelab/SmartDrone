@@ -10,6 +10,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.convergencelab.smartdrone.Models.DroneSoundModel;
+import com.convergencelab.smartdrone.templatecreator.TemplateCreatorActivity;
 import com.convergencelab.smartdrone.templatecreator.TemplateCreatorActivityOld;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.MusicTheory;
@@ -243,7 +244,7 @@ public class DroneSoundActivity extends AppCompatActivity {
      * @param       view View; American Talk Show on the ABC network.
      */
     public void openVoicingCreator(View view) {
-        Intent intent = new Intent(this, TemplateCreatorActivityOld.class);
+        Intent intent = new Intent(this, TemplateCreatorActivity.class);
         startActivity(intent);
     }
 
