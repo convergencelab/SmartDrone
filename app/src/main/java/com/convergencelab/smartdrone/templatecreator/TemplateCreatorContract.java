@@ -30,12 +30,6 @@ public interface TemplateCreatorContract {
 
         void cancel();
 
-//        // These will be on click listeners
-//        void playTone(Tone toPlay);
-//
-//        // These will be on click listeners
-//        void stopTone(Tone toStop);
-
         void saveTemplate(String name);
 
     }

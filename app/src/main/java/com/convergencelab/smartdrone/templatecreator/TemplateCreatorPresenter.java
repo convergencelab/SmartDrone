@@ -14,6 +14,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
     private boolean[] mToneIsActive;
     private Tone[] mTones;
+    private int numActiveTones = 0;
 
 
     public TemplateCreatorPresenter(TemplateCreatorDataSource templateCreatorDataSource,
@@ -26,48 +27,92 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
     @Override
     public void start() {
+        initTones();
         mTemplateCreatorDataSource.initialize();
+    }
+
+    private void initTones() {
+        mTones = new Tone[NUM_TONES];
+        for (int i = 0; i < NUM_TONES; i++) {
+            mTones[i] = new Tone(i, Tone.TONE_CHORD);
+        }
+
+        mToneIsActive = new boolean[NUM_TONES];
+        playTone(mTones[0]);
     }
 
     @Override
     public void toggleToneStatus(int toneDegree) {
-
+        Tone toToggle = mTones[toneDegree];
+        if (mToneIsActive[toneDegree]) {
+            stopTone(toToggle);
+        }
+        else {
+            playTone(toToggle);
+        }
     }
 
     @Override
     public void cancel() {
         mTemplateCreatorView.cancelTemplateCreator();
     }
-//
-//    @Override
-//    public void playTone(Tone toPlay) {
-//        mTemplateCreatorDataSource.playTone(toPlay);
-//    }
-//
-//    @Override
-//    public void stopTone(Tone toStop) {
-//        mTemplateCreatorDataSource.stopTone(toStop);
-//    }
+
+    /**
+     * Plays tone. Marks tone as active. Updates background on view.
+     * @param toPlay tone to play.
+     */
+    private void playTone(Tone toPlay) {
+        mToneIsActive[toPlay.getDegree()] = true;
+        mTemplateCreatorDataSource.playTone(toPlay);
+        mTemplateCreatorView.showToneActive(toPlay);
+        numActiveTones++;
+    }
+
+    /**
+     * Stops tone. Marks tone as inactive. Updates background on view.
+     * @param toStop tone to stop.
+     */
+    private void stopTone(Tone toStop) {
+        mToneIsActive[toStop.getDegree()] = false;
+        mTemplateCreatorDataSource.stopTone(toStop);
+        mTemplateCreatorView.showToneInactive(toStop);
+        numActiveTones--;
+    }
 
     // Todo: Refactor? make template at start of function instead of last condition
     @Override
     public void saveTemplate(String name) {
-        if (isDuplicateName(name)) {
+        Tone defBassTone = new Tone(0, Tone.TONE_BASS);
+        VoicingTemplate template = new VoicingTemplate(name, new Tone[]{defBassTone}, getChordTones());
+
+        // Validate name.
+        if (isDuplicateName(template.getName())) {
             mTemplateCreatorView.showDuplicateNameError();
         }
-        else if (isEmptyName(name)) {
+        else if (isEmptyName(template.getName())) {
             mTemplateCreatorView.showEmptyNameError();
         }
-        else if (isEmptyTemplate(chordTones)) {
+        else if (isEmptyTemplate(template.getChordTones())) {
             mTemplateCreatorView.showEmptyTemplateError();
         }
-        else if (containsIllegalCharacter(name)) {
+        else if (containsIllegalCharacter(template.getName())) {
             mTemplateCreatorView.showIllegalCharacterError();
         }
         else {
-            VoicingTemplate template = new VoicingTemplate(name, new int[]{0}, chordTones);
             mTemplateCreatorDataSource.saveTemplate(template);
         }
+    }
+
+    private Tone[] getChordTones() {
+        Tone[] chordTones = new Tone[numActiveTones];
+        int toneIx = 0;
+        for (int i = 0; i < mTones.length; i++) {
+            if (mToneIsActive[i]) {
+                chordTones[toneIx] = mTones[i];
+                toneIx++;
+            }
+        }
+        return chordTones;
     }
 
     private boolean containsIllegalCharacter(String name) {
@@ -82,7 +127,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
         return name.length() == 0;
     }
 
-    private boolean isEmptyTemplate(int[] chordTones) {
+    private boolean isEmptyTemplate(Tone[] chordTones) {
         return chordTones.length == 0;
     }
 }
