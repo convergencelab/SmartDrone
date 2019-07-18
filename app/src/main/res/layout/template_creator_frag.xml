@@ -21,6 +21,7 @@
 
     <!-- Container for four voicing columns -->
     <LinearLayout
+        android:id="@+id/chord_tone_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -76,6 +77,16 @@
             android:gravity="center"
             android:orientation="vertical">
         </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/bass_tone_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toBottomOf="@id/chord_tone_container"
+        android:orientation="horizontal"
+        android:weightSum="4">
     </LinearLayout>
 
     <Button

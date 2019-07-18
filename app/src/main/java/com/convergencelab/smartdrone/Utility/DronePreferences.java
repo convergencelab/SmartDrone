@@ -104,21 +104,21 @@ public class DronePreferences {
     /**
      * Get current voicing template from shared preferences.
      *
-     * @param context Context; context.
+     * @param prefs shared preferences.
      * @return String; flattened template.
      */
-    public static String getCurTemplatePref(Context context) {
-        return getSharedPrefs(context).getString(CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
+    public static String getCurTemplatePref(SharedPreferences prefs) {
+        return prefs.getString(CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
     }
 
     /**
      * Store current voicing template in shared preferences.
      *
-     * @param context           Context; context.
+     * @param prefs shared preferences.
      * @param flattenedTemplate String; flattened template.
      */
-    public static void setCurTemplatePref(Context context, String flattenedTemplate) {
-        getSharedPrefs(context).edit().putString(CUR_TEMP_KEY, flattenedTemplate).apply();
+    public static void setCurTemplatePref(SharedPreferences prefs, String flattenedTemplate) {
+        prefs.edit().putString(CUR_TEMP_KEY, flattenedTemplate).apply();
     }
 
     /**
@@ -157,6 +157,28 @@ public class DronePreferences {
      */
     public static String getNoteFilterLenPref(Context context) {
         return getSharedPrefs(context).getString(NOTE_LEN_KEY, "60"); //todo refactor hardcoded AND change over to integers
+    }
+
+    /**
+     * Get current voicing template from shared preferences.
+     *
+     * @param context Context; context.
+     * @return String; flattened template.
+     */
+    @Deprecated
+    public static String getCurTemplatePref(Context context) {
+        return getSharedPrefs(context).getString(CUR_TEMP_KEY, Constants.DEFAULT_TEMPLATE);
+    }
+
+    /**
+     * Store current voicing template in shared preferences.
+     *
+     * @param context           Context; context.
+     * @param flattenedTemplate String; flattened template.
+     */
+    @Deprecated
+    public static void setCurTemplatePref(Context context, String flattenedTemplate) {
+        getSharedPrefs(context).edit().putString(CUR_TEMP_KEY, flattenedTemplate).apply();
     }
 
     /**
