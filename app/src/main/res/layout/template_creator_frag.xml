@@ -89,6 +89,23 @@
         android:weightSum="4">
     </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/fbutton_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toBottomOf="@id/bass_tone_row"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <com.convergencelab.smartdrone.widget.FButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="fuck"/>
+
+
+    </LinearLayout>
+
     <Button
         android:id="@+id/template_cancel_button"
         android:layout_width="wrap_content"

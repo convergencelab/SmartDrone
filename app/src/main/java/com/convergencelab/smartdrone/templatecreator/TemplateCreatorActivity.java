@@ -30,4 +30,9 @@ public class TemplateCreatorActivity extends AppCompatActivity {
         TemplateCreatorDataSource dataSource = new TemplateCreatorDataSourceImpl(mPreferences);
         mTemplateCreatorPresenter = new TemplateCreatorPresenter(dataSource, templateCreatorFragment);
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }

@@ -170,6 +170,12 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
     }
 
     @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.cancel(); // Todo current workaround
+    }
+
+    @Override
     public void showToneActive(Tone toShow) {
         chordToneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
     }
