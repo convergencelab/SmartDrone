@@ -12,6 +12,10 @@ public interface TemplateCreatorContract {
 
         void showToneInactive(Tone toShow);
 
+        void showBassTonesActive(int toShow);
+
+        void showBassTonesInactive(int toShow);
+
         void showEmptyNameError();
 
         void showIllegalCharacterError();
@@ -27,6 +31,8 @@ public interface TemplateCreatorContract {
     interface Presenter extends BasePresenter {
 
         void toggleToneStatus(int toneDegree, int toneType);
+
+        void selectBassTones(int ix);
 
         void cancel();
 

@@ -9,6 +9,8 @@ import com.convergencelab.smartdrone.R;
 
 public class TemplateCreatorActivity extends AppCompatActivity {
 
+    private TemplateCreatorPresenter mTemplateCreatorPresenter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,5 +28,6 @@ public class TemplateCreatorActivity extends AppCompatActivity {
 
         SharedPreferences mPreferences = android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(this);
         TemplateCreatorDataSource dataSource = new TemplateCreatorDataSourceImpl(mPreferences);
+        mTemplateCreatorPresenter = new TemplateCreatorPresenter(dataSource, templateCreatorFragment);
     }
 }

@@ -1,6 +1,7 @@
 package com.convergencelab.smartdrone.templatecreator;
 
 import com.example.keyfinder.Tone;
+import com.example.keyfinder.Voicing;
 import com.example.keyfinder.VoicingTemplate;
 
 
@@ -12,11 +13,20 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
     private static final int NUM_TONES = 14;
 
+    private static final int[][] BASS_ROW = {
+            { },     // Null
+            { 0 },   // Root
+            { 4 },   // Fifth
+            { 0, 4 } // Perfect Fifth
+    };
+
     private boolean[] mChordToneIsActive;
     private Tone[] mChordTones;
     private int numActiveChordTones = 0;
 
+    private Tone[] mActiveBassTones;
     private int numActiveBassTones = 0;
+    private int prevIx;
 
     public TemplateCreatorPresenter(TemplateCreatorDataSource templateCreatorDataSource,
                                     TemplateCreatorContract.View templateCreatorView) {
@@ -41,7 +51,8 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
         mChordToneIsActive = new boolean[NUM_TONES];
 
         activateTone(mChordTones[0]);
-        activateTone(new Tone(0, Tone.TONE_BASS));
+
+        selectBassTones(1);
     }
 
     @Override
@@ -61,6 +72,31 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
         else {
             activateTone(toToggle);
         }
+    }
+
+    @Override
+    public void selectBassTones(int ix) {
+        int[] toneIxs = BASS_ROW[ix];
+        Tone[] selected = new Tone[toneIxs.length];
+        for (int i =  0; i < toneIxs.length; i++) {
+            selected[i] = new Tone(toneIxs[i], Tone.TONE_BASS);
+        }
+        if (mActiveBassTones != null) {
+            for (Tone tone : mActiveBassTones) {
+                mTemplateCreatorDataSource.stopTone(tone);
+                numActiveBassTones--;
+            }
+            mTemplateCreatorView.showBassTonesInactive(prevIx);
+        }
+        prevIx = ix;
+        if (selected != null) {
+            for (Tone tone : selected) {
+                mTemplateCreatorDataSource.playTone(tone);
+                numActiveBassTones++;
+            }
+            mTemplateCreatorView.showBassTonesActive(ix);
+        }
+        mActiveBassTones = selected;
     }
 
     @Override
@@ -104,8 +140,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     // Todo: Refactor? make template at start of function instead of last condition
     @Override
     public void saveTemplate(String name) {
-        Tone defBassTone = new Tone(0, Tone.TONE_BASS);
-        VoicingTemplate template = new VoicingTemplate(name, new Tone[]{defBassTone}, getChordTones());
+        VoicingTemplate template = new VoicingTemplate(name, mActiveBassTones, getChordTones());
 
         // Validate name.
         if (isEmptyName(template.getName())) {
@@ -115,7 +150,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
             System.out.println("Name: " + template.getName());
             mTemplateCreatorView.showDuplicateNameError();
         }
-        else if (isEmptyTemplate(template.getChordTones())) {
+        else if (isEmptyTemplate(template)) {
             mTemplateCreatorView.showEmptyTemplateError();
         }
         else if (containsIllegalCharacter(template.getName())) {
@@ -152,7 +187,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
         return name.length() == 0;
     }
 
-    private boolean isEmptyTemplate(Tone[] chordTones) {
-        return chordTones.length == 0;
+    private boolean isEmptyTemplate(VoicingTemplate toCheck) {
+        return toCheck.numVoices() == 0;
     }
 }

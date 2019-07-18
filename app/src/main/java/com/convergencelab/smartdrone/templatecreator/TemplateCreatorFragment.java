@@ -43,11 +43,18 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
             TONE_COLUMN_FOUR
     };
 
-    private final Button[] toneButtons = new Button[NUM_TONES];
+    private final Button[] chordToneButtons = new Button[NUM_TONES];
+    private final Button[] bassToneButtons = new Button[4]; // Todo hardcoded
 
     private TemplateCreatorContract.Presenter mPresenter;
 
     private EditText mName;
+    private String[] BASS_ROW_NAMES = {
+            "-",
+            "R",
+            "5",
+            "P5"
+    };
 
 
     public static TemplateCreatorFragment newInstance() {
@@ -64,15 +71,17 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.template_creator_frag, container, false);
         mName = root.findViewById(R.id.template_name_edit_text);
+        // Set limit of 20 chars on EditText.
         InputFilter[] filterArray = new InputFilter[1];
         filterArray[0] = new InputFilter.LengthFilter(MAX_LEN_NAME);
         mName.setFilters(filterArray);
+
         drawLayout(root);
 
         return root;
     }
 
-    private void drawLayout(View root) {
+    private void drawLayout(final View root) {
         LinearLayout curLayout;
         int totalCount = 0;
         String layoutTemp = "tone_column_";
@@ -102,14 +111,43 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                         mPresenter.toggleToneStatus(degree, Tone.TONE_CHORD);
                     }
                 });
-                toneButtons[(int) curButton.getTag()] = curButton;
+                chordToneButtons[(int) curButton.getTag()] = curButton;
                 totalCount++;
                 curLayout.addView(curButton, btnParams);
             }
         }
 
         // Make bass tone buttons
-        // Todo: Here's where I left off
+        // Todo: come up with some consistent naming convention
+        curLayout = root.findViewById(R.id.bass_tone_row);
+        for (int toneCount = 0; toneCount < BASS_ROW.length; toneCount++) {
+            String toneDegree = BASS_ROW_NAMES[toneCount];
+
+            final Button curButton = new Button(root.getContext());
+            LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
+                    (int) getResources().getDimension(R.dimen.voice_button_height), (int) getResources().getDimension(R.dimen.voice_button_height));
+
+            // +1 to display base 1 indexing for user.
+            if (BASS_ROW[toneCount].length == 2) {
+                curButton.setText("P5"); // Todo: fix hardcoded
+            }
+            else {
+                curButton.setText(toneDegree);
+            }
+
+            curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
+            curButton.setTag(toneCount);
+            curButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int tag = (int)curButton.getTag();
+                    mPresenter.selectBassTones(tag);
+                }
+            });
+            bassToneButtons[toneCount] = curButton;
+            curLayout.addView(curButton, btnParams);
+        }
+
 
         root.findViewById(R.id.template_save_button).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -133,12 +171,22 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
 
     @Override
     public void showToneActive(Tone toShow) {
-        toneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
+        chordToneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
     }
 
     @Override
     public void showToneInactive(Tone toShow) {
-        toneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
+        chordToneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
+    }
+
+    @Override
+    public void showBassTonesActive(int toShow) {
+        bassToneButtons[toShow].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
+    }
+
+    @Override
+    public void showBassTonesInactive(int toShow) {
+        bassToneButtons[toShow].setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
     }
 
     @Override
