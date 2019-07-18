@@ -1,5 +1,7 @@
 package com.convergencelab.smartdrone.widget;
 
+import android.animation.ArgbEvaluator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -20,9 +22,13 @@ import com.convergencelab.smartdrone.R;
 
 public class FButton extends android.support.v7.widget.AppCompatButton implements View.OnClickListener {
 
+    // Todo: Maybe this button can hold onto tone?
+    // Can hang onto int array. store 1 int for all except: null bass -> empty array; p5 bass -> { 0, 4 }
+
     // States of button
     private final static int ON = 0;
     private final static int OFF = 1;
+    private static final int COLOR_FADE_DUR = 100;
 
     // Custom values
     private boolean isShadowEnabled = true;
@@ -40,6 +46,9 @@ public class FButton extends android.support.v7.widget.AppCompatButton implement
     private Drawable unpressedDrawable;
     // Toggle Fields
     private int mCurState;
+    private int onColor;
+    private int offColor;
+    private
 
     boolean isShadowColorDefined = false;
 
@@ -75,13 +84,39 @@ public class FButton extends android.support.v7.widget.AppCompatButton implement
         switch (mCurState) {
             case OFF:
                 mCurState = ON;
-                updateBackground(pressedDrawable);
+                int colorFrom = offColor;
+                int colorTo = onColor;
+                ValueAnimator colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+                colorAnimation.setDuration(COLOR_FADE_DUR); // milliseconds
+                colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animator) {
+                        setButtonColor((int) animator.getAnimatedValue());
+                        updateBackground(pressedDrawable);
+                    }
+                });
+                colorAnimation.start();
+
+//                setButtonColor(mButtonColor = getResources().getColor(R.color.fbutton_color_emerald));
+//                updateBackground(pressedDrawable);
                 this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom);
                 break;
 
             case ON:
                 mCurState = OFF;
-                updateBackground(unpressedDrawable);
+                colorFrom = onColor;
+                colorTo = offColor;
+                colorAnimation = ValueAnimator.ofObject(new ArgbEvaluator(), colorFrom, colorTo);
+                colorAnimation.setDuration(COLOR_FADE_DUR); // milliseconds
+                colorAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                    @Override
+                    public void onAnimationUpdate(ValueAnimator animator) {
+                        setButtonColor((int) animator.getAnimatedValue());
+                        updateBackground(unpressedDrawable);
+                    }
+                });
+                colorAnimation.start();
+
                 this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom + mShadowHeight);
                 break;
         }
@@ -93,8 +128,10 @@ public class FButton extends android.support.v7.widget.AppCompatButton implement
         isShadowEnabled = true;
         Resources resources = getResources();
         if (resources == null) return;
-        mButtonColor = resources.getColor(R.color.fbutton_default_color);
-        mShadowColor = resources.getColor(R.color.fbutton_default_shadow_color);
+        offColor = resources.getColor(R.color.fbutton_color_emerald_light);
+        onColor = resources.getColor(R.color.fbutton_color_emerald);
+        mButtonColor = offColor;
+        mShadowColor = resources.getColor(R.color.fbutton_color_nephritis);
         mShadowHeight = resources.getDimensionPixelSize(R.dimen.fbutton_default_shadow_height);
         mCornerRadius = resources.getDimensionPixelSize(R.dimen.fbutton_default_conner_radius);
     }
