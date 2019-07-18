@@ -11,7 +11,6 @@ import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.ModeTemplate;
 import com.example.keyfinder.Note;
 import com.example.keyfinder.Tone;
-import com.example.keyfinder.Voicing;
 import com.example.keyfinder.VoicingTemplate;
 
 import java.util.HashSet;

@@ -29,6 +29,13 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
     private static final int[] TONE_COLUMN_THREE = { 13, 11, 9, 7 };
     private static final int[] TONE_COLUMN_FOUR = { 12, 10, 8 };
 
+    private static final int[][] BASS_ROW = {
+            { },     // Null
+            { 0 },   // Root
+            { 4 },   // Fifth
+            { 0, 4 } // Perfect Fifth
+    };
+
     private final int[][] TONE_COLUMNS = {
             TONE_COLUMN_ONE,
             TONE_COLUMN_TWO,
@@ -69,6 +76,8 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
         LinearLayout curLayout;
         int totalCount = 0;
         String layoutTemp = "tone_column_";
+
+        // Make chord tones
         for (int columnCount = 0; columnCount < 4; columnCount++) {
             String curLayoutStr = layoutTemp + Integer.toString(columnCount);
             System.out.println(curLayoutStr);
@@ -79,7 +88,7 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                 int toneDegree = TONE_COLUMNS[columnCount][toneCount];
 
                 final Button curButton = new Button(root.getContext());
-                LinearLayout.LayoutParams btnParames = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
                         (int) getResources().getDimension(R.dimen.voice_button_height), (int) getResources().getDimension(R.dimen.voice_button_height));
 
                 // +1 to display base 1 indexing for user.
@@ -95,9 +104,13 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                 });
                 toneButtons[(int) curButton.getTag()] = curButton;
                 totalCount++;
-                curLayout.addView(curButton, btnParames);
+                curLayout.addView(curButton, btnParams);
             }
         }
+
+        // Make bass tone buttons
+        // Todo: Here's where I left off
+
         root.findViewById(R.id.template_save_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
