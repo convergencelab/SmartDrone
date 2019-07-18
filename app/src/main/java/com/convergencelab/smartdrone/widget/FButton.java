@@ -4,14 +4,12 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Color;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
 
 import com.convergencelab.smartdrone.R;
@@ -20,43 +18,49 @@ import com.convergencelab.smartdrone.R;
  * Created by hoang8f on 5/5/14.
  */
 
-public class FButton extends android.support.v7.widget.AppCompatButton implements View.OnTouchListener {
+public class FButton extends android.support.v7.widget.AppCompatButton implements View.OnClickListener {
 
-    //Custom values
+    // States of button
+    private final static int ON = 0;
+    private final static int OFF = 1;
+
+    // Custom values
     private boolean isShadowEnabled = true;
     private int mButtonColor;
     private int mShadowColor;
     private int mShadowHeight;
     private int mCornerRadius;
-    //Native values
+    // Native values
     private int mPaddingLeft;
     private int mPaddingRight;
     private int mPaddingTop;
     private int mPaddingBottom;
-    //Background drawable
+    // Background drawable
     private Drawable pressedDrawable;
     private Drawable unpressedDrawable;
+    // Toggle Fields
+    private int mCurState;
 
     boolean isShadowColorDefined = false;
 
     public FButton(Context context) {
         super(context);
         init();
-        this.setOnTouchListener(this);
+        this.setOnClickListener(this);
     }
 
     public FButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
         parseAttrs(context, attrs);
-        this.setOnTouchListener(this);
+        this.setOnClickListener(this);
     }
 
     public FButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
         parseAttrs(context, attrs);
-        this.setOnTouchListener(this);
+        this.setOnClickListener(this);
     }
 
     @Override
@@ -67,33 +71,25 @@ public class FButton extends android.support.v7.widget.AppCompatButton implement
     }
 
     @Override
-    public boolean onTouch(View view, MotionEvent motionEvent) {
-        switch (motionEvent.getAction()) {
-            case MotionEvent.ACTION_DOWN:
+    public void onClick(View v) {
+        switch (mCurState) {
+            case OFF:
+                mCurState = ON;
                 updateBackground(pressedDrawable);
                 this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom);
                 break;
-            case MotionEvent.ACTION_MOVE:
-                Rect r = new Rect();
-                view.getLocalVisibleRect(r);
-                if (!r.contains((int) motionEvent.getX(), (int) motionEvent.getY() + 3 * mShadowHeight) &&
-                        !r.contains((int) motionEvent.getX(), (int) motionEvent.getY() - 3 * mShadowHeight)) {
-                    updateBackground(unpressedDrawable);
-                    this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom + mShadowHeight);
-                }
-                break;
-            case MotionEvent.ACTION_OUTSIDE:
-            case MotionEvent.ACTION_CANCEL:
-            case MotionEvent.ACTION_UP:
+
+            case ON:
+                mCurState = OFF;
                 updateBackground(unpressedDrawable);
                 this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom + mShadowHeight);
                 break;
         }
-        return false;
     }
 
     private void init() {
         //Init default values
+        mCurState = OFF;
         isShadowEnabled = true;
         Resources resources = getResources();
         if (resources == null) return;
