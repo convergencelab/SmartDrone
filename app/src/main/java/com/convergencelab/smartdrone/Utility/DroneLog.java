@@ -24,7 +24,6 @@ public class DroneLog {
         catch(java.util.ConcurrentModificationException exception) {
             System.out.println(exception.toString());
         }
-
     }
 
     /**

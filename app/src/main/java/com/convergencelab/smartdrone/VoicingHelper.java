@@ -115,33 +115,7 @@ public class VoicingHelper {
         }
 
         return new VoicingTemplate(bassIxs, chordIxs);
-
-
-//        String[] str = flattenedTemplate.split(",");
-//        String name = str[0];
-//        int[] chordTones = new int[str.length - 1];
-//        for (int i = 1; i < str.length; i++) {
-//            chordTones[i - 1] = Integer.parseInt(str[i]);
-//        }
-//        return new VoicingTemplate(name, chordTones);
     }
-
-//    /**
-//     * Makes a flattened string copy of a voicing.
-//     * @param       voicing Voicing; voicing.
-//     * @return      String; flattened string of voicing.
-//     */
-//    public static String flattenVoicing(Voicing voicing) {
-//        String voicingStr = "";
-//        //todo refactor voicing class to be consistent with template class
-//        for (int i = 0; i < voicing.getVoiceIxs().length; i++) {
-//            voicingStr += voicing.getVoiceIxs()[i];
-//            if (i != voicing.getVoiceIxs().length) {
-//                voicingStr += ',';
-//            }
-//        }
-//        return voicingStr;
-//    }
 
     /**
      * Turns string of all flattened voicings into array list of flattened voicings.
