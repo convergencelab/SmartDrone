@@ -99,9 +99,12 @@
         android:weightSum="4">
 
         <com.convergencelab.smartdrone.widget.FButton
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="fuck"/>
+            android:id="@+id/test_button"
+            android:layout_width="@dimen/voice_button_height"
+            android:layout_height="@dimen/voice_button_height"
+            app:cornerRadius="@dimen/voice_button_height"
+            android:text=""
+            />
 
 
     </LinearLayout>

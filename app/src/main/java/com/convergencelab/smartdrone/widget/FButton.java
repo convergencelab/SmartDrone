@@ -1,7 +1,5 @@
 package com.convergencelab.smartdrone.widget;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ArgbEvaluator;
 import android.animation.ValueAnimator;
 import android.content.Context;
@@ -14,15 +12,15 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.RoundRectShape;
 import android.os.Build;
 import android.util.AttributeSet;
-import android.view.View;
 
 import com.convergencelab.smartdrone.R;
 
 /**
  * Created by hoang8f on 5/5/14.
+ * https://github.com/hoang8f/android-flat-button
  */
 
-public class FButton extends android.support.v7.widget.AppCompatButton implements View.OnClickListener {
+public class FButton extends android.support.v7.widget.AppCompatButton {
 
     // Todo: Maybe this button can hold onto tone?
     // Can hang onto int array. store 1 int for all except: null bass -> empty array; p5 bass -> { 0, 4 }
@@ -30,7 +28,7 @@ public class FButton extends android.support.v7.widget.AppCompatButton implement
     // States of button
     private final static int ON = 0;
     private final static int OFF = 1;
-    private static final int COLOR_FADE_DUR = 100;
+    private static final int COLOR_FADE_DUR = 150;
 
     // Custom values
     private boolean isShadowEnabled = true;
@@ -56,21 +54,21 @@ public class FButton extends android.support.v7.widget.AppCompatButton implement
     public FButton(Context context) {
         super(context);
         init();
-        this.setOnClickListener(this);
+//        this.setOnClickListener(this);
     }
 
     public FButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
         parseAttrs(context, attrs);
-        this.setOnClickListener(this);
+//        this.setOnClickListener(this);
     }
 
     public FButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
         parseAttrs(context, attrs);
-        this.setOnClickListener(this);
+//        this.setOnClickListener(this);
     }
 
     @Override
@@ -80,8 +78,7 @@ public class FButton extends android.support.v7.widget.AppCompatButton implement
         refresh();
     }
 
-    @Override
-    public void onClick(View v) {
+    public void showToggle() {
         int colorFrom;
         final int colorTo;
         switch (mCurState) {
@@ -129,12 +126,12 @@ public class FButton extends android.support.v7.widget.AppCompatButton implement
         isShadowEnabled = true;
         Resources resources = getResources();
         if (resources == null) return;
-        offColor = resources.getColor(R.color.fbutton_color_emerald_light);
+        offColor = resources.getColor(R.color.fbutton_color_clouds);
         onColor = resources.getColor(R.color.fbutton_color_emerald);
         mButtonColor = offColor;
         mShadowColor = resources.getColor(R.color.fbutton_color_nephritis);
         mShadowHeight = resources.getDimensionPixelSize(R.dimen.fbutton_default_shadow_height);
-        mCornerRadius = resources.getDimensionPixelSize(R.dimen.fbutton_default_conner_radius);
+        mCornerRadius = resources.getDimensionPixelSize(R.dimen.fbutton_custom_corner_radius);
     }
 
     private void parseAttrs(Context context, AttributeSet attrs) {
@@ -153,7 +150,7 @@ public class FButton extends android.support.v7.widget.AppCompatButton implement
             } else if (attr == R.styleable.FButton_shadowHeight) {
                 mShadowHeight = typedArray.getDimensionPixelSize(attr, R.dimen.fbutton_default_shadow_height);
             } else if (attr == R.styleable.FButton_cornerRadius) {
-                mCornerRadius = typedArray.getDimensionPixelSize(attr, R.dimen.fbutton_default_conner_radius);
+                mCornerRadius = typedArray.getDimensionPixelSize(attr, R.dimen.fbutton_default_corner_radius);
             }
         }
         typedArray.recycle();

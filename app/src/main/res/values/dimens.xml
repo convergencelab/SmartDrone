@@ -6,7 +6,8 @@
     <dimen name="manual_steps">10dp</dimen>
 
     <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="fbutton_default_conner_radius">8dp</dimen>
+    <dimen name="fbutton_default_corner_radius">8dp</dimen>
+    <dimen name="fbutton_custom_corner_radius">60dp</dimen>
     <dimen name="fbutton_default_padding_left">10dp</dimen>
     <dimen name="fbutton_default_padding_right">10dp</dimen>
     <dimen name="fbutton_default_padding_top">5dp</dimen>

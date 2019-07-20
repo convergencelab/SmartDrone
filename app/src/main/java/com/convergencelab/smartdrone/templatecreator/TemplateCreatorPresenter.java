@@ -72,6 +72,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
         else {
             activateTone(toToggle);
         }
+//        mTemplateCreatorView.showToneActive(to);
     }
 
     @Override
@@ -112,7 +113,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     private void activateTone(Tone toPlay) {
         mChordToneIsActive[toPlay.getDegree()] = true;
         mTemplateCreatorDataSource.playTone(toPlay);
-        mTemplateCreatorView.showToneActive(toPlay);
+//        mTemplateCreatorView.showToneActive(toPlay);
         if (toPlay.getCode() == Tone.TONE_CHORD) {
             numActiveChordTones++;
         }
@@ -128,7 +129,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     private void deactivateTone(Tone toStop) {
         mChordToneIsActive[toStop.getDegree()] = false;
         mTemplateCreatorDataSource.stopTone(toStop);
-        mTemplateCreatorView.showToneInactive(toStop);
+//        mTemplateCreatorView.showToneInactive(toStop);
         if (toStop.getCode() == Tone.TONE_CHORD) {
             numActiveChordTones--;
         }

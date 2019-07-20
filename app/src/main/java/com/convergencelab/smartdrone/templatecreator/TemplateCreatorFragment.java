@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.convergencelab.smartdrone.R;
+import com.convergencelab.smartdrone.widget.FButton;
 import com.example.keyfinder.Tone;
 
 /**
@@ -74,14 +75,22 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
         // Set limit of 20 chars on EditText.
         InputFilter[] filterArray = new InputFilter[1];
         filterArray[0] = new InputFilter.LengthFilter(MAX_LEN_NAME);
+        final FButton testButton = root.findViewById(R.id.test_button);
+        testButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testButton.showToggle();
+                testButton.setText("test");
+            }
+        });
         mName.setFilters(filterArray);
 
-        drawLayout(root);
+        drawLayout(root, inflater);
 
         return root;
     }
 
-    private void drawLayout(final View root) {
+    private void drawLayout(final View root, LayoutInflater inflater) {
         LinearLayout curLayout;
         int totalCount = 0;
         String layoutTemp = "tone_column_";
@@ -96,24 +105,28 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
             for (int toneCount = 0; toneCount < TONE_COLUMNS[columnCount].length; toneCount++) {
                 int toneDegree = TONE_COLUMNS[columnCount][toneCount];
 
-                final Button curButton = new Button(root.getContext());
-                LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
-                        (int) getResources().getDimension(R.dimen.voice_button_height), (int) getResources().getDimension(R.dimen.voice_button_height));
+                final FButton curButton = (FButton) inflater.inflate(R.layout.tone_item, null, false);
+//                final FButton curButton = new FButton(root.getContext());
+//                LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
+//                        (int) getResources().getDimension(R.dimen.voice_button_height), (int) getResources().getDimension(R.dimen.voice_button_height));
 
                 // +1 to display base 1 indexing for user.
                 curButton.setText(Integer.toString(toneDegree + 1));
-                curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
+//                curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
                 curButton.setTag(toneDegree);
                 curButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        curButton.showToggle();
                         int degree = (int) curButton.getTag();
                         mPresenter.toggleToneStatus(degree, Tone.TONE_CHORD);
                     }
                 });
                 chordToneButtons[(int) curButton.getTag()] = curButton;
                 totalCount++;
-                curLayout.addView(curButton, btnParams);
+//                curButton.setShadowEnabled(true);
+//                curButton.setEnabled(true);
+                curLayout.addView(curButton);
             }
         }
 
