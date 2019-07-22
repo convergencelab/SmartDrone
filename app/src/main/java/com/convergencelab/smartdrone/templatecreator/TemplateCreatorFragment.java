@@ -8,8 +8,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.convergencelab.smartdrone.R;
@@ -45,6 +47,7 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
     };
 
     private final Button[] chordToneButtons = new Button[NUM_TONES];
+    private final LinearLayout[] toneItems = new LinearLayout[NUM_TONES];
     private final Button[] bassToneButtons = new Button[4]; // Todo hardcoded
 
     private TemplateCreatorContract.Presenter mPresenter;
@@ -75,6 +78,8 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
         // Set limit of 20 chars on EditText.
         InputFilter[] filterArray = new InputFilter[1];
         filterArray[0] = new InputFilter.LengthFilter(MAX_LEN_NAME);
+
+
         final FButton testButton = root.findViewById(R.id.test_button);
         testButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -83,6 +88,13 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                 testButton.setText("test");
             }
         });
+        final FButton testButtonInflate =
+                (FButton) inflater.inflate(R.layout.tone_item, (ViewGroup) root, false);
+        LinearLayout fButtonLayout = root.findViewById(R.id.fbutton_layout);
+        fButtonLayout.addView(testButtonInflate);
+
+
+
         mName.setFilters(filterArray);
 
         drawLayout(root, inflater);
@@ -105,28 +117,25 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
             for (int toneCount = 0; toneCount < TONE_COLUMNS[columnCount].length; toneCount++) {
                 int toneDegree = TONE_COLUMNS[columnCount][toneCount];
 
-                final FButton curButton = (FButton) inflater.inflate(R.layout.tone_item, null, false);
-//                final FButton curButton = new FButton(root.getContext());
-//                LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
-//                        (int) getResources().getDimension(R.dimen.voice_button_height), (int) getResources().getDimension(R.dimen.voice_button_height));
+                final LinearLayout toneItem = (LinearLayout) inflater.inflate(R.layout.tone_item_checkbox,
+                        (ViewGroup) root, false);
 
                 // +1 to display base 1 indexing for user.
-                curButton.setText(Integer.toString(toneDegree + 1));
-//                curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
-                curButton.setTag(toneDegree);
-                curButton.setOnClickListener(new View.OnClickListener() {
+                TextView checkBoxText = toneItem.findViewById(R.id.tone_text);
+                checkBoxText.setText(Integer.toString(toneDegree + 1));
+                toneItem.setTag(toneDegree);
+                toneItem.getChildAt(0).setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        curButton.showToggle();
-                        int degree = (int) curButton.getTag();
+//                        curButton.showToggle();
+                        int degree = (int) toneItem.getTag();
                         mPresenter.toggleToneStatus(degree, Tone.TONE_CHORD);
                     }
                 });
-                chordToneButtons[(int) curButton.getTag()] = curButton;
+
+                toneItems[(int) toneItem.getTag()] = toneItem;
                 totalCount++;
-//                curButton.setShadowEnabled(true);
-//                curButton.setEnabled(true);
-                curLayout.addView(curButton);
+                curLayout.addView(toneItem);
             }
         }
 

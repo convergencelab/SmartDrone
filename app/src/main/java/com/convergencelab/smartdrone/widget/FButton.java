@@ -85,7 +85,7 @@ public class FButton extends android.support.v7.widget.AppCompatButton {
             case OFF:
                 mCurState = ON;
                 updateBackground(pressedDrawable);
-                this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom);
+//                this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom);
 
                 colorFrom = offColor;
                 colorTo = onColor;
@@ -103,7 +103,7 @@ public class FButton extends android.support.v7.widget.AppCompatButton {
             case ON:
                 mCurState = OFF;
                 updateBackground(unpressedDrawable);
-                this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom + mShadowHeight);
+//                this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom + mShadowHeight);
 
                 colorFrom = onColor;
                 colorTo = offColor;
@@ -206,10 +206,13 @@ public class FButton extends android.support.v7.widget.AppCompatButton {
             pressedDrawable = createDrawable(mCornerRadius, disabledColor, Color.TRANSPARENT);
             unpressedDrawable = createDrawable(mCornerRadius, disabledColor, Color.TRANSPARENT);
         }
+
         if (mCurState == ON) {
+            this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom);
             updateBackground(pressedDrawable);
         }
         else {
+            this.setPadding(mPaddingLeft, mPaddingTop + mShadowHeight, mPaddingRight, mPaddingBottom + mShadowHeight);
             updateBackground(unpressedDrawable);
         }
         // This line caused bug where text didn't move.
@@ -225,8 +228,8 @@ public class FButton extends android.support.v7.widget.AppCompatButton {
             this.setBackgroundDrawable(background);
         }
     }
-    private LayerDrawable createDrawable(int radius, int topColor, int bottomColor) {
 
+    private LayerDrawable createDrawable(int radius, int topColor, int bottomColor) {
         float[] outerRadius = new float[]{radius, radius, radius, radius, radius, radius, radius, radius};
 
         //Top
@@ -242,14 +245,15 @@ public class FButton extends android.support.v7.widget.AppCompatButton {
         LayerDrawable layerDrawable = new LayerDrawable(drawArray);
 
         //Set shadow height
-        if (isShadowEnabled && topColor != Color.TRANSPARENT) {
+        if (mCurState == OFF) {
             //unpressed drawable
-            layerDrawable.setLayerInset(0, 0, 0, 0, 0);  /*index, left, top, right, bottom*/
+            layerDrawable.setLayerInset(1, 0, 0, 0, mShadowHeight);  /*index, left, top, right, bottom*/
         } else {
             //pressed drawable
+            layerDrawable.setLayerInset(1, 0, mShadowHeight, 0, 0);
             layerDrawable.setLayerInset(0, 0, mShadowHeight, 0, 0);  /*index, left, top, right, bottom*/
         }
-        layerDrawable.setLayerInset(1, 0, 0, 0, mShadowHeight);  /*index, left, top, right, bottom*/
+//        layerDrawable.setLayerInset(1, 0, 0, 0, mShadowHeight);  /*index, left, top, right, bottom*/
 
         return layerDrawable;
     }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="70dp"
+    android:layout_height="wrap_content"
+    android:background="@drawable/tone_item_border"
+    android:orientation="horizontal"
+    android:weightSum="2">
+
+    <CheckBox
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:paddingStart="@dimen/tone_item_padding"
+        android:paddingLeft="@dimen/tone_item_padding"
+        android:paddingEnd="@dimen/tone_item_padding"
+        android:paddingRight="@dimen/tone_item_padding" />
+
+    <TextView
+        android:id="@+id/tone_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_weight="1"
+        android:fontFamily="@font/amaranth"
+        android:gravity="center"
+        android:paddingStart="@dimen/tone_item_padding"
+        android:paddingLeft="@dimen/tone_item_padding"
+        android:paddingEnd="@dimen/tone_item_padding"
+        android:paddingRight="@dimen/tone_item_padding"
+        android:text="15"
+        android:textColor="@android:color/black"
+        android:textSize="20sp" />
+
+</LinearLayout>

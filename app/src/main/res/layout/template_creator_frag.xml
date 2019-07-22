@@ -25,7 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="4.5"
+        android:weightSum="4.2"
         app:layout_constraintTop_toBottomOf="@+id/template_name_edit_text">
 
         <!-- First column -->
@@ -53,7 +53,7 @@
             android:id="@+id/tone_column_padding"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
+            android:layout_weight="0.2"
             android:gravity="center"
             android:orientation="vertical">
         </LinearLayout>
