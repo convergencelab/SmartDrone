@@ -2,12 +2,11 @@ package com.convergencelab.smartdrone.templatecreator;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.text.InputFilter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -15,7 +14,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.convergencelab.smartdrone.R;
-import com.example.keyfinder.Tone;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -40,7 +38,6 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
             TONE_COLUMN_FOUR
     };
 
-//    private final Button[] chordToneButtons = new Button[NUM_TONES];
     private final LinearLayout[] chordToneItems = new LinearLayout[NUM_TONES];
 
     private final LinearLayout[] bassToneItems = new LinearLayout[5];
@@ -69,28 +66,12 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.template_creator_frag, container, false);
-        mName = root.findViewById(R.id.template_name_edit_text);
+//        mName = root.findViewById(R.id.template_name_edit_text);
         // Set limit of 20 chars on EditText.
         InputFilter[] filterArray = new InputFilter[1];
         filterArray[0] = new InputFilter.LengthFilter(MAX_LEN_NAME);
 
-
-//        final FButton testButton = root.findViewById(R.id.test_button);
-//        testButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                testButton.showToggle();
-//                testButton.setText("test");
-//            }
-//        });
-//        final FButton testButtonInflate =
-//                (FButton) inflater.inflate(R.layout.tone_item, (ViewGroup) root, false);
-//        LinearLayout fButtonLayout = root.findViewById(R.id.fbutton_layout);
-//        fButtonLayout.addView(testButtonInflate);
-
-
-
-        mName.setFilters(filterArray);
+//        mName.setFilters(filterArray);
 
         drawLayout(root, inflater);
 
@@ -189,26 +170,6 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
         super.onPause();
         mPresenter.cancel(); // Todo current workaround
     }
-
-//    @Override
-//    public void showToneActive(Tone toShow) {
-//        chordToneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
-//    }
-//
-//    @Override
-//    public void showToneInactive(Tone toShow) {
-//        chordToneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
-//    }
-//
-//    @Override
-//    public void showBassTonesActive(int toShow) {
-////        bassToneButtons[toShow].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
-//    }
-//
-//    @Override
-//    public void showBassTonesInactive(int toShow) {
-////        bassToneButtons[toShow].setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
-//    }
 
     @Override
     public void showEmptyNameError() {

@@ -51,20 +51,12 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
             mBassTones[i] = new Tone(i, Tone.TONE_BASS);
         }
         mBassToneIsActive = new boolean[NUM_BASS_TONES];
-//
-//        mBassTones[0] = new Tone(0, Tone.TONE_BASS);
-//        mBassTones[1] = new Tone(4, Tone.TONE_BASS);
     }
 
     @Override
     public void toggleChordTone(int degree) {
         Tone toToggle = mChordTones[degree];
-//        if (toneType == Tone.TONE_CHORD) {
-//            toToggle = mChordTones[toneDegree];
-//        }
-//        else {
-//            toToggle = new Tone(toneDegree, Tone.TONE_BASS);
-//        }
+
         // Play or Stop tone.
         if (mChordToneIsActive[degree]) {
             deactivateTone(toToggle);
@@ -77,15 +69,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     @Override
     public void toggleBassTone(int degree) {
         Tone toToggle = mBassTones[degree];
-//        if (mBassToneIsActive)
 
-//        Tone toToggle = mChordTones[degree];
-//        if (toneType == Tone.TONE_CHORD) {
-//            toToggle = mChordTones[toneDegree];
-//        }
-//        else {
-//            toToggle = new Tone(toneDegree, Tone.TONE_BASS);
-//        }
         // Play or Stop tone.
         if (mBassToneIsActive[degree]) {
             deactivateTone(toToggle);
@@ -94,31 +78,6 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
             activateTone(toToggle);
         }
     }
-
-//    @Override
-//    public void selectBassTones(int ix) {
-//        int[] toneIxs = BASS_ROW[ix];
-//        Tone[] selected = new Tone[toneIxs.length];
-//        for (int i =  0; i < toneIxs.length; i++) {
-//            selected[i] = new Tone(toneIxs[i], Tone.TONE_BASS);
-//        }
-//        if (mBassTones != null) {
-//            for (Tone tone : mBassTones) {
-//                mTemplateCreatorDataSource.stopTone(tone);
-//                numActiveBassTones--;
-//            }
-//            mTemplateCreatorView.showBassTonesInactive(prevIx);
-//        }
-//        prevIx = ix;
-//        if (selected != null) {
-//            for (Tone tone : selected) {
-//                mTemplateCreatorDataSource.playTone(tone);
-//                numActiveBassTones++;
-//            }
-//            mTemplateCreatorView.showBassTonesActive(ix);
-//        }
-//        mBassTones = selected;
-//    }
 
     @Override
     public void cancel() {

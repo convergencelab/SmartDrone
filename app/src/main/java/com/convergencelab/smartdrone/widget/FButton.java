@@ -20,7 +20,7 @@ import com.convergencelab.smartdrone.R;
  * https://github.com/hoang8f/android-flat-button
  */
 
-public class FButton extends android.support.v7.widget.AppCompatButton {
+public class FButton extends androidx.appcompat.widget.AppCompatButton {
 
     // Todo: Maybe this button can hold onto tone?
     // Can hang onto int array. store 1 int for all except: null bass -> empty array; p5 bass -> { 0, 4 }

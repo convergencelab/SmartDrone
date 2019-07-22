@@ -7,14 +7,6 @@ import com.example.keyfinder.Tone;
 public interface TemplateCreatorContract {
 
     interface View extends BaseView<Presenter> {
-//
-//        void showToneActive(Tone toShow);
-//
-//        void showToneInactive(Tone toShow);
-//
-//        void showBassTonesActive(int toShow);
-//
-//        void showBassTonesInactive(int toShow);
 
         void showEmptyNameError();
 
@@ -33,8 +25,6 @@ public interface TemplateCreatorContract {
         void toggleChordTone(int degree);
 
         void toggleBassTone(int degree);
-
-//        void selectBassTones(int ix);
 
         void cancel();
 
