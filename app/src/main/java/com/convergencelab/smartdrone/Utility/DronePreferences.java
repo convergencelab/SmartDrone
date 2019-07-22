@@ -253,6 +253,6 @@ public class DronePreferences {
      */
     @Deprecated
     private static SharedPreferences getSharedPrefs(Context context) {
-        return android.support.v7.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        return androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
     }
 }

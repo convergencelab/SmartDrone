@@ -1,7 +1,6 @@
 package com.convergencelab.smartdrone.templatecreator;
 
 import com.example.keyfinder.Tone;
-import com.example.keyfinder.Voicing;
 import com.example.keyfinder.VoicingTemplate;
 
 
@@ -11,22 +10,18 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
     private final TemplateCreatorContract.View mTemplateCreatorView;
 
-    private static final int NUM_TONES = 14;
-
-    private static final int[][] BASS_ROW = {
-            { },     // Null
-            { 0 },   // Root
-            { 4 },   // Fifth
-            { 0, 4 } // Perfect Fifth
-    };
+    private static final int NUM_CHORD_TONES = 14;
+    private static final int NUM_BASS_TONES = 5;
 
     private boolean[] mChordToneIsActive;
     private Tone[] mChordTones;
     private int numActiveChordTones = 0;
 
-    private Tone[] mActiveBassTones;
+    private boolean[] mBassToneIsActive;
+    private Tone[] mBassTones;
     private int numActiveBassTones = 0;
-    private int prevIx;
+
+//    private int prevIx;
 
     public TemplateCreatorPresenter(TemplateCreatorDataSource templateCreatorDataSource,
                                     TemplateCreatorContract.View templateCreatorView) {
@@ -43,30 +38,27 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     }
 
     private void initTones() {
-        mChordTones = new Tone[NUM_TONES];
-        for (int i = 0; i < NUM_TONES; i++) {
+        // Initialize chord tones
+        mChordTones = new Tone[NUM_CHORD_TONES];
+        for (int i = 0; i < NUM_CHORD_TONES; i++) {
             mChordTones[i] = new Tone(i, Tone.TONE_CHORD);
         }
+        mChordToneIsActive = new boolean[NUM_CHORD_TONES];
 
-        mChordToneIsActive = new boolean[NUM_TONES];
-
-        activateTone(mChordTones[0]);
-
-        selectBassTones(1);
+        // Initialize bass tones
+        mBassTones = new Tone[NUM_BASS_TONES];
+        for (int i = 0; i < NUM_BASS_TONES; i++) {
+            mBassTones[i] = new Tone(i, Tone.TONE_BASS);
+        }
+        mBassToneIsActive = new boolean[NUM_BASS_TONES];
     }
 
     @Override
-    public void toggleToneStatus(int toneDegree, int toneType) {
-        Tone toToggle;
-        if (toneType == Tone.TONE_CHORD) {
-            toToggle = mChordTones[toneDegree];
-        }
-        else {
-            toToggle = new Tone(toneDegree, Tone.TONE_BASS);
-        }
+    public void toggleChordTone(int degree) {
+        Tone toToggle = mChordTones[degree];
 
         // Play or Stop tone.
-        if (mChordToneIsActive[toneDegree]) {
+        if (mChordToneIsActive[degree]) {
             deactivateTone(toToggle);
         }
         else {
@@ -75,28 +67,16 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     }
 
     @Override
-    public void selectBassTones(int ix) {
-        int[] toneIxs = BASS_ROW[ix];
-        Tone[] selected = new Tone[toneIxs.length];
-        for (int i =  0; i < toneIxs.length; i++) {
-            selected[i] = new Tone(toneIxs[i], Tone.TONE_BASS);
+    public void toggleBassTone(int degree) {
+        Tone toToggle = mBassTones[degree];
+
+        // Play or Stop tone.
+        if (mBassToneIsActive[degree]) {
+            deactivateTone(toToggle);
         }
-        if (mActiveBassTones != null) {
-            for (Tone tone : mActiveBassTones) {
-                mTemplateCreatorDataSource.stopTone(tone);
-                numActiveBassTones--;
-            }
-            mTemplateCreatorView.showBassTonesInactive(prevIx);
+        else {
+            activateTone(toToggle);
         }
-        prevIx = ix;
-        if (selected != null) {
-            for (Tone tone : selected) {
-                mTemplateCreatorDataSource.playTone(tone);
-                numActiveBassTones++;
-            }
-            mTemplateCreatorView.showBassTonesActive(ix);
-        }
-        mActiveBassTones = selected;
     }
 
     @Override
@@ -110,13 +90,13 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
      * @param toPlay tone to play.
      */
     private void activateTone(Tone toPlay) {
-        mChordToneIsActive[toPlay.getDegree()] = true;
         mTemplateCreatorDataSource.playTone(toPlay);
-        mTemplateCreatorView.showToneActive(toPlay);
         if (toPlay.getCode() == Tone.TONE_CHORD) {
+            mChordToneIsActive[toPlay.getDegree()] = true;
             numActiveChordTones++;
         }
         else if (toPlay.getCode() == Tone.TONE_BASS) {
+            mBassToneIsActive[toPlay.getDegree()] = true;
             numActiveBassTones++;
         }
     }
@@ -126,13 +106,13 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
      * @param toStop tone to stop.
      */
     private void deactivateTone(Tone toStop) {
-        mChordToneIsActive[toStop.getDegree()] = false;
         mTemplateCreatorDataSource.stopTone(toStop);
-        mTemplateCreatorView.showToneInactive(toStop);
         if (toStop.getCode() == Tone.TONE_CHORD) {
+            mChordToneIsActive[toStop.getDegree()] = false;
             numActiveChordTones--;
         }
         else if (toStop.getCode() == Tone.TONE_BASS) {
+            mBassToneIsActive[toStop.getDegree()] = false;
             numActiveBassTones--;
         }
     }
@@ -140,7 +120,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
     // Todo: Refactor? make template at start of function instead of last condition
     @Override
     public void saveTemplate(String name) {
-        VoicingTemplate template = new VoicingTemplate(name, mActiveBassTones, getChordTones());
+        VoicingTemplate template = new VoicingTemplate(name, getBassTones(), getChordTones());
 
         // Validate name.
         if (isEmptyName(template.getName())) {
@@ -161,6 +141,18 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
             mTemplateCreatorDataSource.endPlayback();
             mTemplateCreatorView.cancelTemplateCreator(); // Todo: make better name.
         }
+    }
+
+    private Tone[] getBassTones() {
+        Tone[] bassTones = new Tone[numActiveBassTones];
+        int toneIx = 0;
+        for (int i = 0; i < mBassTones.length; i++) {
+            if (mBassToneIsActive[i]) {
+                bassTones[toneIx] = mBassTones[i];
+                toneIx++;
+            }
+        }
+        return bassTones;
     }
 
     private Tone[] getChordTones() {

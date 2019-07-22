@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,17 +7,25 @@
     android:layout_margin="30dp"
     tools:context=".templatecreator.TemplateCreatorActivity">
 
-    <EditText
-        android:id="@+id/template_name_edit_text"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/template_name_input_layout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPersonName"
         android:hint="@string/voicing_name"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        app:layout_constraintTop_toTopOf="parent"
+        android:inputType="textPersonName"
+        app:counterEnabled="true"
+        app:counterMaxLength="20"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/template_name_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+    </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Container for four voicing columns -->
     <LinearLayout
@@ -25,8 +33,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="4.5"
-        app:layout_constraintTop_toBottomOf="@+id/template_name_edit_text">
+        android:paddingTop="10dp"
+        android:weightSum="4.2"
+        app:layout_constraintTop_toBottomOf="@+id/template_name_input_layout">
 
         <!-- First column -->
         <LinearLayout
@@ -35,8 +44,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
-        </LinearLayout>
+            android:orientation="vertical" />
 
         <!-- Second Column -->
         <LinearLayout
@@ -45,18 +53,16 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
-        </LinearLayout>
+            android:orientation="vertical" />
 
         <!-- PaddingColumn -->
         <LinearLayout
             android:id="@+id/tone_column_padding"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="0.5"
+            android:layout_weight="0.2"
             android:gravity="center"
-            android:orientation="vertical">
-        </LinearLayout>
+            android:orientation="vertical" />
 
         <!-- Third Column -->
         <LinearLayout
@@ -65,8 +71,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
-        </LinearLayout>
+            android:orientation="vertical" />
 
         <!-- Fourth Column -->
         <LinearLayout
@@ -75,8 +80,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center"
-            android:orientation="vertical">
-        </LinearLayout>
+            android:orientation="vertical" />
     </LinearLayout>
 
     <LinearLayout
@@ -84,10 +88,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        app:layout_constraintTop_toBottomOf="@id/chord_tone_container"
         android:orientation="horizontal"
-        android:weightSum="4">
-    </LinearLayout>
+        android:paddingTop="30dp"
+        android:weightSum="4"
+        app:layout_constraintTop_toBottomOf="@id/chord_tone_container" />
 
     <Button
         android:id="@+id/template_cancel_button"
@@ -105,4 +109,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 
-</android.support.constraint.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
