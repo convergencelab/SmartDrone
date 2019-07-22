@@ -25,6 +25,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:paddingTop="30dp"
         android:weightSum="4.2"
         app:layout_constraintTop_toBottomOf="@+id/template_name_edit_text">
 
@@ -85,28 +86,9 @@
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
         app:layout_constraintTop_toBottomOf="@id/chord_tone_container"
+        android:paddingTop="30dp"
         android:orientation="horizontal"
         android:weightSum="4">
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/fbutton_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        app:layout_constraintTop_toBottomOf="@id/bass_tone_row"
-        android:orientation="horizontal"
-        android:weightSum="4">
-
-        <com.convergencelab.smartdrone.widget.FButton
-            android:id="@+id/test_button"
-            android:layout_width="@dimen/voice_button_height"
-            android:layout_height="@dimen/voice_button_height"
-            app:cornerRadius="@dimen/voice_button_height"
-            android:text=""
-            />
-
-
     </LinearLayout>
 
     <Button

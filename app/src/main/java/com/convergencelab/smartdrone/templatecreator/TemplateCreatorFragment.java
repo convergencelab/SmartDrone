@@ -15,7 +15,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.convergencelab.smartdrone.R;
-import com.convergencelab.smartdrone.widget.FButton;
 import com.example.keyfinder.Tone;
 
 /**
@@ -32,12 +31,7 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
     private static final int[] TONE_COLUMN_THREE = { 13, 11, 9, 7 };
     private static final int[] TONE_COLUMN_FOUR = { 12, 10, 8 };
 
-    private static final int[][] BASS_ROW = {
-            { },     // Null
-            { 0 },   // Root
-            { 4 },   // Fifth
-            { 0, 4 } // Perfect Fifth
-    };
+    private static final int[] BASS_ROW = { 0, 4 };
 
     private final int[][] TONE_COLUMNS = {
             TONE_COLUMN_ONE,
@@ -46,9 +40,10 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
             TONE_COLUMN_FOUR
     };
 
-    private final Button[] chordToneButtons = new Button[NUM_TONES];
-    private final LinearLayout[] toneItems = new LinearLayout[NUM_TONES];
-    private final Button[] bassToneButtons = new Button[4]; // Todo hardcoded
+//    private final Button[] chordToneButtons = new Button[NUM_TONES];
+    private final LinearLayout[] chordToneItems = new LinearLayout[NUM_TONES];
+
+    private final LinearLayout[] bassToneItems = new LinearLayout[5];
 
     private TemplateCreatorContract.Presenter mPresenter;
 
@@ -80,18 +75,18 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
         filterArray[0] = new InputFilter.LengthFilter(MAX_LEN_NAME);
 
 
-        final FButton testButton = root.findViewById(R.id.test_button);
-        testButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                testButton.showToggle();
-                testButton.setText("test");
-            }
-        });
-        final FButton testButtonInflate =
-                (FButton) inflater.inflate(R.layout.tone_item, (ViewGroup) root, false);
-        LinearLayout fButtonLayout = root.findViewById(R.id.fbutton_layout);
-        fButtonLayout.addView(testButtonInflate);
+//        final FButton testButton = root.findViewById(R.id.test_button);
+//        testButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                testButton.showToggle();
+//                testButton.setText("test");
+//            }
+//        });
+//        final FButton testButtonInflate =
+//                (FButton) inflater.inflate(R.layout.tone_item, (ViewGroup) root, false);
+//        LinearLayout fButtonLayout = root.findViewById(R.id.fbutton_layout);
+//        fButtonLayout.addView(testButtonInflate);
 
 
 
@@ -131,11 +126,11 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                         checkBox.setChecked(!checkBox.isChecked());
 
                         int degree = (int) toneItem.getTag();
-                        mPresenter.toggleToneStatus(degree, Tone.TONE_CHORD);
+                        mPresenter.toggleChordTone(degree);
                     }
                 });
 
-                toneItems[(int) toneItem.getTag()] = toneItem;
+                chordToneItems[(int) toneItem.getTag()] = toneItem;
                 totalCount++;
                 curLayout.addView(toneItem);
             }
@@ -145,31 +140,27 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
         // Todo: come up with some consistent naming convention
         curLayout = root.findViewById(R.id.bass_tone_row);
         for (int toneCount = 0; toneCount < BASS_ROW.length; toneCount++) {
-            String toneDegree = BASS_ROW_NAMES[toneCount];
+            int toneDegree = BASS_ROW[toneCount];
 
-            final Button curButton = new Button(root.getContext());
-            LinearLayout.LayoutParams btnParams = new LinearLayout.LayoutParams(
-                    (int) getResources().getDimension(R.dimen.voice_button_height), (int) getResources().getDimension(R.dimen.voice_button_height));
+            final LinearLayout toneItem = (LinearLayout) inflater.inflate(R.layout.tone_item_checkbox,
+                    (ViewGroup) root, false);
 
-            // +1 to display base 1 indexing for user.
-            if (BASS_ROW[toneCount].length == 2) {
-                curButton.setText("P5"); // Todo: fix hardcoded
-            }
-            else {
-                curButton.setText(toneDegree);
-            }
+            TextView tv = (TextView) toneItem.getChildAt(1);
+            tv.setText("" + (toneDegree + 1));
 
-            curButton.setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
-            curButton.setTag(toneCount);
-            curButton.setOnClickListener(new View.OnClickListener() {
+            toneItem.setTag(toneDegree);
+            toneItem.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int tag = (int)curButton.getTag();
-                    mPresenter.selectBassTones(tag);
+                    CheckBox checkBox = (CheckBox) toneItem.getChildAt(0);
+                    checkBox.setChecked(!checkBox.isChecked());
+
+                    int degree = (int) toneItem.getTag();
+                    mPresenter.toggleBassTone(degree);
                 }
             });
-            bassToneButtons[toneCount] = curButton;
-            curLayout.addView(curButton, btnParams);
+            bassToneItems[toneCount] = toneItem;
+            curLayout.addView(toneItem);
         }
 
 
@@ -199,25 +190,25 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
         mPresenter.cancel(); // Todo current workaround
     }
 
-    @Override
-    public void showToneActive(Tone toShow) {
-        chordToneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
-    }
-
-    @Override
-    public void showToneInactive(Tone toShow) {
-        chordToneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
-    }
-
-    @Override
-    public void showBassTonesActive(int toShow) {
-        bassToneButtons[toShow].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
-    }
-
-    @Override
-    public void showBassTonesInactive(int toShow) {
-        bassToneButtons[toShow].setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
-    }
+//    @Override
+//    public void showToneActive(Tone toShow) {
+//        chordToneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
+//    }
+//
+//    @Override
+//    public void showToneInactive(Tone toShow) {
+//        chordToneButtons[toShow.getDegree()].setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
+//    }
+//
+//    @Override
+//    public void showBassTonesActive(int toShow) {
+////        bassToneButtons[toShow].setBackground(getResources().getDrawable(R.drawable.active_key_background_active));
+//    }
+//
+//    @Override
+//    public void showBassTonesInactive(int toShow) {
+////        bassToneButtons[toShow].setBackground(getResources().getDrawable(R.drawable.active_key_background_inactive));
+//    }
 
     @Override
     public void showEmptyNameError() {
