@@ -14,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.convergencelab.smartdrone.R;
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,14 +46,7 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
 
     private TemplateCreatorContract.Presenter mPresenter;
 
-    private EditText mName;
-    private String[] BASS_ROW_NAMES = {
-            "-",
-            "R",
-            "5",
-            "P5"
-    };
-
+    private TextInputEditText mName;
 
     public static TemplateCreatorFragment newInstance() {
         return new TemplateCreatorFragment();
@@ -66,12 +61,11 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.template_creator_frag, container, false);
-//        mName = root.findViewById(R.id.template_name_edit_text);
         // Set limit of 20 chars on EditText.
         InputFilter[] filterArray = new InputFilter[1];
         filterArray[0] = new InputFilter.LengthFilter(MAX_LEN_NAME);
-
-//        mName.setFilters(filterArray);
+        mName = root.findViewById(R.id.template_name_edit_text);
+        mName.setFilters(filterArray);
 
         drawLayout(root, inflater);
 

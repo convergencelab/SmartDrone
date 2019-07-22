@@ -13,7 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".templatecreator.TemplateCreatorActivity"></activity>
+        <activity android:name=".templatecreator.TemplateCreatorActivity" />
         <activity android:name=".AboutActivity" />
         <activity
             android:name=".SplashScreenActivity"
@@ -42,7 +42,7 @@
         <activity
             android:name=".DroneActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar"></activity>
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
 
         <meta-data
             android:name="preloaded_fonts"
