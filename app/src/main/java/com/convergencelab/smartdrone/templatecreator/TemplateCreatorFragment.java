@@ -124,10 +124,12 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                 TextView checkBoxText = toneItem.findViewById(R.id.tone_text);
                 checkBoxText.setText(Integer.toString(toneDegree + 1));
                 toneItem.setTag(toneDegree);
-                toneItem.getChildAt(0).setOnClickListener(new View.OnClickListener() {
+                toneItem./*getChildAt(0).*/setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-//                        curButton.showToggle();
+                        CheckBox checkBox = (CheckBox) toneItem.getChildAt(0);
+                        checkBox.setChecked(!checkBox.isChecked());
+
                         int degree = (int) toneItem.getTag();
                         mPresenter.toggleToneStatus(degree, Tone.TONE_CHORD);
                     }

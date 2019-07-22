@@ -11,6 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_weight="1"
+        android:clickable="false"
         android:gravity="center"
         android:paddingStart="@dimen/tone_item_padding"
         android:paddingLeft="@dimen/tone_item_padding"
