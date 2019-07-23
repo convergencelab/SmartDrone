@@ -8,6 +8,26 @@ import org.billthefarmer.mididriver.MidiDriver;
 
 public class MidiDriverModel {
     /**
+     * Start note playback.
+     */
+    private static final int START_NOTE = 0X90;
+
+    /**
+     * Stop note playback.
+     */
+    private static final int STOP_NOTE = 0X80;
+
+    /**
+     * Program change.
+     */
+    private static final int PROGRAM_CHANGE = 0XC0;
+
+    /**
+     * No volume.
+     */
+    private static final int VOLUME_OFF = 0;
+
+    /**
      * Current voicing being synthesized; transposed.
      */
     private Voicing curVoicing;
@@ -20,7 +40,7 @@ public class MidiDriverModel {
     /**
      * Default midi driver mCurVolume.
      */
-    public static final int DEFAULT_VOLUME = 65; //todo move to constants
+    public static final int DEFAULT_VOLUME = 65;
 
     /**
      * Midi driver.
@@ -29,14 +49,13 @@ public class MidiDriverModel {
 
     // List of all the plugins available.
     // https://github.com/billthefarmer/mididriver/blob/master/library/src/main/java/org/billthefarmer/mididriver/GeneralMidiConstants.java
-    //todo user parameter
     /**
      * Plugin for midi driver; sound of drone.
      */
     private int plugin;
 
     /**
-     * Midi driver mCurVolume.
+     * Playback volume.
      * MIN -> MAX; 0 -> 100.
      */
     private int mCurVolume;
