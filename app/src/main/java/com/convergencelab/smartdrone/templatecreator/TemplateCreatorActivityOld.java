@@ -18,7 +18,7 @@ import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.ModeTemplate;
 import com.example.keyfinder.ModeTemplateCollection;
 import com.example.keyfinder.MusicTheory;
-import com.convergencelab.smartdrone.Utility.DronePreferences;
+import com.convergencelab.smartdrone.utility.DronePreferences;
 
 import java.util.HashSet;
 

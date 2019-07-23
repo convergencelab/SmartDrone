@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.models.Data;
+package com.convergencelab.smartdrone.models.data;
 
 public class Plugin {
 

@@ -1,7 +1,7 @@
 package com.convergencelab.smartdrone.models;
 
 import com.convergencelab.smartdrone.Constants;
-import com.convergencelab.smartdrone.Utility.DroneLog;
+import com.convergencelab.smartdrone.utility.DroneLog;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.Note;
 

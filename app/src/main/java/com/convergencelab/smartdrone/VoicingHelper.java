@@ -4,8 +4,8 @@ package com.convergencelab.smartdrone;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.convergencelab.smartdrone.Utility.DroneLog;
-import com.convergencelab.smartdrone.Utility.DronePreferences;
+import com.convergencelab.smartdrone.utility.DroneLog;
+import com.convergencelab.smartdrone.utility.DronePreferences;
 
 import com.example.keyfinder.VoicingTemplate;
 

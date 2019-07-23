@@ -5,6 +5,8 @@ import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.ModeTemplate;
 import com.example.keyfinder.Note;
 
+// Todo: Add key change listener in future.
+
 public class KeyFinderImpl implements KeyFinderInterface {
     private KeyFinder mKeyFinder;
 

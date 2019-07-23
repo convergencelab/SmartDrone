@@ -1,8 +1,8 @@
-package com.convergencelab.smartdrone.models.Data;
+package com.convergencelab.smartdrone.models.data;
 
 import android.content.SharedPreferences;
 
-import com.convergencelab.smartdrone.Utility.DronePreferences;
+import com.convergencelab.smartdrone.utility.DronePreferences;
 import com.convergencelab.smartdrone.VoicingHelper;
 import com.example.keyfinder.VoicingTemplate;
 

@@ -12,7 +12,7 @@ import com.convergencelab.smartdrone.models.DroneSoundModel;
 import com.convergencelab.smartdrone.templatecreator.TemplateCreatorActivity;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.MusicTheory;
-import com.convergencelab.smartdrone.Utility.DronePreferences;
+import com.convergencelab.smartdrone.utility.DronePreferences;
 
 import java.util.ArrayList;
 

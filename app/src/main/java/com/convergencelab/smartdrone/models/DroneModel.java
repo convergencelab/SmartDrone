@@ -4,7 +4,7 @@ import com.convergencelab.smartdrone.Constants;
 import com.convergencelab.smartdrone.DroneActivity;
 import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.Note;
-import com.convergencelab.smartdrone.Utility.DroneLog;
+import com.convergencelab.smartdrone.utility.DroneLog;
 import com.example.keyfinder.Voicing;
 import com.example.keyfinder.VoicingTemplate;
 
