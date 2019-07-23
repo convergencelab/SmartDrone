@@ -49,7 +49,7 @@ public class DroneSoundActivity extends AppCompatActivity {
         super.onResume();
         loadSavedData();
 
-        droneSoundModel = new DroneSoundModel(Constants.PLUGIN_INDICES[userPluginIx], userModeIx, hasBassNote, VoicingHelper.inflateTemplate(curTemplateString));
+        droneSoundModel = new DroneSoundModel(Constants.PLUGIN_INDICES[userPluginIx], userModeIx, hasBassNote, VoicingHelper.decodeTemplate(curTemplateString));
         droneSoundModel.getKeyFinder().setParentKeyList(userParentScaleCode);
         droneSoundModel.initializePlayback();
         droneSoundModel.changePlayBack();
@@ -169,7 +169,7 @@ public class DroneSoundActivity extends AppCompatActivity {
                     // Update current template variable.
                     curSelectedTemplateView = tv;
                     //todo testing line of code
-                    droneSoundModel.setCurTemplate(VoicingHelper.inflateTemplate(curTemplateString));
+                    droneSoundModel.setCurTemplate(VoicingHelper.decodeTemplate(curTemplateString));
                 }
             });
             tv.setOnLongClickListener(new View.OnLongClickListener() {

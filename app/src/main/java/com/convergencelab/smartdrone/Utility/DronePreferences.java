@@ -144,8 +144,18 @@ public class DronePreferences {
     /**
      * Get active key sensitivity from shared preferences.
      *
+     * @param prefs shared preferences.
+     */
+    public static String getActiveKeySensPref(SharedPreferences prefs) {
+        return prefs.getString(KEY_SENS_KEY, "3"); //todo refactor hardcoded AND change over to integers
+    }
+
+    /**
+     * Get active key sensitivity from shared preferences.
+     *
      * @param context Context; activity making function call.
      */
+    @Deprecated
     public static String getActiveKeySensPref(Context context) {
         return getSharedPrefs(context).getString(KEY_SENS_KEY, "3"); //todo refactor hardcoded AND change over to integers
     }

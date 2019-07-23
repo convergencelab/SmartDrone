@@ -23,7 +23,7 @@ public class VoicingHelper {
      * @return      String; flattened string of voicing template.
      */
     //todo needs refactoring
-    public static String flattenTemplate(VoicingTemplate template) {
+    public static String encodeTemplate(VoicingTemplate template) {
         String templateStr = "";
         templateStr += template.getName();
 
@@ -60,7 +60,7 @@ public class VoicingHelper {
      * @return      VoicingTemplate; voicing template.
      */
     //todo needs refactoring
-    public static VoicingTemplate inflateTemplate(String flattenedTemplate) {
+    public static VoicingTemplate decodeTemplate(String flattenedTemplate) {
         // 0) Name, 1) BassTones, 2) ChordTones
         String[] templateStrs = new String[]{"","",""};
         int templateStrIx = 0;
@@ -161,7 +161,7 @@ public class VoicingHelper {
     }
 
     public static void addTemplateToPref(SharedPreferences preferences, VoicingTemplate template) {
-        String flattenedTemplate = flattenTemplate(template);
+        String flattenedTemplate = encodeTemplate(template);
         String allTemplates = DronePreferences.getAllTemplatePref(preferences);
         allTemplates += '|' + flattenedTemplate;
         DronePreferences.setAllTemplatePref(preferences, allTemplates);

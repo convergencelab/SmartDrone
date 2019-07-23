@@ -149,7 +149,7 @@ public class DroneActivity extends AppCompatActivity {
         droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         droneModel.sethasBassNote(userBassNotePref);
 
-        droneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate));
+        droneModel.setCurTemplate(VoicingHelper.decodeTemplate(defTemplate));
 
 
         resetDroneScreen();

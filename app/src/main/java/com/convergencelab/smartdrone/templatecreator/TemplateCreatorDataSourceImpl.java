@@ -51,7 +51,7 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
     @Override
     public void saveTemplate(VoicingTemplate template) {
         VoicingHelper.addTemplateToPref(mPreferences, template);
-        DronePreferences.setCurTemplatePref(mPreferences, VoicingHelper.flattenTemplate(template));
+        DronePreferences.setCurTemplatePref(mPreferences, VoicingHelper.encodeTemplate(template));
     }
 
     @Override

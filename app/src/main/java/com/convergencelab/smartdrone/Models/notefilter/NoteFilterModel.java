@@ -20,7 +20,7 @@ public class NoteFilterModel implements NoteFilterInterface {
      * @return length of note filter.
      */
     @Override
-    public int getLengthFilter() {
+    public int getFilterLength() {
         return Integer.parseInt(DronePreferences.getNoteFilterLenPref(mPrefs));
     }
 }

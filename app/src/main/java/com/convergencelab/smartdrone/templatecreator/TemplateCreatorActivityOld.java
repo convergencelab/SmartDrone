@@ -61,7 +61,7 @@ public class TemplateCreatorActivityOld extends AppCompatActivity {
                 Constants.PLUGIN_INDICES[DronePreferences.getStoredPluginPref(getApplicationContext())],
                 DronePreferences.getStoredModePref(this),
                 DronePreferences.getStoredBassPref(this),
-                VoicingHelper.inflateTemplate("throwaway{0}{0}"));
+                VoicingHelper.decodeTemplate("throwaway{0}{0}"));
         int parentCode = DronePreferences.getStoredParentScalePref(getApplicationContext());
         if (parentCode == KeyFinder.CODE_MAJOR) {
             parentSequence = MusicTheory.MAJOR_SCALE_SEQUENCE;

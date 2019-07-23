@@ -271,14 +271,11 @@ public class MidiDriverModelRefac implements MidiDriverInterface{
     }
 
     /**
-     * Stops current midi driver playback.
-     * Stops and removes every note in set.
+     * Checks if driver is active.
+     * @return boolean if driver not equal to null.
      */
-    private void endPlayback() {
-        for (Integer note : mActiveNotes) {
-            stopNotePlayback(note);
-            mActiveNotes.remove(note);
-        }
+    private boolean driverIsActive() {
+        return mDriver != null;
     }
 
     /**
@@ -297,10 +294,13 @@ public class MidiDriverModelRefac implements MidiDriverInterface{
     }
 
     /**
-     * Checks if driver is active.
-     * @return boolean if driver not equal to null.
+     * Stops current midi driver playback.
+     * Stops and removes every note in set.
      */
-    private boolean driverIsActive() {
-        return mDriver != null;
+    private void endPlayback() {
+        for (Integer note : mActiveNotes) {
+            stopNotePlayback(note);
+            mActiveNotes.remove(note);
+        }
     }
 }
