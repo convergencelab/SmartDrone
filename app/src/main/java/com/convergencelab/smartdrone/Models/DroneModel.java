@@ -219,12 +219,11 @@ public class DroneModel implements Serializable {
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
                         // interface method
-            public void handlePitch(PitchDetectionResult result, AudioEvent event){
+            public void handlePitch(PitchDetectionResult result, AudioEvent event) {
                 final float pitchInHz = result.getPitch();
                 droneActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //todo optimize. No need to run these if drone is inactive
                         processPitch(pitchInHz, droneActivity, keyFinderModel);
                         monitorActiveKey();
                     }

@@ -19,7 +19,6 @@ public class PitchProcessorModel {
      */
     private AudioDispatcher dispatcher;
 
-
     /**
      * Used to stamp time of note heard.
      */
