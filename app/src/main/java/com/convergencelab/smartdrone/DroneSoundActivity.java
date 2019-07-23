@@ -8,7 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.Switch;
 import android.widget.TextView;
 
-import com.convergencelab.smartdrone.Models.DroneSoundModel;
+import com.convergencelab.smartdrone.models.DroneSoundModel;
 import com.convergencelab.smartdrone.templatecreator.TemplateCreatorActivity;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.MusicTheory;

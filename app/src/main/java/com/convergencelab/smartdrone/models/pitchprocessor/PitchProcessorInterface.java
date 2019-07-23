@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.Models.pitchprocessor;
+package com.convergencelab.smartdrone.models.pitchprocessor;
 
 
 public interface PitchProcessorInterface {

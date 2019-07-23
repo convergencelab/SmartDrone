@@ -1,8 +1,4 @@
-package com.convergencelab.smartdrone.Models.mididriver;
-
-import android.content.SharedPreferences;
-
-import com.convergencelab.smartdrone.Utility.DronePreferences;
+package com.convergencelab.smartdrone.models.mididriver;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
@@ -56,22 +52,21 @@ public class MidiDriverModelRefac implements MidiDriverInterface{
      */
     private int mPlugin;
 
-    /**
-     * Shared preferences containing midi mDriver data.
-     */
-    private SharedPreferences mPrefs;
+//    /**
+//     * Shared preferences containing midi mDriver data.
+//     */
+//    private SharedPreferences mPrefs;
 
     /**
      * Constructor.
-     * @param prefs shared preferences for retrieving persistent data.
      */
-    MidiDriverModelRefac(SharedPreferences prefs) {
-        mPrefs = prefs;
+    MidiDriverModelRefac(int plugin/*, SharedPreferences prefs*/) {
+//        mPrefs = prefs;
 
         mDriver = new MidiDriver();
         mActiveNotes = new HashSet<>();
         mVolume = DEFAULT_VOLUME;
-        mPlugin = DronePreferences.getStoredPluginPref(prefs);
+        mPlugin = plugin;
     }
 
     /**
@@ -283,7 +278,7 @@ public class MidiDriverModelRefac implements MidiDriverInterface{
      * If any attributes have changed this method will use any new changes.
      */
     private void refreshPlayback() {
-        // End old notes.
+        // Stop old notes.
         for (Integer note : mActiveNotes) {
             stopNotePlayback(note);
         }

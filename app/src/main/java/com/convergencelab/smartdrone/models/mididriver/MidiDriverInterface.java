@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.Models.mididriver;
+package com.convergencelab.smartdrone.models.mididriver;
 
 public interface MidiDriverInterface {
 

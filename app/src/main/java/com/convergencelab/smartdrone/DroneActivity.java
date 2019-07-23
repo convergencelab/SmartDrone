@@ -50,7 +50,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.convergencelab.smartdrone.Models.DroneModel;
+import com.convergencelab.smartdrone.models.DroneModel;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.MusicTheory;

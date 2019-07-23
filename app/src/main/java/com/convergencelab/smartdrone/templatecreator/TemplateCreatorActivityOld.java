@@ -10,8 +10,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.convergencelab.smartdrone.Constants;
-import com.convergencelab.smartdrone.Models.DroneSoundModel;
-import com.convergencelab.smartdrone.Models.MidiDriverModel;
+import com.convergencelab.smartdrone.models.DroneSoundModel;
+import com.convergencelab.smartdrone.models.MidiDriverModel;
 import com.convergencelab.smartdrone.R;
 import com.convergencelab.smartdrone.VoicingHelper;
 import com.example.keyfinder.KeyFinder;

@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.Models;
+package com.convergencelab.smartdrone.models;
 
 import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.KeyFinder;

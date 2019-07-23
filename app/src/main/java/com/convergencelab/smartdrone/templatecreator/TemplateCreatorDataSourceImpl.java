@@ -2,8 +2,8 @@ package com.convergencelab.smartdrone.templatecreator;
 
 import android.content.SharedPreferences;
 
-import com.convergencelab.smartdrone.Models.KeyFinderModel;
-import com.convergencelab.smartdrone.Models.MidiDriverModel;
+import com.convergencelab.smartdrone.models.KeyFinderModel;
+import com.convergencelab.smartdrone.models.MidiDriverModel;
 import com.convergencelab.smartdrone.Utility.DronePreferences;
 import com.convergencelab.smartdrone.VoicingHelper;
 import com.example.keyfinder.AbstractKey;

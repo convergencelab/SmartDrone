@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.Models;
+package com.convergencelab.smartdrone.models;
 
 import com.convergencelab.smartdrone.Constants;
 import com.convergencelab.smartdrone.DroneActivity;
