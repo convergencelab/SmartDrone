@@ -8,11 +8,16 @@ import com.example.keyfinder.Note;
 // Todo: Add key change listener in future.
 
 public class KeyFinderImpl implements KeyFinderInterface {
+
+    private final int mLenFilter;
+
     private KeyFinder mKeyFinder;
 
-    KeyFinderImpl(int parentScale) {
+    KeyFinderImpl(int parentScale, int lenFilter) {
         mKeyFinder = new KeyFinder();
+
         mKeyFinder.setParentKeyList(parentScale);
+        mLenFilter = lenFilter;
     }
 
     @Override
@@ -26,18 +31,8 @@ public class KeyFinderImpl implements KeyFinderInterface {
     }
 
     @Override
-    public void addNote(Note toAdd) {
-        mKeyFinder.addNoteToList(toAdd);
-    }
-
-    @Override
-    public void startNoteTimer(Note toStart) {
-        mKeyFinder.scheduleNoteRemoval(toStart);
-    }
-
-    @Override
-    public void cancelNoteTimer(Note toCancel) {
-        mKeyFinder.cancelNoteRemoval(toCancel);
+    public void handleNote(int noteIx) {
+        // Todo: this is where I left off
     }
 
     @Override
@@ -48,6 +43,11 @@ public class KeyFinderImpl implements KeyFinderInterface {
     @Override
     public void setKeyTimerLen(int timerLen) {
         mKeyFinder.setKeyTimerLength(timerLen);
+    }
+
+    @Override
+    public void setNoteLengthFilter(int millis) {
+
     }
 
     @Override

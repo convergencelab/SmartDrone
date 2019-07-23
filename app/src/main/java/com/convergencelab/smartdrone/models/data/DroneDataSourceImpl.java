@@ -7,17 +7,21 @@ import com.convergencelab.smartdrone.VoicingHelper;
 import com.example.keyfinder.VoicingTemplate;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class DroneDataSourceImpl implements DroneDataSource {
 
     private static final int STRINGS = 48;
     private static final int CHOIR = 52;
     private static final int BRASS = 61;
+    private final HashSet<String> nameSet;
 
     private SharedPreferences mPrefs;
 
     DroneDataSourceImpl(SharedPreferences prefs) {
         mPrefs = prefs;
+        nameSet = VoicingHelper
+                .getSetOfAllTemplateNames(DronePreferences.getAllTemplatePref(mPrefs));
     }
 
     // Not the best solution, but it works.
@@ -87,5 +91,10 @@ public class DroneDataSourceImpl implements DroneDataSource {
     @Override
     public int getActiveKeySensitivity() {
         return Integer.parseInt(DronePreferences.getActiveKeySensPref(mPrefs));
+    }
+
+    @Override
+    public boolean isDuplicateName(String name) {
+        return nameSet.contains(name);
     }
 }

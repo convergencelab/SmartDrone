@@ -10,15 +10,13 @@ public interface KeyFinderInterface {
 
     void clear();
 
-    void addNote(Note toAdd);
-
-    void startNoteTimer(Note toStart);
-
-    void cancelNoteTimer(Note toCancel);
+    void handleNote(int noteIx);
 
     AbstractKey getActiveKey();
 
     void setKeyTimerLen(int timerLen);
+
+    void setNoteLengthFilter(int millis);
 
     void setParentScale(int parentScale);
 

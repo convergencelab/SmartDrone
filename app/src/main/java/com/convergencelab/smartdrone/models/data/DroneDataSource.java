@@ -30,4 +30,6 @@ public interface DroneDataSource {
     int getNoteLengthFilter();
 
     int getActiveKeySensitivity();
+
+    boolean isDuplicateName(String name);
 }
