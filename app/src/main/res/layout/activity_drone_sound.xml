@@ -7,40 +7,38 @@
     tools:context="com.convergencelab.smartdrone.DroneSoundActivity">
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:paddingTop="16dp">
+
+    </LinearLayout>
+    
     <RelativeLayout
         android:id="@+id/parentscale_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="getNextParentScale"
         android:paddingStart="@dimen/sound_settings_lr"
         android:paddingLeft="@dimen/sound_settings_lr"
         android:paddingTop="16dp"
         android:paddingEnd="@dimen/sound_settings_lr"
         android:paddingRight="@dimen/sound_settings_lr"
         android:paddingBottom="16dp"
-        android:background="@drawable/textline_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="131dp">
 
-        <Button
-            android:id="@+id/user_parentscale_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="@android:color/transparent"
-            android:onClick="getNextParentScale"
-            android:text=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
         <TextView
             android:id="@+id/parentscale_text_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/parentscale_text_title"
-            android:textStyle="bold"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
@@ -57,36 +55,27 @@
         android:id="@+id/mode_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="getNextMode"
         android:paddingStart="@dimen/sound_settings_lr"
         android:paddingLeft="@dimen/sound_settings_lr"
         android:paddingTop="16dp"
         android:paddingEnd="@dimen/sound_settings_lr"
         android:paddingRight="@dimen/sound_settings_lr"
         android:paddingBottom="16dp"
-        android:background="@drawable/textline_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/parentscale_layout"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="131dp">
 
-        <Button
-            android:id="@+id/user_mode_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="@android:color/transparent"
-            android:onClick="getNextMode"
-            android:text=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
         <TextView
             android:id="@+id/mode_text_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/mode_text_title"
-            android:textStyle="bold"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
@@ -103,36 +92,27 @@
         android:id="@+id/user_plugin_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:onClick="getNextPlugin"
         android:paddingStart="@dimen/sound_settings_lr"
         android:paddingLeft="@dimen/sound_settings_lr"
         android:paddingTop="16dp"
         android:paddingEnd="@dimen/sound_settings_lr"
         android:paddingRight="@dimen/sound_settings_lr"
         android:paddingBottom="16dp"
-        android:background="@drawable/textline_bottom"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/mode_layout"
         tools:layout_editor_absoluteX="8dp"
         tools:layout_editor_absoluteY="131dp">
 
-        <Button
-            android:id="@+id/user_plugin_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:background="@android:color/transparent"
-            android:onClick="getNextPlugin"
-            android:text=""
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
-
         <TextView
             android:id="@+id/user_plugin_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/user_plugin_title"
-            android:textStyle="bold"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
@@ -165,18 +145,17 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="@string/user_voicing_label"
-            android:textStyle="bold"
             android:textColor="@android:color/black"
             android:textSize="18sp" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/new_voicing"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:onClick="openVoicingCreator"/>
+            android:layout_centerVertical="true"
+            android:onClick="openVoicingCreator"
+            android:text="@string/new_voicing" />
 
 
     </RelativeLayout>
@@ -191,10 +170,10 @@
         android:paddingEnd="@dimen/sound_settings_lr"
         android:paddingRight="@dimen/sound_settings_lr"
         android:paddingBottom="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_voicing_layout"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toBottomOf="@id/user_voicing_layout">
 
         <ScrollView
             android:id="@+id/user_voicing_scroll"

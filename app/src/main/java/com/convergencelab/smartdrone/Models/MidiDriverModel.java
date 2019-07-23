@@ -163,7 +163,6 @@ public class MidiDriverModel {
         for (int i = 0; i < toStop.numVoices(); i++) {
             voiceIxs[i] = toStop.getVoice(i).getRawIx();
         }
-//        int[] voiceIxs = toStop.getVoiceIxs();
         sendMidiChord(Constants.STOP_NOTE, voiceIxs, Constants.VOLUME_OFF); //todo new sendmidichord method
     }
 
@@ -177,7 +176,6 @@ public class MidiDriverModel {
         for (int i = 0; i < toStart.numVoices(); i++) {
             voiceIxs[i] = toStart.getVoice(i).getRawIx(); // todo: Debug: changed from getIx to rawIx
         }
-//        int[] voiceIxs = toStart.getVoiceIxs();
         sendMidiChord(Constants.START_NOTE, voiceIxs, mCurVolume); //todo new sendmidichordmethod
         curVoicing = toStart;
     }

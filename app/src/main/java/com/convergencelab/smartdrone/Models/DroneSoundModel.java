@@ -11,7 +11,6 @@ public class DroneSoundModel {
     private MidiDriverModel midiDriverModel;
     private KeyFinder keyFinder;
 
-//    private int pluginIx;
     private int modeIx;
     private boolean hasBassNote;
     private VoicingTemplate curTemplate;
@@ -77,9 +76,6 @@ public class DroneSoundModel {
         //todo comeback to this later
         Voicing voicing = generator.generateVoicing(curTemplate, keyFinder.getModeTemplate(modeIx), keyFinder.getKeyAtIndex(0)); // todo: default c major for now
         midiDriverModel.playVoicing(voicing);
-
-//        midiDriverModel.playVoicing(curTemplate.generateVoicing(
-//                keyFinder.getKeyAtIndex(0), modeIx, 4, hasBassNote)); // Default C major for now
     }
 
     public void setHasBassNote(boolean hasBassNote) {
