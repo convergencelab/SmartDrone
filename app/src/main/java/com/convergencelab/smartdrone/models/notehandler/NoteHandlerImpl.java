@@ -1,20 +1,27 @@
-package com.convergencelab.smartdrone.models.keyfinder;
+package com.convergencelab.smartdrone.models.notehandler;
 
 import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.ModeTemplate;
-import com.example.keyfinder.Note;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 // Todo: Add key change listener in future.
 
-public class KeyFinderImpl implements KeyFinderInterface {
+public class NoteHandlerImpl implements NoteHandler, Observer {
 
     private final int mLenFilter;
 
     private KeyFinder mKeyFinder;
 
-    KeyFinderImpl(int parentScale, int lenFilter) {
+    private List<KeyChangeListener> listeners;
+
+    NoteHandlerImpl(int parentScale, int lenFilter) {
         mKeyFinder = new KeyFinder();
+        listeners = new ArrayList<>();
 
         mKeyFinder.setParentKeyList(parentScale);
         mLenFilter = lenFilter;
@@ -58,5 +65,32 @@ public class KeyFinderImpl implements KeyFinderInterface {
     @Override
     public ModeTemplate getModeTemplate(int templateIx) {
         return mKeyFinder.getModeTemplate(templateIx);
+    }
+
+    @Override
+    public void addKeyChangeListener(KeyChangeListener toAdd) {
+        // Todo: Throw exception
+        if (listeners.contains(toAdd)) {
+            // Todo: Throw exception
+            return;
+        }
+        listeners.add(toAdd);
+    }
+
+    @Override
+    public void removeKeyChangeListener(KeyChangeListener toRemove) {
+        if (!listeners.contains(toRemove)) {
+            // Todo: Throw exception
+            return;
+        }
+        listeners.remove(toRemove);
+    }
+
+    @Override
+    public void update(Observable o, Object arg) {
+        KeyFinder kf = (KeyFinder) o;
+        AbstractKey activeKey = kf.getActiveKey();
+
+        // Do whatever
     }
 }

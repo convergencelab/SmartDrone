@@ -1,10 +1,11 @@
-package com.convergencelab.smartdrone.models.keyfinder;
+package com.convergencelab.smartdrone.models.notehandler;
 
 import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.ModeTemplate;
-import com.example.keyfinder.Note;
 
-public interface KeyFinderInterface {
+import java.util.Observer;
+
+public interface NoteHandler {
 
     void start();
 
@@ -21,5 +22,9 @@ public interface KeyFinderInterface {
     void setParentScale(int parentScale);
 
     ModeTemplate getModeTemplate(int templateIx);
+
+    void addKeyChangeListener(KeyChangeListener toAdd);
+
+    void removeKeyChangeListener(KeyChangeListener toRemove);
 
 }

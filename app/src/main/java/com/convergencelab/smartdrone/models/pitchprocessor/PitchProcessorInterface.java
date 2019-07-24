@@ -7,8 +7,8 @@ public interface PitchProcessorInterface {
     
     void stop();
     
-    void addObserver(PitchProcessorObserver observer);
+    void addPitchListener(PitchProcessorObserver observer);
 
-    void removeObserver(PitchProcessorObserver observer);
+    void removePitchListener(PitchProcessorObserver observer);
 
 }

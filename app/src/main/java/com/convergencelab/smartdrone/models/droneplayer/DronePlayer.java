@@ -1,6 +1,6 @@
-package com.convergencelab.smartdrone.models.mididriver;
+package com.convergencelab.smartdrone.models.droneplayer;
 
-public interface MidiDriverInterface {
+public interface DronePlayer {
 
     void start();
 

@@ -1,25 +1,29 @@
 package com.convergencelab.smartdrone.drone;
 
 import com.convergencelab.smartdrone.models.data.DroneDataSource;
-import com.convergencelab.smartdrone.models.keyfinder.KeyFinderInterface;
-import com.convergencelab.smartdrone.models.mididriver.MidiDriverInterface;
+import com.convergencelab.smartdrone.models.notehandler.KeyChangeListener;
+import com.convergencelab.smartdrone.models.notehandler.NoteHandler;
+import com.convergencelab.smartdrone.models.droneplayer.DronePlayer;
 import com.convergencelab.smartdrone.models.pitchprocessor.PitchProcessorInterface;
 import com.convergencelab.smartdrone.models.pitchprocessor.PitchProcessorObserver;
-import com.convergencelab.smartdrone.models.voicing.VoicingInterface;
+import com.convergencelab.smartdrone.models.chords.Chords;
+import com.example.keyfinder.AbstractKey;
 
-public class DronePresenter implements DroneContract.Presenter, PitchProcessorObserver {
+public class DronePresenter implements DroneContract.Presenter, PitchProcessorObserver, KeyChangeListener {
+
+    // Models
 
     private DroneDataSource mDataSource;
 
     private DroneContract.View mDroneView;
 
-    private KeyFinderInterface mKeyFinder;
+    private NoteHandler mNoteHandler;
 
-    private MidiDriverInterface mDriver;
+    private DronePlayer mPlayer;
 
     private PitchProcessorInterface mProcessor;
 
-    private VoicingInterface mVoicing;
+    private Chords mChords;
 
     /**
      * Constructor.
@@ -32,26 +36,28 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
      */
     DronePresenter(DroneDataSource dataSource,
                    DroneContract.View droneView,
-                   KeyFinderInterface keyFinder,
-                   MidiDriverInterface driver,
+                   NoteHandler keyFinder,
+                   DronePlayer driver,
                    PitchProcessorInterface processor,
-                   VoicingInterface voicing) {
+                   Chords voicing) {
         mDataSource = dataSource;
         mDroneView = droneView;
-        mKeyFinder = keyFinder;
-        mDriver = driver;
+        mNoteHandler = keyFinder;
+        mPlayer = driver;
         mProcessor = processor;
-        mVoicing = voicing;
+        mChords = voicing;
     }
 
     @Override
     public void start() {
-        mProcessor.addObserver(this);
+        mProcessor.addPitchListener(this);
     }
 
     @Override
     public void stop() {
-
+        mProcessor.stop();
+        mNoteHandler.clear();
+        mPlayer.stop();
     }
 
     @Override
@@ -70,6 +76,12 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
      */
     @Override
     public void handlePitchResult(int pitch) {
-        mKeyFinder.handleNote(pitch);
+        mNoteHandler.handleNote(pitch);
+    }
+
+    @Override
+    public void handleKeyChange(AbstractKey activeKey) {
+        // view -> show active key
+        mChords.makeVoicing()
     }
 }

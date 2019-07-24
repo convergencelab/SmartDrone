@@ -1,11 +1,11 @@
-package com.convergencelab.smartdrone.models.mididriver;
+package com.convergencelab.smartdrone.models.droneplayer;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class MidiDriverModelRefac implements MidiDriverInterface{
+public class DronePlayerImpl implements DronePlayer {
     /**
      * Start note playback.
      */
@@ -60,7 +60,7 @@ public class MidiDriverModelRefac implements MidiDriverInterface{
     /**
      * Constructor.
      */
-    MidiDriverModelRefac(int plugin/*, SharedPreferences prefs*/) {
+    DronePlayerImpl(int plugin/*, SharedPreferences prefs*/) {
 //        mPrefs = prefs;
 
         mDriver = new MidiDriver();

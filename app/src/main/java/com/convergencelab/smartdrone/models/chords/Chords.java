@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.models.voicing;
+package com.convergencelab.smartdrone.models.chords;
 
 import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.ModeTemplate;
@@ -7,7 +7,7 @@ import com.example.keyfinder.Tone;
 import com.example.keyfinder.Voicing;
 import com.example.keyfinder.VoicingTemplate;
 
-public interface VoicingInterface {
+public interface Chords {
 
     Voicing makeVoicing(VoicingTemplate voicingTemplate,
                         ModeTemplate modeTemplate,

@@ -1,4 +1,9 @@
 package com.convergencelab.smartdrone.drone;
 
-public class DroneFragment {
+import com.example.keyfinder.KeyFinder;
+
+import java.util.Observable;
+import java.util.Observer;
+
+public class DroneFragment  {
 }

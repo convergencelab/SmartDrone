@@ -107,7 +107,7 @@ public class PitchProcessorModelRefac implements PitchProcessorInterface {
      * @param observer to be added.
      */
     @Override
-    public void addObserver(PitchProcessorObserver observer) {
+    public void addPitchListener(PitchProcessorObserver observer) {
         observers.add(observer);
     }
 
@@ -116,7 +116,7 @@ public class PitchProcessorModelRefac implements PitchProcessorInterface {
      * @param observer to be removed.
      */
     @Override
-    public void removeObserver(PitchProcessorObserver observer) {
+    public void removePitchListener(PitchProcessorObserver observer) {
         observers.remove(observer);
     }
 

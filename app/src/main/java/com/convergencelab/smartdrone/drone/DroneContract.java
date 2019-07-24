@@ -11,7 +11,7 @@ public interface DroneContract {
 
         void showNoteInactive(int toShow);
 
-        void showActiveKey(String toShow);
+        void showActiveKey(String key, String mode);
 
         void showSoundActivity();
 

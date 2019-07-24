@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.models.voicing;
+package com.convergencelab.smartdrone.models.chords;
 
 import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.HarmonyGenerator;
@@ -8,10 +8,12 @@ import com.example.keyfinder.Tone;
 import com.example.keyfinder.Voicing;
 import com.example.keyfinder.VoicingTemplate;
 
-public class VoicingImpl implements VoicingInterface {
+public class ChordsImpl implements Chords {
     private HarmonyGenerator mGenerator;
 
-    VoicingImpl() {
+
+
+    ChordsImpl() {
         mGenerator = new HarmonyGenerator();
     }
 
