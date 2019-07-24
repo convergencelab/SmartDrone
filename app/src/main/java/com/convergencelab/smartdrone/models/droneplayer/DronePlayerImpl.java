@@ -52,17 +52,10 @@ public class DronePlayerImpl implements DronePlayer {
      */
     private int mPlugin;
 
-//    /**
-//     * Shared preferences containing midi mDriver data.
-//     */
-//    private SharedPreferences mPrefs;
-
     /**
      * Constructor.
      */
-    DronePlayerImpl(int plugin/*, SharedPreferences prefs*/) {
-//        mPrefs = prefs;
-
+    public DronePlayerImpl(int plugin) {
         mDriver = new MidiDriver();
         mActiveNotes = new HashSet<>();
         mVolume = DEFAULT_VOLUME;

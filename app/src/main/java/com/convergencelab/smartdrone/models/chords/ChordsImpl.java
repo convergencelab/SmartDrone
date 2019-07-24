@@ -15,7 +15,7 @@ public class ChordsImpl implements Chords {
     private VoicingTemplate mVoicingTemplate;
     private Tone mTone;
 
-    ChordsImpl() {
+    public ChordsImpl() {
         mGenerator = new HarmonyGenerator();
     }
 

@@ -4,8 +4,8 @@ import com.convergencelab.smartdrone.models.data.DroneDataSource;
 import com.convergencelab.smartdrone.models.notehandler.KeyChangeListener;
 import com.convergencelab.smartdrone.models.notehandler.NoteHandler;
 import com.convergencelab.smartdrone.models.droneplayer.DronePlayer;
-import com.convergencelab.smartdrone.models.pitchprocessor.PitchProcessorInterface;
-import com.convergencelab.smartdrone.models.pitchprocessor.PitchProcessorObserver;
+import com.convergencelab.smartdrone.models.signalprocessor.SignalProcessor;
+import com.convergencelab.smartdrone.models.signalprocessor.PitchProcessorObserver;
 import com.convergencelab.smartdrone.models.chords.Chords;
 import com.convergencelab.smartdrone.utility.Utility;
 import com.example.keyfinder.AbstractKey;
@@ -23,7 +23,7 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
     private DronePlayer mPlayer;
 
-    private PitchProcessorInterface mProcessor;
+    private SignalProcessor mProcessor;
 
     private Chords mChords;
 
@@ -31,23 +31,23 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
      * Constructor.
      * @param dataSource persistent data.
      * @param droneView view to interact with.
-     * @param keyFinder key finder for determining key.
-     * @param driver midi driver for midi synthesis.
-     * @param processor processor for digital signal processing.
-     * @param voicing voicing for generating harmony.
+     * @param noteHandler object for determining key.
+     * @param player object for midi synthesis.
+     * @param processor object for digital signal processing.
+     * @param chords object for generating harmony.
      */
     DronePresenter(DroneDataSource dataSource,
                    DroneContract.View droneView,
-                   NoteHandler keyFinder,
-                   DronePlayer driver,
-                   PitchProcessorInterface processor,
-                   Chords voicing) {
+                   NoteHandler noteHandler,
+                   DronePlayer player,
+                   SignalProcessor processor,
+                   Chords chords) {
         mDataSource = dataSource;
         mDroneView = droneView;
-        mNoteHandler = keyFinder;
-        mPlayer = driver;
+        mNoteHandler = noteHandler;
+        mPlayer = player;
         mProcessor = processor;
-        mChords = voicing;
+        mChords = chords;
     }
 
     @Override
@@ -91,13 +91,13 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
     @Override
     public void handleKeyChange(AbstractKey activeKey) {
-        // view -> show active key
         mChords.setKey(activeKey);
         Voicing curVoicing = mChords.makeVoicing();
 
         int[] toPlay = Utility.voicingToIntArray(curVoicing);
         mPlayer.play(toPlay);
 
-        mDroneView.showActiveKey(activeKey.getName(), mNoteHandler.getModeTemplate(mDataSource.getParentScale()).getName());
+        mDroneView.showActiveKey(activeKey.getName(),
+                mNoteHandler.getModeTemplate(mDataSource.getParentScale()).getName());
     }
 }

@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.models.pitchprocessor;
+package com.convergencelab.smartdrone.models.signalprocessor;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -9,13 +9,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import be.tarsos.dsp.AudioDispatcher;
-import be.tarsos.dsp.AudioProcessor;
 import be.tarsos.dsp.io.android.AudioDispatcherFactory;
 import be.tarsos.dsp.pitch.PitchDetectionHandler;
 import be.tarsos.dsp.pitch.PitchProcessor;
 import be.tarsos.dsp.util.PitchConverter;
 
-public class PitchProcessorModelRefac implements PitchProcessorInterface {
+public class SignalProcessorImpl implements SignalProcessor {
     /**
      * Audio dispatcher connected to microphone.
      */
@@ -51,7 +50,7 @@ public class PitchProcessorModelRefac implements PitchProcessorInterface {
      * Constructor.
      * @param activity activity needed to run on UI thread.
      */
-    PitchProcessorModelRefac(AppCompatActivity activity) {
+    public SignalProcessorImpl(AppCompatActivity activity) {
         mActivity = activity;
 
         observers = new ArrayList<>();
@@ -74,7 +73,7 @@ public class PitchProcessorModelRefac implements PitchProcessorInterface {
                 }
             });
         };
-        AudioProcessor pitchProcessor = new PitchProcessor(
+        be.tarsos.dsp.AudioProcessor pitchProcessor = new PitchProcessor(
                 PitchProcessor.PitchEstimationAlgorithm.FFT_YIN,
                 SAMPLE_RATE,
                 AUDIO_BUFFER_SIZE,

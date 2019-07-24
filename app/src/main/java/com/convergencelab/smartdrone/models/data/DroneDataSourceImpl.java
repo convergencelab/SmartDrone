@@ -22,7 +22,7 @@ public class DroneDataSourceImpl implements DroneDataSource {
     private Integer mCurModeIx = null;
     private Integer mCurKeyIx = null;
 
-    DroneDataSourceImpl(SharedPreferences prefs) {
+    public DroneDataSourceImpl(SharedPreferences prefs) {
         mPrefs = prefs;
         nameSet = VoicingHelper
                 .getSetOfAllTemplateNames(DronePreferences.getAllTemplatePref(mPrefs));

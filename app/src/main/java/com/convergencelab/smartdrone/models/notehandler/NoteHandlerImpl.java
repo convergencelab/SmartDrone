@@ -43,7 +43,7 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
      */
     private boolean noteTimerIsQueued;
 
-    NoteHandlerImpl(int parentScale, int lenFilter) {
+    public NoteHandlerImpl(int parentScale, int lenFilter) {
         mKeyFinder = new KeyFinder();
         listeners = new ArrayList<>();
         noteTimerIsQueued = false;

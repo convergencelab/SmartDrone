@@ -1,7 +1,7 @@
-package com.convergencelab.smartdrone.models.pitchprocessor;
+package com.convergencelab.smartdrone.models.signalprocessor;
 
 
-public interface PitchProcessorInterface {
+public interface SignalProcessor {
     
     void start();
     
