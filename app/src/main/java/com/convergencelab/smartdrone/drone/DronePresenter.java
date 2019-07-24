@@ -13,6 +13,10 @@ import com.example.keyfinder.Voicing;
 
 public class DronePresenter implements DroneContract.Presenter, PitchProcessorObserver, KeyChangeListener {
 
+    enum State {
+        ON, OFF
+    }
+
     // Models
 
     private DroneContract.View mDroneView;
@@ -26,6 +30,8 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
     private SignalProcessor mProcessor;
 
     private Chords mChords;
+
+    private State mState;
 
     /**
      * Constructor.
@@ -48,6 +54,8 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
         mPlayer = player;
         mProcessor = processor;
         mChords = chords;
+
+        mDroneView.setPresenter(this);
     }
 
     @Override
@@ -59,19 +67,28 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
         mChords.setVoicingTemplate(mDataSource.getTemplate());
         mChords.setModeTemplate(mNoteHandler.getModeTemplate(mDataSource.getModeIx()));
+
+        mState = State.OFF;
     }
 
     @Override
-    public void activateDrone() {
-        mPlayer.start();
-        mNoteHandler.start();
+    public void toggleDroneState() {
+        if (mState == State.OFF) {
+            activateDrone();
+            mState = State.ON;
+        }
+        else {
+            deactivateDrone();
+            mState = State.OFF;
+        }
     }
 
     @Override
-    public void stop() {
-        mProcessor.stop();
-        mNoteHandler.clear();
-        mPlayer.stop();
+    public void handleActivityChange() {
+        if (mState == State.ON) {
+            deactivateDrone();
+            mState = State.OFF;
+        }
     }
 
     @Override
@@ -86,6 +103,7 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
     @Override
     public void handlePitchResult(int pitch) {
+        mDroneView.showNoteActive(pitch);
         mNoteHandler.handleNote(pitch);
     }
 
@@ -99,5 +117,17 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
         mDroneView.showActiveKey(activeKey.getName(),
                 mNoteHandler.getModeTemplate(mDataSource.getParentScale()).getName());
+    }
+
+    private void activateDrone() {
+        mPlayer.start();
+        mNoteHandler.start();
+    }
+
+    private void deactivateDrone() {
+        mProcessor.stop();
+        mNoteHandler.clear();
+        mPlayer.stop();
+        mDroneView.showNullPitch();
     }
 }

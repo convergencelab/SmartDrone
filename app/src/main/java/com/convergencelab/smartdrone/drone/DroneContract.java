@@ -9,7 +9,7 @@ public interface DroneContract {
 
         void showNoteActive(int toShow);
 
-        void showNoteInactive(int toShow);
+        void showNullPitch();
 
         void showActiveKey(String key, String mode);
 
@@ -22,9 +22,11 @@ public interface DroneContract {
     /* Not much here since user interaction mostly comes from microphone input */
     interface Presenter extends BasePresenter {
 
-        void activateDrone();
+//        void activateDrone();
 
-        void stop();
+        void toggleDroneState();
+
+        void handleActivityChange();
 
         void setActiveKey(int toSet);
 

@@ -237,7 +237,7 @@ public class DronePlayerImpl implements DronePlayer {
 
     /**
      * Stops playback for notes.
-     * @param toStop note to stop.
+     * @param toStop note to handleActivityChange.
      */
     private void stopNotePlayback(int toStop) {
         sendMessage(STOP, toStop, VOLUME_OFF);
@@ -246,7 +246,7 @@ public class DronePlayerImpl implements DronePlayer {
     /**
      * Method for playing or stopping notes.
      * Writes message to midi driver.
-     * @param event start or stop.
+     * @param event start or handleActivityChange.
      * @param toSend note to send.
      * @param volume volume of message (is 0 for stopping notes).
      */

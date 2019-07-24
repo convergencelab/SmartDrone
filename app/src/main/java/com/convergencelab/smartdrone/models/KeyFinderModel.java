@@ -71,7 +71,7 @@ public class KeyFinderModel {
 
     /**
      * Cancels timer for note.
-     * Will stop the scheduled task of removing note from active note list.
+     * Will handleActivityChange the scheduled task of removing note from active note list.
      * @param       toCancel Note; note to cancel.
      */
     void cancelNoteTimerRefac(Note toCancel) {

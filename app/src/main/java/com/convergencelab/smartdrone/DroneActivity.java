@@ -110,7 +110,7 @@ public class DroneActivity extends AppCompatActivity {
 
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
-        pianoImage = findViewById(R.id.image_piano);
+        pianoImage = findViewById(R.id.piano_img);
     }
 
     @Override

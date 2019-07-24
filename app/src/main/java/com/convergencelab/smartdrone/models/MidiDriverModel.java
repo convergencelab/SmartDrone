@@ -175,7 +175,7 @@ public class MidiDriverModel {
 
     /**
      * Stops voicing that
-     * @param       toStop Voicing; voicing to stop playing.
+     * @param       toStop Voicing; voicing to handleActivityChange playing.
      */
     public void stopVoicing(Voicing toStop) {
         int[] voiceIxs = new int[toStop.numVoices()];

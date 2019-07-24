@@ -60,7 +60,7 @@ public class SignalProcessorImpl implements SignalProcessor {
     /**
      * Starts processing pitch from microphone.
      * Thread contains a runnable that will notify observers of pitch result.
-     * Call method stop() to end pitch processing.
+     * Call method handleActivityChange() to end pitch processing.
      */
     @Override
     public void start() {
