@@ -3,25 +3,50 @@ package com.convergencelab.smartdrone.models.notehandler;
 import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.ModeTemplate;
+import com.example.keyfinder.Note;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
-// Todo: Add key change listener in future.
-
 public class NoteHandlerImpl implements NoteHandler, Observer {
 
-    private final int mLenFilter;
+    private int mLenFilter;
 
     private KeyFinder mKeyFinder;
 
     private List<KeyChangeListener> listeners;
 
+    /**
+     * Used to stamp time of note heard.
+     */
+    private long mTimeHeard;
+
+    /**
+     * Last heard note.
+     */
+    private Note mLastHeard;
+
+    /**
+     * Last added note.
+     */
+    private Note mLastAdded;
+
+    /**
+     * Note ready to have timer started.
+     */
+    private Note mToStart;
+
+    /**
+     * Flag if a note timer is ready to be started.
+     */
+    private boolean noteTimerIsQueued;
+
     NoteHandlerImpl(int parentScale, int lenFilter) {
         mKeyFinder = new KeyFinder();
         listeners = new ArrayList<>();
+        noteTimerIsQueued = false;
 
         mKeyFinder.setParentKeyList(parentScale);
         mLenFilter = lenFilter;
@@ -39,7 +64,33 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
 
     @Override
     public void handleNote(int noteIx) {
-        // Todo: this is where I left off
+        Note curHeard;
+        // No note heard
+        if (noteIx == -1) {
+            curHeard = null;
+        }
+        // Note heard
+        else {
+            curHeard = mKeyFinder.getNote(noteIx);
+        }
+
+        // Different note heard (can be null)
+        if (noteChangeDetected(curHeard)) {
+            mLastHeard = curHeard;
+            mTimeHeard = System.currentTimeMillis();
+            mLastAdded = null;
+            if (noteTimerIsQueued) {
+                mKeyFinder.scheduleNoteRemoval(mToStart);
+                noteTimerIsQueued = false;
+            }
+        }
+        // Same note heard
+        else if (noteCanBeAdded(curHeard)) {
+            mLastAdded = curHeard;
+            mKeyFinder.addNoteToList(curHeard);
+            queueNoteTimer(curHeard);
+            mKeyFinder.cancelNoteRemoval(curHeard);
+        }
     }
 
     @Override
@@ -54,7 +105,7 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
 
     @Override
     public void setNoteLengthFilter(int millis) {
-
+        mLenFilter = millis;
     }
 
     @Override
@@ -91,6 +142,47 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
         KeyFinder kf = (KeyFinder) o;
         AbstractKey activeKey = kf.getActiveKey();
 
-        // Do whatever
+        for (KeyChangeListener listener : listeners) {
+            listener.handleKeyChange(activeKey);
+        }
+    }
+
+    /**
+     * Check if current note is not the same as last heard note.
+     * @param       curNote Note; current heard note.
+     * @return      boolean; true if curNote is different than lastHeardNote.
+     */
+    private boolean noteChangeDetected(Note curNote) {
+        return curNote != mLastHeard;
+    }
+
+    /**
+     * Three conditions in order to return true.
+     * 1) Note must be detected; not NULL_NOTE.
+     * 2) Note was not the last note to be added to the list.
+     * 3) Note note must be heard for the required amount of time.
+     *
+     * @param       toCheck Note; note to check.
+     * @return      boolean; true if conditions met.
+     */
+    private boolean noteCanBeAdded(Note toCheck) {
+        return toCheck != null && toCheck != mLastAdded && noteFilterLengthMet();
+    }
+
+    /**
+     * Check if the note filter length has been reached.
+     * @return      boolean; true if note has been heard as long as the filter length.
+     */
+    private boolean noteFilterLengthMet() {
+        return (System.currentTimeMillis() - mTimeHeard) >= mLenFilter;
+    }
+
+    /**
+     * Flags timer for note is ready to be started.
+     * @param       toQueue Note; note to queue.
+     */
+    private void queueNoteTimer(Note toQueue) {
+        noteTimerIsQueued = true;
+        mToStart = toQueue;
     }
 }

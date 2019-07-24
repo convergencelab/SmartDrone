@@ -17,4 +17,16 @@ public interface Chords {
                   ModeTemplate modeTemplate,
                   AbstractKey key);
 
+    Voicing makeVoicing();
+
+    Note makeNote();
+
+    void setTone(Tone tone);
+
+    void setVoicingTemplate(VoicingTemplate voicingTemplate);
+
+    void setModeTemplate(ModeTemplate modeTemplate);
+
+    void setKey(AbstractKey key);
+
 }

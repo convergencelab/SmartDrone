@@ -18,6 +18,10 @@ public class DroneDataSourceImpl implements DroneDataSource {
 
     private SharedPreferences mPrefs;
 
+    private VoicingTemplate mCurTemplate = null;
+    private Integer mCurModeIx = null;
+    private Integer mCurKeyIx = null;
+
     DroneDataSourceImpl(SharedPreferences prefs) {
         mPrefs = prefs;
         nameSet = VoicingHelper

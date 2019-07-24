@@ -22,6 +22,8 @@ public interface DroneContract {
     /* Not much here since user interaction mostly comes from microphone input */
     interface Presenter extends BasePresenter {
 
+        void activateDrone();
+
         void stop();
 
         void setActiveKey(int toSet);

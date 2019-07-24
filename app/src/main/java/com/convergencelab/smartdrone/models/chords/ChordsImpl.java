@@ -10,8 +10,10 @@ import com.example.keyfinder.VoicingTemplate;
 
 public class ChordsImpl implements Chords {
     private HarmonyGenerator mGenerator;
-
-
+    private AbstractKey mKey;
+    private ModeTemplate mModeTemplate;
+    private VoicingTemplate mVoicingTemplate;
+    private Tone mTone;
 
     ChordsImpl() {
         mGenerator = new HarmonyGenerator();
@@ -29,5 +31,35 @@ public class ChordsImpl implements Chords {
                          ModeTemplate modeTemplate,
                          AbstractKey key) {
         return mGenerator.generateNote(tone, modeTemplate, key);
+    }
+
+    @Override
+    public Voicing makeVoicing() {
+        return mGenerator.generateVoicing(mVoicingTemplate, mModeTemplate, mKey);
+    }
+
+    @Override
+    public Note makeNote() {
+        return mGenerator.generateNote(mTone, mModeTemplate, mKey);
+    }
+
+    @Override
+    public void setTone(Tone tone) {
+        mTone = tone;
+    }
+
+    @Override
+    public void setVoicingTemplate(VoicingTemplate voicingTemplate) {
+        mVoicingTemplate = voicingTemplate;
+    }
+
+    @Override
+    public void setModeTemplate(ModeTemplate modeTemplate) {
+        mModeTemplate = modeTemplate;
+    }
+
+    @Override
+    public void setKey(AbstractKey key) {
+        mKey = key;
     }
 }

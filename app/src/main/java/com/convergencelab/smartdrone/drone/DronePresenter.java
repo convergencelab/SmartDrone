@@ -13,9 +13,9 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
     // Models
 
-    private DroneDataSource mDataSource;
-
     private DroneContract.View mDroneView;
+
+    private DroneDataSource mDataSource;
 
     private NoteHandler mNoteHandler;
 
@@ -51,6 +51,18 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
     @Override
     public void start() {
         mProcessor.addPitchListener(this);
+        mNoteHandler.addKeyChangeListener(this);
+
+        // Put init model stuff here
+
+        mChords.setVoicingTemplate(mDataSource.getTemplate());
+        mChords.setModeTemplate(mNoteHandler.getModeTemplate(mDataSource.getModeIx()));
+    }
+
+    @Override
+    public void activateDrone() {
+        mPlayer.start();
+        mNoteHandler.start();
     }
 
     @Override
@@ -70,10 +82,6 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
         // Todo: Future implementation. (active key button touch)
     }
 
-    /**
-     * Meaty function.
-     * @param pitch pitch to be handled.
-     */
     @Override
     public void handlePitchResult(int pitch) {
         mNoteHandler.handleNote(pitch);
@@ -82,6 +90,6 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
     @Override
     public void handleKeyChange(AbstractKey activeKey) {
         // view -> show active key
-        mChords.makeVoicing()
+//        mChords.makeVoicing()
     }
 }
