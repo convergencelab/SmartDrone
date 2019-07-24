@@ -7,7 +7,9 @@ import com.convergencelab.smartdrone.models.droneplayer.DronePlayer;
 import com.convergencelab.smartdrone.models.pitchprocessor.PitchProcessorInterface;
 import com.convergencelab.smartdrone.models.pitchprocessor.PitchProcessorObserver;
 import com.convergencelab.smartdrone.models.chords.Chords;
+import com.convergencelab.smartdrone.utility.Utility;
 import com.example.keyfinder.AbstractKey;
+import com.example.keyfinder.Voicing;
 
 public class DronePresenter implements DroneContract.Presenter, PitchProcessorObserver, KeyChangeListener {
 
@@ -90,6 +92,12 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
     @Override
     public void handleKeyChange(AbstractKey activeKey) {
         // view -> show active key
-//        mChords.makeVoicing()
+        mChords.setKey(activeKey);
+        Voicing curVoicing = mChords.makeVoicing();
+
+        int[] toPlay = Utility.voicingToIntArray(curVoicing);
+        mPlayer.play(toPlay);
+
+        mDroneView.showActiveKey(activeKey.getName(), mNoteHandler.getModeTemplate(mDataSource.getParentScale()).getName());
     }
 }
