@@ -26,7 +26,7 @@ public interface DroneContract {
 
         void toggleDroneState();
 
-        void handleActivityChange();
+        void stop();
 
         void setActiveKey(int toSet);
 

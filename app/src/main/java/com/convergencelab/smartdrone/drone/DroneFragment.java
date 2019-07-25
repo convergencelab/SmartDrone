@@ -20,7 +20,6 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.convergencelab.smartdrone.Constants;
-import com.convergencelab.smartdrone.DroneActivity;
 import com.convergencelab.smartdrone.DroneSettingsActivity;
 import com.convergencelab.smartdrone.DroneSoundActivity;
 import com.convergencelab.smartdrone.R;
@@ -67,7 +66,11 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        mRoot = inflater.inflate(R.layout.template_creator_frag, container, false);
+        mRoot = inflater.inflate(R.layout.drone_frag, container, false);
+
+        // Setup Piano Image map
+        mPianoImageName = new HashMap<>();
+        inflatePianoMap();
 
         if (ContextCompat.checkSelfPermission(mRoot.getContext(),
                 Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
@@ -101,12 +104,31 @@ public class DroneFragment extends Fragment implements DroneContract.View {
         });
 
         // Drone sound settings
-        mRoot.findViewById(R.id.drone_control_button).setOnClickListener(v -> showSoundActivity());
+        mRoot.findViewById(R.id.drone_sound_button).setOnClickListener(v -> {
+            mPresenter.stop();
+            showSoundActivity();
+
+        });
 
         // Drone preferences button
-        mRoot.findViewById(R.id.drone_preferences_button).setOnClickListener(v -> showPreferencesActivity());
+        mRoot.findViewById(R.id.drone_preferences_button).setOnClickListener(v -> {
+            mPresenter.stop();
+            showPreferencesActivity();
+        });
 
         return mRoot;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        mPresenter.start();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        mPresenter.stop();
     }
 
     @Override
@@ -115,8 +137,10 @@ public class DroneFragment extends Fragment implements DroneContract.View {
             mPianoImg.setImageResource(R.drawable.piano_null);
         }
         else {
-            int resID = getResources().getIdentifier(
-                    mPianoImageName.get(toShow), "drawable", mRoot.getContext().getPackageName());
+            String piano_text = mPianoImageName.get(toShow);
+            int resID = getResources().getIdentifier(piano_text,
+                    "drawable",
+                    mRoot.getContext().getPackageName());
             mPianoImg.setImageResource(resID);
         }
     }
@@ -133,14 +157,14 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showSoundActivity() {
-        mPresenter.handleActivityChange();
+        mPresenter.stop();
         Intent intent = new Intent(getContext(), DroneSoundActivity.class);
         startActivity(intent);
     }
 
     @Override
     public void showPreferencesActivity() {
-        mPresenter.handleActivityChange();
+        mPresenter.stop();
         Intent intent = new Intent(getContext(), DroneSettingsActivity.class);
         startActivity(intent);
     }

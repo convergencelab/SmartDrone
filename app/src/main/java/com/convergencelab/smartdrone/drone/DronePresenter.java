@@ -56,12 +56,13 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
         mChords = chords;
 
         mDroneView.setPresenter(this);
+        mProcessor.addPitchListener(this);
+        mNoteHandler.addKeyChangeListener(this);
     }
 
     @Override
     public void start() {
-        mProcessor.addPitchListener(this);
-        mNoteHandler.addKeyChangeListener(this);
+
 
         // Put init model stuff here
 
@@ -84,7 +85,7 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
     }
 
     @Override
-    public void handleActivityChange() {
+    public void stop() {
         if (mState == State.ON) {
             deactivateDrone();
             mState = State.OFF;
@@ -120,8 +121,9 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
     }
 
     private void activateDrone() {
-        mPlayer.start();
+        mProcessor.start();
         mNoteHandler.start();
+        mPlayer.start();
     }
 
     private void deactivateDrone() {

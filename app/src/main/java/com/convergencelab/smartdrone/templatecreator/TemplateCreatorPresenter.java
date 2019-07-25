@@ -103,7 +103,7 @@ public class TemplateCreatorPresenter implements TemplateCreatorContract.Present
 
     /**
      * Stops tone. Marks tone as inactive. Updates background on view.
-     * @param toStop tone to handleActivityChange.
+     * @param toStop tone to stop.
      */
     private void deactivateTone(Tone toStop) {
         mTemplateCreatorDataSource.stopTone(toStop);

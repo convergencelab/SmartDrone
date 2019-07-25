@@ -1,5 +1,6 @@
 package com.convergencelab.smartdrone.models.notehandler;
 
+import com.convergencelab.smartdrone.utility.DroneLog;
 import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.ModeTemplate;
@@ -49,6 +50,7 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
         noteTimerIsQueued = false;
 
         mKeyFinder.setParentKeyList(parentScale);
+        mKeyFinder.addObserver(this);
         mLenFilter = lenFilter;
     }
 
@@ -88,8 +90,11 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
         else if (noteCanBeAdded(curHeard)) {
             mLastAdded = curHeard;
             mKeyFinder.addNoteToList(curHeard);
+            DroneLog.noteList(mKeyFinder.getActiveNotesString()); // Debug statement
             queueNoteTimer(curHeard);
-            mKeyFinder.cancelNoteRemoval(curHeard);
+            if (mKeyFinder.noteIsScheduled(curHeard)) {
+                mKeyFinder.cancelNoteRemoval(curHeard);
+            }
         }
     }
 

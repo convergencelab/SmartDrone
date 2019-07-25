@@ -5,6 +5,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.convergencelab.smartdrone.drone.DroneActivity;
+
 import java.util.Timer;
 import java.util.TimerTask;
 
