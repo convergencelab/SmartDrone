@@ -1,5 +1,7 @@
 package com.convergencelab.smartdrone.drone;
 
+import android.util.Log;
+
 import com.convergencelab.smartdrone.models.data.DroneDataSource;
 import com.convergencelab.smartdrone.models.notehandler.KeyChangeListener;
 import com.convergencelab.smartdrone.models.notehandler.NoteHandler;
@@ -110,9 +112,13 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
     @Override
     public void handleKeyChange(AbstractKey activeKey) {
+        Log.d("debug", "handle key change 1: " + activeKey.getName());
         mChords.setKey(activeKey);
+
+        Log.d("debug", "handle key change 2: " + activeKey.getName());
         Voicing curVoicing = mChords.makeVoicing();
 
+        Log.d("debug", "handle key change 3: " + activeKey.getName());
         int[] toPlay = Utility.voicingToIntArray(curVoicing);
         mPlayer.play(toPlay);
 

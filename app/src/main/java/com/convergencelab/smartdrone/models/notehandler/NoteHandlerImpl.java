@@ -1,5 +1,7 @@
 package com.convergencelab.smartdrone.models.notehandler;
 
+import android.util.Log;
+
 import com.convergencelab.smartdrone.utility.DroneLog;
 import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.KeyFinder;
@@ -51,6 +53,7 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
 
         mKeyFinder.setParentKeyList(parentScale);
         mKeyFinder.addObserver(this);
+        Log.d("debug", "" + mKeyFinder.countObservers());
         mLenFilter = lenFilter;
     }
 
@@ -144,8 +147,9 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
 
     @Override
     public void update(Observable o, Object arg) {
-        KeyFinder kf = (KeyFinder) o;
-        AbstractKey activeKey = kf.getActiveKey();
+//        KeyFinder kf = (KeyFinder) o;
+//        AbstractKey activeKey = kf.getActiveKey();
+        AbstractKey activeKey = (AbstractKey) arg;
 
         for (KeyChangeListener listener : listeners) {
             listener.handleKeyChange(activeKey);
