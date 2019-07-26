@@ -5,6 +5,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -116,6 +117,8 @@ public class DroneFragment extends Fragment implements DroneContract.View {
             showPreferencesActivity();
         });
 
+        mActiveKeyButton = mRoot.findViewById(R.id.active_key_button);
+
         return mRoot;
     }
 
@@ -152,6 +155,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showActiveKey(String key, String mode) {
+        Log.d("debug", "i am how to basic");
         mActiveKeyButton.setText(key + '\n' + mode);
     }
 

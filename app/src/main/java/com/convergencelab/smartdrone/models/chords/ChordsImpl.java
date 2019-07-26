@@ -1,5 +1,7 @@
 package com.convergencelab.smartdrone.models.chords;
 
+import android.util.Log;
+
 import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.ModeTemplate;
@@ -35,6 +37,7 @@ public class ChordsImpl implements Chords {
 
     @Override
     public Voicing makeVoicing() {
+        Log.d("debug", "makeVoicing");
         return mGenerator.generateVoicing(mVoicingTemplate, mModeTemplate, mKey);
     }
 

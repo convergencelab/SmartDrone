@@ -3,6 +3,7 @@ package com.convergencelab.smartdrone.models.droneplayer;
 import org.billthefarmer.mididriver.MidiDriver;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Set;
 
 public class DronePlayerImpl implements DronePlayer {
@@ -288,7 +289,7 @@ public class DronePlayerImpl implements DronePlayer {
     private void endPlayback() {
         for (Integer note : mActiveNotes) {
             stopNotePlayback(note);
-            mActiveNotes.remove(note);
         }
+        mActiveNotes.clear();
     }
 }
