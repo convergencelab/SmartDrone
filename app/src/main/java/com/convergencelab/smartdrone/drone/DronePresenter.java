@@ -122,9 +122,11 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
         int[] toPlay = Utility.voicingToIntArray(curVoicing);
         mPlayer.play(toPlay);
 
+        int mode = mDataSource.getModeIx();
+
         mDroneView.showActiveKey(
-                activeKey.getName(),
-                mNoteHandler.getModeTemplate(mDataSource.getModeIx()).getName());
+                activeKey.getDegree(mode).getName(),
+                mNoteHandler.getModeTemplate(mode).getName());
     }
 
     private void activateDrone() {
