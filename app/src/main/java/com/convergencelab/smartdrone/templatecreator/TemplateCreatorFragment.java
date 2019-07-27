@@ -8,14 +8,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.convergencelab.smartdrone.R;
 import com.google.android.material.textfield.TextInputEditText;
-import com.google.android.material.textfield.TextInputLayout;
+
+import java.util.Objects;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -56,7 +56,6 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -79,7 +78,7 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
 
         // Make chord tones
         for (int columnCount = 0; columnCount < 4; columnCount++) {
-            String curLayoutStr = layoutTemp + Integer.toString(columnCount);
+            String curLayoutStr = layoutTemp + (columnCount);
             System.out.println(curLayoutStr);
             int resId = getResources().getIdentifier(curLayoutStr, "id", root.getContext().getPackageName());
             curLayout = root.findViewById(resId);
@@ -90,8 +89,8 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                 final LinearLayout toneItem = (LinearLayout) inflater.inflate(R.layout.tone_item_checkbox,
                         (ViewGroup) root, false);
 
-                // +1 to display base 1 indexing for user.
                 TextView checkBoxText = toneItem.findViewById(R.id.tone_text);
+                // +1 to display base 1 indexing for user.
                 checkBoxText.setText(Integer.toString(toneDegree + 1));
                 toneItem.setTag(toneDegree);
                 toneItem./*getChildAt(0).*/setOnClickListener(new View.OnClickListener() {
@@ -121,6 +120,7 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                     (ViewGroup) root, false);
 
             TextView tv = (TextView) toneItem.getChildAt(1);
+            // +1 to display base 1 indexing for user
             tv.setText("" + (toneDegree + 1));
 
             toneItem.setTag(toneDegree);
@@ -167,27 +167,27 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
 
     @Override
     public void showEmptyNameError() {
-        Toast.makeText(getActivity().getApplicationContext(), "empty name", Toast.LENGTH_SHORT).show();
+        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Please enter a name", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showIllegalCharacterError() {
-        Toast.makeText(getActivity().getApplicationContext(), "illegal character", Toast.LENGTH_SHORT).show();
+        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Name cannot contain { } or |", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showDuplicateNameError() {
-        Toast.makeText(getActivity().getApplicationContext(), "duplicate name", Toast.LENGTH_SHORT).show();
+        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Name already taken", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void showEmptyTemplateError() {
-        Toast.makeText(getActivity().getApplicationContext(), "empty template", Toast.LENGTH_SHORT).show();
+        Toast.makeText(Objects.requireNonNull(getActivity()).getApplicationContext(), "Must select at least one voice.", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void cancelTemplateCreator() {
-        getActivity().finish(); // Todo: make sure correct
+        Objects.requireNonNull(getActivity()).finish(); // Todo: make sure correct
     }
 
     @Override

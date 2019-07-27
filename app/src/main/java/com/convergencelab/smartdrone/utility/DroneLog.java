@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.Utility;
+package com.convergencelab.smartdrone.utility;
 
 import android.util.Log;
 

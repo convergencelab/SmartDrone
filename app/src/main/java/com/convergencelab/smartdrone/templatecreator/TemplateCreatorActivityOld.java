@@ -10,15 +10,15 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.convergencelab.smartdrone.Constants;
-import com.convergencelab.smartdrone.Models.DroneSoundModel;
-import com.convergencelab.smartdrone.Models.MidiDriverModel;
+import com.convergencelab.smartdrone.models.DroneSoundModel;
+import com.convergencelab.smartdrone.models.MidiDriverModel;
 import com.convergencelab.smartdrone.R;
 import com.convergencelab.smartdrone.VoicingHelper;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.ModeTemplate;
 import com.example.keyfinder.ModeTemplateCollection;
 import com.example.keyfinder.MusicTheory;
-import com.convergencelab.smartdrone.Utility.DronePreferences;
+import com.convergencelab.smartdrone.utility.DronePreferences;
 
 import java.util.HashSet;
 
@@ -61,7 +61,7 @@ public class TemplateCreatorActivityOld extends AppCompatActivity {
                 Constants.PLUGIN_INDICES[DronePreferences.getStoredPluginPref(getApplicationContext())],
                 DronePreferences.getStoredModePref(this),
                 DronePreferences.getStoredBassPref(this),
-                VoicingHelper.inflateTemplate("throwaway{0}{0}"));
+                VoicingHelper.decodeTemplate("throwaway{0}{0}"));
         int parentCode = DronePreferences.getStoredParentScalePref(getApplicationContext());
         if (parentCode == KeyFinder.CODE_MAJOR) {
             parentSequence = MusicTheory.MAJOR_SCALE_SEQUENCE;

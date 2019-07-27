@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
-    tools:context="com.convergencelab.smartdrone.DroneActivity">
+    android:orientation="vertical"
+    tools:context=".drone.DroneActivity">
 
     <ImageView
         android:id="@+id/piano_img"
@@ -30,9 +31,8 @@
         android:layout_marginRight="8dp"
         android:background="@drawable/active_key_background_inactive"
         android:gravity="center"
-        android:onClick="activeKeyClick"
         android:text="@string/active_key_button"
-        android:textSize="48sp"
+        android:textSize="28sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -61,7 +61,6 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
-            android:onClick="openSoundSettings"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/drone_control_button"
             app:srcCompat="@drawable/ic_drone_sound" />
@@ -75,13 +74,12 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
-            android:onClick="toggleDroneState"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/drone_preferences_button"
             app:srcCompat="@drawable/ic_play_drone" />
 
         <ImageButton
-            android:id="@+id/drone_settings_button"
+            android:id="@+id/drone_preferences_button"
             android:layout_width="0dp"
             android:layout_height="64dp"
             android:layout_marginLeft="8dp"
@@ -89,11 +87,9 @@
             android:layout_marginRight="8dp"
             android:layout_marginBottom="8dp"
             android:layout_weight="1"
-            android:onClick="openDroneSettings"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_settings" />
     </LinearLayout>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.Utility;
+package com.convergencelab.smartdrone.utility;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -84,21 +84,21 @@ public class DronePreferences {
     /**
      * Get plugin index from shared preferences.
      *
-     * @param context Context; context.
-     * @return int; plugin index.
+     * @param prefs shared preferences.
+     * @return plugin index.
      */
-    public static int getStoredPluginPref(Context context) {
-        return getSharedPrefs(context).getInt(USER_PLUGIN_KEY, 0);
+    public static int getStoredPluginPref(SharedPreferences prefs) {
+        return prefs.getInt(USER_PLUGIN_KEY, 0);
     }
 
     /**
      * Put plugin index in shared preferences.
      *
-     * @param context  Context; context.
-     * @param pluginIx int; plugin index.
+     * @param prefs shared preferences.
+     * @param pluginIx plugin index.
      */
-    public static void setStoredPluginPref(Context context, int pluginIx) {
-        getSharedPrefs(context).edit().putInt(USER_PLUGIN_KEY, pluginIx).apply();
+    public static void setStoredPluginPref(SharedPreferences prefs, int pluginIx) {
+        prefs.edit().putInt(USER_PLUGIN_KEY, pluginIx).apply();
     }
 
     /**
@@ -144,8 +144,18 @@ public class DronePreferences {
     /**
      * Get active key sensitivity from shared preferences.
      *
+     * @param prefs shared preferences.
+     */
+    public static String getActiveKeySensPref(SharedPreferences prefs) {
+        return prefs.getString(KEY_SENS_KEY, "3"); //todo refactor hardcoded AND change over to integers
+    }
+
+    /**
+     * Get active key sensitivity from shared preferences.
+     *
      * @param context Context; activity making function call.
      */
+    @Deprecated
     public static String getActiveKeySensPref(Context context) {
         return getSharedPrefs(context).getString(KEY_SENS_KEY, "3"); //todo refactor hardcoded AND change over to integers
     }
@@ -153,8 +163,40 @@ public class DronePreferences {
     /**
      * Get length of note filter from shared preferences.
      *
+     * @param prefs shared preferences containing note length filter data.
+     */
+    public static String getNoteFilterLenPref(SharedPreferences prefs) {
+        return prefs.getString(NOTE_LEN_KEY, "60"); //todo refactor hardcoded AND change over to integers
+    }
+
+    /**
+     * Get plugin index from shared preferences.
+     *
+     * @param context Context; context.
+     * @return int; plugin index.
+     */
+    @Deprecated
+    public static int getStoredPluginPref(Context context) {
+        return getSharedPrefs(context).getInt(USER_PLUGIN_KEY, 0);
+    }
+
+    /**
+     * Put plugin index in shared preferences.
+     *
+     * @param context  Context; context.
+     * @param pluginIx int; plugin index.
+     */
+    @Deprecated
+    public static void setStoredPluginPref(Context context, int pluginIx) {
+        getSharedPrefs(context).edit().putInt(USER_PLUGIN_KEY, pluginIx).apply();
+    }
+
+    /**
+     * Get length of note filter from shared preferences.
+     *
      * @param context Context; activity making function call.
      */
+    @Deprecated
     public static String getNoteFilterLenPref(Context context) {
         return getSharedPrefs(context).getString(NOTE_LEN_KEY, "60"); //todo refactor hardcoded AND change over to integers
     }

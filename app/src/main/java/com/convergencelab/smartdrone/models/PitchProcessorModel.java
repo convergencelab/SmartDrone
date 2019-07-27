@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.Models;
+package com.convergencelab.smartdrone.models;
 
 import com.convergencelab.smartdrone.Constants;
 import com.example.keyfinder.Note;
@@ -18,7 +18,6 @@ public class PitchProcessorModel {
      * Audio dispatcher connected to microphone.
      */
     private AudioDispatcher dispatcher;
-
 
     /**
      * Used to stamp time of note heard.

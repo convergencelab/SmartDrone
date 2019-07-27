@@ -1,10 +1,10 @@
-package com.convergencelab.smartdrone.Models;
+package com.convergencelab.smartdrone.models;
 
 import com.convergencelab.smartdrone.Constants;
 import com.convergencelab.smartdrone.DroneActivity;
 import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.Note;
-import com.convergencelab.smartdrone.Utility.DroneLog;
+import com.convergencelab.smartdrone.utility.DroneLog;
 import com.example.keyfinder.Voicing;
 import com.example.keyfinder.VoicingTemplate;
 
@@ -219,12 +219,11 @@ public class DroneModel implements Serializable {
         PitchDetectionHandler pdh = new PitchDetectionHandler() {
             @Override
                         // interface method
-            public void handlePitch(PitchDetectionResult result, AudioEvent event){
+            public void handlePitch(PitchDetectionResult result, AudioEvent event) {
                 final float pitchInHz = result.getPitch();
                 droneActivity.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        //todo optimize. No need to run these if drone is inactive
                         processPitch(pitchInHz, droneActivity, keyFinderModel);
                         monitorActiveKey();
                     }

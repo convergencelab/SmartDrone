@@ -50,8 +50,8 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.convergencelab.smartdrone.Models.DroneModel;
-import com.convergencelab.smartdrone.Utility.DronePreferences;
+import com.convergencelab.smartdrone.models.DroneModel;
+import com.convergencelab.smartdrone.utility.DronePreferences;
 import com.example.keyfinder.KeyFinder;
 import com.example.keyfinder.MusicTheory;
 
@@ -110,7 +110,7 @@ public class DroneActivity extends AppCompatActivity {
 
         controlButton = findViewById(R.id.drone_control_button);
         activeKeyButton = findViewById(R.id.active_key_button);
-        pianoImage = findViewById(R.id.image_piano);
+        pianoImage = findViewById(R.id.piano_img);
     }
 
     @Override
@@ -149,7 +149,7 @@ public class DroneActivity extends AppCompatActivity {
         droneModel.getMidiDriverModel().setPlugin(Constants.PLUGIN_INDICES[userPluginIx]);
         droneModel.sethasBassNote(userBassNotePref);
 
-        droneModel.setCurTemplate(VoicingHelper.inflateTemplate(defTemplate));
+        droneModel.setCurTemplate(VoicingHelper.decodeTemplate(defTemplate));
 
 
         resetDroneScreen();
