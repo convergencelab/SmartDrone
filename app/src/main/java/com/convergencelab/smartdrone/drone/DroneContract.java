@@ -7,9 +7,11 @@ public interface DroneContract {
 
     interface View extends BaseView<Presenter> {
 
-        void showNoteActive(int toShow);
+        void showDroneActive();
 
         void showDroneInactive();
+
+        void showNoteActive(int toShow);
 
         void showActiveKey(String key, String mode);
 
@@ -21,8 +23,6 @@ public interface DroneContract {
 
     /* Not much here since user interaction mostly comes from microphone input */
     interface Presenter extends BasePresenter {
-
-//        void activateDrone();
 
         void toggleDroneState();
 

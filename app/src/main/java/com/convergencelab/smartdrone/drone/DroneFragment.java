@@ -1,11 +1,9 @@
 package com.convergencelab.smartdrone.drone;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,9 +45,6 @@ public class DroneFragment extends Fragment implements DroneContract.View {
      */
     private ImageButton mDroneToggleButton;
 
-    // Todo: just the way it is right now
-    private int mCurDroneState = 0;
-
     /**
      * Image of piano on drone main screen.
      */
@@ -61,9 +56,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
      */
     private Button mActiveKeyButton;
 
-
     private DroneContract.Presenter mPresenter;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,22 +78,11 @@ public class DroneFragment extends Fragment implements DroneContract.View {
         // Drone state button
         mDroneToggleButton = mRoot.findViewById(R.id.drone_control_button);
         mDroneToggleButton.setOnClickListener(v -> {
-            mPresenter.toggleDroneState();
             if (ContextCompat.checkSelfPermission(mRoot.getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 requestMicrophonePermission();
             }
             else {
-                // Todo: Better solution? It is what it is for now.
-                switch (mCurDroneState) {
-                    case 0:
-                        mCurDroneState = 1;
-                        mDroneToggleButton.setImageResource(R.drawable.ic_stop_drone);
-                        break;
-                    case 1:
-                        mCurDroneState = 0;
-                        mDroneToggleButton.setImageResource(R.drawable.ic_play_drone);
-                        break;
-                }
+                mPresenter.toggleDroneState();
             }
         });
 
@@ -135,6 +117,18 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     }
 
     @Override
+    public void showDroneActive() {
+        mDroneToggleButton.setImageResource(R.drawable.ic_stop_drone);
+    }
+
+    @Override
+    public void showDroneInactive() {
+        mPianoImg.setImageResource(R.drawable.piano_null);
+        mActiveKeyButton.setText("Start");
+        mDroneToggleButton.setImageResource(R.drawable.ic_play_drone);
+    }
+
+    @Override
     public void showNoteActive(int toShow) {
         if (toShow == -1) {
             mPianoImg.setImageResource(R.drawable.piano_null);
@@ -146,12 +140,6 @@ public class DroneFragment extends Fragment implements DroneContract.View {
                     mRoot.getContext().getPackageName());
             mPianoImg.setImageResource(resID);
         }
-    }
-
-    @Override
-    public void showDroneInactive() {
-        mPianoImg.setImageResource(R.drawable.piano_null);
-        mActiveKeyButton.setText("Start");
     }
 
     @Override
@@ -183,10 +171,11 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     }
 
     // Todo: she ain't pretty
+
     /**
      * Builds hash map for (note name -> piano image file name).
      */
-    public void inflatePianoMap() {
+    private void inflatePianoMap() {
         String str;
         for (int i = 0; i < 12; i++) {
             str = "piano_";
@@ -198,43 +187,41 @@ public class DroneFragment extends Fragment implements DroneContract.View {
         }
     }
 
-    public void requestMicrophonePermission() {
+    private void requestMicrophonePermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.RECORD_AUDIO)) {
             new AlertDialog.Builder(getContext())
                     .setTitle("Permission Needed")
-                    .setMessage("This permission is needed for drone.")
-                    .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
-
-                        }
-                    })
-                    .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    })
+                    .setMessage("This permission is needed to process pitch.")
+                    .setPositiveButton("ok", (dialog, which) -> ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE))
+                    .setNegativeButton("cancel", (dialog, which) -> dialog.dismiss())
                     .create().show();
         }
         else {
-            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
         }
 
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode,
+                                           @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
         if (requestCode == MICROPHONE_PERMISSION_CODE) {
             if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(getActivity().getApplicationContext(), "Permission Granted", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        getActivity().getApplicationContext(),
+                        "Permission Granted",
+                        Toast.LENGTH_SHORT)
+                        .show();
             }
             else {
-                Toast.makeText(getActivity().getApplicationContext(), "Permission Denied", Toast.LENGTH_SHORT).show();
+                Toast.makeText(
+                        getActivity().getApplicationContext(),
+                        "Permission Denied",
+                        Toast.LENGTH_SHORT)
+                        .show();
 
             }
         }
-
     }
 }

@@ -58,7 +58,7 @@ import com.example.keyfinder.MusicTheory;
 import java.util.HashMap;
 
 
-public class DroneActivity extends AppCompatActivity {
+public class DroneActivityOld extends AppCompatActivity {
 
     private int MICROPHONE_PERMISSION_CODE = 1;
 
@@ -98,7 +98,7 @@ public class DroneActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_drone_main);
 
-        if (ContextCompat.checkSelfPermission(DroneActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(DroneActivityOld.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestMicrophonePermission();
         }
 
@@ -215,7 +215,7 @@ public class DroneActivity extends AppCompatActivity {
      * Updates drawable on toggle button.
      */
     public void toggleDroneState(View view) {
-        if (ContextCompat.checkSelfPermission(DroneActivity.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(DroneActivityOld.this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestMicrophonePermission();
         }
         else {
@@ -305,7 +305,7 @@ public class DroneActivity extends AppCompatActivity {
                     .setPositiveButton("ok", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            ActivityCompat.requestPermissions(DroneActivity.this, new String[] {Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
+                            ActivityCompat.requestPermissions(DroneActivityOld.this, new String[] {Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
 
                         }
                     })

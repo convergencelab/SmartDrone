@@ -133,6 +133,7 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
         mProcessor.start();
         mNoteHandler.start();
         mPlayer.start();
+        mDroneView.showDroneActive();
     }
 
     private void deactivateDrone() {
