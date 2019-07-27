@@ -53,6 +53,13 @@ public class DronePlayerImpl implements DronePlayer {
      */
     private int mPlugin;
 
+    public DronePlayerImpl() {
+        mDriver = new MidiDriver();
+        mActiveNotes = new HashSet<>();
+        mVolume = DEFAULT_VOLUME;
+        mPlugin = -1;
+    }
+
     /**
      * Constructor.
      */

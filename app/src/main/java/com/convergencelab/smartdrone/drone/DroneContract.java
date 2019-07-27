@@ -9,7 +9,7 @@ public interface DroneContract {
 
         void showNoteActive(int toShow);
 
-        void showNullPitch();
+        void showDroneInactive();
 
         void showActiveKey(String key, String mode);
 

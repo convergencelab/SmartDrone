@@ -46,6 +46,17 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
      */
     private boolean noteTimerIsQueued;
 
+    public NoteHandlerImpl() {
+        mKeyFinder = new KeyFinder();
+        listeners = new ArrayList<>();
+        noteTimerIsQueued = false;
+
+        mKeyFinder.addObserver(this);
+//        Log.d("debug", "" + mKeyFinder.countObservers());
+        mLenFilter = 0;
+    }
+
+    // todo: remove
     public NoteHandlerImpl(int parentScale, int lenFilter) {
         mKeyFinder = new KeyFinder();
         listeners = new ArrayList<>();
@@ -53,7 +64,7 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
 
         mKeyFinder.setParentKeyList(parentScale);
         mKeyFinder.addObserver(this);
-        Log.d("debug", "" + mKeyFinder.countObservers());
+//        Log.d("debug", "" + mKeyFinder.countObservers());
         mLenFilter = lenFilter;
     }
 

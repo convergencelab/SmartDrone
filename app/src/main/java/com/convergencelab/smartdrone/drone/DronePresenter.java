@@ -1,7 +1,5 @@
 package com.convergencelab.smartdrone.drone;
 
-import android.util.Log;
-
 import com.convergencelab.smartdrone.models.data.DroneDataSource;
 import com.convergencelab.smartdrone.models.data.Plugin;
 import com.convergencelab.smartdrone.models.notehandler.KeyChangeListener;
@@ -60,9 +58,6 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
         mProcessor = processor;
         mChords = chords;
 
-        mPlugins = mDataSource.getPlugins();
-        mPlayer.setPlugin(mPlugins[mDataSource.getPluginIx()].getPlugin());
-
         mDroneView.setPresenter(this);
         mProcessor.addPitchListener(this);
         mNoteHandler.addKeyChangeListener(this);
@@ -70,14 +65,16 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
     @Override
     public void start() {
+        mState = State.OFF;
 
+        mPlugins = mDataSource.getPlugins();
+        mPlayer.setPlugin(mPlugins[mDataSource.getPluginIx()].getPlugin());
 
-        // Put init model stuff here
+        mNoteHandler.setParentScale(mDataSource.getParentScale());
+        mNoteHandler.setNoteLengthFilter(mDataSource.getNoteLengthFilter());
 
         mChords.setVoicingTemplate(mDataSource.getTemplate());
         mChords.setModeTemplate(mNoteHandler.getModeTemplate(mDataSource.getModeIx()));
-
-        mState = State.OFF;
     }
 
     @Override
@@ -125,8 +122,9 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
         int[] toPlay = Utility.voicingToIntArray(curVoicing);
         mPlayer.play(toPlay);
 
-        mDroneView.showActiveKey(activeKey.getName(),
-                mNoteHandler.getModeTemplate(mDataSource.getParentScale()).getName());
+        mDroneView.showActiveKey(
+                activeKey.getName(),
+                mNoteHandler.getModeTemplate(mDataSource.getModeIx()).getName());
     }
 
     private void activateDrone() {
@@ -139,6 +137,6 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
         mProcessor.stop();
         mNoteHandler.clear();
         mPlayer.stop();
-        mDroneView.showNullPitch();
+        mDroneView.showDroneInactive();
     }
 }

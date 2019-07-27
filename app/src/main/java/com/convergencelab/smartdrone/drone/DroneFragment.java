@@ -149,13 +149,13 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     }
 
     @Override
-    public void showNullPitch() {
+    public void showDroneInactive() {
         mPianoImg.setImageResource(R.drawable.piano_null);
+        mActiveKeyButton.setText("Start");
     }
 
     @Override
     public void showActiveKey(String key, String mode) {
-        Log.d("debug", "i am how to basic");
         mActiveKeyButton.setText(key + '\n' + mode);
     }
 
