@@ -26,11 +26,11 @@ public interface DroneContract {
 
         void toggleDroneState();
 
+        void handleActiveKeyButtonClick();
+
         void stop();
 
         void setActiveKey(int toSet);
-
-        void sustainKey();
 
     }
 }

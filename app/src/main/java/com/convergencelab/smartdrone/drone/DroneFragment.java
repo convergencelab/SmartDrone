@@ -3,6 +3,7 @@ package com.convergencelab.smartdrone.drone;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +27,8 @@ import com.convergencelab.smartdrone.R;
 import java.util.HashMap;
 
 public class DroneFragment extends Fragment implements DroneContract.View {
+
+    private static final int BUTTON_TRANS_TIME = 250;
 
     // Todo: Improve architecture:
     //       Permissions will live here for now.
@@ -55,6 +58,8 @@ public class DroneFragment extends Fragment implements DroneContract.View {
      * Click function will sustain playback of the active drone. //todo make it so this comment isn't a lie
      */
     private Button mActiveKeyButton;
+
+    TransitionDrawable mActiveKeyBackground;
 
     private DroneContract.Presenter mPresenter;
 
@@ -100,6 +105,13 @@ public class DroneFragment extends Fragment implements DroneContract.View {
         });
 
         mActiveKeyButton = mRoot.findViewById(R.id.active_key_button);
+        mActiveKeyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mPresenter.handleActiveKeyButtonClick();
+            }
+        });
+        mActiveKeyBackground = (TransitionDrawable) mActiveKeyButton.getBackground();
 
         return mRoot;
     }
@@ -118,11 +130,14 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showDroneActive() {
+        mActiveKeyBackground.startTransition(BUTTON_TRANS_TIME);
+        mActiveKeyButton.setText("Listening");
         mDroneToggleButton.setImageResource(R.drawable.ic_stop_drone);
     }
 
     @Override
     public void showDroneInactive() {
+        mActiveKeyBackground.reverseTransition(BUTTON_TRANS_TIME);
         mPianoImg.setImageResource(R.drawable.piano_null);
         mActiveKeyButton.setText("Start");
         mDroneToggleButton.setImageResource(R.drawable.ic_play_drone);

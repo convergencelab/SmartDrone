@@ -21,7 +21,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/active_key_button"
         android:layout_width="175dp"
         android:layout_height="175dp"
@@ -29,7 +29,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/active_key_background_inactive"
+        android:background="@drawable/active_key_background_transition"
         android:gravity="center"
         android:text="@string/active_key_button"
         android:textSize="28sp"

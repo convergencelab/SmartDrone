@@ -90,6 +90,17 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
     }
 
     @Override
+    public void handleActiveKeyButtonClick() {
+        if (mState == State.OFF) {
+            activateDrone();
+            mState = State.ON;
+        }
+        else {
+            // Todo: Sustain key
+        }
+    }
+
+    @Override
     public void stop() {
         if (mState == State.ON) {
             deactivateDrone();
@@ -100,11 +111,6 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
     @Override
     public void setActiveKey(int toSet) {
         // Todo: Future implementation. (piano key touch)
-    }
-
-    @Override
-    public void sustainKey() {
-        // Todo: Future implementation. (active key button touch)
     }
 
     @Override
