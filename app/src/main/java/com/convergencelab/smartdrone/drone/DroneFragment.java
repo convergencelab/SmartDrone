@@ -8,9 +8,13 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,7 +32,21 @@ import java.util.HashMap;
 
 public class DroneFragment extends Fragment implements DroneContract.View {
 
-    private static final int BUTTON_TRANS_TIME = 250;
+    /* Used for animating */
+
+    private static final int BUTTON_TRANS_DUR = 250;
+
+    private static final int TEXT_FADE_DUR = 150;
+
+    private static final float BLACK = 0.0f;
+
+    private static final float WHITE = 1.0f;
+
+    private Animation in;
+
+    private Animation out;
+
+    private ViewGroup mActiveKeyLayout;
 
     // Todo: Improve architecture:
     //       Permissions will live here for now.
@@ -62,10 +80,14 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     TransitionDrawable mActiveKeyBackground;
 
     private DroneContract.Presenter mPresenter;
+    private TextView mActiveKeyText;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.drone_frag, container, false);
+
+        // Used for animating text
+        mActiveKeyLayout = mRoot.findViewById(R.id.active_key_layout);
 
         // Setup Piano Image map
         mPianoImageName = new HashMap<>();
@@ -98,20 +120,21 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
         });
 
-        // Drone preferences button
+        // Drone Preference Button
         mRoot.findViewById(R.id.drone_preferences_button).setOnClickListener(v -> {
             mPresenter.stop();
             showPreferencesActivity();
         });
 
+        // Active Key Button
         mActiveKeyButton = mRoot.findViewById(R.id.active_key_button);
-        mActiveKeyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mPresenter.handleActiveKeyButtonClick();
-            }
-        });
+        mActiveKeyButton.setOnClickListener(v -> mPresenter.handleActiveKeyButtonClick());
         mActiveKeyBackground = (TransitionDrawable) mActiveKeyButton.getBackground();
+
+        mActiveKeyText = mRoot.findViewById(R.id.active_key_text);
+
+        setupTextAnimators();
+
 
         return mRoot;
     }
@@ -130,16 +153,17 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showDroneActive() {
-        mActiveKeyBackground.startTransition(BUTTON_TRANS_TIME);
-        mActiveKeyButton.setText("Listening");
+        mActiveKeyBackground.startTransition(BUTTON_TRANS_DUR);
+        animateActiveKeyText("Listening");
+//        mActiveKeyButton.setText("Listening");
         mDroneToggleButton.setImageResource(R.drawable.ic_stop_drone);
     }
 
     @Override
     public void showDroneInactive() {
-        mActiveKeyBackground.reverseTransition(BUTTON_TRANS_TIME);
+        mActiveKeyBackground.reverseTransition(BUTTON_TRANS_DUR);
         mPianoImg.setImageResource(R.drawable.piano_null);
-        mActiveKeyButton.setText("Start");
+        animateActiveKeyText("Start");
         mDroneToggleButton.setImageResource(R.drawable.ic_play_drone);
     }
 
@@ -159,7 +183,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showActiveKey(String key, String mode) {
-        mActiveKeyButton.setText(key + '\n' + mode);
+        animateActiveKeyText(key + '\n' + mode);
     }
 
     @Override
@@ -183,6 +207,36 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     public static DroneFragment newInstance() {
         return new DroneFragment();
+    }
+
+    private void setupTextAnimators() {
+        in = new AlphaAnimation(BLACK, WHITE);
+        in.setDuration(TEXT_FADE_DUR);
+
+        out = new AlphaAnimation(WHITE, BLACK);
+        out.setDuration(TEXT_FADE_DUR);
+    }
+
+    private void animateActiveKeyText(String newText) {
+        AnimationSet as = new AnimationSet(true);
+        out.setAnimationListener(new Animation.AnimationListener() {
+            @Override
+            public void onAnimationStart(Animation animation) {
+
+            }
+
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                mActiveKeyText.setText(newText);
+                mActiveKeyText.startAnimation(in);
+            }
+
+            @Override
+            public void onAnimationRepeat(Animation animation) {
+
+            }
+        });
+        mActiveKeyText.startAnimation(out);
     }
 
     // Todo: she ain't pretty
