@@ -14,7 +14,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".templatecreator.TemplateCreatorActivity" />
-        <activity android:name=".drone.DroneActivity"/>
+        <activity
+            android:name=".drone.DroneActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".AboutActivity" />
         <activity
             android:name=".SplashScreenActivity"

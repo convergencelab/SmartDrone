@@ -43,13 +43,17 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     public static final float POSITION_ROTATED = 90f;
 
-    private static final float INVISIBLE = 0.0f;
+    private static final float INVISIBLE = 0f;
 
-    private static final float VISIBLE = 1.0f;
+    private static final float VISIBLE = 1f;
 
-    private Animation in;
+    private static final int TEXT_SIZE_SMALL = 20;
 
-    private Animation out;
+    public static final int TEXT_SIZE_MEDIUM = 28;
+
+    private Animation mFadeIn;
+
+    private Animation mFadeOut;
 
     private ViewGroup mActiveKeyLayout;
 
@@ -136,7 +140,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     public void showDroneInactive() {
         mActiveKeyBackground.reverseTransition(DURATION_MEDIUM);
         mPianoImg.setImageResource(R.drawable.piano_null);
-        animateActiveKeyText("Start");
+        animateActiveKeyText("Start", TEXT_SIZE_MEDIUM);
         showControlButtonInactive();
     }
 
@@ -156,7 +160,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showActiveKey(String key, String mode) {
-        animateActiveKeyText(key + '\n' + mode);
+        animateActiveKeyText(key + '\n' + mode, TEXT_SIZE_SMALL);
     }
 
     @Override
@@ -233,36 +237,47 @@ public class DroneFragment extends Fragment implements DroneContract.View {
      * Sets up variables for text fading animation.
      */
     private void setupTextAnimators() {
-        in = new AlphaAnimation(INVISIBLE, VISIBLE);
-        in.setDuration(DURATION_MEDIUM);
+        mFadeIn = new AlphaAnimation(INVISIBLE, VISIBLE);
+        mFadeIn.setDuration(DURATION_MEDIUM);
 
-        out = new AlphaAnimation(VISIBLE, INVISIBLE);
-        out.setDuration(DURATION_MEDIUM);
+        mFadeOut = new AlphaAnimation(VISIBLE, INVISIBLE);
+        mFadeOut.setDuration(DURATION_MEDIUM);
     }
 
     /**
-     * Animates active key text to fade out and in.
-     * @param newText new text to show in active key button.
+     * Animates active key text to fade mFadeOut and mFadeIn.
+     * @param newText new text to show mFadeIn active key button.
      */
     private void animateActiveKeyText(String newText) {
-        out.setAnimationListener(new Animation.AnimationListener() {
+        animateActiveKeyText(newText, -1);
+    }
+
+    /**
+     * Animates active key text to fade mFadeOut and mFadeIn.
+     * @param newText new text to show mFadeIn active key button.
+     */
+    private void animateActiveKeyText(String newText, int textSize) {
+        mFadeOut.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) { /* Not used. */ }
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                if (textSize != -1) {
+                    mActiveKeyText.setTextSize(textSize);
+                }
                 mActiveKeyText.setText(newText);
-                mActiveKeyText.startAnimation(in);
+                mActiveKeyText.startAnimation(mFadeIn);
             }
 
             @Override
             public void onAnimationRepeat(Animation animation) { /* Not used. */ }
         });
-        mActiveKeyText.startAnimation(out);
+        mActiveKeyText.startAnimation(mFadeOut);
     }
 
     /**
-     * Animates control button, ends in active state.
+     * Animates control button, ends mFadeIn active state.
      */
     private void showControlButtonActive() {
         ObjectAnimator.ofFloat(mDroneToggleButton, "rotation", POSITION_NORMAL, POSITION_ROTATED).setDuration(DURATION_MEDIUM).start();
@@ -271,7 +286,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     }
 
     /**
-     * Animates control button, ends in inactive state.
+     * Animates control button, ends mFadeIn inactive state.
      */
     private void showControlButtonInactive() {
         ObjectAnimator.ofFloat(mDroneToggleButton, "rotation", POSITION_ROTATED, POSITION_NORMAL).setDuration(DURATION_MEDIUM).start();

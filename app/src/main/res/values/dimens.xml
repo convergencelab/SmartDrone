@@ -8,6 +8,10 @@
     <!-- For three FAB'S in main screen  -->
     <dimen name="main_fab_size_bigger">72dp</dimen>
     <dimen name="main_fab_size_smaller">50dp</dimen>
+    <dimen name="drone_button_margin">36dp</dimen>
+    <dimen name="drone_button_border_width">0dp</dimen>
 
     <dimen name="tone_item_padding">2dp</dimen>
+    <dimen name="piano_padding">10dp</dimen>
+    <dimen name="active_key_button_size">200dp</dimen>
 </resources>
