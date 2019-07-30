@@ -13,7 +13,6 @@ import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,13 +35,17 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     /* Used for animating */
 
-    private static final int BUTTON_TRANS_DUR = 250;
+    public static final int DURATION_MEDIUM = 200;
 
-    private static final int TEXT_FADE_DUR = 150;
+    public static final int DURATION_SHORT = 100;
 
-    private static final float BLACK = 0.0f;
+    public static final float POSITION_NORMAL = 0f;
 
-    private static final float WHITE = 1.0f;
+    public static final float POSITION_ROTATED = 90f;
+
+    private static final float INVISIBLE = 0.0f;
+
+    private static final float VISIBLE = 1.0f;
 
     private Animation in;
 
@@ -61,6 +64,9 @@ public class DroneFragment extends Fragment implements DroneContract.View {
      */
     private HashMap<Integer, String> mPianoImageName;
 
+    /**
+     * Root view.
+     */
     private View mRoot;
 
     /**
@@ -79,6 +85,9 @@ public class DroneFragment extends Fragment implements DroneContract.View {
      */
     private Button mActiveKeyButton;
 
+    /**
+     * The ring drawable that outlines the active key.
+     */
     TransitionDrawable mActiveKeyBackground;
 
     private DroneContract.Presenter mPresenter;
@@ -88,55 +97,17 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.drone_frag, container, false);
 
-        // Used for animating text
-        mActiveKeyLayout = mRoot.findViewById(R.id.active_key_layout);
-
-        // Setup Piano Image map
-        mPianoImageName = new HashMap<>();
-        inflatePianoMap();
-
         if (ContextCompat.checkSelfPermission(mRoot.getContext(),
                 Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             requestMicrophonePermission();
         }
 
-        // Draw piano null
-        mPianoImg = mRoot.findViewById(R.id.piano_img);
-        mPianoImg.setImageResource(R.drawable.piano_null);
+        // Setup Piano Image map
+        mPianoImageName = new HashMap<>();
+        inflatePianoMap();
 
-        // Drone state button
-        mDroneToggleButton = mRoot.findViewById(R.id.drone_control_button);
-        mDroneToggleButton.setOnClickListener(v -> {
-            if (ContextCompat.checkSelfPermission(mRoot.getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-                requestMicrophonePermission();
-            }
-            else {
-                mPresenter.toggleDroneState();
-            }
-        });
-
-        // Drone sound settings
-        mRoot.findViewById(R.id.drone_sound_button).setOnClickListener(v -> {
-            mPresenter.stop();
-            showSoundActivity();
-
-        });
-
-        // Drone Preference Button
-        mRoot.findViewById(R.id.drone_preferences_button).setOnClickListener(v -> {
-            mPresenter.stop();
-            showPreferencesActivity();
-        });
-
-        // Active Key Button
-        mActiveKeyButton = mRoot.findViewById(R.id.active_key_button);
-        mActiveKeyButton.setOnClickListener(v -> mPresenter.handleActiveKeyButtonClick());
-        mActiveKeyBackground = (TransitionDrawable) mActiveKeyButton.getBackground();
-
-        mActiveKeyText = mRoot.findViewById(R.id.active_key_text);
-
+        setupView();
         setupTextAnimators();
-
 
         return mRoot;
     }
@@ -155,26 +126,18 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showDroneActive() {
-        mActiveKeyBackground.startTransition(BUTTON_TRANS_DUR);
+        mActiveKeyBackground.startTransition(DURATION_MEDIUM);
         animateActiveKeyText("Listening");
-//        mDroneToggleButton.setImageResource(R.drawable.ic_stop_drone);
 
-
-        ObjectAnimator.ofFloat(mDroneToggleButton, "rotation", 0f, 180f).setDuration(200).start();
-        final Handler handler = new Handler();
-        handler.postDelayed(() -> mDroneToggleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_stop_drone)), 100);
+        showControlButtonActive();
     }
 
     @Override
     public void showDroneInactive() {
-        mActiveKeyBackground.reverseTransition(BUTTON_TRANS_DUR);
+        mActiveKeyBackground.reverseTransition(DURATION_MEDIUM);
         mPianoImg.setImageResource(R.drawable.piano_null);
         animateActiveKeyText("Start");
-//        mDroneToggleButton.setImageResource(R.drawable.ic_play_drone);
-
-        ObjectAnimator.ofFloat(mDroneToggleButton, "rotation", 180f, 0f).setDuration(200).start();
-        final Handler handler = new Handler();
-        handler.postDelayed(() -> mDroneToggleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_drone)), 100);
+        showControlButtonInactive();
     }
 
     @Override
@@ -215,24 +178,76 @@ public class DroneFragment extends Fragment implements DroneContract.View {
         mPresenter = presenter;
     }
 
+    /**
+     * Return instance of fragment.
+     * @return new instance.
+     */
     public static DroneFragment newInstance() {
         return new DroneFragment();
     }
 
-    private void setupTextAnimators() {
-        in = new AlphaAnimation(BLACK, WHITE);
-        in.setDuration(TEXT_FADE_DUR);
+    /**
+     * Sets up view for fragment.
+     */
+    private void setupView() {
+        // Used for animating text
+        mActiveKeyLayout = mRoot.findViewById(R.id.active_key_layout);
 
-        out = new AlphaAnimation(WHITE, BLACK);
-        out.setDuration(TEXT_FADE_DUR);
+        // Draw piano null
+        mPianoImg = mRoot.findViewById(R.id.piano_img);
+        mPianoImg.setImageResource(R.drawable.piano_null);
+
+        // Drone play/stop button
+        mDroneToggleButton = mRoot.findViewById(R.id.drone_control_button);
+        mDroneToggleButton.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(mRoot.getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                requestMicrophonePermission();
+            }
+            else {
+                mPresenter.toggleDroneState();
+            }
+        });
+
+        // Drone sound settings
+        mRoot.findViewById(R.id.drone_sound_button).setOnClickListener(v -> {
+            mPresenter.stop();
+            showSoundActivity();
+
+        });
+
+        // Drone preferences
+        mRoot.findViewById(R.id.drone_preferences_button).setOnClickListener(v -> {
+            mPresenter.stop();
+            showPreferencesActivity();
+        });
+
+        // Active key button
+        mActiveKeyButton = mRoot.findViewById(R.id.active_key_button);
+        mActiveKeyButton.setOnClickListener(v -> mPresenter.handleActiveKeyButtonClick());
+        mActiveKeyBackground = (TransitionDrawable) mActiveKeyButton.getBackground();
+
+        mActiveKeyText = mRoot.findViewById(R.id.active_key_text);
     }
 
+    /**
+     * Sets up variables for text fading animation.
+     */
+    private void setupTextAnimators() {
+        in = new AlphaAnimation(INVISIBLE, VISIBLE);
+        in.setDuration(DURATION_MEDIUM);
+
+        out = new AlphaAnimation(VISIBLE, INVISIBLE);
+        out.setDuration(DURATION_MEDIUM);
+    }
+
+    /**
+     * Animates active key text to fade out and in.
+     * @param newText new text to show in active key button.
+     */
     private void animateActiveKeyText(String newText) {
         out.setAnimationListener(new Animation.AnimationListener() {
             @Override
-            public void onAnimationStart(Animation animation) {
-
-            }
+            public void onAnimationStart(Animation animation) { /* Not used. */ }
 
             @Override
             public void onAnimationEnd(Animation animation) {
@@ -241,15 +256,30 @@ public class DroneFragment extends Fragment implements DroneContract.View {
             }
 
             @Override
-            public void onAnimationRepeat(Animation animation) {
-
-            }
+            public void onAnimationRepeat(Animation animation) { /* Not used. */ }
         });
         mActiveKeyText.startAnimation(out);
     }
 
-    // Todo: she ain't pretty
+    /**
+     * Animates control button, ends in active state.
+     */
+    private void showControlButtonActive() {
+        ObjectAnimator.ofFloat(mDroneToggleButton, "rotation", POSITION_NORMAL, POSITION_ROTATED).setDuration(DURATION_MEDIUM).start();
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> mDroneToggleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_stop_drone)), DURATION_SHORT);
+    }
 
+    /**
+     * Animates control button, ends in inactive state.
+     */
+    private void showControlButtonInactive() {
+        ObjectAnimator.ofFloat(mDroneToggleButton, "rotation", POSITION_ROTATED, POSITION_NORMAL).setDuration(DURATION_MEDIUM).start();
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> mDroneToggleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_drone)), DURATION_SHORT);
+    }
+
+    // Todo: she ain't pretty
     /**
      * Builds hash map for (note name -> piano image file name).
      */
@@ -277,7 +307,6 @@ public class DroneFragment extends Fragment implements DroneContract.View {
         else {
             ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.RECORD_AUDIO}, MICROPHONE_PERMISSION_CODE);
         }
-
     }
 
     @Override
