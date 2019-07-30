@@ -15,15 +15,11 @@ public class DroneSettingsFragment extends PreferenceFragmentCompat {
     public void onCreatePreferences(Bundle bundle, String rootKey) {
         setPreferencesFromResource(R.xml.drone_preferences, rootKey);
 
-
         Preference aboutButton = findPreference(getString(R.string.about_button));
-        aboutButton.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(getContext(), AboutActivity.class);
-                startActivity(intent);
-                return true;
-            }
+        aboutButton.setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(getContext(), AboutActivity.class);
+            startActivity(intent);
+            return true;
         });
     }
 

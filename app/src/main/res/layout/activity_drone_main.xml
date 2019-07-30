@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:keepScreenOn="true"
-    tools:context="com.convergencelab.smartdrone.DroneActivity">
+    tools:context="com.convergencelab.smartdrone.DroneActivityOld">
 
     <ImageView
         android:id="@+id/piano_img"
@@ -92,7 +92,7 @@
             android:onClick="openDroneSettings"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_settings" />
+            app:srcCompat="@drawable/ic_preferences" />
     </LinearLayout>
 
 

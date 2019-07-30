@@ -36,6 +36,7 @@ dependencies {
     implementation files('libs/drone_app_plusplus_java.jar')
     implementation 'com.github.billthefarmer:mididriver:v1.17'
     implementation 'androidx.preference:preference:1.0.0'
+    implementation 'com.github.timrijckaert:FloatingMusicActionButton:v2.0.4'
     implementation "com.google.android.material:material:1.1.0-alpha08"
 
     // Glide Library

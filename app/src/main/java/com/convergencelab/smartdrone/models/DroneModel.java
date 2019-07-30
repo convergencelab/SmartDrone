@@ -1,7 +1,7 @@
 package com.convergencelab.smartdrone.models;
 
 import com.convergencelab.smartdrone.Constants;
-import com.convergencelab.smartdrone.DroneActivity;
+import com.convergencelab.smartdrone.DroneActivityOld;
 import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.Note;
 import com.convergencelab.smartdrone.utility.DroneLog;
@@ -27,7 +27,7 @@ public class DroneModel implements Serializable {
     /**
      * Activity class that the model communicates with.
      */
-    private DroneActivity droneActivity;
+    private DroneActivityOld droneActivity;
 
     /**
      * Current active voicing template.
@@ -90,9 +90,9 @@ public class DroneModel implements Serializable {
 
     /**
      * Constructor.
-     * @param       droneActivity DroneActivity; drone activity.
+     * @param       droneActivity DroneActivityOld; drone activity.
      */
-    public DroneModel(DroneActivity droneActivity) {
+    public DroneModel(DroneActivityOld droneActivity) {
         this.droneActivity = droneActivity;
         keyFinderModel = new KeyFinderModel();
 
@@ -126,10 +126,10 @@ public class DroneModel implements Serializable {
      * 2) Update text views that depend on pitch processor.
      *
      * @param pitchInHz       float; pitch in hertz.
-     * @param droneActivity   DroneActivity; activity that displays pitch.
+     * @param droneActivity   DroneActivityOld; activity that displays pitch.
      * @param keyFinderModel  KeyFinderModel; object control note processing.
      */
-    private void processPitch(float pitchInHz, DroneActivity droneActivity, KeyFinderModel keyFinderModel) {
+    private void processPitch(float pitchInHz, DroneActivityOld droneActivity, KeyFinderModel keyFinderModel) {
         Note curNote = pitchProcessorModel.processPitch(pitchInHz, keyFinderModel);
 
         // Note removal detected.

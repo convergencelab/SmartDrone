@@ -14,7 +14,10 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity android:name=".templatecreator.TemplateCreatorActivity" />
-        <activity android:name=".drone.DroneActivity"/>
+        <activity
+            android:name=".drone.DroneActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".AboutActivity" />
         <activity
             android:name=".SplashScreenActivity"
@@ -34,14 +37,14 @@
         <activity
             android:name=".DroneSettingsActivity"
             android:label="Settings"
-            android:parentActivityName=".DroneActivity"
+            android:parentActivityName=".DroneActivityOld"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.convergencelab.smartdrone.DroneActivity" />
+                android:value="com.convergencelab.smartdrone.DroneActivityOld" />
         </activity>
         <activity
-            android:name=".DroneActivity"
+            android:name=".DroneActivityOld"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
 

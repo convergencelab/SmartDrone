@@ -83,4 +83,5 @@
     <string name="parentscale_text_title">Parent Scale</string>
     <string name="save_template">Save</string>
     <string name="cancel_template">Cancel</string>
+    <string name="piano_image_description">Displays note heard.</string>
 </resources>
