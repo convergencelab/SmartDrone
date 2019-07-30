@@ -5,13 +5,9 @@
     <dimen name="library_padding">14dp</dimen>
     <dimen name="manual_steps">10dp</dimen>
 
-    <!-- Default screen margins, per the Android Design guidelines. -->
-    <dimen name="fbutton_default_corner_radius">8dp</dimen>
-    <dimen name="fbutton_custom_corner_radius">60dp</dimen>
-    <dimen name="fbutton_default_padding_left">10dp</dimen>
-    <dimen name="fbutton_default_padding_right">10dp</dimen>
-    <dimen name="fbutton_default_padding_top">5dp</dimen>
-    <dimen name="fbutton_default_padding_bottom">5dp</dimen>
-    <dimen name="fbutton_default_shadow_height">4dp</dimen>
+    <!-- For three FAB'S in main screen  -->
+    <dimen name="main_fab_size_bigger">72dp</dimen>
+    <dimen name="main_fab_size_smaller">50dp</dimen>
+
     <dimen name="tone_item_padding">2dp</dimen>
 </resources>

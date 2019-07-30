@@ -28,7 +28,7 @@
         app:layout_constraintBottom_toTopOf="@+id/linearLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/piano_img" >
+        app:layout_constraintTop_toBottomOf="@+id/piano_img">
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/active_key_button"
@@ -46,9 +46,9 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:text="@string/active_key_button"
-            android:textSize="28sp"
             android:textAllCaps="true"
             android:textColor="@android:color/black"
+            android:textSize="28sp"
             app:layout_constraintBottom_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -56,58 +56,102 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout"
-        android:layout_width="fill_parent"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginBottom="16dp"
-        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/active_key_layout">
 
-        <ImageButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/drone_sound_button"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/drone_control_button"
+            style="@style/Widget.MaterialComponents.FloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|left"
+            android:layout_margin="32dp"
+            app:borderWidth="4dp"
+            app:fabCustomSize="@dimen/main_fab_size_smaller"
             app:srcCompat="@drawable/ic_drone_sound" />
 
-        <ImageButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/drone_control_button"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/drone_preferences_button"
-            app:srcCompat="@drawable/ic_play_drone" />
+            style="@style/Widget.MaterialComponents.FloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="32dp"
+            app:borderWidth="4dp"
+            app:fabCustomSize="@dimen/main_fab_size_bigger"
+            app:srcCompat="@drawable/ic_play_drone"
+            android:transitionName=""/>
 
-        <ImageButton
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/drone_preferences_button"
-            android:layout_width="0dp"
-            android:layout_height="64dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_marginBottom="8dp"
-            android:layout_weight="1"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_settings" />
-    </LinearLayout>
+            style="@style/Widget.MaterialComponents.FloatingActionButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|right"
+            android:layout_margin="32dp"
+            app:borderWidth="4dp"
+            app:fabCustomSize="@dimen/main_fab_size_smaller"
+            app:srcCompat="@drawable/ic_preferences" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+    <!--<LinearLayout-->
+    <!--android:id="@+id/linearLayout"-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginLeft="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginRight="8dp"-->
+    <!--android:layout_marginBottom="16dp"-->
+    <!--android:orientation="horizontal"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent">-->
+
+    <!--<ImageButton-->
+    <!--android:id="@+id/drone_sound_button"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="64dp"-->
+    <!--android:layout_marginLeft="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginRight="8dp"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:layout_weight="1"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toStartOf="@+id/drone_control_button"-->
+    <!--app:srcCompat="@drawable/ic_drone_sound" />-->
+
+    <!--<ImageButton-->
+    <!--android:id="@+id/drone_control_button"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="64dp"-->
+    <!--android:layout_marginLeft="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginRight="8dp"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:layout_weight="1"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toStartOf="@+id/drone_preferences_button"-->
+    <!--app:srcCompat="@drawable/ic_play_drone" />-->
+
+    <!--<ImageButton-->
+    <!--android:id="@+id/drone_preferences_button"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="64dp"-->
+    <!--android:layout_marginLeft="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:layout_marginRight="8dp"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--android:layout_weight="1"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:srcCompat="@drawable/ic_preferences" />-->
+    <!--</LinearLayout>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

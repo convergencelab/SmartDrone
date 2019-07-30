@@ -1,16 +1,17 @@
 package com.convergencelab.smartdrone.drone;
 
 import android.Manifest;
+import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -27,6 +28,7 @@ import com.convergencelab.smartdrone.Constants;
 import com.convergencelab.smartdrone.DroneSettingsActivity;
 import com.convergencelab.smartdrone.DroneSoundActivity;
 import com.convergencelab.smartdrone.R;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashMap;
 
@@ -64,7 +66,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     /**
      * Button for toggling state of drone.
      */
-    private ImageButton mDroneToggleButton;
+    private FloatingActionButton mDroneToggleButton;
 
     /**
      * Image of piano on drone main screen.
@@ -155,8 +157,12 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     public void showDroneActive() {
         mActiveKeyBackground.startTransition(BUTTON_TRANS_DUR);
         animateActiveKeyText("Listening");
-//        mActiveKeyButton.setText("Listening");
-        mDroneToggleButton.setImageResource(R.drawable.ic_stop_drone);
+//        mDroneToggleButton.setImageResource(R.drawable.ic_stop_drone);
+
+
+        ObjectAnimator.ofFloat(mDroneToggleButton, "rotation", 0f, 180f).setDuration(200).start();
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> mDroneToggleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_stop_drone)), 100);
     }
 
     @Override
@@ -164,7 +170,11 @@ public class DroneFragment extends Fragment implements DroneContract.View {
         mActiveKeyBackground.reverseTransition(BUTTON_TRANS_DUR);
         mPianoImg.setImageResource(R.drawable.piano_null);
         animateActiveKeyText("Start");
-        mDroneToggleButton.setImageResource(R.drawable.ic_play_drone);
+//        mDroneToggleButton.setImageResource(R.drawable.ic_play_drone);
+
+        ObjectAnimator.ofFloat(mDroneToggleButton, "rotation", 180f, 0f).setDuration(200).start();
+        final Handler handler = new Handler();
+        handler.postDelayed(() -> mDroneToggleButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_drone)), 100);
     }
 
     @Override
@@ -218,7 +228,6 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     }
 
     private void animateActiveKeyText(String newText) {
-        AnimationSet as = new AnimationSet(true);
         out.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
@@ -289,7 +298,6 @@ public class DroneFragment extends Fragment implements DroneContract.View {
                         "Permission Denied",
                         Toast.LENGTH_SHORT)
                         .show();
-
             }
         }
     }
