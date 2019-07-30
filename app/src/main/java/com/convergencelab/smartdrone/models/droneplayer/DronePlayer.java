@@ -28,4 +28,8 @@ public interface DronePlayer {
 
     void setVolume(int volume);
 
+    void mute();
+
+    void unmute();
+
 }

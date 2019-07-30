@@ -167,8 +167,6 @@ public class DronePlayerImpl implements DronePlayer {
         }
     }
 
-    // Todo: Not sure if this needs to be a public method? I'll keep it here for now though.
-
     /**
      * Checks if target note is currently being synthesized.
      * @param target note to check.
@@ -215,13 +213,27 @@ public class DronePlayerImpl implements DronePlayer {
     /**
      * Sets current volume for midi driver.
      * If driver is active it will change update playback to the new volume.
-     * @param volume
+     * @param volume volume of playback.
      */
     @Override
     public void setVolume(int volume) {
         mVolume = volume;
         if (driverIsActive()) {
             refreshPlayback();
+        }
+    }
+
+    @Override
+    public void mute() {
+        for (Integer note : mActiveNotes) {
+            stopNotePlayback(note);
+        }
+    }
+
+    @Override
+    public void unmute() {
+        for (Integer note : mActiveNotes) {
+            startNotePlayback(note);
         }
     }
 
