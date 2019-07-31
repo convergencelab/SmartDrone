@@ -1,6 +1,5 @@
 package com.convergencelab.smartdrone.models.chords;
 
-import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.ModeTemplate;
 import com.example.keyfinder.Note;
 import com.example.keyfinder.Tone;
@@ -11,11 +10,11 @@ public interface Chords {
 
     Voicing makeVoicing(VoicingTemplate voicingTemplate,
                         ModeTemplate modeTemplate,
-                        AbstractKey key);
+                        int key);
 
     Note makeNote(Tone tone,
                   ModeTemplate modeTemplate,
-                  AbstractKey key);
+                  int key);
 
     Voicing makeVoicing();
 
@@ -27,6 +26,6 @@ public interface Chords {
 
     void setModeTemplate(ModeTemplate modeTemplate);
 
-    void setKey(AbstractKey key);
+    void setKey(int keyIx);
 
 }

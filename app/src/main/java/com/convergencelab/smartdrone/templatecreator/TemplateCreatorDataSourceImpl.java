@@ -6,7 +6,6 @@ import com.convergencelab.smartdrone.models.KeyFinderModel;
 import com.convergencelab.smartdrone.models.MidiDriverModel;
 import com.convergencelab.smartdrone.utility.DronePreferences;
 import com.convergencelab.smartdrone.VoicingHelper;
-import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.ModeTemplate;
 import com.example.keyfinder.Note;
@@ -26,7 +25,7 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
 
     private final HashSet<String> nameSet;
 
-    private AbstractKey mCurKey;
+    private int mCurKey;
     private ModeTemplate mCurMode;
 
     // Todo: Make private and create method getInstance()
@@ -77,7 +76,7 @@ public class TemplateCreatorDataSourceImpl implements TemplateCreatorDataSource 
         int modeIx = DronePreferences.getStoredModePref(mPreferences);
 
         mKeyFinderModel.getKeyFinder().setParentKeyList(parentScaleIx);
-        mCurKey = mKeyFinderModel.getKeyFinder().getKeyAtIndex(DEFAULT_KEY_IX);
+        mCurKey = 0;
         mCurMode = mKeyFinderModel.getKeyFinder().getModeTemplate(modeIx);
     }
 

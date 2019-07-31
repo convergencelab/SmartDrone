@@ -127,7 +127,7 @@ public class DroneSoundSettingsPresenter implements DroneSoundSettingsContract.P
         mModeNames = mDataSource.getModeNames(mParentScaleIx);
 
         mChords.setVoicingTemplate(mDataSource.getTemplate());
-        mChords.setKey();
+//        mChords.setKey();
 
     }
 }

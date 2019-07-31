@@ -1,8 +1,5 @@
 package com.convergencelab.smartdrone.models.chords;
 
-import android.util.Log;
-
-import com.example.keyfinder.AbstractKey;
 import com.example.keyfinder.HarmonyGenerator;
 import com.example.keyfinder.ModeTemplate;
 import com.example.keyfinder.Note;
@@ -12,7 +9,7 @@ import com.example.keyfinder.VoicingTemplate;
 
 public class ChordsImpl implements Chords {
     private HarmonyGenerator mGenerator;
-    private AbstractKey mKey;
+    private int mKeyIx;
     private ModeTemplate mModeTemplate;
     private VoicingTemplate mVoicingTemplate;
     private Tone mTone;
@@ -24,26 +21,25 @@ public class ChordsImpl implements Chords {
     @Override
     public Voicing makeVoicing(VoicingTemplate voicingTemplate,
                                ModeTemplate modeTemplate,
-                               AbstractKey key) {
-        return mGenerator.generateVoicing(voicingTemplate, modeTemplate, key);
+                               int keyIx) {
+        return mGenerator.generateVoicing(voicingTemplate, modeTemplate, keyIx);
     }
 
     @Override
     public Note makeNote(Tone tone,
                          ModeTemplate modeTemplate,
-                         AbstractKey key) {
-        return mGenerator.generateNote(tone, modeTemplate, key);
+                         int keyIx) {
+        return mGenerator.generateNote(tone, modeTemplate, keyIx);
     }
 
     @Override
     public Voicing makeVoicing() {
-        Log.d("debug", "makeVoicing");
-        return mGenerator.generateVoicing(mVoicingTemplate, mModeTemplate, mKey);
+        return mGenerator.generateVoicing(mVoicingTemplate, mModeTemplate, mKeyIx);
     }
 
     @Override
     public Note makeNote() {
-        return mGenerator.generateNote(mTone, mModeTemplate, mKey);
+        return mGenerator.generateNote(mTone, mModeTemplate, mKeyIx);
     }
 
     @Override
@@ -62,7 +58,7 @@ public class ChordsImpl implements Chords {
     }
 
     @Override
-    public void setKey(AbstractKey key) {
-        mKey = key;
+    public void setKey(int keyIx) {
+        mKeyIx = keyIx;
     }
 }

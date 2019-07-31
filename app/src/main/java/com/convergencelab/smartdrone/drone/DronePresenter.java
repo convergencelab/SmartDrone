@@ -121,7 +121,7 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
     @Override
     public void handleKeyChange(AbstractKey activeKey) {
-        mChords.setKey(activeKey);
+        mChords.setKey(activeKey.getDegree(mDataSource.getModeIx()).getIx());
 
         Voicing curVoicing = mChords.makeVoicing();
 
