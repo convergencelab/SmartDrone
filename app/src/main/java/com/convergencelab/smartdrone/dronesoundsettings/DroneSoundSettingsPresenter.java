@@ -77,6 +77,11 @@ public class DroneSoundSettingsPresenter implements DroneSoundSettingsContract.P
         Voicing toPlay = mChords.makeVoicing();
         mPlayer.start();
         mPlayer.play(Utility.voicingToIntArray(toPlay));
+
+        // Show views
+        mView.showParentScale(mParentScaleNames[mParentScaleIx]);
+        mView.showMode(mModeNames[mModeIx]);
+        mView.showPlugin(mPlugins[mPluginIx].getName());
     }
 
     @Override
@@ -133,6 +138,8 @@ public class DroneSoundSettingsPresenter implements DroneSoundSettingsContract.P
 
     @Override
     public void selectTemplate(int templateIx) {
+        mView.showTemplateActive(templateIx);
+
         VoicingTemplate selectedTemplate =
                 VoicingHelper.decodeTemplate(mAllTemplatesEncoded.get(templateIx));
         mChords.setVoicingTemplate(selectedTemplate);

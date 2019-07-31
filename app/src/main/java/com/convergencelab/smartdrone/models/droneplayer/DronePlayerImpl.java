@@ -225,16 +225,18 @@ public class DronePlayerImpl implements DronePlayer {
 
     @Override
     public void mute() {
-        for (Integer note : mActiveNotes) {
-            stopNotePlayback(note);
-        }
+        setVolume(VOLUME_OFF);
+//        for (Integer note : mActiveNotes) {
+//            stopNotePlayback(note);
+//        }
     }
 
     @Override
     public void unmute() {
-        for (Integer note : mActiveNotes) {
-            startNotePlayback(note);
-        }
+        setVolume(DEFAULT_VOLUME);
+//        for (Integer note : mActiveNotes) {
+//            startNotePlayback(note);
+//        }
     }
 
     /**

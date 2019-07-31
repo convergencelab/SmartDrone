@@ -13,7 +13,7 @@ public class DroneSoundSettingsContract {
 
         void showPlugin(String name);
 
-        void showTemplateActive();
+        void showTemplateActive(int templateIx);
 
         void showPlaybackUnmuted();
 
