@@ -35,9 +35,9 @@ public class DroneSoundSettingsContract {
 
         void nextPlugin();
 
-        void selectTemplate();
+        void selectTemplate(int templateIx);
 
-        void newTemplate();
+        void finish();
 
     }
 
