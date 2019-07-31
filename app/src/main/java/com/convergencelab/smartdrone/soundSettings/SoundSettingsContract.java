@@ -1,9 +1,9 @@
-package com.convergencelab.smartdrone.dronesoundsettings;
+package com.convergencelab.smartdrone.soundSettings;
 
 import com.convergencelab.smartdrone.BasePresenter;
 import com.convergencelab.smartdrone.BaseView;
 
-public class DroneSoundSettingsContract {
+public class SoundSettingsContract {
 
     interface View extends BaseView<Presenter> {
 

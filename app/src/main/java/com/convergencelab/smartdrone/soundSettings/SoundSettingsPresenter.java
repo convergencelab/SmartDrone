@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.dronesoundsettings;
+package com.convergencelab.smartdrone.soundSettings;
 
 import com.convergencelab.smartdrone.VoicingHelper;
 import com.convergencelab.smartdrone.models.chords.Chords;
@@ -12,7 +12,7 @@ import com.example.keyfinder.VoicingTemplate;
 
 import java.util.ArrayList;
 
-public class DroneSoundSettingsPresenter implements DroneSoundSettingsContract.Presenter {
+public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
     /**
      * PlaybackState of midi playback.
      */
@@ -22,7 +22,7 @@ public class DroneSoundSettingsPresenter implements DroneSoundSettingsContract.P
 
     /* Models */
 
-    private DroneSoundSettingsContract.View mView;
+    private SoundSettingsContract.View mView;
 
     private DroneDataSource mDataSource;
 
@@ -52,11 +52,11 @@ public class DroneSoundSettingsPresenter implements DroneSoundSettingsContract.P
 
     private ArrayList<String> mAllTemplatesEncoded;
 
-    DroneSoundSettingsPresenter(DroneDataSource dataSource,
-                                DroneSoundSettingsContract.View view,
-                                DronePlayer player,
-                                Chords chords,
-                                NoteHandler noteHandler) {
+    SoundSettingsPresenter(DroneDataSource dataSource,
+                           SoundSettingsContract.View view,
+                           DronePlayer player,
+                           Chords chords,
+                           NoteHandler noteHandler) {
         mView = view;
         mDataSource = dataSource;
         mPlayer = player;
@@ -148,11 +148,12 @@ public class DroneSoundSettingsPresenter implements DroneSoundSettingsContract.P
 
     @Override
     public void finish() {
+        // Save all prefs
         mDataSource.saveModeIx(mModeIx);
         mDataSource.saveParentScale(mParentScaleIx);
         mDataSource.savePluginIx(mPluginIx);
         mDataSource.saveTemplate(mCurTemplate);
-        // Save all prefs
+
         mPlayer.stop();
     }
 

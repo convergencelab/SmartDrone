@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.drone;
+package com.convergencelab.smartdrone.soundSettings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.convergencelab.smartdrone.R;
-import com.convergencelab.smartdrone.models.signalprocessor.SignalProcessor;
 import com.convergencelab.smartdrone.models.chords.Chords;
 import com.convergencelab.smartdrone.models.chords.ChordsImpl;
 import com.convergencelab.smartdrone.models.data.DroneDataSource;
@@ -16,47 +15,43 @@ import com.convergencelab.smartdrone.models.droneplayer.DronePlayer;
 import com.convergencelab.smartdrone.models.droneplayer.DronePlayerImpl;
 import com.convergencelab.smartdrone.models.notehandler.NoteHandler;
 import com.convergencelab.smartdrone.models.notehandler.NoteHandlerImpl;
-import com.convergencelab.smartdrone.models.signalprocessor.SignalProcessorImpl;
 
-public class DroneActivity extends AppCompatActivity {
+public class SoundSettingsActivity extends AppCompatActivity {
 
-    private DronePresenter mDronePresenter;
+    private SoundSettingsPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_drone);
+        setContentView(R.layout.activity_sound_settings);
 
-        DroneFragment droneFragment =
-                (DroneFragment) getSupportFragmentManager()
-                        .findFragmentById(R.id.contentFrame);
+        SoundSettingsFragment soundFragment =
+                (SoundSettingsFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.contentFrame);
 
-        if (droneFragment == null) {
-            droneFragment = DroneFragment.newInstance();
+        if (soundFragment == null) {
+            soundFragment = SoundSettingsFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.contentFrame, droneFragment);
+            transaction.add(R.id.contentFrame, soundFragment);
             transaction.commit();
         }
 
-        // Todo: May be a better way to do this.
         SharedPreferences mPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        DroneDataSource dataSource = new DroneDataSourceImpl(mPreferences, false);
+        DroneDataSource dataSource = new DroneDataSourceImpl(mPreferences, true); // Todo: try changing to false later
 
         NoteHandler noteHandler = new NoteHandlerImpl();
 
         DronePlayer dronePlayer = new DronePlayerImpl();
 
-        // Needs activity to run on UI thread.
-        SignalProcessor signalProcessor = new SignalProcessorImpl(this);
-
         Chords chords = new ChordsImpl();
 
-        mDronePresenter = new DronePresenter(
+        mPresenter = new SoundSettingsPresenter(
                 dataSource,
-                droneFragment,
-                noteHandler,
+                soundFragment,
                 dronePlayer,
-                signalProcessor,
-                chords);
+                chords,
+                noteHandler);
     }
+
+
 }

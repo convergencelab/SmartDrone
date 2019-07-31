@@ -47,6 +47,7 @@
             android:name=".DroneActivityOld"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+        <activity android:name=".soundSettings.SoundSettingsActivity" />
 
         <meta-data
             android:name="preloaded_fonts"
