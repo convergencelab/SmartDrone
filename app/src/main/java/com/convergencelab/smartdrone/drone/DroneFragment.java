@@ -27,6 +27,7 @@ import com.convergencelab.smartdrone.Constants;
 import com.convergencelab.smartdrone.DroneSettingsActivity;
 import com.convergencelab.smartdrone.DroneSoundActivity;
 import com.convergencelab.smartdrone.R;
+import com.convergencelab.smartdrone.soundSettings.SoundSettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashMap;
@@ -166,7 +167,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     @Override
     public void showSoundActivity() {
         mPresenter.stop();
-        Intent intent = new Intent(getContext(), DroneSoundActivity.class);
+        Intent intent = new Intent(getContext(), SoundSettingsActivity.class); // todo: this is new activity
         startActivity(intent);
     }
 

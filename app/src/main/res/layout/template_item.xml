@@ -3,6 +3,7 @@
     style="@style/Widget.MaterialComponents.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:checkable="true"
     android:layout_marginLeft="@dimen/template_card_spacing"
     android:layout_marginTop="@dimen/template_card_spacing"
     android:layout_marginRight="@dimen/template_card_spacing"
