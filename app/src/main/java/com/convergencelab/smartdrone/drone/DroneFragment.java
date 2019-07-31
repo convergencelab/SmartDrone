@@ -35,13 +35,13 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     /* Used for animating */
 
-    public static final int DURATION_MEDIUM = 200;
+    private static final int DURATION_MEDIUM = 200;
 
-    public static final int DURATION_SHORT = 100;
+    private static final int DURATION_SHORT = 100;
 
-    public static final float POSITION_NORMAL = 0f;
+    private static final float POSITION_NORMAL = 0f;
 
-    public static final float POSITION_ROTATED = 90f;
+    private static final float POSITION_ROTATED = 90f;
 
     private static final float INVISIBLE = 0f;
 
@@ -49,7 +49,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     private static final int TEXT_SIZE_SMALL = 20;
 
-    public static final int TEXT_SIZE_MEDIUM = 28;
+    private static final int TEXT_SIZE_MEDIUM = 28;
 
     private Animation mFadeIn;
 

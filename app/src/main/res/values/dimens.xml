@@ -14,4 +14,7 @@
     <dimen name="tone_item_padding">2dp</dimen>
     <dimen name="piano_padding">10dp</dimen>
     <dimen name="active_key_button_size">200dp</dimen>
+
+    <!-- Template Cards -->
+    <dimen name="template_card_spacing">4dp</dimen>
 </resources>
