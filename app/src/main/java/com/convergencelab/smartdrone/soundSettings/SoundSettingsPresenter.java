@@ -149,6 +149,17 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
     }
 
     @Override
+    public ArrayList<VoicingTemplate> getAllTemplates() {
+        ArrayList<VoicingTemplate> toReturn = new ArrayList<>();
+        for (String str : mAllTemplatesEncoded) {
+            VoicingTemplate curTemplate = VoicingHelper.decodeTemplate(str);
+            toReturn.add(curTemplate);
+        }
+        return toReturn;
+//        return mAllTemplatesEncoded;
+    }
+
+    @Override
     public void finish() {
         // Save all prefs
         mDataSource.saveModeIx(mModeIx);
@@ -174,6 +185,7 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
 
         // Harmony
         mAllTemplatesEncoded = mDataSource.getAllTemplates();
+
         mCurTemplate = mDataSource.getTemplate();
         mChords.setVoicingTemplate(mCurTemplate);
         mChords.setKey(0);

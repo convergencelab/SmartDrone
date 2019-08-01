@@ -2,6 +2,9 @@ package com.convergencelab.smartdrone.soundSettings;
 
 import com.convergencelab.smartdrone.BasePresenter;
 import com.convergencelab.smartdrone.BaseView;
+import com.example.keyfinder.VoicingTemplate;
+
+import java.util.ArrayList;
 
 public class SoundSettingsContract {
 
@@ -36,6 +39,8 @@ public class SoundSettingsContract {
         void nextPlugin();
 
         void selectTemplate(int templateIx);
+
+        ArrayList<VoicingTemplate> getAllTemplates();
 
         void finish();
 

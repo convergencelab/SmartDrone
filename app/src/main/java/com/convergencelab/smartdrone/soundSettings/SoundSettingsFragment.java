@@ -7,9 +7,14 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.convergencelab.smartdrone.R;
+import com.example.keyfinder.Tone;
+import com.example.keyfinder.VoicingTemplate;
+
+import java.util.ArrayList;
 
 public class SoundSettingsFragment extends Fragment implements SoundSettingsContract.View {
 
@@ -20,6 +25,9 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
 
     private SoundSettingsContract.Presenter mPresenter;
     private LayoutInflater mInflater;
+
+    private CardView[] mTemplates;
+    private int mSelectedTemplateIx;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,6 +43,7 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     public void onResume() {
         super.onResume();
         mPresenter.start();
+        setupTemplates();
     }
 
     @Override
@@ -98,7 +107,6 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
 
     private void setupView() {
         setupPrefs();
-        setupTemplates();
     }
 
     private void setupPrefs() {
@@ -120,7 +128,6 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
         mModePref.setOnClickListener(v -> mPresenter.nextMode());
         ((ViewGroup) mRoot).addView(mModePref);
 
-
         addDivider();
 
         // Plugin Pref
@@ -135,6 +142,41 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     }
 
     private void setupTemplates() {
+        ArrayList<VoicingTemplate> templates = mPresenter.getAllTemplates();
+        mTemplates = new CardView[templates.size()];
+        for (int i = 0; i < templates.size(); i++) {
+            VoicingTemplate curTemplate = templates.get(i);
+
+            mTemplates[i] =
+                    (CardView) mInflater.inflate(R.layout.template_item, (ViewGroup) mRoot, false);
+            mTemplates[i].setTag(i);
+
+            TextView templateName = mTemplates[i].findViewById(R.id.template_name);
+            templateName.setText(curTemplate.getName());
+
+            TextView templateTones = mTemplates[i].findViewById(R.id.template_tones);
+            String tonesStr = "";
+
+            // Bass Tones
+            if (curTemplate.getBassTones().length != 0) {
+                tonesStr += "Bass ";
+                for (Tone tone : curTemplate.getBassTones()) {
+                    tonesStr += (tone.getDegree()) + " ";
+                }
+                tonesStr += ": ";
+            }
+
+            // Chord Tones
+            if (curTemplate.getChordTones().length != 0) {
+                tonesStr += "Chord ";
+                for (Tone tone : curTemplate.getChordTones()) {
+                    tonesStr += (tone.getDegree()) + " ";
+                }
+            }
+            templateTones.setText(tonesStr);
+
+            ((ViewGroup) mRoot).addView(mTemplates[i]);
+        }
 
     }
 
