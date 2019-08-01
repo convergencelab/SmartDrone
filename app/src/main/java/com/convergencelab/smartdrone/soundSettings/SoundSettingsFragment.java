@@ -1,14 +1,19 @@
 package com.convergencelab.smartdrone.soundSettings;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
+import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
 
 import com.convergencelab.smartdrone.R;
 import com.example.keyfinder.Tone;
@@ -33,6 +38,8 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.sound_settings_frag, container, false);
         mInflater = inflater;
+
+        mSelectedTemplateIx = -1;
 
         setupView();
 
@@ -69,7 +76,27 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
 
     @Override
     public void showTemplateActive(int templateIx) {
+        int activeColor = getResources().getColor(R.color.colorActiveNote);
+        int inactiveColor = getResources().getColor(R.color.white);
 
+        int oldTemplate = mSelectedTemplateIx;
+        mSelectedTemplateIx = templateIx;
+
+        // Show old template unselected.
+        if (oldTemplate != -1) {
+            ValueAnimator inactiveAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), activeColor, inactiveColor);
+            inactiveAnimator.setDuration(200); // milliseconds
+            inactiveAnimator.addUpdateListener
+                    (animator -> mTemplates[oldTemplate].setCardBackgroundColor((int) animator.getAnimatedValue()));
+            inactiveAnimator.start();
+        }
+
+        // Show new template selected.
+        ValueAnimator activeAnimator = ValueAnimator.ofObject(new ArgbEvaluator(), inactiveColor, activeColor);
+        activeAnimator.setDuration(200); // milliseconds
+        activeAnimator.addUpdateListener
+                (animator -> mTemplates[templateIx].setCardBackgroundColor((int) animator.getAnimatedValue()));
+        activeAnimator.start();
     }
 
     @Override
@@ -139,9 +166,17 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
         ((ViewGroup) mRoot).addView(mPluginPref);
 
         addDivider();
+
+        LinearLayout voicingLabel = (LinearLayout) mInflater.inflate(R.layout.sound_pref_item_nodescription, (ViewGroup) mRoot, false);
+        TextView voicingLabelText = (TextView) voicingLabel.getChildAt(0);
+        voicingLabelText.setText("Voicing Template:");
+        ((ViewGroup) mRoot).addView(voicingLabel);
+
+        addDivider();
     }
 
     private void setupTemplates() {
+        ScrollView templateContainer = (ScrollView) mInflater.inflate(R.layout.template_container, (ViewGroup) mRoot, false);
         ArrayList<VoicingTemplate> templates = mPresenter.getAllTemplates();
         mTemplates = new CardView[templates.size()];
         for (int i = 0; i < templates.size(); i++) {
@@ -175,8 +210,14 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
             }
             templateTones.setText(tonesStr);
 
-            ((ViewGroup) mRoot).addView(mTemplates[i]);
+            int finalI = i;
+            mTemplates[i]
+                    .setOnClickListener(v -> mPresenter.selectTemplate((int) mTemplates[finalI].getTag()));
+
+//            ((ViewGroup) mRoot).addView(mTemplates[i]);
+            ((LinearLayout) templateContainer.getChildAt(0)).addView(mTemplates[i]);
         }
+        ((ViewGroup) mRoot).addView(templateContainer);
 
     }
 

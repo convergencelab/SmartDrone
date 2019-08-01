@@ -6,6 +6,9 @@
     <color name="colorAccentDark">#25A18E</color>
     <color name="colorActiveNote">#7AE582</color>
 
+    <color name="black">#000000</color>
+    <color name="white">#FFFFFF</color>
+
     <color name="active">#7AE582</color>
     <color name="inactive">#665858</color>
     <color name="textline_color">#B9B9B9</color>

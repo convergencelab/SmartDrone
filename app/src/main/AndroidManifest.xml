@@ -13,7 +13,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".templatecreator.TemplateCreatorActivity" />
+        <activity
+            android:name=".templatecreator.TemplateCreatorActivity"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".drone.DroneActivity"
             android:screenOrientation="portrait"
@@ -47,7 +49,9 @@
             android:name=".DroneActivityOld"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
-        <activity android:name=".soundSettings.SoundSettingsActivity" />
+        <activity
+            android:name=".soundSettings.SoundSettingsActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="preloaded_fonts"

@@ -16,8 +16,9 @@
     <dimen name="active_key_button_size">200dp</dimen>
 
     <!-- Template Cards -->
-    <dimen name="template_card_spacing">4dp</dimen>
+    <dimen name="template_card_spacing">10dp</dimen>
+    <dimen name="template_card_border_width">2dp</dimen>
 
     <!-- Sound Preference Items -->
-    <dimen name="sound_pref_spacing">10dp</dimen>
+    <dimen name="sound_pref_spacing">14dp</dimen>
 </resources>

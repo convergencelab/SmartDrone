@@ -145,6 +145,7 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
         VoicingTemplate selectedTemplate =
                 VoicingHelper.decodeTemplate(mAllTemplatesEncoded.get(templateIx));
         mChords.setVoicingTemplate(selectedTemplate);
+        mPlayer.play(Utility.voicingToIntArray(mChords.makeVoicing()));
         mCurTemplate = selectedTemplate;
     }
 
