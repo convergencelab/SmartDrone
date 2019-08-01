@@ -8,6 +8,9 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -20,28 +23,30 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.convergencelab.smartdrone.Constants;
 import com.convergencelab.smartdrone.DroneSettingsActivity;
-import com.convergencelab.smartdrone.DroneSoundActivity;
 import com.convergencelab.smartdrone.R;
+import com.convergencelab.smartdrone.soundsettings.SoundSettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class DroneFragment extends Fragment implements DroneContract.View {
 
     /* Used for animating */
 
-    public static final int DURATION_MEDIUM = 200;
+    private static final int DURATION_MEDIUM = 200;
 
-    public static final int DURATION_SHORT = 100;
+    private static final int DURATION_SHORT = 100;
 
-    public static final float POSITION_NORMAL = 0f;
+    private static final float POSITION_NORMAL = 0f;
 
-    public static final float POSITION_ROTATED = 90f;
+    private static final float POSITION_ROTATED = 90f;
 
     private static final float INVISIBLE = 0f;
 
@@ -49,7 +54,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     private static final int TEXT_SIZE_SMALL = 20;
 
-    public static final int TEXT_SIZE_MEDIUM = 28;
+    private static final int TEXT_SIZE_MEDIUM = 28;
 
     private Animation mFadeIn;
 
@@ -96,6 +101,10 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     private DroneContract.Presenter mPresenter;
     private TextView mActiveKeyText;
+
+    public DroneFragment() {
+        // Requires empty public constructor
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -166,7 +175,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     @Override
     public void showSoundActivity() {
         mPresenter.stop();
-        Intent intent = new Intent(getContext(), DroneSoundActivity.class);
+        Intent intent = new Intent(getContext(), SoundSettingsActivity.class); // todo: this is new activity
         startActivity(intent);
     }
 

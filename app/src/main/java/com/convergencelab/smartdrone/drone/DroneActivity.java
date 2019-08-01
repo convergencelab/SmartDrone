@@ -39,9 +39,8 @@ public class DroneActivity extends AppCompatActivity {
         }
 
         // Todo: May be a better way to do this.
-
         SharedPreferences mPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
-        DroneDataSource dataSource = new DroneDataSourceImpl(mPreferences);
+        DroneDataSource dataSource = new DroneDataSourceImpl(mPreferences, false);
 
         NoteHandler noteHandler = new NoteHandlerImpl();
 

@@ -93,15 +93,12 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                 // +1 to display base 1 indexing for user.
                 checkBoxText.setText(Integer.toString(toneDegree + 1));
                 toneItem.setTag(toneDegree);
-                toneItem./*getChildAt(0).*/setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        CheckBox checkBox = (CheckBox) toneItem.getChildAt(0);
-                        checkBox.setChecked(!checkBox.isChecked());
+                toneItem.setOnClickListener(v -> {
+                    CheckBox checkBox = (CheckBox) toneItem.getChildAt(0);
+                    checkBox.setChecked(!checkBox.isChecked());
 
-                        int degree = (int) toneItem.getTag();
-                        mPresenter.toggleChordTone(degree);
-                    }
+                    int degree = (int) toneItem.getTag();
+                    mPresenter.toggleChordTone(degree);
                 });
 
                 chordToneItems[(int) toneItem.getTag()] = toneItem;

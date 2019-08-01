@@ -9,7 +9,7 @@ public interface DroneDataSource {
 
     Plugin[] getPlugins();
 
-    ArrayList<String> getTemplates();
+    ArrayList<String> getAllTemplates();
 
     int getPluginIx();
 
@@ -32,4 +32,11 @@ public interface DroneDataSource {
     int getActiveKeySensitivity();
 
     boolean isDuplicateName(String name);
+
+    String[] getParentScaleNames();
+
+    String[] getModeNames(int parentScale);
+
+    void saveTemplateList(ArrayList<VoicingTemplate> templateList);
+
 }

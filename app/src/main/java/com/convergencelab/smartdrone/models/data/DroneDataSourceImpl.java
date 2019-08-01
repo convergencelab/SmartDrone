@@ -4,6 +4,8 @@ import android.content.SharedPreferences;
 
 import com.convergencelab.smartdrone.utility.DronePreferences;
 import com.convergencelab.smartdrone.VoicingHelper;
+import com.example.keyfinder.KeyFinder;
+import com.example.keyfinder.MusicTheory;
 import com.example.keyfinder.VoicingTemplate;
 
 import java.util.ArrayList;
@@ -22,10 +24,16 @@ public class DroneDataSourceImpl implements DroneDataSource {
     private Integer mCurModeIx = null;
     private Integer mCurKeyIx = null;
 
-    public DroneDataSourceImpl(SharedPreferences prefs) {
+    public DroneDataSourceImpl(SharedPreferences prefs, boolean shouldLoadAllTemplates) {
         mPrefs = prefs;
-        nameSet = VoicingHelper
-                .getSetOfAllTemplateNames(DronePreferences.getAllTemplatePref(mPrefs));
+
+        if (shouldLoadAllTemplates) {
+            nameSet = VoicingHelper
+                    .getSetOfAllTemplateNames(DronePreferences.getAllTemplatePref(mPrefs));
+        }
+        else {
+            nameSet = null;
+        }
     }
 
     // Not the best solution, but it works.
@@ -39,7 +47,7 @@ public class DroneDataSourceImpl implements DroneDataSource {
     }
 
     @Override
-    public ArrayList<String> getTemplates() {
+    public ArrayList<String> getAllTemplates() {
         return VoicingHelper.inflateTemplateList(DronePreferences.getAllTemplatePref(mPrefs));
     }
 
@@ -100,5 +108,29 @@ public class DroneDataSourceImpl implements DroneDataSource {
     @Override
     public boolean isDuplicateName(String name) {
         return nameSet.contains(name);
+    }
+
+    @Override
+    public String[] getParentScaleNames() {
+        return MusicTheory.PARENT_SCALE_NAMES;
+    }
+
+    @Override
+    public String[] getModeNames(int parentScale) {
+        if (parentScale == KeyFinder.CODE_MAJOR) {
+            return MusicTheory.MAJOR_MODE_NAMES;
+        }
+        else {
+            return MusicTheory.MELODIC_MINOR_MODE_NAMES;
+        }
+    }
+
+    @Override
+    public void saveTemplateList(ArrayList<VoicingTemplate> templateList) {
+        ArrayList<String> encodedList = new ArrayList<>();
+        for (VoicingTemplate template : templateList) {
+            encodedList.add(VoicingHelper.encodeTemplate(template));
+        }
+        DronePreferences.setAllTemplatePref(mPrefs, VoicingHelper.flattenTemplateList(encodedList));
     }
 }

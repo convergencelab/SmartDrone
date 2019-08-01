@@ -114,7 +114,7 @@ public class VoicingHelper {
             chordIxs = new int[]{};
         }
 
-        return new VoicingTemplate(bassIxs, chordIxs);
+        return new VoicingTemplate(templateStrs[0], bassIxs, chordIxs);
     }
 
     /**

@@ -84,4 +84,6 @@
     <string name="save_template">Save</string>
     <string name="cancel_template">Cancel</string>
     <string name="piano_image_description">Displays note heard.</string>
+    <string name="new_template_item">New Template</string>
+    <string name="mute_button_item">Mute Button</string>
 </resources>
