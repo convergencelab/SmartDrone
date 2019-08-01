@@ -124,4 +124,13 @@ public class DroneDataSourceImpl implements DroneDataSource {
             return MusicTheory.MELODIC_MINOR_MODE_NAMES;
         }
     }
+
+    @Override
+    public void saveTemplateList(ArrayList<VoicingTemplate> templateList) {
+        ArrayList<String> encodedList = new ArrayList<>();
+        for (VoicingTemplate template : templateList) {
+            encodedList.add(VoicingHelper.encodeTemplate(template));
+        }
+        DronePreferences.setAllTemplatePref(mPrefs, VoicingHelper.flattenTemplateList(encodedList));
+    }
 }

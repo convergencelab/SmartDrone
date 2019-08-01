@@ -50,9 +50,13 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
 
     private String[] mParentScaleNames;
 
+    ArrayList<VoicingTemplate> mAllTemplates;
+
     private String[] mModeNames;
 
     private ArrayList<String> mAllTemplatesEncoded;
+
+    private boolean mListHasChanged = false;
 
     SoundSettingsPresenter(DroneDataSource dataSource,
                            SoundSettingsContract.View view,
@@ -71,6 +75,8 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
     @Override
     public void start() {
         loadData();
+
+        mAllTemplates = null;
 
         mPaybackState = PlaybackState.UNMUTED;
         mView.showParentScale(mParentScaleNames[mParentScaleIx]);
@@ -142,27 +148,31 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
 
     @Override
     public void selectTemplate(int templateIx) {
-        mView.showTemplateActive(templateIx);
+        if (templateIx != mCurTemplateIx) {
+            mView.showTemplateActive(templateIx);
 
-        VoicingTemplate selectedTemplate =
-                VoicingHelper.decodeTemplate(mAllTemplatesEncoded.get(templateIx));
-        mChords.setVoicingTemplate(selectedTemplate);
-        mPlayer.play(Utility.voicingToIntArray(mChords.makeVoicing()));
-        mCurTemplate = selectedTemplate;
+            VoicingTemplate selectedTemplate = (mAllTemplates.get(templateIx));
+            mChords.setVoicingTemplate(selectedTemplate);
+            mPlayer.play(Utility.voicingToIntArray(mChords.makeVoicing()));
+            mCurTemplateIx = templateIx;
+            mCurTemplate = selectedTemplate;
+        }
     }
 
     @Override
     public ArrayList<VoicingTemplate> getAllTemplates() {
         mCurTemplateIx = -1;
-        ArrayList<VoicingTemplate> toReturn = new ArrayList<>();
-        for (int i = 0; i < mAllTemplatesEncoded.size(); i++) {
-            VoicingTemplate curTemplate = VoicingHelper.decodeTemplate(mAllTemplatesEncoded.get(i));
-            toReturn.add(curTemplate);
-            if (mCurTemplate.getName().equals(curTemplate.getName())) {
-                mCurTemplateIx = i;
+        if (mAllTemplates == null) {
+            mAllTemplates = new ArrayList<>();
+            for (int i = 0; i < mAllTemplatesEncoded.size(); i++) {
+                VoicingTemplate curTemplate = VoicingHelper.decodeTemplate(mAllTemplatesEncoded.get(i));
+                mAllTemplates.add(curTemplate);
+                if (mCurTemplate.getName().equals(curTemplate.getName())) {
+                    mCurTemplateIx = i;
+                }
             }
         }
-        return toReturn;
+        return mAllTemplates;
     }
 
     @Override
@@ -172,6 +182,9 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
         mDataSource.saveParentScale(mParentScaleIx);
         mDataSource.savePluginIx(mPluginIx);
         mDataSource.saveTemplate(mCurTemplate);
+        if (mListHasChanged) {
+            mDataSource.saveTemplateList(mAllTemplates);
+        }
 
         mPlayer.stop();
     }
@@ -180,6 +193,22 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
     public void getCurrentTemplate() {
         if (mCurTemplateIx != -1) {
             mView.showTemplateActive(mCurTemplateIx);
+        }
+    }
+
+    @Override
+    public void deleteTemplate(int templateIx) {
+        mListHasChanged = true;
+//        boolean curDeleted = mCurTemplate.getName().equals(mAllTemplates.get(templateIx).getName());
+        mAllTemplates.remove(templateIx);
+        mView.refreshTemplates();
+
+        if (mCurTemplateIx == -1) {
+//            mCurTemplate = mAllTemplates.get(0);
+            selectTemplate(0);
+        }
+        else {
+            selectTemplate(mCurTemplateIx);
         }
     }
 

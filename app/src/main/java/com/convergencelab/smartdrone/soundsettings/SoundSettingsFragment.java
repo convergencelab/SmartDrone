@@ -54,18 +54,6 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     public void onResume() {
         super.onResume();
 
-        dialogClickListener = (dialog, which) -> {
-            switch (which){
-                case DialogInterface.BUTTON_POSITIVE:
-//                    mPresenter.deleteTemplate();
-                    break;
-
-                case DialogInterface.BUTTON_NEGATIVE:
-                    // Do nothing.
-                    break;
-            }
-        };
-
         mSelectedTemplateIx = -1;
         setupView();
         mPresenter.start();
@@ -141,6 +129,11 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     }
 
     @Override
+    public void refreshTemplates() {
+        setupTemplates();
+    }
+
+    @Override
     public void setPresenter(SoundSettingsContract.Presenter presenter) {
         mPresenter = presenter;
     }
@@ -198,6 +191,10 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     }
 
     private void setupTemplates() {
+        mSelectedTemplateIx = -1;
+        if (mRoot.findViewById(R.id.template_scroll_view) != null) {
+            ((ViewGroup) mRoot).removeView(mRoot.findViewById(R.id.template_scroll_view));
+        }
         ScrollView templateContainer = (ScrollView) mInflater.inflate(R.layout.template_container, (ViewGroup) mRoot, false);
         ArrayList<VoicingTemplate> templates = mPresenter.getAllTemplates();
         mTemplates = new CardView[templates.size()];
@@ -236,12 +233,27 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
             }
             templateTones.setText(tonesStr);
 
-            int finalI = i;
+            int finalIx = i;
             mTemplates[i]
-                    .setOnClickListener(v -> mPresenter.selectTemplate((int) mTemplates[finalI].getTag()));
+                    .setOnClickListener(v -> mPresenter.selectTemplate((int) mTemplates[finalIx].getTag()));
 
             mTemplates[i]
                     .setOnLongClickListener(v -> {
+                        dialogClickListener = (dialog, which) -> {
+                            switch (which) {
+                                case DialogInterface.BUTTON_POSITIVE:
+                                    mSelectedTemplateIx = -1;
+                                    if (mTemplates.length > 1) {
+                                        mPresenter.deleteTemplate(finalIx);
+                                    }
+                                    break;
+
+                                case DialogInterface.BUTTON_NEGATIVE:
+                                    // Do nothing.
+                                    break;
+                            }
+                        };
+
                         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
                         builder.setMessage("Delete Template?").setPositiveButton("Yes", dialogClickListener)
                                 .setNegativeButton("No", dialogClickListener).show();

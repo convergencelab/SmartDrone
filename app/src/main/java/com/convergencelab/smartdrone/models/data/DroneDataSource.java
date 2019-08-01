@@ -37,4 +37,6 @@ public interface DroneDataSource {
 
     String[] getModeNames(int parentScale);
 
+    void saveTemplateList(ArrayList<VoicingTemplate> templateList);
+
 }

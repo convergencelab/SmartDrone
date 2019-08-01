@@ -26,6 +26,8 @@ public class SoundSettingsContract {
 
         void showDroneMainActivity();
 
+        void refreshTemplates();
+
     }
 
     interface Presenter extends BasePresenter {
@@ -45,6 +47,8 @@ public class SoundSettingsContract {
         void finish();
 
         void getCurrentTemplate();
+
+        void deleteTemplate(int templateIx);
 
     }
 

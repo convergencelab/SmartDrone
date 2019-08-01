@@ -23,6 +23,12 @@ import com.convergencelab.smartdrone.models.notehandler.NoteHandlerImpl;
 
 public class SoundSettingsActivity extends AppCompatActivity {
 
+    enum IconState {
+        MUTED, UNMUTED
+    }
+
+    private IconState mState = IconState.UNMUTED;
+
     private SoundSettingsPresenter mPresenter;
 
     private SoundSettingsFragment mView;
@@ -52,7 +58,6 @@ public class SoundSettingsActivity extends AppCompatActivity {
             transaction.remove(mView);
             transaction.commit();
         }
-
 
         mView = SoundSettingsFragment.newInstance();
         FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
@@ -94,6 +99,15 @@ public class SoundSettingsActivity extends AppCompatActivity {
 
             case R.id.action_mute:
                 mPresenter.togglePlayback();
+
+                if (mState == IconState.UNMUTED) {
+                    item.setIcon(R.drawable.ic_muted);
+                    mState = IconState.MUTED;
+                }
+                else {
+                    item.setIcon(R.drawable.ic_unmuted);
+                    mState = IconState.UNMUTED;
+                }
                 return true;
         }
         return super.onOptionsItemSelected(item);

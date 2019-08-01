@@ -1,7 +1,6 @@
 package com.convergencelab.smartdrone.templatecreator;
 
 
-import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.text.InputFilter;
@@ -14,7 +13,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.convergencelab.smartdrone.R;
-import com.convergencelab.smartdrone.soundsettings.SoundSettingsActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
