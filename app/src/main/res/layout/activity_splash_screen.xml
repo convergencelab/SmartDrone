@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.convergencelab.smartdrone.SplashScreenActivity">
+    tools:context="com.convergencelabstfx.smartdrone.SplashScreenActivity">
 
     <ImageView
         android:id="@+id/convergence_lab_iv"

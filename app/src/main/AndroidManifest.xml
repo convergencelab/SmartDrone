@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.convergencelab.smartdrone">
+    package="com.convergencelabstfx.smartdrone">
 
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
@@ -14,15 +14,15 @@
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
         <activity
-            android:name=".templatecreator.TemplateCreatorActivity"
+            android:name="com.convergencelabstfx.smartdrone.templatecreator.TemplateCreatorActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".drone.DroneActivity"
+            android:name="com.convergencelabstfx.smartdrone.drone.DroneActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".AboutActivity" />
+        <activity android:name="com.convergencelabstfx.smartdrone.AboutActivity" />
         <activity
-            android:name=".SplashScreenActivity"
+            android:name="com.convergencelabstfx.smartdrone.SplashScreenActivity"
             android:theme="@style/SplashTheme"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -32,26 +32,26 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".templatecreator.TemplateCreatorActivityOld"
+            android:name="com.convergencelabstfx.smartdrone.templatecreator.TemplateCreatorActivityOld"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DroneSoundActivity"
+            android:name="com.convergencelabstfx.smartdrone.DroneSoundActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".DroneSettingsActivity"
+            android:name="com.convergencelabstfx.smartdrone.DroneSettingsActivity"
             android:label="Settings"
-            android:parentActivityName=".DroneActivityOld"
+            android:parentActivityName="com.convergencelabstfx.smartdrone.DroneActivityOld"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.convergencelab.smartdrone.DroneActivityOld" />
+                android:value="com.convergencelabstfx.smartdrone.DroneActivityOld" />
         </activity>
         <activity
-            android:name=".DroneActivityOld"
+            android:name="com.convergencelabstfx.smartdrone.DroneActivityOld"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity
-            android:name=".soundsettings.SoundSettingsActivity"
+            android:name="com.convergencelabstfx.smartdrone.soundsettings.SoundSettingsActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar"/>
 
