@@ -27,7 +27,7 @@ public class SoundSettingsActivity extends AppCompatActivity {
         MUTED, UNMUTED
     }
 
-    private IconState mState = IconState.UNMUTED;
+    private IconState mState;
 
     private SoundSettingsPresenter mPresenter;
 
@@ -43,12 +43,15 @@ public class SoundSettingsActivity extends AppCompatActivity {
 
         mToolbar = findViewById(R.id.soundsettings_toolbar);
         setSupportActionBar(mToolbar);
+//        getSupportActionBar().setTitle("Sound Settings");
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
+
+        mState = IconState.UNMUTED;
 
         mView = (SoundSettingsFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.contentFrame);
