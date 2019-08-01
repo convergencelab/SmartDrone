@@ -186,9 +186,7 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
 
     @Override
     public void cancelTemplateCreator() {
-//        Objects.requireNonNull(getActivity()).finish(); // Todo: make sure correct
-        Intent intent = new Intent(getContext(), SoundSettingsActivity.class);
-        startActivity(intent);
+        Objects.requireNonNull(getActivity()).finish(); // Todo: make sure correct
     }
 
     @Override

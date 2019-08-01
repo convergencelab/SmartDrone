@@ -8,6 +8,7 @@
     android:layout_marginTop="@dimen/template_card_spacing"
     android:layout_marginRight="@dimen/template_card_spacing"
     android:checkable="true"
+    app:cardBackgroundColor="@color/dark_white"
     android:padding="@dimen/template_card_spacing"
     app:contentPadding="@dimen/template_card_spacing"
     app:rippleColor="@color/colorActiveNote"

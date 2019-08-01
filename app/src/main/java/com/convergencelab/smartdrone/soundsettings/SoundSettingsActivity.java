@@ -35,17 +35,9 @@ public class SoundSettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.sound_settings_activity);
 
-
         mToolbar = findViewById(R.id.soundsettings_toolbar);
         setSupportActionBar(mToolbar);
-    }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        // See if it can be moved back into onCreate
         mView =
                 (SoundSettingsFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.contentFrame);
@@ -72,6 +64,12 @@ public class SoundSettingsActivity extends AppCompatActivity {
                 dronePlayer,
                 chords,
                 noteHandler);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override

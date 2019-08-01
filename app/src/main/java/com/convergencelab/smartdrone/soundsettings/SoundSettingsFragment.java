@@ -1,18 +1,17 @@
 package com.convergencelab.smartdrone.soundsettings;
 
 import android.animation.ValueAnimator;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
@@ -30,6 +29,8 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     private LinearLayout mParentScalePref;
     private LinearLayout mModePref;
     private LinearLayout mPluginPref;
+
+    DialogInterface.OnClickListener dialogClickListener;
 
     private SoundSettingsContract.Presenter mPresenter;
     private LayoutInflater mInflater;
@@ -52,6 +53,18 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     @Override
     public void onResume() {
         super.onResume();
+
+        dialogClickListener = (dialog, which) -> {
+            switch (which){
+                case DialogInterface.BUTTON_POSITIVE:
+//                    mPresenter.deleteTemplate();
+                    break;
+
+                case DialogInterface.BUTTON_NEGATIVE:
+                    //No button clicked
+                    break;
+            }
+        };
 
         mSelectedTemplateIx = -1;
         setupView();
@@ -83,7 +96,7 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     @Override
     public void showTemplateActive(int templateIx) {
         int activeColor = getResources().getColor(R.color.colorActiveNote);
-        int inactiveColor = getResources().getColor(R.color.white);
+        int inactiveColor = getResources().getColor(R.color.dark_white);
 
         int oldTemplate = mSelectedTemplateIx;
         mSelectedTemplateIx = templateIx;
@@ -226,6 +239,17 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
             int finalI = i;
             mTemplates[i]
                     .setOnClickListener(v -> mPresenter.selectTemplate((int) mTemplates[finalI].getTag()));
+
+            mTemplates[i]
+                    .setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                            builder.setMessage("Delete Template?").setPositiveButton("Yes", dialogClickListener)
+                                    .setNegativeButton("No", dialogClickListener).show();
+                            return true;
+                        }
+                    });
 
 //            ((ViewGroup) mRoot).addView(mTemplates[i]);
             ((LinearLayout) templateContainer.getChildAt(0)).addView(mTemplates[i]);
