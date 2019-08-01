@@ -2,9 +2,14 @@ package com.convergencelab.smartdrone.soundsettings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.preference.PreferenceManager;
 
 import com.convergencelab.smartdrone.R;
 import com.convergencelab.smartdrone.models.chords.Chords;
@@ -20,23 +25,39 @@ public class SoundSettingsActivity extends AppCompatActivity {
 
     private SoundSettingsPresenter mPresenter;
 
+    private SoundSettingsFragment mView;
+
+    private Toolbar mToolbar;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_sound_settings);
+        setContentView(R.layout.sound_settings_activity);
 
-        SoundSettingsFragment soundFragment =
+
+        mToolbar = findViewById(R.id.soundsettings_toolbar);
+        setSupportActionBar(mToolbar);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        // See if it can be moved back into onCreate
+        mView =
                 (SoundSettingsFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.contentFrame);
+                        .findFragmentById(R.id.contentFrame);
 
-        if (soundFragment == null) {
-            soundFragment = SoundSettingsFragment.newInstance();
+        if (mView == null) {
+            mView = SoundSettingsFragment.newInstance();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.contentFrame, soundFragment);
+            transaction.add(R.id.contentFrame, mView);
             transaction.commit();
         }
 
-        SharedPreferences mPreferences = androidx.preference.PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         DroneDataSource dataSource = new DroneDataSourceImpl(mPreferences, true); // Todo: try changing to false later
 
         NoteHandler noteHandler = new NoteHandlerImpl();
@@ -47,11 +68,32 @@ public class SoundSettingsActivity extends AppCompatActivity {
 
         mPresenter = new SoundSettingsPresenter(
                 dataSource,
-                soundFragment,
+                mView,
                 dronePlayer,
                 chords,
                 noteHandler);
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_soundsettings, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+
+            case R.id.action_new_template:
+                // This method stops presenter.
+                mView.showTemplateCreatorActivity();
+                return true;
+
+            case R.id.action_mute:
+                mPresenter.togglePlayback();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 }

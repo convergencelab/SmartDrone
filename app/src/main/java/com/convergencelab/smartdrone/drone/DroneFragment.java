@@ -8,6 +8,9 @@ import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AlphaAnimation;
@@ -20,6 +23,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
+import androidx.core.app.NavUtils;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -30,6 +34,7 @@ import com.convergencelab.smartdrone.soundsettings.SoundSettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashMap;
+import java.util.Objects;
 
 public class DroneFragment extends Fragment implements DroneContract.View {
 
@@ -96,6 +101,10 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     private DroneContract.Presenter mPresenter;
     private TextView mActiveKeyText;
+
+    public DroneFragment() {
+        // Requires empty public constructor
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {

@@ -162,10 +162,6 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
                 mCurTemplateIx = i;
             }
         }
-//        for (String str : mAllTemplatesEncoded) {
-//            VoicingTemplate curTemplate = VoicingHelper.decodeTemplate(str);
-//            toReturn.add(curTemplate);
-//        }
         return toReturn;
     }
 

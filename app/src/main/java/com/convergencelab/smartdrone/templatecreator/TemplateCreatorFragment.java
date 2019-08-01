@@ -1,6 +1,7 @@
 package com.convergencelab.smartdrone.templatecreator;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import androidx.fragment.app.Fragment;
 import android.text.InputFilter;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.convergencelab.smartdrone.R;
+import com.convergencelab.smartdrone.soundsettings.SoundSettingsActivity;
 import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.Objects;
@@ -93,15 +95,12 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
                 // +1 to display base 1 indexing for user.
                 checkBoxText.setText(Integer.toString(toneDegree + 1));
                 toneItem.setTag(toneDegree);
-                toneItem./*getChildAt(0).*/setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        CheckBox checkBox = (CheckBox) toneItem.getChildAt(0);
-                        checkBox.setChecked(!checkBox.isChecked());
+                toneItem.setOnClickListener(v -> {
+                    CheckBox checkBox = (CheckBox) toneItem.getChildAt(0);
+                    checkBox.setChecked(!checkBox.isChecked());
 
-                        int degree = (int) toneItem.getTag();
-                        mPresenter.toggleChordTone(degree);
-                    }
+                    int degree = (int) toneItem.getTag();
+                    mPresenter.toggleChordTone(degree);
                 });
 
                 chordToneItems[(int) toneItem.getTag()] = toneItem;
@@ -187,7 +186,9 @@ public class TemplateCreatorFragment extends Fragment implements TemplateCreator
 
     @Override
     public void cancelTemplateCreator() {
-        Objects.requireNonNull(getActivity()).finish(); // Todo: make sure correct
+//        Objects.requireNonNull(getActivity()).finish(); // Todo: make sure correct
+        Intent intent = new Intent(getContext(), SoundSettingsActivity.class);
+        startActivity(intent);
     }
 
     @Override

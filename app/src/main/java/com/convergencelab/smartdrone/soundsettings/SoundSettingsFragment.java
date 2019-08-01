@@ -1,8 +1,12 @@
 package com.convergencelab.smartdrone.soundsettings;
 
 import android.animation.ValueAnimator;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
@@ -14,6 +18,7 @@ import androidx.fragment.app.Fragment;
 import androidx.vectordrawable.graphics.drawable.ArgbEvaluator;
 
 import com.convergencelab.smartdrone.R;
+import com.convergencelab.smartdrone.templatecreator.TemplateCreatorActivity;
 import com.example.keyfinder.Tone;
 import com.example.keyfinder.VoicingTemplate;
 
@@ -32,14 +37,14 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     private CardView[] mTemplates;
     private int mSelectedTemplateIx;
 
+    public SoundSettingsFragment() {
+        // Requires empty public constructor
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         mRoot = inflater.inflate(R.layout.sound_settings_frag, container, false);
         mInflater = inflater;
-
-        mSelectedTemplateIx = -1;
-
-        setupView();
 
         return mRoot;
     }
@@ -47,6 +52,9 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     @Override
     public void onResume() {
         super.onResume();
+
+        mSelectedTemplateIx = -1;
+        setupView();
         mPresenter.start();
         setupTemplates();
     }
@@ -109,7 +117,9 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
 
     @Override
     public void showTemplateCreatorActivity() {
-
+        mPresenter.finish();
+        Intent intent = new Intent(getContext(), TemplateCreatorActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -124,6 +134,7 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
 
     /**
      * Return instance of fragment.
+     *
      * @return new instance.
      */
     public static SoundSettingsFragment newInstance() {
@@ -194,16 +205,20 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
             if (curTemplate.getBassTones().length != 0) {
                 tonesStr += "Bass ";
                 for (Tone tone : curTemplate.getBassTones()) {
-                    tonesStr += (tone.getDegree()) + " ";
+                    // + 1 for base 1 indexing
+                    tonesStr += (tone.getDegree() + 1) + " ";
                 }
-                tonesStr += ": ";
+                if (curTemplate.getChordTones().length != 0) {
+                    tonesStr += ": ";
+                }
             }
 
             // Chord Tones
             if (curTemplate.getChordTones().length != 0) {
                 tonesStr += "Chord ";
                 for (Tone tone : curTemplate.getChordTones()) {
-                    tonesStr += (tone.getDegree()) + " ";
+                    // + 1 for base 1 indexing
+                    tonesStr += (tone.getDegree() + 1) + " ";
                 }
             }
             templateTones.setText(tonesStr);
