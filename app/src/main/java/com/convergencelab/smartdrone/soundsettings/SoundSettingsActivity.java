@@ -37,17 +37,28 @@ public class SoundSettingsActivity extends AppCompatActivity {
 
         mToolbar = findViewById(R.id.soundsettings_toolbar);
         setSupportActionBar(mToolbar);
+    }
 
-        mView =
-                (SoundSettingsFragment) getSupportFragmentManager()
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        mView = (SoundSettingsFragment) getSupportFragmentManager()
                         .findFragmentById(R.id.contentFrame);
 
-        if (mView == null) {
-            mView = SoundSettingsFragment.newInstance();
+        if (mView != null) {
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-            transaction.add(R.id.contentFrame, mView);
+            transaction.remove(mView);
             transaction.commit();
         }
+
+
+        mView = SoundSettingsFragment.newInstance();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        transaction.add(R.id.contentFrame, mView);
+        transaction.commit();
+
 
         SharedPreferences mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         DroneDataSource dataSource = new DroneDataSourceImpl(mPreferences, true); // Todo: try changing to false later
@@ -64,12 +75,6 @@ public class SoundSettingsActivity extends AppCompatActivity {
                 dronePlayer,
                 chords,
                 noteHandler);
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     @Override

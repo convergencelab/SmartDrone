@@ -61,7 +61,7 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
                     break;
 
                 case DialogInterface.BUTTON_NEGATIVE:
-                    //No button clicked
+                    // Do nothing.
                     break;
             }
         };
@@ -241,17 +241,13 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
                     .setOnClickListener(v -> mPresenter.selectTemplate((int) mTemplates[finalI].getTag()));
 
             mTemplates[i]
-                    .setOnLongClickListener(new View.OnLongClickListener() {
-                        @Override
-                        public boolean onLongClick(View v) {
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                            builder.setMessage("Delete Template?").setPositiveButton("Yes", dialogClickListener)
-                                    .setNegativeButton("No", dialogClickListener).show();
-                            return true;
-                        }
+                    .setOnLongClickListener(v -> {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                        builder.setMessage("Delete Template?").setPositiveButton("Yes", dialogClickListener)
+                                .setNegativeButton("No", dialogClickListener).show();
+                        return true;
                     });
 
-//            ((ViewGroup) mRoot).addView(mTemplates[i]);
             ((LinearLayout) templateContainer.getChildAt(0)).addView(mTemplates[i]);
         }
         ((ViewGroup) mRoot).addView(templateContainer);
