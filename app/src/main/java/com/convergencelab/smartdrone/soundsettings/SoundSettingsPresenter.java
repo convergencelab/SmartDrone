@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.soundSettings;
+package com.convergencelab.smartdrone.soundsettings;
 
 import com.convergencelab.smartdrone.VoicingHelper;
 import com.convergencelab.smartdrone.models.chords.Chords;
@@ -13,6 +13,8 @@ import com.example.keyfinder.VoicingTemplate;
 import java.util.ArrayList;
 
 public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
+    private int mCurTemplateIx;
+
     /**
      * PlaybackState of midi playback.
      */
@@ -151,13 +153,20 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
 
     @Override
     public ArrayList<VoicingTemplate> getAllTemplates() {
+        mCurTemplateIx = -1;
         ArrayList<VoicingTemplate> toReturn = new ArrayList<>();
-        for (String str : mAllTemplatesEncoded) {
-            VoicingTemplate curTemplate = VoicingHelper.decodeTemplate(str);
+        for (int i = 0; i < mAllTemplatesEncoded.size(); i++) {
+            VoicingTemplate curTemplate = VoicingHelper.decodeTemplate(mAllTemplatesEncoded.get(i));
             toReturn.add(curTemplate);
+            if (mCurTemplate.getName().equals(curTemplate.getName())) {
+                mCurTemplateIx = i;
+            }
         }
+//        for (String str : mAllTemplatesEncoded) {
+//            VoicingTemplate curTemplate = VoicingHelper.decodeTemplate(str);
+//            toReturn.add(curTemplate);
+//        }
         return toReturn;
-//        return mAllTemplatesEncoded;
     }
 
     @Override
@@ -169,6 +178,13 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
         mDataSource.saveTemplate(mCurTemplate);
 
         mPlayer.stop();
+    }
+
+    @Override
+    public void getCurrentTemplate() {
+        if (mCurTemplateIx != -1) {
+            mView.showTemplateActive(mCurTemplateIx);
+        }
     }
 
     private void loadData() {

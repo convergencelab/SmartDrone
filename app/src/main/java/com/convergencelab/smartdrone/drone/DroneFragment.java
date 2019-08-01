@@ -25,9 +25,8 @@ import androidx.fragment.app.Fragment;
 
 import com.convergencelab.smartdrone.Constants;
 import com.convergencelab.smartdrone.DroneSettingsActivity;
-import com.convergencelab.smartdrone.DroneSoundActivity;
 import com.convergencelab.smartdrone.R;
-import com.convergencelab.smartdrone.soundSettings.SoundSettingsActivity;
+import com.convergencelab.smartdrone.soundsettings.SoundSettingsActivity;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.HashMap;

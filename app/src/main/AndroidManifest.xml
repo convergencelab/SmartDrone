@@ -50,7 +50,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity
-            android:name=".soundSettings.SoundSettingsActivity"
+            android:name=".soundsettings.SoundSettingsActivity"
             android:screenOrientation="portrait" />
 
         <meta-data

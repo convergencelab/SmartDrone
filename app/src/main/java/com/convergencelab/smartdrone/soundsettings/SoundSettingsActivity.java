@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.soundSettings;
+package com.convergencelab.smartdrone.soundsettings;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

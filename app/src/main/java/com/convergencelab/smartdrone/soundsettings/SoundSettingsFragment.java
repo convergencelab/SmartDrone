@@ -1,7 +1,5 @@
-package com.convergencelab.smartdrone.soundSettings;
+package com.convergencelab.smartdrone.soundsettings;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -219,6 +217,7 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
         }
         ((ViewGroup) mRoot).addView(templateContainer);
 
+        mPresenter.getCurrentTemplate();
     }
 
     private void setPrefText(LinearLayout layout, String newText) {

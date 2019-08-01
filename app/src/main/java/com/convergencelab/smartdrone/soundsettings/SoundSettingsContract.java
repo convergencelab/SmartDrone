@@ -1,4 +1,4 @@
-package com.convergencelab.smartdrone.soundSettings;
+package com.convergencelab.smartdrone.soundsettings;
 
 import com.convergencelab.smartdrone.BasePresenter;
 import com.convergencelab.smartdrone.BaseView;
@@ -43,6 +43,8 @@ public class SoundSettingsContract {
         ArrayList<VoicingTemplate> getAllTemplates();
 
         void finish();
+
+        void getCurrentTemplate();
 
     }
 
