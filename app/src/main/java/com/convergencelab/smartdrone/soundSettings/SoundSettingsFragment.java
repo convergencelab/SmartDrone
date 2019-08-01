@@ -102,26 +102,36 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     }
 
     private void setupPrefs() {
-
-        // Todo: Add dividers in between prefs.
-
         // Parent Scale Pref
         mParentScalePref = (LinearLayout) mInflater
-                .inflate(R.layout.sound_pref_item, (ViewGroup) mRoot, true);
+                .inflate(R.layout.sound_pref_item, (ViewGroup) mRoot, false);
         TextView prefTitle = (TextView) mParentScalePref.getChildAt(0);
         prefTitle.setText("Parent Scale");
+        mParentScalePref.setOnClickListener(v -> mPresenter.nextParentScale());
+        ((ViewGroup) mRoot).addView(mParentScalePref);
+
+        addDivider();
 
         // Mode pref
         mModePref = (LinearLayout) mInflater
-                .inflate(R.layout.sound_pref_item, (ViewGroup) mRoot, true);
+                .inflate(R.layout.sound_pref_item, (ViewGroup) mRoot, false);
         prefTitle = (TextView) mModePref.getChildAt(0);
         prefTitle.setText("Mode");
+        mModePref.setOnClickListener(v -> mPresenter.nextMode());
+        ((ViewGroup) mRoot).addView(mModePref);
+
+
+        addDivider();
 
         // Plugin Pref
         mPluginPref = (LinearLayout) mInflater
-                .inflate(R.layout.sound_pref_item, (ViewGroup) mRoot, true);
+                .inflate(R.layout.sound_pref_item, (ViewGroup) mRoot, false);
         prefTitle = (TextView) mPluginPref.getChildAt(0);
         prefTitle.setText("Plugin");
+        mPluginPref.setOnClickListener(v -> mPresenter.nextPlugin());
+        ((ViewGroup) mRoot).addView(mPluginPref);
+
+        addDivider();
     }
 
     private void setupTemplates() {
@@ -131,6 +141,11 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
     private void setPrefText(LinearLayout layout, String newText) {
         TextView toChange = (TextView) layout.getChildAt(1);
         toChange.setText(newText);
+    }
+
+    private void addDivider() {
+        ((ViewGroup) mRoot).addView(
+                mInflater.inflate(R.layout.layout_divider, (ViewGroup) mRoot, false));
     }
 
 

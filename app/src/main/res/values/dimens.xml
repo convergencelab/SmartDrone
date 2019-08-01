@@ -17,4 +17,7 @@
 
     <!-- Template Cards -->
     <dimen name="template_card_spacing">4dp</dimen>
+
+    <!-- Sound Preference Items -->
+    <dimen name="sound_pref_spacing">10dp</dimen>
 </resources>

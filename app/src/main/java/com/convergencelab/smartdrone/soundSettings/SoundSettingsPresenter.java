@@ -101,8 +101,10 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
     @Override
     public void nextParentScale() {
         mParentScaleIx = (mParentScaleIx + 1) % mParentScaleNames.length;
+        mModeNames = mDataSource.getModeNames(mParentScaleIx);
 
         // View
+        mView.showMode(mModeNames[mModeIx]);
         mView.showParentScale(mParentScaleNames[mParentScaleIx]);
 
         // Model
@@ -164,8 +166,8 @@ public class SoundSettingsPresenter implements SoundSettingsContract.Presenter {
         mPluginIx = mDataSource.getPluginIx();
 
         // KeyFinder
-        mNoteHandler.setParentScale(mParentScaleIx);
         mParentScaleIx = mDataSource.getParentScale();
+        mNoteHandler.setParentScale(mParentScaleIx);
         mModeIx = mDataSource.getModeIx();
         mParentScaleNames = mDataSource.getParentScaleNames();
         mModeNames = mDataSource.getModeNames(mParentScaleIx);
