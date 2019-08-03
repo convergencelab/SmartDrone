@@ -1,13 +1,13 @@
 <component name="ProjectDictionaryState">
-  <dictionary name="macdo">
-    <words>
-      <w>locrian</w>
-      <w>midikey</w>
-      <w>mixolydian</w>
-      <w>phrygian</w>
-      <w>tarsos</w>
-      <w>voiceleader</w>
-      <w>voicings</w>
-    </words>
-  </dictionary>
+    <dictionary name="macdo">
+        <words>
+            <w>locrian</w>
+            <w>midikey</w>
+            <w>mixolydian</w>
+            <w>phrygian</w>
+            <w>tarsos</w>
+            <w>voiceleader</w>
+            <w>voicings</w>
+        </words>
+    </dictionary>
 </component>
