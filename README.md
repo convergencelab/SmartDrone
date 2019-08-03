@@ -1,6 +1,9 @@
 # SmartDrone
 SmartDrone is an android application that can generate tones based on user input. This app can analyze the notes the user is playing on their instrument and find the corresponding key. It was created to improve musicians ability to hear chord-scale relationships. 
 
+## Download
+[Google Play](https://play.google.com/store/apps/details?id=com.convergencelabstfx.smartdrone&hl=en)
+
 ## About
 This app was developed by Travis MacDonald as part of a research assistant position for Convergence Lab.
 
