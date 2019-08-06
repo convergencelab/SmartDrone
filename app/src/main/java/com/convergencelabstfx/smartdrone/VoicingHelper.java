@@ -23,34 +23,34 @@ public class VoicingHelper {
      */
     //todo needs refactoring
     public static String encodeTemplate(VoicingTemplate template) {
-        String templateStr = "";
-        templateStr += template.getName();
+        StringBuilder templateStr = new StringBuilder();
+        templateStr.append(template.getName());
 
         // Add Bass Tones.
-        templateStr += "{";
+        templateStr.append('{');
         for (int i = 0; i < template.getBassTones().length; i++) {
             // So string only has comma in between values,
             // not before first or after last.
             if (i > 0) {
-                templateStr += ',';
+                templateStr.append(',');
             }
-            templateStr += Integer.toString(template.getBassTones()[i].getDegree());
+            templateStr.append(template.getBassTones()[i].getDegree());
         }
-        templateStr += "}";
+        templateStr.append('}');
 
         // Add Chord Tones.
-        templateStr += "{";
+        templateStr.append('{');
         for (int i = 0; i < template.getChordTones().length; i++) {
             // So string only has comma in between values,
             // not before first or after last.
             if (i > 0) {
-                templateStr += ',';
+                templateStr.append(',');
             }
-            templateStr += Integer.toString(template.getChordTones()[i].getDegree());
+            templateStr.append(template.getChordTones()[i].getDegree());
         }
-        templateStr += "}";
+        templateStr.append('}');
 
-        return templateStr;
+        return templateStr.toString();
     }
 
     /**
@@ -61,7 +61,7 @@ public class VoicingHelper {
     //todo needs refactoring
     public static VoicingTemplate decodeTemplate(String flattenedTemplate) {
         // 0) Name, 1) BassTones, 2) ChordTones
-        String[] templateStrs = new String[]{"","",""};
+        StringBuilder[] templateStrs = new StringBuilder[]{new StringBuilder(), new StringBuilder(), new StringBuilder()}; // Name, Bass Tones, Chord Tones
         int templateStrIx = 0;
 
         for (int i = 0; i < flattenedTemplate.length(); i++) {
@@ -72,7 +72,7 @@ public class VoicingHelper {
                     templateStrIx++;
                 }
                 else {
-                    templateStrs[templateStrIx] += curChar;
+                    templateStrs[templateStrIx].append(curChar);
                 }
             }
             else {
@@ -81,15 +81,14 @@ public class VoicingHelper {
                     templateStrIx++;
                 }
                 else if (curChar != '}') {
-                    templateStrs[templateStrIx] += curChar;
+                    templateStrs[templateStrIx].append(curChar);
                 }
             }
         }
 
-        // Todo: fix bug where empty indices adds '0' as chord tone
-        String[] bassStr = templateStrs[1].split(",");
+        String[] bassStr = templateStrs[1].toString().split(",");
         int[] bassIxs;
-        if (!templateStrs[1].isEmpty()) {
+        if (!templateStrs[1].toString().isEmpty()) {
             bassIxs = new int[bassStr.length];
             for (int i = 0; i < bassIxs.length; i++) {
                 bassIxs[i] = Integer.parseInt(bassStr[i]);
@@ -99,9 +98,9 @@ public class VoicingHelper {
             bassIxs = new int[]{};
         }
 
-        String[] chordStr = templateStrs[2].split(",");
+        String[] chordStr = templateStrs[2].toString().split(",");
         int[] chordIxs;
-        if (!templateStrs[2].isEmpty()) {
+        if (!templateStrs[2].toString().isEmpty()) {
             chordIxs = new int[chordStr.length];
             for (int i = 0; i < chordIxs.length; i++) {
                 chordIxs[i] = Integer.parseInt(chordStr[i]);
@@ -111,7 +110,7 @@ public class VoicingHelper {
             chordIxs = new int[]{};
         }
 
-        return new VoicingTemplate(templateStrs[0], bassIxs, chordIxs);
+        return new VoicingTemplate(templateStrs[0].toString(), bassIxs, chordIxs);
     }
 
     /**
@@ -119,7 +118,7 @@ public class VoicingHelper {
      * @param       flattenedList String; string with all flattened templates.
      * @return      ArrayList; list of all flattened templates.
      */
-    public static ArrayList<String> inflateTemplateList(String flattenedList) {
+    public static ArrayList inflateTemplateList(String flattenedList) {
         String[] strArr = flattenedList.split("\\|");
         return new ArrayList(Arrays.asList(strArr));
     }
@@ -133,11 +132,14 @@ public class VoicingHelper {
         if (templateList.isEmpty()) { //todo replace with exception
             return Constants.DEFAULT_TEMPLATE_LIST;
         }
-        String flattenedTemplates = templateList.get(0); //todo error check; but should work for meantime IF must have one voicing rule imposed
+
+        // Grab the first template so pipes are only inserted in between voicings
+        StringBuilder flattenedTemplates = new StringBuilder(templateList.get(0));
         for (int i = 1; i < templateList.size(); i++) {
-            flattenedTemplates += "|" + templateList.get(i);
+            flattenedTemplates.append('|');
+            flattenedTemplates.append(templateList.get(i));
         }
-        return flattenedTemplates;
+        return flattenedTemplates.toString();
     }
 
     /**
@@ -146,15 +148,15 @@ public class VoicingHelper {
      * @return      String; name of template.
      */
     public static String getTemplateName(String flattenedTemplate) {
-        String name = "";
-        name += flattenedTemplate.charAt(0);
+        StringBuilder name = new StringBuilder();
+        name.append(flattenedTemplate.charAt(0));
         // todo why the f is this 1?
         int i = 1;
         while (flattenedTemplate.charAt(i) != '{') {
-            name += flattenedTemplate.charAt(i);
+            name.append(flattenedTemplate.charAt(i));
             i++;
         }
-        return name;
+        return name.toString();
     }
 
     public static void addTemplateToPref(SharedPreferences preferences, VoicingTemplate template) {
@@ -167,17 +169,18 @@ public class VoicingHelper {
     public static HashSet<String> getSetOfAllTemplateNames(String flattenedTemplateList) {
         HashSet<String> allNames = new HashSet<>();
         boolean nameFound = false;
-        String curString = "";
+        StringBuilder curName = new StringBuilder();
         char curChar;
         for (int i = 0; i < flattenedTemplateList.length(); i++) {
             curChar = flattenedTemplateList.charAt(i);
             if (!nameFound && curChar != '{') {
-                curString += curChar;
+                curName.append(curChar);
             }
             else if (curChar == '{') {
                 nameFound = true;
-                allNames.add(curString);
-                curString = "";
+                allNames.add(curName.toString());
+                // Clear the previous name.
+                curName.setLength(0);
             }
             else if (nameFound && curChar == '|') {
                 nameFound = false;
