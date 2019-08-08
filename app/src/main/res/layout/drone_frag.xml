@@ -31,17 +31,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/piano_img">
 
-        <androidx.appcompat.widget.AppCompatButton
-            android:id="@+id/active_key_button"
-            android:layout_width="@dimen/active_key_button_size"
-            android:layout_height="@dimen/active_key_button_size"
-            android:background="@drawable/active_key_background_transition"
-            app:layout_constraintBottom_toTopOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="parent" />
-
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/active_key_text"
             android:layout_width="wrap_content"
@@ -53,6 +42,17 @@
             android:textSize="28sp"
             app:layout_constraintBottom_toTopOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/active_key_button"
+            android:layout_width="@dimen/active_key_button_size"
+            android:layout_height="@dimen/active_key_button_size"
+            android:background="@drawable/active_key_background_inactive"
+            app:layout_constraintBottom_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="parent" />
 
@@ -82,7 +82,7 @@
                 style="@style/Widget.MaterialComponents.FloatingActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@android:color/white"
+                app:backgroundTint="@color/drone_fab_color"
                 app:borderWidth="0dp"
                 app:elevation="0dp"
                 app:fabCustomSize="@dimen/main_fab_size_bigger"
@@ -103,7 +103,7 @@
                 style="@style/Widget.MaterialComponents.FloatingActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@android:color/white"
+                app:backgroundTint="@color/drone_fab_color"
                 app:borderWidth="0dp"
                 app:elevation="0dp"
                 app:fabCustomSize="@dimen/main_fab_size_bigger"
@@ -126,7 +126,7 @@
                 style="@style/Widget.MaterialComponents.FloatingActionButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:backgroundTint="@android:color/white"
+                app:backgroundTint="@color/drone_fab_color"
                 app:borderWidth="0dp"
                 app:elevation="0dp"
                 app:fabCustomSize="@dimen/main_fab_size_bigger"

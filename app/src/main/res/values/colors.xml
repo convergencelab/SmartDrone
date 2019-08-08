@@ -7,6 +7,9 @@
     <color name="colorAccentDark">#25A18E</color>
     <color name="colorActiveNote">#7AE582</color>
 
+    <!-- Drone Main Buttons -->
+    <color name="drone_fab_color">#FFFFFF</color>
+
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
     <color name="dark_white">#ECECEC</color>
@@ -48,4 +51,5 @@
     <color name="fbutton_color_concrete">#95a5a6</color>
     <color name="fbutton_color_asbestos">#7f8c8d</color>
     <color name="fbutton_color_transparent">@android:color/transparent</color>
+
 </resources>
