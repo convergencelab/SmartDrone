@@ -6,8 +6,8 @@ android {
         applicationId "com.convergencelabstfx.smartdrone"
         minSdkVersion 16
         targetSdkVersion 28
-        versionCode 4
-        versionName "1.0.0"
+        versionCode 6
+        versionName "1.0.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
 
