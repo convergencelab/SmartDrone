@@ -11,7 +11,7 @@
     app:cardBackgroundColor="@color/dark_white"
     android:padding="@dimen/template_card_spacing"
     app:contentPadding="@dimen/template_card_spacing"
-    app:rippleColor="@color/colorActiveNote"
+    app:rippleColor="@color/green_test"
     app:strokeColor="@android:color/black"
     app:strokeWidth="@dimen/template_card_border_width">
 

@@ -92,7 +92,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     /**
      * The ring drawable that outlines the active key.
      */
-    TransitionDrawable mActiveKeyBackground;
+//    TransitionDrawable mActiveKeyBackground;
 
     private DroneContract.Presenter mPresenter;
     private TextView mActiveKeyText;
@@ -134,7 +134,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showDroneActive() {
-        mActiveKeyBackground.startTransition(DURATION_MEDIUM);
+//        mActiveKeyBackground.startTransition(DURATION_MEDIUM);
         animateActiveKeyText("Listening");
 
         showControlButtonActive();
@@ -142,7 +142,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showDroneInactive() {
-        mActiveKeyBackground.reverseTransition(DURATION_MEDIUM);
+//        mActiveKeyBackground.reverseTransition(DURATION_MEDIUM);
         mPianoImg.setImageResource(R.drawable.piano_null);
         animateActiveKeyText("Start", TEXT_SIZE_MEDIUM);
         showControlButtonInactive();
@@ -232,7 +232,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
         // Active key button
         mActiveKeyButton = mRoot.findViewById(R.id.active_key_button);
         mActiveKeyButton.setOnClickListener(v -> mPresenter.handleActiveKeyButtonClick());
-        mActiveKeyBackground = (TransitionDrawable) mActiveKeyButton.getBackground();
+//        mActiveKeyBackground = (TransitionDrawable) mActiveKeyButton.getBackground();
 
         mActiveKeyText = mRoot.findViewById(R.id.active_key_text);
     }

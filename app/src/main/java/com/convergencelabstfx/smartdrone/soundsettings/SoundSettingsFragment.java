@@ -83,7 +83,7 @@ public class SoundSettingsFragment extends Fragment implements SoundSettingsCont
 
     @Override
     public void showTemplateActive(int templateIx) {
-        int activeColor = getResources().getColor(R.color.colorActiveNote);
+        int activeColor = getResources().getColor(R.color.green_test);
         int inactiveColor = getResources().getColor(R.color.dark_white);
 
         int oldTemplate = mSelectedTemplateIx;
