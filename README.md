@@ -29,4 +29,4 @@ The delay in key change allows for users to play passing tones without changing 
 
 The <b>Note Length Filter</b> sets how long a note must be heard before it is recognized. A longer filter can help filter out invalid frequencies in noisy environments, but will subsequently require the user to play longer tones in order to be recognized.
 
-Change voicings with the voicing selector and the app will transpose it to any mode. Select a voicing by tapping it, and delete a voicing by holding it. Create a new voicing with the <b>New Voicing</b> button.
+Change voicings with the voicing selector and the app will transpose it to any mode. Select a voicing by tapping it, and delete a voicing by holding it. Create a new voicing with the <b>'+'</b> button.
