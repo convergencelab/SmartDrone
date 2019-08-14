@@ -4,7 +4,6 @@ import android.Manifest;
 import android.animation.ObjectAnimator;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.drawable.TransitionDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.LayoutInflater;
@@ -89,11 +88,6 @@ public class DroneFragment extends Fragment implements DroneContract.View {
      */
     private Button mActiveKeyButton;
 
-    /**
-     * The ring drawable that outlines the active key.
-     */
-//    TransitionDrawable mActiveKeyBackground;
-
     private DroneContract.Presenter mPresenter;
     private TextView mActiveKeyText;
 
@@ -134,7 +128,6 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showDroneActive() {
-//        mActiveKeyBackground.startTransition(DURATION_MEDIUM);
         animateActiveKeyText("Listening");
 
         showControlButtonActive();
@@ -142,7 +135,6 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showDroneInactive() {
-//        mActiveKeyBackground.reverseTransition(DURATION_MEDIUM);
         mPianoImg.setImageResource(R.drawable.piano_null);
         animateActiveKeyText("Start", TEXT_SIZE_MEDIUM);
         showControlButtonInactive();
@@ -231,8 +223,14 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
         // Active key button
         mActiveKeyButton = mRoot.findViewById(R.id.active_key_button);
-        mActiveKeyButton.setOnClickListener(v -> mPresenter.handleActiveKeyButtonClick());
-//        mActiveKeyBackground = (TransitionDrawable) mActiveKeyButton.getBackground();
+        mActiveKeyButton.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(mRoot.getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                requestMicrophonePermission();
+            }
+            else {
+                mPresenter.handleActiveKeyButtonClick();
+            }
+        });
 
         mActiveKeyText = mRoot.findViewById(R.id.active_key_text);
     }

@@ -43,7 +43,9 @@
     <string name="about_description">
         SmartDrone was created to improve musicians ability hear chord-scale relationships.
         \n\nThis app was developed by Travis MacDonald as part of a research assistant position for Convergence Lab.
-        \n\nConvergence Lab is a funded research program established by James Hughes Ph.D., assistant professor at St. Francis Xavier University.\n
+        \n\nConvergence Lab is a funded research program established by James Hughes Ph.D., assistant professor at St. Francis Xavier University.
+        \n\nArtwork created by Matea Drljepan.\n
+
     </string>
     <!-- Libraries -->
     <string name="libraries_heading">Libraries</string>
