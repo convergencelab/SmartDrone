@@ -223,12 +223,6 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
         // Active key button
         mActiveKeyButton = mRoot.findViewById(R.id.active_key_button);
-        if (ContextCompat.checkSelfPermission(mRoot.getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
-            requestMicrophonePermission();
-        }
-        else {
-            mPresenter.toggleDroneState();
-        }
         mActiveKeyButton.setOnClickListener(v -> {
             if (ContextCompat.checkSelfPermission(mRoot.getContext(), Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
                 requestMicrophonePermission();
