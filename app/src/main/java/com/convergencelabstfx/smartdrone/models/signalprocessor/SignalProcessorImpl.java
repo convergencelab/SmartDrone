@@ -128,7 +128,7 @@ public class SignalProcessorImpl implements SignalProcessor {
         if (pitchInHz == -1) {
             return -1;
         }
-        return PitchConverter.hertzToMidiKey(pitchInHz) % MusicTheory.TOTAL_NOTES;
+        return PitchConverter.hertzToMidiKey(pitchInHz);
     }
 
 }

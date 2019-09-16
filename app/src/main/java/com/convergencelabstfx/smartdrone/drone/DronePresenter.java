@@ -115,7 +115,7 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
     @Override
     public void handlePitchResult(int pitch) {
-        mDroneView.showNoteActive(pitch);
+        mDroneView.showNoteActive(pitch % 12);
         mNoteHandler.handleNote(pitch);
     }
 
