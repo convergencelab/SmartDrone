@@ -11,4 +11,6 @@ public interface SignalProcessor {
 
     void removePitchListener(PitchProcessorObserver observer);
 
+    boolean isRunning();
+
 }

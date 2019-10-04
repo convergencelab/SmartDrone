@@ -15,6 +15,7 @@ import be.tarsos.dsp.pitch.PitchProcessor;
 import be.tarsos.dsp.util.PitchConverter;
 
 public class SignalProcessorImpl implements SignalProcessor {
+
     /**
      * Audio dispatcher connected to microphone.
      */
@@ -46,6 +47,8 @@ public class SignalProcessorImpl implements SignalProcessor {
      */
     private List<PitchProcessorObserver> observers;
 
+    private boolean mIsRunning;
+
     /**
      * Constructor.
      * @param activity activity needed to run on UI thread.
@@ -55,6 +58,7 @@ public class SignalProcessorImpl implements SignalProcessor {
 
         observers = new ArrayList<>();
         dispatcher = null;
+        mIsRunning = false;
     }
 
     /**
@@ -86,6 +90,8 @@ public class SignalProcessorImpl implements SignalProcessor {
         dispatcher.addAudioProcessor(pitchProcessor);
         Thread audioThread = new Thread(dispatcher, "Pitch Processing Thread");
         audioThread.start();
+
+        mIsRunning = true;
     }
 
     /**
@@ -99,6 +105,8 @@ public class SignalProcessorImpl implements SignalProcessor {
         }
         dispatcher.stop();
         dispatcher = null;
+
+        mIsRunning = false;
     }
 
     /**
@@ -129,6 +137,10 @@ public class SignalProcessorImpl implements SignalProcessor {
             return -1;
         }
         return PitchConverter.hertzToMidiKey(pitchInHz);
+    }
+
+    public boolean isRunning() {
+        return mIsRunning;
     }
 
 }
