@@ -3,8 +3,6 @@ package com.convergencelabstfx.smartdrone;
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
 
 import com.convergencelabstfx.smartdrone.drone.DroneActivity;
@@ -22,7 +20,7 @@ public class SplashScreenActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash_screen);
-        ImageView background = findViewById(R.id.convergence_lab_iv);
+        ImageView background = findViewById(R.id.splash_img);
         background.setImageResource(R.drawable.convergence_lab_1080);
 
         new Timer().schedule(new TimerTask() {

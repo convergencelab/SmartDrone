@@ -88,4 +88,5 @@
     <string name="piano_image_description">Displays note heard.</string>
     <string name="new_template_item">New Template</string>
     <string name="mute_button_item">Mute Button</string>
+    <string name="splash_img_description">Convergence Lab Logo</string>
 </resources>

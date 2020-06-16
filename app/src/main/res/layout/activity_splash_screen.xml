@@ -7,11 +7,13 @@
     tools:context="com.convergencelabstfx.smartdrone.SplashScreenActivity">
 
     <ImageView
-        android:id="@+id/convergence_lab_iv"
+        android:id="@+id/splash_img"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/splash_img_description"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
