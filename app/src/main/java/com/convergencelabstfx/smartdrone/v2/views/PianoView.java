@@ -9,14 +9,23 @@ import android.widget.LinearLayout;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.convergencelabstfx.smartdrone.R;
+import com.example.keyfinder.MusicTheory;
 
 import java.util.HashMap;
 
 class PianoView extends ConstraintLayout {
 
-    private HashMap<Integer, ImageButton> pianoKeyMap;
     private LinearLayout whiteKeys;
     private LinearLayout blackKeys;
+
+    private HashMap<Integer, ImageButton> pianoKeyMap = new HashMap<>(MusicTheory.TOTAL_NOTES);
+
+    private boolean[] keyIsPressed = new boolean[12];
+
+    private final boolean[] isWhiteKey = new boolean[]{
+            true, false, true, false, true, true, false,
+            true, false, true, false, true, false, true
+    };
 
     public PianoView(Context context) {
         super(context);
@@ -35,6 +44,31 @@ class PianoView extends ConstraintLayout {
 
     public ImageButton getPianoKeyAt(int ix) {
         return pianoKeyMap.get(ix);
+    }
+
+    public void showKeyPressed(int ix) {
+        if (!keyIsPressed[ix]) {
+            keyIsPressed[ix] = true;
+            // Show pressed color
+            getPianoKeyAt(ix).setBackgroundResource(R.drawable.piano_key_background_green);
+        }
+    }
+
+    public void showKeyNotPressed(int ix) {
+        if (keyIsPressed[ix]) {
+            keyIsPressed[ix] = false;
+            // Show regular color
+            if (isWhiteKey[ix]) {
+                getPianoKeyAt(ix).setBackgroundResource(R.drawable.piano_key_background_white);
+            }
+            else {
+                getPianoKeyAt(ix).setBackgroundResource(R.drawable.piano_key_background_black);
+            }
+        }
+    }
+
+    public boolean keyIsPressed(int ix) {
+        return keyIsPressed[ix];
     }
 
     private void init(Context context) {
@@ -58,7 +92,7 @@ class PianoView extends ConstraintLayout {
         // map will give you back the corresponding key button.
         final int[] seqBlack = { 1, 3, 6, 8, 10 };
         final int[] seqWhite = { 0, 2, 4, 5, 7, 9, 11 };
-        pianoKeyMap = new HashMap<>(seqWhite.length + seqBlack.length);
+
         for (int i = 0; i < seqBlack.length; i++) {
             ImageButton pianoKey = (ImageButton) blackKeys.getChildAt(i);
             pianoKeyMap.put(seqBlack[i], pianoKey);

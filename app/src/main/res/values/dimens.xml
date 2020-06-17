@@ -22,5 +22,5 @@
     <!-- Sound Preference Items -->
     <dimen name="sound_pref_spacing">14dp</dimen>
 
-    <dimen name="piano_key_radius">2dp</dimen>
+    <dimen name="piano_key_radius">1dp</dimen>
 </resources>
