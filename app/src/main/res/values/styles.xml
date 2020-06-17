@@ -21,4 +21,8 @@
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:windowBackground">@color/convergence_background</item>
     </style>
+
+    <style name="pianoKey">
+
+    </style>
 </resources>
