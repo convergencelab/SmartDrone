@@ -13,18 +13,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity
-            android:name="com.convergencelabstfx.smartdrone.templatecreator.TemplateCreatorActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name="com.convergencelabstfx.smartdrone.drone.DroneActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name="com.convergencelabstfx.smartdrone.AboutActivity" />
-        <activity
-            android:name="com.convergencelabstfx.smartdrone.SplashScreenActivity"
-            android:theme="@style/SplashTheme"
-            android:screenOrientation="portrait">
+        <activity android:name=".v2.views.BaseActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -32,28 +21,46 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.convergencelabstfx.smartdrone.templatecreator.TemplateCreatorActivityOld"
+            android:name=".templatecreator.TemplateCreatorActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.convergencelabstfx.smartdrone.DroneSoundActivity"
+            android:name=".drone.DroneActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".AboutActivity" />
+        <activity
+            android:name=".SplashScreenActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".templatecreator.TemplateCreatorActivityOld"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.convergencelabstfx.smartdrone.DroneSettingsActivity"
+            android:name=".DroneSoundActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".DroneSettingsActivity"
             android:label="Settings"
-            android:parentActivityName="com.convergencelabstfx.smartdrone.DroneActivityOld"
+            android:parentActivityName=".DroneActivityOld"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.convergencelabstfx.smartdrone.DroneActivityOld" />
         </activity>
         <activity
-            android:name="com.convergencelabstfx.smartdrone.DroneActivityOld"
+            android:name=".DroneActivityOld"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
         <activity
-            android:name="com.convergencelabstfx.smartdrone.soundsettings.SoundSettingsActivity"
+            android:name=".soundsettings.SoundSettingsActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar"/>
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="preloaded_fonts"

@@ -9,13 +9,13 @@ public interface NoteHandler {
 
     void clear();
 
-    void handleNote(int noteIx);
+    void handleNote(int noteIx); // Move to notefilter
 
     AbstractKey getActiveKey();
 
     void setKeyTimerLen(int timerLen);
 
-    void setNoteLengthFilter(int millis);
+    void setNoteLengthFilter(int millis); // Move to notefilter
 
     void setParentScale(int parentScale);
 

@@ -96,16 +96,33 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
             mState = State.ON;
         }
         else {
+            if (mProcessor.isRunning()) {
+                mProcessor.stop();
+                mDroneView.showDroneLocked();
+                mDroneView.showNoteActive(-1);
+            }
+            else {
+                mProcessor.start();
+                mDroneView.showDroneUnlocked();
+            }
             // Todo: Sustain key
         }
     }
 
     @Override
     public void stop() {
-        if (mState == State.ON) {
-            deactivateDrone();
-            mState = State.OFF;
-        }
+    if (mState == State.OFF) {
+        // something went wrong
+    }
+    else {
+        deactivateDrone();
+        mState = State.OFF;
+    }
+    // old code
+//        if (mState == State.ON) {
+//            deactivateDrone();
+//            mState = State.OFF;
+//        }
     }
 
     @Override
@@ -115,7 +132,7 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
 
     @Override
     public void handlePitchResult(int pitch) {
-        mDroneView.showNoteActive(pitch);
+        mDroneView.showNoteActive(pitch % 12);
         mNoteHandler.handleNote(pitch);
     }
 
@@ -140,12 +157,16 @@ public class DronePresenter implements DroneContract.Presenter, PitchProcessorOb
         mNoteHandler.start();
         mPlayer.start();
         mDroneView.showDroneActive();
+        mDroneView.showDroneUnlocked();
     }
 
     private void deactivateDrone() {
-        mProcessor.stop();
+        if (mProcessor.isRunning()) {
+            mProcessor.stop();
+        }
         mNoteHandler.clear();
         mPlayer.stop();
         mDroneView.showDroneInactive();
+        mDroneView.showDroneLocked();
     }
 }

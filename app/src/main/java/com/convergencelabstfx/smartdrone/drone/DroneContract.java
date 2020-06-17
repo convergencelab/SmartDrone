@@ -19,6 +19,10 @@ public interface DroneContract {
 
         void showPreferencesActivity();
 
+        void showDroneLocked();
+
+        void showDroneUnlocked();
+
     }
 
     /* Not much here since user interaction mostly comes from microphone input */

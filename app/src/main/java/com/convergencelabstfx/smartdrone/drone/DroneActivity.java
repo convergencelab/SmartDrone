@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.convergencelabstfx.smartdrone.R;
+import com.convergencelabstfx.smartdrone.models.notehandler.OctaveChanger;
 import com.convergencelabstfx.smartdrone.models.signalprocessor.SignalProcessor;
 import com.convergencelabstfx.smartdrone.models.chords.Chords;
 import com.convergencelabstfx.smartdrone.models.chords.ChordsImpl;
@@ -43,6 +44,7 @@ public class DroneActivity extends AppCompatActivity {
         DroneDataSource dataSource = new DroneDataSourceImpl(mPreferences, false);
 
         NoteHandler noteHandler = new NoteHandlerImpl();
+//        NoteHandler noteHandler = new OctaveChanger();
 
         DronePlayer dronePlayer = new DronePlayerImpl();
 

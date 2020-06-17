@@ -88,6 +88,8 @@ public class DroneFragment extends Fragment implements DroneContract.View {
      */
     private Button mActiveKeyButton;
 
+    private ImageView mDroneLockedImg;
+
     private DroneContract.Presenter mPresenter;
     private TextView mActiveKeyText;
 
@@ -174,6 +176,16 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     }
 
     @Override
+    public void showDroneLocked() {
+        mDroneLockedImg.setImageResource(R.drawable.ic_locked);
+    }
+
+    @Override
+    public void showDroneUnlocked() {
+        mDroneLockedImg.setImageResource(R.drawable.ic_unlocked);
+    }
+
+    @Override
     public void setPresenter(DroneContract.Presenter presenter) {
         mPresenter = presenter;
     }
@@ -192,6 +204,8 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     private void setupView() {
         // Used for animating text
         mActiveKeyLayout = mRoot.findViewById(R.id.active_key_layout);
+
+        mDroneLockedImg = mRoot.findViewById(R.id.drone_locked_img);
 
         // Draw piano null
         mPianoImg = mRoot.findViewById(R.id.piano_img);

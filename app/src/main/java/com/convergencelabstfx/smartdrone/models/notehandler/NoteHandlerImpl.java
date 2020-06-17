@@ -82,7 +82,7 @@ public class NoteHandlerImpl implements NoteHandler, Observer {
         }
         // Note heard
         else {
-            curHeard = mKeyFinder.getNote(noteIx);
+            curHeard = mKeyFinder.getNote(noteIx % 12); // Todo: Current workaround
         }
 
         // Different note heard (can be null)
