@@ -5,6 +5,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <LinearLayout
+        android:id="@+id/whiteKeys"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:orientation="horizontal"
@@ -49,6 +50,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/blackKeys"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         android:orientation="horizontal"
@@ -58,6 +60,7 @@
         <ImageButton
             android:id="@+id/p1"
             style="@style/pianoKeyBlack"
+            android:background="@drawable/piano_key_background_black"
             android:layout_marginLeft="25dp"
             />
 
