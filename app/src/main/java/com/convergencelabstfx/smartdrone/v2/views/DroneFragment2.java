@@ -10,26 +10,22 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.convergencelabstfx.smartdrone.R;
-import com.convergencelabstfx.smartdrone.databinding.FragmentSplashBinding;
+import com.convergencelabstfx.smartdrone.databinding.FragmentDrone2Binding;
 
 import org.jetbrains.annotations.NotNull;
 
-public class SplashFragment extends Fragment {
+public class DroneFragment2 extends Fragment {
 
-    public SplashFragment() {
+    public DroneFragment2() {
+        // Required empty public constructor
     }
-
-
+    
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        FragmentSplashBinding binding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_splash, container, false
+        FragmentDrone2Binding binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_drone_2, container, false
         );
-
-        binding.splashImg.setImageResource(R.drawable.convergence_lab_1080);
-
         return binding.getRoot();
     }
 }
