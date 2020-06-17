@@ -1,10 +1,11 @@
-package com.convergencelabstfx.smartdrone;
+package com.convergencelabstfx.smartdrone.v2.views;
 
 import android.content.Intent;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
 
+import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.drone.DroneActivity;
 import com.convergencelabstfx.smartdrone.v2.views.BaseActivity;
 

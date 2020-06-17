@@ -6,7 +6,7 @@
     app:startDestination="@id/droneFragment_v2">
     <fragment
         android:id="@+id/droneFragment_v2"
-        android:name="com.convergencelabstfx.smartdrone.v2.views.DroneFragment_v2"
+        android:name="com.convergencelabstfx.smartdrone.v2.views.DroneFragment2"
         android:label="fragment_drone_v2"
-        tools:layout="@layout/fragment_drone_v2" />
+        tools:layout="@layout/fragment_drone_2" />
 </navigation>
