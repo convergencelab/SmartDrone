@@ -26,6 +26,8 @@ public class DroneFragment2 extends Fragment {
         FragmentDrone2Binding binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_drone_2, container, false
         );
+        PianoView piano = new PianoView(getContext());
+        binding.container.addView(piano);
         return binding.getRoot();
     }
 }
