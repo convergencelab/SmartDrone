@@ -13,7 +13,7 @@ import com.example.keyfinder.MusicTheory;
 
 import java.util.HashMap;
 
-class PianoView extends ConstraintLayout {
+public class PianoView extends ConstraintLayout {
 
     private LinearLayout whiteKeys;
     private LinearLayout blackKeys;
