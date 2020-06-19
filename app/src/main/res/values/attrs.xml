@@ -9,14 +9,12 @@
     </declare-styleable>
 
     <declare-styleable name="PianoView">
-        <attr name="numberOfKeys" format="integer" />
-        <attr name="whiteKeysHeight" format="dimension" />
-        <attr name="whiteKeysWidth" format="dimension" />
-        <attr name="blackKeysHeight" format="dimension" />
-        <attr name="blackKeysWidth" format="dimension" />
         <attr name="keyCornerRadius" format="dimension" />
         <attr name="showBlackKeys" format="boolean" />
         <attr name="centerBlackKeys" format="boolean" />
+        <attr name="blackKeyColor" format="color" />
+        <attr name="whiteKeyColor" format="color" />
+        <attr name="keyPressColor" format="color" />
     </declare-styleable>
 
 </resources>
