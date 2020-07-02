@@ -13,26 +13,6 @@
         android:layout_height="match_parent"
         tools:context=".v2.views.DroneFragment2">
 
-        <com.convergencelabstfx.smartdrone.v2.views.PianoView
-            android:id="@+id/piano_view"
-            android:layout_width="123dp"
-            android:layout_height="234dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:layout_constraintLeft_toRightOf="@id/piano_view"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <Button
-            android:layout_width="100dp"
-            android:layout_height="100dp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/piano_view" />
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

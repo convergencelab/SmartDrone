@@ -31,25 +31,29 @@ public class DroneFragment2 extends Fragment {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_drone_2, container, false
         );
-//        PianoView piano = new PianoView(getContext());
-//        for (int i = 0; i < 12; i++) {
-//            final int ix = i;
-//            piano.getPianoKeyAt(ix).setOnClickListener(view -> {
-//                if (!piano.keyIsPressed(ix)) {
-//                    piano.showKeyPressed(ix);
-//                }
-//                else {
-//                    piano.showKeyNotPressed(ix);
-//                }
-//                pianoClick(ix);
-//            });
-//        }
-//        binding.container.addView(piano);
+        addPiano();
         return binding.getRoot();
     }
 
     private void pianoClick(int key) {
         Log.d("test", "" + key);
+    }
+
+    private void addPiano() {
+        PianoView piano = new PianoView(getContext());
+        for (int i = 0; i < 12; i++) {
+            final int ix = i;
+            piano.getPianoKeyAt(ix).setOnClickListener(view -> {
+                if (!piano.keyIsPressed(ix)) {
+                    piano.showKeyPressed(ix);
+                }
+                else {
+                    piano.showKeyNotPressed(ix);
+                }
+                pianoClick(ix);
+            });
+        }
+        binding.container.addView(piano);
     }
 
 }
