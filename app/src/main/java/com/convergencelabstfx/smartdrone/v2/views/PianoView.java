@@ -8,6 +8,7 @@ import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -18,7 +19,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import com.convergencelabstfx.smartdrone.R;
 import com.example.keyfinder.MusicTheory;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class PianoView extends ConstraintLayout {
 
@@ -53,6 +56,8 @@ public class PianoView extends ConstraintLayout {
     private int heightInPx;
 
     private Context context;
+
+    private List<PianoTouchListener> listeners = new ArrayList<>();
 
 //    private int whiteKeyWidth;
 //    private int whiteKeyHeight;
@@ -156,6 +161,36 @@ public class PianoView extends ConstraintLayout {
         }
         Log.d("testV", "broke for loop");
         setWillNotDraw(true);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        int touchedKey = -1; // todo: find key pressed
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                // todo
+                // invalidate() ?
+                break;
+            case MotionEvent.ACTION_MOVE:
+                // todo
+                // invalidate() ?
+                break;
+            case MotionEvent.ACTION_UP:
+                for (PianoTouchListener listener : listeners) {
+                    listener.onPianoTouch(touchedKey);
+                }
+                break;
+        }
+        return true;
+    }
+
+    public void addPianoTouchListener(PianoTouchListener listener) {
+        listeners.add(listener);
+    }
+
+    public void removePianoTouchListener(PianoTouchListener listener) {
+        // todo: test; make sure it works correctly
+        listeners.remove(listener);
     }
 
     public ImageButton getPianoKeyAt(int ix) {
