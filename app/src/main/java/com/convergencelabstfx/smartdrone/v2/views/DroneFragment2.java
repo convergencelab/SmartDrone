@@ -1,19 +1,19 @@
 package com.convergencelabstfx.smartdrone.v2.views;
 
 import android.os.Bundle;
-
-import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.LinearLayout;
+
+import androidx.databinding.DataBindingUtil;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDrone2Binding;
+import com.convergencelabstfx.smartdrone.v2.viewmodels.DroneViewModel;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -21,10 +21,12 @@ public class DroneFragment2 extends Fragment {
 
     private FragmentDrone2Binding binding;
 
+    private DroneViewModel mViewModel;
+
     public DroneFragment2() {
         // Required empty public constructor
     }
-    
+
     @Override
     public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -32,6 +34,8 @@ public class DroneFragment2 extends Fragment {
                 inflater, R.layout.fragment_drone_2, container, false
         );
         addPiano();
+        mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
+        Log.d("testV", mViewModel.testField);
         return binding.getRoot();
     }
 
@@ -46,8 +50,7 @@ public class DroneFragment2 extends Fragment {
             piano.getPianoKeyAt(ix).setOnClickListener(view -> {
                 if (!piano.keyIsPressed(ix)) {
                     piano.showKeyPressed(ix);
-                }
-                else {
+                } else {
                     piano.showKeyNotPressed(ix);
                 }
                 pianoClick(ix);
