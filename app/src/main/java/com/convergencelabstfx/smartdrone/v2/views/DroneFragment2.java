@@ -42,21 +42,21 @@ public class DroneFragment2 extends Fragment {
     private void pianoClick(int key) {
         Log.d("test", "" + key);
     }
-
-    private void addPiano() {
-        PianoView piano = new PianoView(getContext());
-        for (int i = 0; i < 12; i++) {
-            final int ix = i;
-            piano.getPianoKeyAt(ix).setOnClickListener(view -> {
-                if (!piano.keyIsPressed(ix)) {
-                    piano.showKeyPressed(ix);
-                } else {
-                    piano.showKeyNotPressed(ix);
-                }
-                pianoClick(ix);
-            });
-        }
-        binding.container.addView(piano);
-    }
+//
+//    private void addPiano() {
+//        PianoView piano = new PianoView(getContext());
+//        for (int i = 0; i < 12; i++) {
+//            final int ix = i;
+//            piano.getPianoKeyAt(ix).setOnClickListener(view -> {
+//                if (!piano.keyIsPressed(ix)) {
+//                    piano.showKeyPressed(ix);
+//                } else {
+//                    piano.showKeyNotPressed(ix);
+//                }
+//                pianoClick(ix);
+//            });
+//        }
+//        binding.container.addView(piano);
+//    }
 
 }

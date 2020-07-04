@@ -9,20 +9,18 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 
 import com.convergencelabstfx.smartdrone.R;
 import com.example.keyfinder.MusicTheory;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class PianoView extends View {
 
-    // Note: Dimensions are in DIP unless explicitly specified (i.e. ___inPx)
+    final private int NUMBER_OF_WHITE_KEYS = 7;
+    final private int NUMBER_OF_BLACK_KEYS = 5;
+
     final private float BLACK_KEY_HEIGHT_RATIO_DEFAULT = 0.7f;
     final private float BLACK_KEY_WIDTH_RATIO_DEFAULT = 0.6f;
 
@@ -36,31 +34,23 @@ public class PianoView extends View {
     final private int KEY_STROKE_WIDTH_DEFAULT = 2;
     final private int KEY_CORNER_RADIUS_DEFAULT = 1;
 
-    final private ImageButton[] keyButtons = new ImageButton[12];
+
     final private int[] whiteKeyIxs = new int[]{0, 2, 4, 5, 7, 9, 11};
     final private int[] blackKeyIxs = new int[]{1, 3, 6, 8, 10};
 
-    // TODO: actually implement these
-    final private boolean SHOW_BLACK_KEYS_DEFAULT = true;
-    final private boolean CENTER_BLACK_KEYS_DEFAULT = true;
-
+    // todo: remove this eventually
     final private float SCALE = getContext().getResources().getDisplayMetrics().density;
-
-    private LinearLayout whiteKeys;
-    private LinearLayout blackKeys;
-
-    private int widthInPx;
-    private int heightInPx;
 
     // todo: remove reference, pass as parameter instead
     private Context context;
 
     private List<PianoTouchListener> listeners = new ArrayList<>();
 
-//    private int whiteKeyWidth;
-//    private int whiteKeyHeight;
-//    private int blackKeyWidth;
-//    private int blackKeyHeight;
+    private int viewWidthRemainder;
+    private int whiteKeyWidth;
+    private int whiteKeyHeight;
+    private int blackKeyWidth;
+    private int blackKeyHeight;
 
     private float blackKeyWidthRatio;
     private float blackKeyHeightRatio;
@@ -69,13 +59,11 @@ public class PianoView extends View {
     private int blackKeyColor;
     private int keyPressedColor;
     private int keyStrokeColor;
-    private int keyStrokeWidth;
+    private int keyStrokeWidth = 6;
     private int keyCornerRadius;
 
     private boolean showBlackKeys;
     private boolean centerBlackKeys;
-
-    private HashMap<Integer, ImageButton> pianoKeyMap = new HashMap<>(MusicTheory.TOTAL_NOTES);
 
     private boolean[] keyIsPressed = new boolean[MusicTheory.TOTAL_NOTES];
 
@@ -86,42 +74,38 @@ public class PianoView extends View {
 
     public PianoView(Context context) {
         super(context);
-        init(context);
+        
     }
 
     public PianoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-//        setWillNotDraw(false); // this was here when this class inherited from ConstraintLayout
-        Log.d("testV", "init called");
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs,
                 R.styleable.PianoView,
                 0, 0
         );
         parseAttrs(a);
-//        final int whiteKeyWidth = a.getInteger(R.styleable.Pia)
-//        this.addView(makePianoKeyButton(
-//                context,
-//                100,
-//                100,
-//                2,
-//                2,
-//                Color.BLUE));
-//        setupPianoLocationMap();
+        // a.recycle(); // todo : add this in at some point ? find out what it does
     }
 
     public PianoView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context);
     }
 
     @Override
-    protected void onSizeChanged(int w, int h, int oldW, int oldH) {
-        super.onSizeChanged(w, h, oldW, oldH);
-        widthInPx = w;
-        heightInPx = h;
-        Log.d("testV", "onsizechanged called");
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        // todo: extract magic number 6
+        whiteKeyWidth = (getMeasuredWidth() + 6 * keyStrokeWidth) / NUMBER_OF_WHITE_KEYS;
+        whiteKeyHeight = getMeasuredHeight();
+        blackKeyWidth = (int) (whiteKeyWidth * blackKeyWidthRatio);
+        blackKeyHeight = (int) (whiteKeyHeight * blackKeyHeightRatio);
+        // todo: extract magic numbers
+        viewWidthRemainder = getMeasuredWidth() - (whiteKeyWidth * 7 - keyStrokeWidth * 6);
+        Log.d(
+                "testV",
+                "remainder: " + viewWidthRemainder);
     }
 
     @Override
@@ -167,12 +151,11 @@ public class PianoView extends View {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int touchedKey = -1; // todo: find key pressed
+        int touchedKey = getTouchedKey(event.getX(), event.getY());
         switch (event.getAction()) {
-            int keyTouched = getTouchedKey(event.getX(), event.getY());
             case MotionEvent.ACTION_DOWN:
                 // todo: verify this works
-                //       find out how the Android library handles touch / click
+                //       find out how the prebuilt Android views handles touch / click
                 //       only going to worry about click handling right now
                 for (PianoTouchListener listener : listeners) {
                     listener.onPianoTouch(touchedKey);
@@ -201,15 +184,11 @@ public class PianoView extends View {
         listeners.remove(listener);
     }
 
-    public ImageButton getPianoKeyAt(int ix) {
-        return pianoKeyMap.get(ix);
-    }
-
     public void showKeyPressed(int ix) {
         if (!keyIsPressed[ix]) {
             keyIsPressed[ix] = true;
+            // TODO
             // Show pressed color
-            getPianoKeyAt(ix).setBackgroundResource(R.drawable.piano_key_background_green);
         }
     }
 
@@ -218,9 +197,9 @@ public class PianoView extends View {
             keyIsPressed[ix] = false;
             // Show regular color
             if (isWhiteKey[ix]) {
-                getPianoKeyAt(ix).setBackgroundResource(R.drawable.piano_key_background_white);
+                // todo
             } else {
-                getPianoKeyAt(ix).setBackgroundResource(R.drawable.piano_key_background_black);
+                // todo
             }
         }
     }
@@ -236,65 +215,34 @@ public class PianoView extends View {
 
     private void drawWhiteKeys(Canvas canvas) {
         Log.d("testV", "drawWhiteKeys called");
+
+        GradientDrawable drawable = new GradientDrawable();
+        int left = 0;
+        // This view divides it's width by 7. So if the width isn't divisible by 7
+        // there would be unused space in the view.
+        // For this reason, whiteKeyWidth has 1 added to it, and 1 removed from it after the
+        // remainder has been added in.
+
+        int offset = 1;
+        for (int i = 0; i < NUMBER_OF_WHITE_KEYS; i++) {
+            if (i >= viewWidthRemainder) {
+                offset = 0;
+            }
+            drawable.setShape(GradientDrawable.RECTANGLE);
+            drawable.setColor(Color.WHITE);
+            drawable.setStroke(keyStrokeWidth, Color.BLACK);
+            drawable.setCornerRadius(keyCornerRadius);
+            drawable.setBounds(left, 0, left + whiteKeyWidth + offset, whiteKeyHeight);
+            drawable.draw(canvas);
+            left += whiteKeyWidth + offset - keyStrokeWidth;
+            if (i < viewWidthRemainder) {
+                left += 1;
+            }
+        }
     }
 
     private void drawBlackKeys(Canvas canvas) {
         // todo: do something
-    }
-
-    private void init(Context context) {
-//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-//        inflater.inflate(R.layout.piano_view, this);
-//        whiteKeys = findViewById(R.id.whiteKeys);
-//        blackKeys = findViewById(R.id.blackKeys);
-//        setupPianoLocationMap();
-    }
-
-    private void setupPianoLocationMap() {
-        // If you look at 'piano_view.xml', the keys are contained in 2 linear layouts;
-        // one for the white keys, and the other for the black keys.
-        // Because of this, the coordinates of the piano keys are not sequential
-        // and actually have a sort of staggered ordering.
-        //
-        //     ACTUAL |   (   1   3       6   8   10   ) -> black keys
-        //     ORDER  |   ( 0   2   4   5   7   9   11 ) -> white keys
-        //
-        // For this reason, the locations are mapped so that the index of the pitch class
-        // map will give you back the corresponding key button.
-        final int[] seqBlack = {1, 3, 6, 8, 10};
-        final int[] seqWhite = {0, 2, 4, 5, 7, 9, 11};
-
-        for (int i = 0; i < seqBlack.length; i++) {
-            ImageButton pianoKey = (ImageButton) blackKeys.getChildAt(i);
-            pianoKeyMap.put(seqBlack[i], pianoKey);
-        }
-        for (int i = 0; i < seqWhite.length; i++) {
-            ImageButton pianoKey = (ImageButton) whiteKeys.getChildAt(i);
-            pianoKeyMap.put(seqWhite[i], pianoKey);
-        }
-    }
-
-    private View makePianoKeyButton(
-            Context context,
-            int width,
-            int height,
-            int strokeWidth,
-            int cornerRadius,
-            int fillColor) {
-
-        ImageButton pianoKeyButton = new ImageButton(context);
-
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(width, height);
-        pianoKeyButton.setLayoutParams(params);
-
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setShape(GradientDrawable.RECTANGLE);
-        drawable.setColor(Color.GRAY);
-        drawable.setStroke(strokeWidth, Color.BLACK);
-        drawable.setCornerRadius(cornerRadius);
-        pianoKeyButton.setBackground(drawable);
-
-        return pianoKeyButton;
     }
 
     private int dpsToPx(float dps) {
@@ -306,14 +254,6 @@ public class PianoView extends View {
         keyCornerRadius = (int) attrs.getDimension(
                 R.styleable.PianoView_keyCornerRadius,
                 dpsToPx(KEY_CORNER_RADIUS_DEFAULT)
-        );
-        showBlackKeys = attrs.getBoolean(
-                R.styleable.PianoView_showBlackKeys,
-                SHOW_BLACK_KEYS_DEFAULT
-        );
-        centerBlackKeys = attrs.getBoolean(
-                R.styleable.PianoView_centerBlackKeys,
-                centerBlackKeys
         );
         blackKeyColor = attrs.getColor(
                 R.styleable.PianoView_blackKeyColor,
