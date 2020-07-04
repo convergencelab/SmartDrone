@@ -74,7 +74,7 @@ public class PianoView extends View {
 
     public PianoView(Context context) {
         super(context);
-        
+
     }
 
     public PianoView(Context context, AttributeSet attrs) {
@@ -235,9 +235,6 @@ public class PianoView extends View {
             drawable.setBounds(left, 0, left + whiteKeyWidth + offset, whiteKeyHeight);
             drawable.draw(canvas);
             left += whiteKeyWidth + offset - keyStrokeWidth;
-            if (i < viewWidthRemainder) {
-                left += 1;
-            }
         }
     }
 
