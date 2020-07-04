@@ -33,7 +33,7 @@ public class DroneFragment2 extends Fragment {
         binding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_drone_2, container, false
         );
-        addPiano();
+//        addPiano();
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
         Log.d("testV", mViewModel.testField);
         return binding.getRoot();

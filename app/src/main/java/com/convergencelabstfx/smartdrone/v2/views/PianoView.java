@@ -7,14 +7,11 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-
-import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.convergencelabstfx.smartdrone.R;
 import com.example.keyfinder.MusicTheory;
@@ -23,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class PianoView extends ConstraintLayout {
+public class PianoView extends View {
 
     // Note: Dimensions are in DIP unless explicitly specified (i.e. ___inPx)
     final private float BLACK_KEY_HEIGHT_RATIO_DEFAULT = 0.7f;
@@ -55,6 +52,7 @@ public class PianoView extends ConstraintLayout {
     private int widthInPx;
     private int heightInPx;
 
+    // todo: remove reference, pass as parameter instead
     private Context context;
 
     private List<PianoTouchListener> listeners = new ArrayList<>();
@@ -94,7 +92,7 @@ public class PianoView extends ConstraintLayout {
     public PianoView(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.context = context;
-        setWillNotDraw(false);
+//        setWillNotDraw(false); // this was here when this class inherited from ConstraintLayout
         Log.d("testV", "init called");
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs,
@@ -129,6 +127,9 @@ public class PianoView extends ConstraintLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        drawWhiteKeys(canvas);
+        drawBlackKeys(canvas);
+        /*
         Log.d("testV", "ondraw called");
         // Todo: extract hard-coded values
         // Todo: move to on sizeChanged or onMeasure
@@ -161,14 +162,21 @@ public class PianoView extends ConstraintLayout {
         }
         Log.d("testV", "broke for loop");
         setWillNotDraw(true);
+        */
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int touchedKey = -1; // todo: find key pressed
         switch (event.getAction()) {
+            int keyTouched = getTouchedKey(event.getX(), event.getY());
             case MotionEvent.ACTION_DOWN:
-                // todo
+                // todo: verify this works
+                //       find out how the Android library handles touch / click
+                //       only going to worry about click handling right now
+                for (PianoTouchListener listener : listeners) {
+                    listener.onPianoTouch(touchedKey);
+                }
                 // invalidate() ?
                 break;
             case MotionEvent.ACTION_MOVE:
@@ -177,7 +185,7 @@ public class PianoView extends ConstraintLayout {
                 break;
             case MotionEvent.ACTION_UP:
                 for (PianoTouchListener listener : listeners) {
-                    listener.onPianoTouch(touchedKey);
+                    listener.onPianoClick(touchedKey);
                 }
                 break;
         }
@@ -221,13 +229,25 @@ public class PianoView extends ConstraintLayout {
         return keyIsPressed[ix];
     }
 
-    private void init(Context context) {
+    private int getTouchedKey(float x, float y) {
+        // todo: find which key is touched
+        return -1;
+    }
 
-        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.piano_view, this);
-        whiteKeys = findViewById(R.id.whiteKeys);
-        blackKeys = findViewById(R.id.blackKeys);
-        setupPianoLocationMap();
+    private void drawWhiteKeys(Canvas canvas) {
+        Log.d("testV", "drawWhiteKeys called");
+    }
+
+    private void drawBlackKeys(Canvas canvas) {
+        // todo: do something
+    }
+
+    private void init(Context context) {
+//        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+//        inflater.inflate(R.layout.piano_view, this);
+//        whiteKeys = findViewById(R.id.whiteKeys);
+//        blackKeys = findViewById(R.id.blackKeys);
+//        setupPianoLocationMap();
     }
 
     private void setupPianoLocationMap() {
@@ -281,6 +301,7 @@ public class PianoView extends ConstraintLayout {
         return (int) (dps * SCALE + 0.5f);
     }
 
+    // todo: pass context as parameter instead of storing as local variable
     private void parseAttrs(TypedArray attrs) {
         keyCornerRadius = (int) attrs.getDimension(
                 R.styleable.PianoView_keyCornerRadius,
