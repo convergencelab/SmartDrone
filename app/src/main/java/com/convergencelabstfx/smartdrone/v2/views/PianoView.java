@@ -62,6 +62,8 @@ public class PianoView extends View {
     private int keyStrokeWidth = 6;
     private int keyCornerRadius;
 
+    private GradientDrawable[] pianoKeys = new GradientDrawable[NUMBER_OF_WHITE_KEYS + NUMBER_OF_BLACK_KEYS];
+
     private boolean showBlackKeys;
     private boolean centerBlackKeys;
 
@@ -214,32 +216,55 @@ public class PianoView extends View {
     }
 
     private void drawWhiteKeys(Canvas canvas) {
-        Log.d("testV", "drawWhiteKeys called");
-
-        GradientDrawable drawable = new GradientDrawable();
         int left = 0;
+        // todo: update the math in this comment
         // This view divides it's width by 7. So if the width isn't divisible by 7
         // there would be unused space in the view.
         // For this reason, whiteKeyWidth has 1 added to it, and 1 removed from it after the
         // remainder has been added in.
 
-        int offset = 1;
+        whiteKeyWidth++;
         for (int i = 0; i < NUMBER_OF_WHITE_KEYS; i++) {
-            if (i >= viewWidthRemainder) {
-                offset = 0;
+            if (i == viewWidthRemainder) {
+                whiteKeyWidth--;
             }
-            drawable.setShape(GradientDrawable.RECTANGLE);
-            drawable.setColor(Color.WHITE);
-            drawable.setStroke(keyStrokeWidth, Color.BLACK);
-            drawable.setCornerRadius(keyCornerRadius);
-            drawable.setBounds(left, 0, left + whiteKeyWidth + offset, whiteKeyHeight);
-            drawable.draw(canvas);
-            left += whiteKeyWidth + offset - keyStrokeWidth;
+            final GradientDrawable pianoKey = makePianoKey(Color.WHITE, keyStrokeWidth, Color.BLACK, keyCornerRadius);
+            pianoKey.setBounds(left, 0, left + whiteKeyWidth, whiteKeyHeight);
+            pianoKey.draw(canvas);
+            left += whiteKeyWidth - keyStrokeWidth;
+            pianoKeys[whiteKeyIxs[i]] = pianoKey;
         }
     }
 
+    // todo: investigate / fix issue with black keys being off center due to pixel remainder
+    //       not really a pressing issue
     private void drawBlackKeys(Canvas canvas) {
-        // todo: do something
+        int left = (whiteKeyWidth / 2) + ((whiteKeyWidth - blackKeyWidth) / 2);
+        for (int i = 0; i < NUMBER_OF_BLACK_KEYS; i++) {
+            // There is a gap between the 2nd and 3rd (base 1 indexing) black key on a piano.
+            if (i == 2) {
+                left += whiteKeyWidth - keyStrokeWidth;
+            }
+            final GradientDrawable pianoKey = makePianoKey(Color.DKGRAY, keyStrokeWidth, Color.BLACK, keyCornerRadius);
+            pianoKey.setBounds(left, 0, left + blackKeyWidth, blackKeyHeight);
+            pianoKey.draw(canvas);
+            left += whiteKeyWidth - keyStrokeWidth;
+            pianoKeys[blackKeyIxs[i]] = pianoKey;
+        }
+    }
+
+    private GradientDrawable makePianoKey(
+            int fillColor,
+            int strokeWidth,
+            int strokeColor,
+            int cornerRadius
+    ) {
+        final GradientDrawable pianoKey = new GradientDrawable();
+        pianoKey.setShape(GradientDrawable.RECTANGLE);
+        pianoKey.setColor(fillColor);
+        pianoKey.setStroke(strokeWidth, strokeColor);
+        pianoKey.setCornerRadius(cornerRadius);
+        return pianoKey;
     }
 
     private int dpsToPx(float dps) {
