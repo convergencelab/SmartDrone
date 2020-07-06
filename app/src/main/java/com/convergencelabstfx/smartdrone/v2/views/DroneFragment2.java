@@ -37,12 +37,12 @@ public class DroneFragment2 extends Fragment {
         binding.piano.addPianoTouchListener(new PianoTouchListener() {
             @Override
             public void onPianoTouch(int key) {
-
+                Log.d("testV", "" + key);
             }
 
             @Override
             public void onPianoClick(int key) {
-                Log.d("testV", "" + key);
+
             }
         });
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);

@@ -22,7 +22,9 @@ import java.util.List;
 // todo: move all piano classes to separate package
 public class PianoView extends View {
 
-    final private int NOTES_IN_OCTAVE = 12;
+    final private int NOTES_PER_OCTAVE = 12;
+    final private int WHITE_KEYS_PER_OCTAVE = 7;
+    final private int BLACK_KEYS_PER_OCTAVE = 5;
 
     final private int[] whiteKeyIxs = new int[]{0, 2, 4, 5, 7, 9, 11};
     final private int[] blackKeyIxs = new int[]{1, 3, 6, 8, 10};
@@ -54,6 +56,7 @@ public class PianoView extends View {
     private int keyStrokeWidth;
     private int keyCornerRadius;
 
+    private int lastTouchedKey;
     private int initTouchedKey;
     private boolean hasStayedOnInitKey;
 
@@ -71,7 +74,8 @@ public class PianoView extends View {
         );
         parseAttrs(a);
         pianoKeys = new ArrayList<>(numberOfWhiteKeys + numberOfBlackKeys);
-        // a.recycle(); // todo : add this in at some point ? find out what it does
+//        pianoKeys = new ArrayList<>();
+        a.recycle(); // todo : add this in at some point ? find out what it does
     }
 
     public PianoView(Context context, AttributeSet attrs, int defStyleAttr) {
@@ -81,22 +85,40 @@ public class PianoView extends View {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        // todo: extract magic number 6
-        whiteKeyWidth = (getMeasuredWidth() + 6 * keyStrokeWidth) / numberOfWhiteKeys;
+        // The borders for each white key overlaps (other than the leftmost and rightmost border),
+        // therefore the the sum of the inner borders (e.g. numWhite - 1) is added to the total width
+
+        // The rightmost key is white
+        if (lastKeyIsWhite()) {
+            whiteKeyWidth =
+                    (getMeasuredWidth() + (numberOfWhiteKeys - 1) * keyStrokeWidth) / numberOfWhiteKeys;
+            blackKeyWidth =
+                    (int) (whiteKeyWidth * blackKeyWidthScale);
+            viewWidthRemainder =
+                    getMeasuredWidth() - (whiteKeyWidth * numberOfWhiteKeys - keyStrokeWidth * (numberOfWhiteKeys - 1));
+        }
+        // The rightmost key is black
+        else {
+            // todo: explain the math
+            // some math, but it works
+            whiteKeyWidth =
+                    (int) ( ( (2 * getMeasuredWidth()) + (2 * numberOfWhiteKeys * keyStrokeWidth) - keyStrokeWidth) / (2 * numberOfWhiteKeys + blackKeyWidthScale));
+            blackKeyWidth =
+                    (int) (whiteKeyWidth * blackKeyWidthScale);
+            viewWidthRemainder =
+                    getMeasuredWidth() - ((whiteKeyWidth * numberOfWhiteKeys - keyStrokeWidth * (numberOfWhiteKeys - 1)) + ((blackKeyWidth / 2) - keyStrokeWidth / 2));
+        }
         whiteKeyHeight = getMeasuredHeight();
-        blackKeyWidth = (int) (whiteKeyWidth * blackKeyWidthScale);
         blackKeyHeight = (int) (whiteKeyHeight * blackKeyHeightScale);
-        // todo: extract magic numbers
-        viewWidthRemainder = getMeasuredWidth() - (whiteKeyWidth * 7 - keyStrokeWidth * 6);
 //        Log.d("testV", "remainder: " + viewWidthRemainder);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        pianoKeys.clear();
         drawWhiteKeys(canvas);
         drawBlackKeys(canvas);
-
 //        final StringBuilder sb = new StringBuilder();
 //        for (int i = 0; i < pianoKeys.size(); i++) {
 //            sb.append("i: ");
@@ -104,30 +126,36 @@ public class PianoView extends View {
 //            sb.append('\n');
 //        }
 //        Log.d("testV", sb.toString());
-
     }
 
+    // todo: find out how to deal with multiple touches at once
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int curTouchedKey = getTouchedKey(event.getX(), event.getY());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 initTouchedKey = curTouchedKey;
+                lastTouchedKey = curTouchedKey;
                 hasStayedOnInitKey = true;
                 for (PianoTouchListener listener : listeners) {
                     listener.onPianoTouch(curTouchedKey);
                 }
-                // invalidate() ?
                 break;
             case MotionEvent.ACTION_MOVE:
+                if (lastTouchedKey != curTouchedKey) {
+                    for (PianoTouchListener listener : listeners) {
+                        listener.onPianoTouch(curTouchedKey);
+                    }
+                    lastTouchedKey = curTouchedKey;
+                }
                 if (curTouchedKey != initTouchedKey) {
                     hasStayedOnInitKey = false;
                 }
-                // invalidate() ?
                 break;
             case MotionEvent.ACTION_UP:
-                if (hasStayedOnInitKey) {
-                    for (PianoTouchListener listener : listeners) {
+                for (PianoTouchListener listener : listeners) {
+                    listener.onPianoTouch(-1);
+                    if (hasStayedOnInitKey) {
                         listener.onPianoClick(curTouchedKey);
                     }
                 }
@@ -178,12 +206,14 @@ public class PianoView extends View {
         // todo: use a 'round' function instead of casting
         final int touchX = (int) x;
         final int touchY = (int) y;
-        for (int ix : blackKeyIxs) {
+        for (int i = 0; i < numberOfBlackKeys; i++) {
+            final int ix = blackKeyIxs[i % blackKeyIxs.length] + (i / blackKeyIxs.length) * NOTES_PER_OCTAVE;
             if (coordsAreInPianoKey(touchX, touchY, pianoKeys.get(ix))) {
                 return ix;
             }
         }
-        for (int ix : whiteKeyIxs) {
+        for (int i = 0; i < numberOfWhiteKeys; i++) {
+            final int ix = whiteKeyIxs[i % whiteKeyIxs.length] + (i / whiteKeyIxs.length) * NOTES_PER_OCTAVE;
             if (coordsAreInPianoKey(touchX, touchY, pianoKeys.get(ix))) {
                 return ix;
             }
@@ -213,33 +243,18 @@ public class PianoView extends View {
             pianoKey.setBounds(left, 0, left + whiteKeyWidth, whiteKeyHeight);
             pianoKey.draw(canvas);
             left += whiteKeyWidth - keyStrokeWidth;
-//            pianoKeys[whiteKeyIxs[i]] = pianoKey;
             pianoKeys.add(pianoKey);
         }
-//        final StringBuilder sb = new StringBuilder();
-//        for (int i = 0; i < numberOfWhiteKeys; i++) {
-//            sb.append("i: ");
-//            sb.append(i);
-//            sb.append('\n');
-//        }
-//        Log.d("testV", sb.toString());
-//        int counter = 0;
-//        for (GradientDrawable gd : pianoKeys) {
-//            counter++;
-//        }
-//        Log.d("testV", "counter: " + counter);
     }
 
     private void drawBlackKeys(Canvas canvas) {
         for (int i = 0; i < numberOfBlackKeys; i++) {
-//            GradientDrawable whiteKey = pianoKeys[blackKeyIxs[i] - 1];
-            GradientDrawable whiteKey = pianoKeys.get(blackKeyIxs[i] - 1);
+            GradientDrawable whiteKey = pianoKeys.get(blackKeyIxs[i % blackKeyIxs.length] + (i / blackKeyIxs.length) * NOTES_PER_OCTAVE - 1);
             final int left = whiteKey.getBounds().right - (blackKeyWidth / 2) - (keyStrokeWidth / 2);
             final GradientDrawable pianoKey = makePianoKey(blackKeyColor, keyStrokeWidth, keyStrokeColor, keyCornerRadius);
             pianoKey.setBounds(left, 0, left + blackKeyWidth, blackKeyHeight);
             pianoKey.draw(canvas);
-//            pianoKeys[blackKeyIxs[i]] = pianoKey;
-            pianoKeys.add(blackKeyIxs[i], pianoKey);
+            pianoKeys.add(blackKeyIxs[i % blackKeyIxs.length] + (i / blackKeyIxs.length) * NOTES_PER_OCTAVE, pianoKey);
         }
     }
 
@@ -319,7 +334,11 @@ public class PianoView extends View {
     }
 
     private boolean isWhiteKey(int ix) {
-        return isWhiteKey[ix % NOTES_IN_OCTAVE];
+        return isWhiteKey[ix % NOTES_PER_OCTAVE];
+    }
+
+    private boolean lastKeyIsWhite() {
+        return isWhiteKey(numberOfWhiteKeys + numberOfBlackKeys - 1);
     }
 
 }
