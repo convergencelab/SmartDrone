@@ -9,6 +9,8 @@
     <color name="blackKeyColor">#333333</color>
     <color name="keyPressedColor">#7AE582</color>
 
+    <integer name="numberOfKeys">12</integer>
+
     <dimen name="pianoWidth">300dp</dimen>
     <dimen name="pianoHeight">180dp</dimen>
 </resources>

@@ -3,7 +3,6 @@ package com.convergencelabstfx.smartdrone.v2.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
@@ -23,14 +22,13 @@ import java.util.List;
 // todo: move all piano classes to separate package
 public class PianoView extends View {
 
-    final private int NUMBER_OF_WHITE_KEYS = 7;
-    final private int NUMBER_OF_BLACK_KEYS = 5;
+    final private int NOTES_IN_OCTAVE = 12;
 
     final private int[] whiteKeyIxs = new int[]{0, 2, 4, 5, 7, 9, 11};
     final private int[] blackKeyIxs = new int[]{1, 3, 6, 8, 10};
 
     private List<PianoTouchListener> listeners = new ArrayList<>();
-    private GradientDrawable[] pianoKeys = new GradientDrawable[NUMBER_OF_WHITE_KEYS + NUMBER_OF_BLACK_KEYS];
+    private List<GradientDrawable> pianoKeys = new ArrayList<>();
     private boolean[] keyIsPressed = new boolean[MusicTheory.TOTAL_NOTES];
     private final boolean[] isWhiteKey = new boolean[]{
             true, false, true, false, true, true, false,
@@ -44,6 +42,9 @@ public class PianoView extends View {
     private int blackKeyHeight;
     private float blackKeyWidthScale;
     private float blackKeyHeightScale;
+
+    private int numberOfBlackKeys;
+    private int numberOfWhiteKeys;
 
     private int whiteKeyColor;
     private int blackKeyColor;
@@ -69,6 +70,7 @@ public class PianoView extends View {
                 0, 0
         );
         parseAttrs(a);
+        pianoKeys = new ArrayList<>(numberOfWhiteKeys + numberOfBlackKeys);
         // a.recycle(); // todo : add this in at some point ? find out what it does
     }
 
@@ -80,7 +82,7 @@ public class PianoView extends View {
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         // todo: extract magic number 6
-        whiteKeyWidth = (getMeasuredWidth() + 6 * keyStrokeWidth) / NUMBER_OF_WHITE_KEYS;
+        whiteKeyWidth = (getMeasuredWidth() + 6 * keyStrokeWidth) / numberOfWhiteKeys;
         whiteKeyHeight = getMeasuredHeight();
         blackKeyWidth = (int) (whiteKeyWidth * blackKeyWidthScale);
         blackKeyHeight = (int) (whiteKeyHeight * blackKeyHeightScale);
@@ -94,6 +96,15 @@ public class PianoView extends View {
         super.onDraw(canvas);
         drawWhiteKeys(canvas);
         drawBlackKeys(canvas);
+
+//        final StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < pianoKeys.size(); i++) {
+//            sb.append("i: ");
+//            sb.append(pianoKeys.get(i).getColor().toString());
+//            sb.append('\n');
+//        }
+//        Log.d("testV", sb.toString());
+
     }
 
     @Override
@@ -168,12 +179,12 @@ public class PianoView extends View {
         final int touchX = (int) x;
         final int touchY = (int) y;
         for (int ix : blackKeyIxs) {
-            if (coordsAreInPianoKey(touchX, touchY, pianoKeys[ix])) {
+            if (coordsAreInPianoKey(touchX, touchY, pianoKeys.get(ix))) {
                 return ix;
             }
         }
         for (int ix : whiteKeyIxs) {
-            if (coordsAreInPianoKey(touchX, touchY, pianoKeys[ix])) {
+            if (coordsAreInPianoKey(touchX, touchY, pianoKeys.get(ix))) {
                 return ix;
             }
         }
@@ -194,7 +205,7 @@ public class PianoView extends View {
         // remainder has been added in.
 
         whiteKeyWidth++;
-        for (int i = 0; i < NUMBER_OF_WHITE_KEYS; i++) {
+        for (int i = 0; i < numberOfWhiteKeys; i++) {
             if (i == viewWidthRemainder) {
                 whiteKeyWidth--;
             }
@@ -202,18 +213,33 @@ public class PianoView extends View {
             pianoKey.setBounds(left, 0, left + whiteKeyWidth, whiteKeyHeight);
             pianoKey.draw(canvas);
             left += whiteKeyWidth - keyStrokeWidth;
-            pianoKeys[whiteKeyIxs[i]] = pianoKey;
+//            pianoKeys[whiteKeyIxs[i]] = pianoKey;
+            pianoKeys.add(pianoKey);
         }
+//        final StringBuilder sb = new StringBuilder();
+//        for (int i = 0; i < numberOfWhiteKeys; i++) {
+//            sb.append("i: ");
+//            sb.append(i);
+//            sb.append('\n');
+//        }
+//        Log.d("testV", sb.toString());
+//        int counter = 0;
+//        for (GradientDrawable gd : pianoKeys) {
+//            counter++;
+//        }
+//        Log.d("testV", "counter: " + counter);
     }
 
     private void drawBlackKeys(Canvas canvas) {
-        for (int i = 0; i < NUMBER_OF_BLACK_KEYS; i++) {
-            GradientDrawable whiteKey = pianoKeys[blackKeyIxs[i] - 1];
+        for (int i = 0; i < numberOfBlackKeys; i++) {
+//            GradientDrawable whiteKey = pianoKeys[blackKeyIxs[i] - 1];
+            GradientDrawable whiteKey = pianoKeys.get(blackKeyIxs[i] - 1);
             final int left = whiteKey.getBounds().right - (blackKeyWidth / 2) - (keyStrokeWidth / 2);
             final GradientDrawable pianoKey = makePianoKey(blackKeyColor, keyStrokeWidth, keyStrokeColor, keyCornerRadius);
             pianoKey.setBounds(left, 0, left + blackKeyWidth, blackKeyHeight);
             pianoKey.draw(canvas);
-            pianoKeys[blackKeyIxs[i]] = pianoKey;
+//            pianoKeys[blackKeyIxs[i]] = pianoKey;
+            pianoKeys.add(blackKeyIxs[i], pianoKey);
         }
     }
 
@@ -267,6 +293,33 @@ public class PianoView extends View {
                 R.styleable.PianoView_keyStrokeWidth,
                 getResources().getDimension(R.dimen.keyStrokeWidth)
         );
+        final int numberOfKeys = attrs.getInt(
+                R.styleable.PianoView_numberOfKeys,
+                getResources().getInteger(R.integer.numberOfKeys)
+        );
+        final int[] numOfEach = findNumberOfWhiteAndBlackKeys(numberOfKeys);
+        numberOfWhiteKeys = numOfEach[0];
+        numberOfBlackKeys = numOfEach[1];
+        Log.d("testV", "w: " + numberOfWhiteKeys + "\nb: " + numberOfBlackKeys);
+    }
+
+    private int[] findNumberOfWhiteAndBlackKeys(int numberOfKeys) {
+        // 0: num white keys
+        // 1: num black keys
+        int[] ans = new int[2];
+        for (int i = 0; i < numberOfKeys; i++) {
+            if (isWhiteKey(i)) {
+                ans[0]++;
+            }
+            else {
+                ans[1]++;
+            }
+        }
+        return ans;
+    }
+
+    private boolean isWhiteKey(int ix) {
+        return isWhiteKey[ix % NOTES_IN_OCTAVE];
     }
 
 }

@@ -17,6 +17,7 @@
         <attr name="keyCornerRadius" format="dimension" />
         <attr name="keyStrokeWidth" format="dimension" />
         <attr name="keyStrokeColor" format="color" />
+        <attr name="numberOfKeys" format="integer" />
     </declare-styleable>
 
 </resources>
