@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Rect;
 import android.graphics.drawable.GradientDrawable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -172,6 +173,7 @@ public class PianoView extends View {
                 for (PianoTouchListener listener : listeners) {
                     listener.onPianoClick(touchedKey);
                 }
+                Log.d("testV", "" + touchedKey);
                 break;
         }
         return true;
@@ -211,8 +213,25 @@ public class PianoView extends View {
     }
 
     private int getTouchedKey(float x, float y) {
-        // todo: find which key is touched
+//        Log.d("testV", "x: " + x + "; y: " + y);
+        for (int ix : blackKeyIxs) {
+            // todo: use a 'round' function instead of casting
+            if (coordsInPianoKey((int) x, (int) y, pianoKeys[ix])) {
+                return ix;
+            }
+        }
+        for (int ix : whiteKeyIxs) {
+            // todo: use a 'round' function instead of casting
+            if (coordsInPianoKey((int) x, (int) y, pianoKeys[ix])) {
+                return ix;
+            }
+        }
         return -1;
+    }
+
+    private boolean coordsInPianoKey(int x, int y, GradientDrawable key) {
+        Rect keyBounds = key.getBounds();
+        return x >= keyBounds.left && x <= keyBounds.right && y >= keyBounds.top && y <= keyBounds.bottom;
     }
 
     private void drawWhiteKeys(Canvas canvas) {
