@@ -34,6 +34,17 @@ public class DroneFragment2 extends Fragment {
                 inflater, R.layout.fragment_drone_2, container, false
         );
 //        addPiano();
+        binding.piano.addPianoTouchListener(new PianoTouchListener() {
+            @Override
+            public void onPianoTouch(int key) {
+
+            }
+
+            @Override
+            public void onPianoClick(int key) {
+                Log.d("testV", "" + key);
+            }
+        });
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
         Log.d("testV", mViewModel.testField);
         return binding.getRoot();

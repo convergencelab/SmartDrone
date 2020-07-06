@@ -60,8 +60,13 @@ public class PianoView extends View {
     private int blackKeyColor;
     private int keyPressedColor;
     private int keyStrokeColor;
-    private int keyStrokeWidth = 6;
+
+    // todo: fix black key off center bug; more noticeable with larger border
+    private int keyStrokeWidth = 50;
     private int keyCornerRadius;
+
+    private int initTouchedKey;
+    private boolean hasStayedOnInitKey;
 
     private GradientDrawable[] pianoKeys = new GradientDrawable[NUMBER_OF_WHITE_KEYS + NUMBER_OF_BLACK_KEYS];
 
@@ -116,64 +121,35 @@ public class PianoView extends View {
         super.onDraw(canvas);
         drawWhiteKeys(canvas);
         drawBlackKeys(canvas);
-        /*
-        Log.d("testV", "ondraw called");
-        // Todo: extract hard-coded values
-        // Todo: move to on sizeChanged or onMeasure
-        final int whiteKeyWidth = widthInPx / 7;
-        final int whiteKeyHeight = heightInPx;
-        final int whiteKeyWidthRemainder = widthInPx % 7;
-        final int blackKeyHeight = (int) (whiteKeyWidth * blackKeyWidthRatio);
-        final int blackKeyWidth = (int) (whiteKeyHeight * blackKeyHeightRatio);
-        // nothing right now
-
-        int leftMargin = 0;
-        ViewGroup.LayoutParams params = this.getLayoutParams();
-        for (int i = 0; i < whiteKeyIxs.length; i++) {
-            int keyWidth = whiteKeyWidth;
-            if (i < whiteKeyWidthRemainder) {
-                keyWidth += 1;
-            }
-            View key = makePianoKeyButton(
-                    context,
-                    keyWidth,
-                    whiteKeyHeight,
-                    // Todo: add attribute for border
-                    dpsToPx(2),
-                    keyCornerRadius,
-                    whiteKeyColor);
-            leftMargin += dpsToPx(10);
-            key.setPadding(leftMargin, 0, 0, 0);
-            Log.d("testV", "left padding: " + key.getPaddingLeft());
-            this.addView(key);
-        }
-        Log.d("testV", "broke for loop");
-        setWillNotDraw(true);
-        */
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int touchedKey = getTouchedKey(event.getX(), event.getY());
+        int curTouchedKey = getTouchedKey(event.getX(), event.getY());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
                 // todo: verify this works
                 //       find out how the prebuilt Android views handles touch / click
                 //       only going to worry about click handling right now
+                initTouchedKey = curTouchedKey;
+                hasStayedOnInitKey = true;
                 for (PianoTouchListener listener : listeners) {
-                    listener.onPianoTouch(touchedKey);
+                    listener.onPianoTouch(curTouchedKey);
                 }
                 // invalidate() ?
                 break;
             case MotionEvent.ACTION_MOVE:
-                // todo
+                if (curTouchedKey != initTouchedKey) {
+                    hasStayedOnInitKey = false;
+                }
                 // invalidate() ?
                 break;
             case MotionEvent.ACTION_UP:
-                for (PianoTouchListener listener : listeners) {
-                    listener.onPianoClick(touchedKey);
+                if (hasStayedOnInitKey) {
+                    for (PianoTouchListener listener : listeners) {
+                        listener.onPianoClick(curTouchedKey);
+                    }
                 }
-                Log.d("testV", "" + touchedKey);
                 break;
         }
         return true;
@@ -212,17 +188,22 @@ public class PianoView extends View {
         return keyIsPressed[ix];
     }
 
+    // todo: change these to ints
+    // todo: the borders overlap on the middle white keys,
+    //       so implement the correct touch geometry (stroke / 2)
+    //       (currently biased towards the left keys, they get the whole border)
     private int getTouchedKey(float x, float y) {
 //        Log.d("testV", "x: " + x + "; y: " + y);
+        // todo: use a 'round' function instead of casting
+        final int touchX = (int) x;
+        final int touchY = (int) y;
         for (int ix : blackKeyIxs) {
-            // todo: use a 'round' function instead of casting
-            if (coordsInPianoKey((int) x, (int) y, pianoKeys[ix])) {
+            if (coordsInPianoKey(touchX, touchY, pianoKeys[ix])) {
                 return ix;
             }
         }
         for (int ix : whiteKeyIxs) {
-            // todo: use a 'round' function instead of casting
-            if (coordsInPianoKey((int) x, (int) y, pianoKeys[ix])) {
+            if (coordsInPianoKey(touchX, touchY, pianoKeys[ix])) {
                 return ix;
             }
         }
