@@ -62,7 +62,7 @@ public class PianoView extends View {
     private int keyStrokeColor;
 
     // todo: fix black key off center bug; more noticeable with larger border
-    private int keyStrokeWidth = 50;
+    private int keyStrokeWidth = 6;
     private int keyCornerRadius;
 
     private int initTouchedKey;
@@ -111,9 +111,7 @@ public class PianoView extends View {
         blackKeyHeight = (int) (whiteKeyHeight * blackKeyHeightRatio);
         // todo: extract magic numbers
         viewWidthRemainder = getMeasuredWidth() - (whiteKeyWidth * 7 - keyStrokeWidth * 6);
-        Log.d(
-                "testV",
-                "remainder: " + viewWidthRemainder);
+//        Log.d("testV", "remainder: " + viewWidthRemainder);
     }
 
     @Override
@@ -128,9 +126,6 @@ public class PianoView extends View {
         int curTouchedKey = getTouchedKey(event.getX(), event.getY());
         switch (event.getAction()) {
             case MotionEvent.ACTION_DOWN:
-                // todo: verify this works
-                //       find out how the prebuilt Android views handles touch / click
-                //       only going to worry about click handling right now
                 initTouchedKey = curTouchedKey;
                 hasStayedOnInitKey = true;
                 for (PianoTouchListener listener : listeners) {
@@ -239,7 +234,9 @@ public class PianoView extends View {
     // todo: investigate / fix issue with black keys being off center due to pixel remainder
     //       not really a pressing issue
     private void drawBlackKeys(Canvas canvas) {
-        int left = (whiteKeyWidth / 2) + ((whiteKeyWidth - blackKeyWidth) / 2);
+        /* Method 1 */
+        /*
+        int left = (whiteKeyWidth / 2) + ((whiteKeyWidth - blackKeyWidth) / 2) - keyStrokeWidth / 2;
         for (int i = 0; i < NUMBER_OF_BLACK_KEYS; i++) {
             // There is a gap between the 2nd and 3rd (base 1 indexing) black key on a piano.
             if (i == 2) {
@@ -249,6 +246,17 @@ public class PianoView extends View {
             pianoKey.setBounds(left, 0, left + blackKeyWidth, blackKeyHeight);
             pianoKey.draw(canvas);
             left += whiteKeyWidth - keyStrokeWidth;
+            pianoKeys[blackKeyIxs[i]] = pianoKey;
+        }
+         */
+
+        /* Method 2 */
+        for (int i = 0; i < NUMBER_OF_BLACK_KEYS; i++) {
+            GradientDrawable whiteKey = pianoKeys[blackKeyIxs[i] - 1];
+            final int left = whiteKey.getBounds().right - (blackKeyWidth / 2) - (keyStrokeWidth / 2);
+            final GradientDrawable pianoKey = makePianoKey(Color.DKGRAY, keyStrokeWidth, Color.BLACK, keyCornerRadius);
+            pianoKey.setBounds(left, 0, left + blackKeyWidth, blackKeyHeight);
+            pianoKey.draw(canvas);
             pianoKeys[blackKeyIxs[i]] = pianoKey;
         }
     }
