@@ -16,13 +16,13 @@
         <com.convergencelabstfx.smartdrone.v2.views.PianoView
             android:id="@+id/piano"
             android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:numberOfKeys="16"
-            app:keyStrokeWidth="10dp"
+            android:layout_height="180dp"
+            app:numberOfKeys="24"
+            app:keyStrokeWidth="2dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

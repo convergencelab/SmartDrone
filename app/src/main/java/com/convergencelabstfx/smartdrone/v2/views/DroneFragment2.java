@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.convergencelabstfx.smartdrone.R;
@@ -23,6 +22,8 @@ public class DroneFragment2 extends Fragment {
 
     private DroneViewModel mViewModel;
 
+    private int lastKeyPressed = - 1;
+
     public DroneFragment2() {
         // Required empty public constructor
     }
@@ -36,13 +37,29 @@ public class DroneFragment2 extends Fragment {
 //        addPiano();
         binding.piano.addPianoTouchListener(new PianoTouchListener() {
             @Override
-            public void onPianoTouch(int key) {
-                Log.d("testV", "" + key);
+            public void onPianoTouch(PianoView piano, int key) {
+//                Log.d("testV", "" + key);
+                // Piano key change
+                if (key != lastKeyPressed) {
+                    if (lastKeyPressed != -1) {
+                        piano.showKeyNotPressed(lastKeyPressed);
+                    }
+                    if (key != -1) {
+                        piano.showKeyPressed(key);
+                    }
+                    lastKeyPressed = key;
+                }
+
             }
 
             @Override
-            public void onPianoClick(int key) {
-
+            public void onPianoClick(PianoView piano, int key) {
+//                if (piano.keyIsPressed(key)) {
+//                    piano.showKeyNotPressed(key);
+//                }
+//                else {
+//                    piano.showKeyPressed(key);
+//                }
             }
         });
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
