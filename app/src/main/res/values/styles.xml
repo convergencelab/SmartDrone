@@ -22,15 +22,4 @@
         <item name="android:windowBackground">@color/convergence_background</item>
     </style>
 
-    <style name="pianoKeyBlack">
-        <item name="android:background">@drawable/piano_key_background_black</item>
-        <item name="android:layout_width">30dp</item>
-        <item name="android:layout_height">85dp</item>
-    </style>
-
-    <style name="pianoKeyWhite">
-        <item name="android:background">@drawable/piano_key_background_white</item>
-        <item name="android:layout_width">40dp</item>
-        <item name="android:layout_height">120dp</item>
-    </style>
 </resources>
