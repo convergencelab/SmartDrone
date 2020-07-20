@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
@@ -14,8 +15,6 @@ import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDrone2Binding;
 import com.convergencelabstfx.smartdrone.v2.models.SignalProcessorKt;
 import com.convergencelabstfx.smartdrone.v2.viewmodels.DroneViewModel;
-
-import org.jetbrains.annotations.NotNull;
 
 public class DroneFragment2 extends Fragment {
 
@@ -32,7 +31,7 @@ public class DroneFragment2 extends Fragment {
     }
 
     @Override
-    public View onCreateView(@NotNull LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(
                 inflater, R.layout.fragment_drone_2, container, false
