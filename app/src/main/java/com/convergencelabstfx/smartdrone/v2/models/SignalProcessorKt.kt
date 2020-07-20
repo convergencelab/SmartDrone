@@ -20,7 +20,9 @@ class SignalProcessorKt {
     private var dispatcher: AudioDispatcher? = null
 
     private val observers: MutableList<PitchProcessorObserver> = ArrayList()
-    private var mIsRunning = false
+
+    var isRunning = false
+        private set
 
     fun start() {
         val handler = PitchDetectionHandler { result: PitchDetectionResult, event: AudioEvent? ->
@@ -45,7 +47,7 @@ class SignalProcessorKt {
         dispatcher?.addAudioProcessor(pitchProcessor)
         val audioThread = Thread(dispatcher, "Pitch Processing Thread")
         audioThread.start()
-        mIsRunning = true
+        isRunning = true
     }
 
     fun stop() {
@@ -55,7 +57,7 @@ class SignalProcessorKt {
         }
         dispatcher!!.stop()
         dispatcher = null
-        mIsRunning = false
+        isRunning = false
     }
 
     fun addPitchListener(observer: PitchProcessorObserver) {
@@ -66,13 +68,8 @@ class SignalProcessorKt {
         observers.remove(observer)
     }
 
-    // todo: fix this; kotlin was generating weird name (getMIsRunning())
-    fun isRunning(): Boolean {
-        return mIsRunning
-    }
-
     private fun convertPitchToIx(pitchInHz: Double): Int {
-        return if (pitchInHz == -1.0) -1
+        return if (pitchInHz == -1.0) { -1 }
         else PitchConverter.hertzToMidiKey(pitchInHz)
     }
 
