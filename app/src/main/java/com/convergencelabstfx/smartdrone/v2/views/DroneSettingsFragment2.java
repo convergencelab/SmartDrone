@@ -1,7 +1,6 @@
 package com.convergencelabstfx.smartdrone.v2.views;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,29 +13,25 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.convergencelabstfx.smartdrone.R;
-import com.convergencelabstfx.smartdrone.databinding.FragmentDrone2Binding;
-import com.convergencelabstfx.smartdrone.v2.models.SignalProcessorKt;
+import com.convergencelabstfx.smartdrone.databinding.FragmentDroneSettings2Binding;
 import com.convergencelabstfx.smartdrone.v2.viewmodels.DroneViewModel;
 
-public class DroneFragment2 extends Fragment {
-
-    private FragmentDrone2Binding mBinding;
+public class DroneSettingsFragment2 extends Fragment {
 
     private DroneViewModel mViewModel;
 
-    private SignalProcessorKt sp = new SignalProcessorKt();
+    private FragmentDroneSettings2Binding mBinding;
 
-    private int mLastKey = -1;
-
-    public DroneFragment2() {
+    public DroneSettingsFragment2() {
         // Required empty public constructor
     }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         mBinding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_drone_2, container, false
+                inflater, R.layout.fragment_drone_settings_2, container, false
         );
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
 
@@ -45,36 +40,11 @@ public class DroneFragment2 extends Fragment {
             @Override
             public void onChanged(@Nullable final String newText) {
                 // Update the UI, in this case, a TextView.
-                mBinding.pitchText.setText(newText);
+                mBinding.textView.setText(newText);
             }
         };
         mViewModel.mTestField.observe(getViewLifecycleOwner(), nameObserver);
 
-
-        sp.addPitchListener(pitch -> {
-                    Log.d("testV", Integer.toString(pitch));
-                    if (pitch != mLastKey) {
-                        if (pitch == -1) {
-                            mBinding.piano.showKeyNotPressed(mLastKey % 12);
-                        }
-                        else {
-                            mBinding.piano.showKeyPressed(pitch % 12);
-                        }
-                        mLastKey = pitch;
-                    }
-                }
-        );
-
-        mBinding.randomButton.setOnClickListener(view -> {
-            if (sp.isRunning()) {
-                sp.stop();
-            }
-            else {
-                sp.start();
-            }
-        });
-
         return mBinding.getRoot();
     }
-
 }

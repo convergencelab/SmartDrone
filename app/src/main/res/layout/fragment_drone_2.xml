@@ -17,6 +17,7 @@
             android:id="@+id/piano"
             android:layout_width="320dp"
             android:layout_height="180dp"
+            app:showPressMode="onClick"
             android:layout_marginTop="20dp"
             app:enableMultiKeyHighlighting="false"
             app:layout_constraintLeft_toLeftOf="parent"
