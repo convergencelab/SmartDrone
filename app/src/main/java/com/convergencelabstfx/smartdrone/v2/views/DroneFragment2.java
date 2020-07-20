@@ -7,8 +7,10 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.convergencelabstfx.smartdrone.R;
@@ -37,7 +39,16 @@ public class DroneFragment2 extends Fragment {
                 inflater, R.layout.fragment_drone_2, container, false
         );
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
-        Log.d("testV", mViewModel.testField);
+
+        // todo: remove, just a reference on how to use livedata
+        final Observer<String> nameObserver = new Observer<String>() {
+            @Override
+            public void onChanged(@Nullable final String newText) {
+                // Update the UI, in this case, a TextView.
+                mBinding.pitchText.setText(newText);
+            }
+        };
+        mViewModel.mTestField.observe(getViewLifecycleOwner(), nameObserver);
 
 
         sp.addPitchListener(pitch -> {
