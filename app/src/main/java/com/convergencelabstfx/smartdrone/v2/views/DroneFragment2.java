@@ -51,6 +51,8 @@ public class DroneFragment2 extends Fragment {
                 }
         );
 
+        mBinding.activeKeyButton.setText("Butich");
+
         return mBinding.getRoot();
     }
 

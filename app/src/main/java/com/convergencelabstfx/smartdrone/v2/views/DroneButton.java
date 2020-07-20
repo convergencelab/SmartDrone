@@ -3,13 +3,24 @@ package com.convergencelabstfx.smartdrone.v2.views;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.convergencelabstfx.smartdrone.R;
+
 public class DroneButton extends ConstraintLayout {
+
+    private TextView mTextView;
 
     public DroneButton(Context context, AttributeSet attrs) {
         super(context, attrs);
+        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        View droneButton = inflater.inflate(R.layout.drone_button, this, false);
+        this.addView(droneButton);
+        mTextView = this.findViewById(R.id.droneButton_textView);
     }
 
     @Override
@@ -27,4 +38,22 @@ public class DroneButton extends ConstraintLayout {
         Log.d("testV", "w: " + w + " ;h: " + h);
         Log.d("testV", "onSizeChanged");
     }
+
+    public void setText(String text) {
+        // todo: animate text
+        mTextView.setText(text);
+    }
+
+    public void setRingColor(int color) {
+
+    }
+
+    public void setIcon(int icon) {
+
+    }
+
+    public void setIcon() {
+
+    }
+
 }
