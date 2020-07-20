@@ -10,10 +10,10 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.convergencelabstfx.pianoview.PianoTouchListener;
-import com.convergencelabstfx.pianoview.PianoView;
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDrone2Binding;
+import com.convergencelabstfx.smartdrone.models.signalprocessor.PitchProcessorObserver;
+import com.convergencelabstfx.smartdrone.v2.models.SignalProcessor2;
 import com.convergencelabstfx.smartdrone.v2.viewmodels.DroneViewModel;
 
 import org.jetbrains.annotations.NotNull;
@@ -23,6 +23,9 @@ public class DroneFragment2 extends Fragment {
     private FragmentDrone2Binding mBinding;
 
     private DroneViewModel mViewModel;
+
+//    private SignalProcessor2 sp = new SignalProcessor2();
+    private SignalProcessor2 sp = new SignalProcessor2();
 
     private int lastKeyPressed = - 1;
 
@@ -38,6 +41,23 @@ public class DroneFragment2 extends Fragment {
         );
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
         Log.d("testV", mViewModel.testField);
+
+
+        sp.setActivity(getActivity());
+        sp.addPitchListener(new PitchProcessorObserver() {
+            @Override
+            public void handlePitchResult(int pitch) {
+                mBinding.pitchText.setText(Integer.toString(pitch));
+            }
+        });
+
+        mBinding.randomButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sp.start();
+            }
+        });
+
         return mBinding.getRoot();
     }
 
