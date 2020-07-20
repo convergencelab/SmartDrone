@@ -12,8 +12,7 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDrone2Binding;
-import com.convergencelabstfx.smartdrone.models.signalprocessor.PitchProcessorObserver;
-import com.convergencelabstfx.smartdrone.v2.models.SignalProcessor2;
+import com.convergencelabstfx.smartdrone.v2.models.SignalProcessorKt;
 import com.convergencelabstfx.smartdrone.v2.viewmodels.DroneViewModel;
 
 import org.jetbrains.annotations.NotNull;
@@ -24,10 +23,9 @@ public class DroneFragment2 extends Fragment {
 
     private DroneViewModel mViewModel;
 
-//    private SignalProcessor2 sp = new SignalProcessor2();
-    private SignalProcessor2 sp = new SignalProcessor2();
+    private SignalProcessorKt sp = new SignalProcessorKt();
 
-    private int lastKeyPressed = - 1;
+    private int mLastKey = -1;
 
     public DroneFragment2() {
         // Required empty public constructor
@@ -43,17 +41,25 @@ public class DroneFragment2 extends Fragment {
         Log.d("testV", mViewModel.testField);
 
 
-        sp.setActivity(getActivity());
-        sp.addPitchListener(new PitchProcessorObserver() {
-            @Override
-            public void handlePitchResult(int pitch) {
-                mBinding.pitchText.setText(Integer.toString(pitch));
-            }
-        });
+        sp.addPitchListener(pitch -> {
+                    Log.d("testV", Integer.toString(pitch));
+                    if (pitch != mLastKey) {
+                        if (pitch == -1) {
+                            mBinding.piano.showKeyNotPressed(mLastKey % 12);
+                        }
+                        else {
+                            mBinding.piano.showKeyPressed(pitch % 12);
+                        }
+                        mLastKey = pitch;
+                    }
+                }
+        );
 
-        mBinding.randomButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        mBinding.randomButton.setOnClickListener(view -> {
+            if (sp.isRunning()) {
+                sp.stop();
+            }
+            else {
                 sp.start();
             }
         });
