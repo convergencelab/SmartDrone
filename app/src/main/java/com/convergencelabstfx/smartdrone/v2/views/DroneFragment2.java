@@ -11,6 +11,8 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.convergencelabstfx.pianoview.PianoTouchListener;
+import com.convergencelabstfx.pianoview.PianoView;
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDrone2Binding;
 import com.convergencelabstfx.smartdrone.v2.viewmodels.DroneViewModel;
@@ -49,7 +51,26 @@ public class DroneFragment2 extends Fragment {
                 }
         );
 
+        mBinding.piano.addPianoTouchListener(new PianoTouchListener() {
+            @Override
+            public void onKeyDown(@NonNull PianoView piano, int key) {
+
+            }
+
+            @Override
+            public void onKeyUp(@NonNull PianoView piano, int key) {
+
+            }
+
+            @Override
+            public void onKeyClick(@NonNull PianoView piano, int key) {
+                mBinding.activeKeyButton.setText(Integer.toString(key), 20);
+            }
+        });
+
         return mBinding.getRoot();
     }
+
+
 
 }
