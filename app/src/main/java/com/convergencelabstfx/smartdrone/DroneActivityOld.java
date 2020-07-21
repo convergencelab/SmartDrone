@@ -37,11 +37,6 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import android.text.SpannableString;
 import android.text.style.RelativeSizeSpan;
 import android.view.View;
@@ -49,6 +44,12 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.convergencelabstfx.smartdrone.models.DroneModel;
 import com.convergencelabstfx.smartdrone.utility.DronePreferences;
@@ -186,7 +187,7 @@ public class DroneActivityOld extends AppCompatActivity {
      */
     public void setPianoImage(int noteIx) {
         if (noteIx == Constants.NULL_NOTE_IX) {
-            pianoImage.setImageResource(R.drawable.piano_null);
+//            pianoImage.setImageResource(R.drawable.piano_null);
         }
         else {
             String piano_text = noteToResIdName.get(Constants.NOTES_SHARP[noteIx]);
@@ -290,7 +291,7 @@ public class DroneActivityOld extends AppCompatActivity {
         if (droneModel.isActive()) {
             droneModel.toggleDroneState();
         }
-        pianoImage.setImageResource(R.drawable.piano_null);
+//        pianoImage.setImageResource(R.drawable.piano_null);
         controlButton.setImageResource(R.drawable.ic_play_drone);
         activeKeyButton.setTextSize(48);
         activeKeyButton.setText("Start");

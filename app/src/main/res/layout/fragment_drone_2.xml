@@ -15,13 +15,14 @@
 
         <com.convergencelabstfx.pianoview.PianoView
             android:id="@+id/piano"
-            android:layout_width="320dp"
-            android:layout_height="180dp"
+            android:layout_width="300dp"
+            android:layout_height="152dp"
             android:layout_marginTop="20dp"
             app:enableMultiKeyHighlighting="false"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/activeKey_button"
             app:showPressMode="onClick" />
 
 
@@ -29,90 +30,89 @@
             android:id="@+id/activeKey_button"
             android:layout_width="180dp"
             android:layout_height="180dp"
-            app:layout_constraintTop_toBottomOf="@id/piano"
+            app:db_text="Start"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent" />
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/drone_buttons_layout"
+            app:layout_constraintTop_toBottomOf="@id/piano" />
 
         <!-- Drone Buttons -->
-        <androidx.coordinatorlayout.widget.CoordinatorLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/drone_buttons_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activeKey_button">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|start"
-                android:layout_marginStart="@dimen/drone_button_margin"
-                android:layout_marginLeft="@dimen/drone_button_margin"
-                android:background="@drawable/fab_background"
-                android:padding="3dp">
+            <com.convergencelabstfx.smartdrone.v2.views.DroneButton
+                android:id="@+id/play_button"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                app:db_icon="@drawable/ic_play_drone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@id/lock_button"
+                app:layout_constraintTop_toTopOf="parent">
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/drone_sound_button"
-                    style="@style/Widget.MaterialComponents.FloatingActionButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:backgroundTint="@color/drone_fab_color"
-                    app:borderWidth="0dp"
-                    app:elevation="0dp"
-                    app:fabCustomSize="@dimen/main_fab_size_bigger"
-                    app:rippleColor="@android:color/darker_gray"
-                    app:srcCompat="@drawable/ic_drone_sound" />
+            </com.convergencelabstfx.smartdrone.v2.views.DroneButton>
 
-            </LinearLayout>
+            <com.convergencelabstfx.smartdrone.v2.views.DroneButton
+                android:id="@+id/lock_button"
+                android:layout_width="72dp"
+                android:layout_height="72dp"
+                app:db_icon="@drawable/ic_locked"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toRightOf="@id/play_button"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:background="@drawable/fab_background"
-                android:padding="3dp">
+            </com.convergencelabstfx.smartdrone.v2.views.DroneButton>
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/drone_control_button"
-                    style="@style/Widget.MaterialComponents.FloatingActionButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:backgroundTint="@color/drone_fab_color"
-                    app:borderWidth="0dp"
-                    app:elevation="0dp"
-                    app:fabCustomSize="@dimen/main_fab_size_bigger"
-                    app:rippleColor="@android:color/darker_gray"
-                    app:srcCompat="@drawable/ic_play_drone" />
+            <!--            <LinearLayout-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:background="@drawable/fab_background"-->
+            <!--                android:padding="3dp">-->
 
-            </LinearLayout>
+            <!--                <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+            <!--                    android:id="@+id/drone_control_button"-->
+            <!--                    style="@style/Widget.MaterialComponents.FloatingActionButton"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    app:backgroundTint="@color/drone_fab_color"-->
+            <!--                    app:borderWidth="0dp"-->
+            <!--                    app:elevation="0dp"-->
+            <!--                    app:fabCustomSize="@dimen/main_fab_size_bigger"-->
+            <!--                    app:rippleColor="@android:color/darker_gray"-->
+            <!--                    app:srcCompat="@drawable/ic_play_drone" />-->
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center|end"
-                android:layout_marginEnd="@dimen/drone_button_margin"
-                android:background="@drawable/fab_background"
-                android:padding="3dp">
+            <!--            </LinearLayout>-->
 
-                <com.google.android.material.floatingactionbutton.FloatingActionButton
-                    android:id="@+id/drone_preferences_button"
-                    style="@style/Widget.MaterialComponents.FloatingActionButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:backgroundTint="@color/drone_fab_color"
-                    app:borderWidth="0dp"
-                    app:elevation="0dp"
-                    app:fabCustomSize="@dimen/main_fab_size_bigger"
-                    app:rippleColor="@android:color/darker_gray"
-                    app:srcCompat="@drawable/ic_preferences" />
+            <!--            <LinearLayout-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center|end"-->
+            <!--                android:layout_marginEnd="@dimen/drone_button_margin"-->
+            <!--                android:background="@drawable/fab_background"-->
+            <!--                android:padding="3dp">-->
 
-            </LinearLayout>
+            <!--                <com.google.android.material.floatingactionbutton.FloatingActionButton-->
+            <!--                    android:id="@+id/drone_preferences_button"-->
+            <!--                    style="@style/Widget.MaterialComponents.FloatingActionButton"-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    app:backgroundTint="@color/drone_fab_color"-->
+            <!--                    app:borderWidth="0dp"-->
+            <!--                    app:elevation="0dp"-->
+            <!--                    app:fabCustomSize="@dimen/main_fab_size_bigger"-->
+            <!--                    app:rippleColor="@android:color/darker_gray"-->
+            <!--                    app:srcCompat="@drawable/ic_preferences" />-->
+
+            <!--            </LinearLayout>-->
 
 
-
-        </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
+        </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

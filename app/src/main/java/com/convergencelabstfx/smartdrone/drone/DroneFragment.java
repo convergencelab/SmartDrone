@@ -137,7 +137,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
     @Override
     public void showDroneInactive() {
-        mPianoImg.setImageResource(R.drawable.piano_null);
+//        mPianoImg.setImageResource(R.drawable.piano_null);
         animateActiveKeyText("Start", TEXT_SIZE_MEDIUM);
         showControlButtonInactive();
     }
@@ -145,7 +145,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
     @Override
     public void showNoteActive(int toShow) {
         if (toShow == -1) {
-            mPianoImg.setImageResource(R.drawable.piano_null);
+//            mPianoImg.setImageResource(R.drawable.piano_null);
         }
         else {
             String piano_text = mPianoImageName.get(toShow);
@@ -209,7 +209,7 @@ public class DroneFragment extends Fragment implements DroneContract.View {
 
         // Draw piano null
         mPianoImg = mRoot.findViewById(R.id.piano_img);
-        mPianoImg.setImageResource(R.drawable.piano_null);
+//        mPianoImg.setImageResource(R.drawable.piano_null);
 
         // Drone play/stop button
         mDroneToggleButton = mRoot.findViewById(R.id.drone_control_button);

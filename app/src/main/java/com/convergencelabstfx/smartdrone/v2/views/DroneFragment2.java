@@ -21,8 +21,6 @@ public class DroneFragment2 extends Fragment {
 
     private DroneViewModel mViewModel;
 
-//    private SignalProcessorKt sp = new SignalProcessorKt();
-
     private int mLastKey = -1;
 
     public DroneFragment2() {
@@ -50,8 +48,6 @@ public class DroneFragment2 extends Fragment {
                     }
                 }
         );
-
-        mBinding.activeKeyButton.setText("Butich");
 
         return mBinding.getRoot();
     }
