@@ -4,8 +4,8 @@ import com.convergencelabstfx.keyfinder.Note;
 
 public interface NoteProcessorObserver {
 
-    void notifyNoteDetected(Note note);
+    void notifyNoteDetected(int note);
 
-    void notifyNoteUndetected(Note note);
+    void notifyNoteUndetected(int note);
 
 }

@@ -1,7 +1,5 @@
 package com.convergencelabstfx.smartdrone.models;
 
-import com.convergencelabstfx.keyfinder.Note;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,27 +13,29 @@ public class NoteProcessor {
 
     final private List<NoteProcessorObserver> mListeners = new ArrayList<>();
 
-    private Note mLastNoteHeard = null;
+    private int mLastNoteHeardIx = -1;
 
     public NoteProcessor() {
 
     }
 
+    // todo: for now, pitch detection is only monophonic;
+    //       if polyphonic detection is added in later, then
+    //       this will need to be reworked
     public void onPitchDetected(int noteIx, float probability, boolean isPitched) {
         // todo: use other parameters later to better filter out noise / incorrect guesses
-        // No note heard
-        if (noteIx == -1) {
-            return;
-        }
-        if (mLastNoteHeard == null || noteIx != mLastNoteHeard.getIx()) {
-            final Note note = new Note(noteIx);
-            for (NoteProcessorObserver listener : mListeners) {
-                listener.notifyNoteDetected(note);
-                if (mLastNoteHeard != null) {
-                    listener.notifyNoteUndetected(mLastNoteHeard);
+        if (noteIx != mLastNoteHeardIx) {
+            if (mLastNoteHeardIx != -1) {
+                for (NoteProcessorObserver listener : mListeners) {
+                    listener.notifyNoteUndetected(mLastNoteHeardIx);
                 }
             }
-            mLastNoteHeard = note;
+            if (noteIx != -1) {
+                for (NoteProcessorObserver listener : mListeners) {
+                    listener.notifyNoteDetected(noteIx);
+                }
+            }
+            mLastNoteHeardIx = noteIx;
         }
     }
 
