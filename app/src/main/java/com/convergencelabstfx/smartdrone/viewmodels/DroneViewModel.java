@@ -3,14 +3,15 @@ package com.convergencelabstfx.smartdrone.viewmodels;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.convergencelabstfx.keyfinder.Note;
+import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor;
+import com.convergencelabstfx.keyfinder.keypredictor.Phrase;
+import com.convergencelabstfx.keyfinder.keypredictor.PhrasePredictor;
 import com.convergencelabstfx.smartdrone.models.NoteProcessor;
 import com.convergencelabstfx.smartdrone.models.NoteProcessorObserver;
 import com.convergencelabstfx.smartdrone.models.SignalProcessorKt;
 import com.convergencelabstfx.smartdrone.models.SignalProcessorObserver;
-import com.example.keyfinder.keypredictor.KeyPredictor;
-import com.example.keyfinder.keypredictor.Phrase;
-import com.example.keyfinder.keypredictor.PhrasePredictor;
-import com.example.keyfinder.melody.Note;
+
 
 /**
  * Drone pipeline:
@@ -78,7 +79,7 @@ public class DroneViewModel extends ViewModel {
         mNoteProcessor.addNoteProcessorListener(new NoteProcessorObserver() {
             @Override
             public void notifyNoteResult(int note, int millisHeard) {
-
+                mKeyPredictor.addNote(note);
             }
         });
     }

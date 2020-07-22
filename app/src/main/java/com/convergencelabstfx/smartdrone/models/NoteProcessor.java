@@ -25,9 +25,14 @@ public class NoteProcessor {
         // todo: use other parameters later to better filter out noise / incorrect guesses
         if (noteIx != mLastNoteHeard) {
             mLastNoteInitTimeHeard = System.currentTimeMillis();
+            for (NoteProcessorObserver listener : mListeners) {
+                listener.notifyNoteResult(noteIx, 0);
+            }
         }
-        for (NoteProcessorObserver listener : mListeners) {
-            listener.notifyNoteResult(noteIx, (int) (System.currentTimeMillis() - mLastNoteInitTimeHeard));
+        else {
+            for (NoteProcessorObserver listener : mListeners) {
+                listener.notifyNoteResult(noteIx, (int) (System.currentTimeMillis() - mLastNoteInitTimeHeard));
+            }
         }
     }
 
