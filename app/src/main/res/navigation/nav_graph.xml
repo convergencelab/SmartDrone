@@ -6,12 +6,12 @@
     app:startDestination="@id/dronePagerFragment">
     <fragment
         android:id="@+id/droneFragment_v2"
-        android:name="com.convergencelabstfx.smartdrone.v2.views.DroneFragment2"
+        android:name="com.convergencelabstfx.smartdrone.views.DroneFragment2"
         android:label="fragment_drone_v2"
         tools:layout="@layout/fragment_drone_2" />
     <fragment
         android:id="@+id/dronePagerFragment"
-        android:name="com.convergencelabstfx.smartdrone.v2.views.DronePagerFragment"
+        android:name="com.convergencelabstfx.smartdrone.views.DronePagerFragment"
         android:label="fragment_drone_pager"
         tools:layout="@layout/fragment_drone_pager" />
 </navigation>

@@ -11,7 +11,7 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".v2.views.DroneFragment2">
+        tools:context=".views.DroneFragment2">
 
         <com.convergencelabstfx.pianoview.PianoView
             android:id="@+id/piano"
@@ -26,7 +26,7 @@
             app:showPressMode="onClick" />
 
 
-        <com.convergencelabstfx.smartdrone.v2.views.DroneButton
+        <com.convergencelabstfx.smartdrone.views.DroneButton
             android:id="@+id/activeKey_button"
             android:layout_width="180dp"
             android:layout_height="180dp"
@@ -44,7 +44,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintTop_toBottomOf="@id/activeKey_button">
 
-            <com.convergencelabstfx.smartdrone.v2.views.DroneButton
+            <com.convergencelabstfx.smartdrone.views.DroneButton
                 android:id="@+id/play_button"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
@@ -54,9 +54,9 @@
                 app:layout_constraintRight_toLeftOf="@id/lock_button"
                 app:layout_constraintTop_toTopOf="parent">
 
-            </com.convergencelabstfx.smartdrone.v2.views.DroneButton>
+            </com.convergencelabstfx.smartdrone.views.DroneButton>
 
-            <com.convergencelabstfx.smartdrone.v2.views.DroneButton
+            <com.convergencelabstfx.smartdrone.views.DroneButton
                 android:id="@+id/lock_button"
                 android:layout_width="72dp"
                 android:layout_height="72dp"
@@ -66,7 +66,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
 
-            </com.convergencelabstfx.smartdrone.v2.views.DroneButton>
+            </com.convergencelabstfx.smartdrone.views.DroneButton>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
