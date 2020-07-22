@@ -1,9 +1,11 @@
 package com.convergencelabstfx.smartdrone.models;
 
+import com.convergencelabstfx.keyfinder.Note;
+
 public interface NoteProcessorObserver {
 
-    // Millis heard refers to the consecutive amount of time
-    // that the note has been heard for.
-    void notifyNoteResult(int note, int millisHeard);
+    void notifyNoteDetected(Note note);
+
+    void notifyNoteUndetected(Note note);
 
 }

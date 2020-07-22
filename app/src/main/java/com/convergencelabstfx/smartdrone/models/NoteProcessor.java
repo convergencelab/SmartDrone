@@ -1,5 +1,7 @@
 package com.convergencelabstfx.smartdrone.models;
 
+import com.convergencelabstfx.keyfinder.Note;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,9 +15,7 @@ public class NoteProcessor {
 
     final private List<NoteProcessorObserver> mListeners = new ArrayList<>();
 
-    private int mLastNoteHeard = -1;
-
-    private long mLastNoteInitTimeHeard;
+    private Note mLastNoteHeard = null;
 
     public NoteProcessor() {
 
@@ -23,16 +23,19 @@ public class NoteProcessor {
 
     public void onPitchDetected(int noteIx, float probability, boolean isPitched) {
         // todo: use other parameters later to better filter out noise / incorrect guesses
-        if (noteIx != mLastNoteHeard) {
-            mLastNoteInitTimeHeard = System.currentTimeMillis();
-            for (NoteProcessorObserver listener : mListeners) {
-                listener.notifyNoteResult(noteIx, 0);
-            }
+        // No note heard
+        if (noteIx == -1) {
+            return;
         }
-        else {
+        if (mLastNoteHeard == null || noteIx != mLastNoteHeard.getIx()) {
+            final Note note = new Note(noteIx);
             for (NoteProcessorObserver listener : mListeners) {
-                listener.notifyNoteResult(noteIx, (int) (System.currentTimeMillis() - mLastNoteInitTimeHeard));
+                listener.notifyNoteDetected(note);
+                if (mLastNoteHeard != null) {
+                    listener.notifyNoteUndetected(mLastNoteHeard);
+                }
             }
+            mLastNoteHeard = note;
         }
     }
 

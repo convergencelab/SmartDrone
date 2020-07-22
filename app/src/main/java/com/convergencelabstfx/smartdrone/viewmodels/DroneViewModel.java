@@ -76,10 +76,15 @@ public class DroneViewModel extends ViewModel {
                 mNoteProcessor.onPitchDetected(pitch, probability, isPitched);
             }
         });
+
         mNoteProcessor.addNoteProcessorListener(new NoteProcessorObserver() {
             @Override
-            public void notifyNoteResult(int note, int millisHeard) {
-                mKeyPredictor.addNote(note);
+            public void notifyNoteDetected(Note note) {
+                mKeyPredictor.noteDetected(note);
+            }
+            @Override
+            public void notifyNoteUndetected(Note note) {
+                mKeyPredictor.noteUndetected(note);
             }
         });
     }

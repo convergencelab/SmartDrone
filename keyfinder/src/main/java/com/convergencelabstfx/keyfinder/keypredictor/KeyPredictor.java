@@ -14,7 +14,10 @@ public abstract class KeyPredictor {
 
     final private List<KeyPredictorListener> listeners = new ArrayList<>();
 
-    public abstract void addNote(Note addNote, int consecutiveMillisHeard);
+    public abstract void noteDetected(Note note);
+
+    // Todo: couldn't think of what the proper name should actually be, so it is 'undetected' for now
+    public abstract void noteUndetected(Note note);
 
     public long getNoteExpirationLength() {
         return noteExpirationLength;

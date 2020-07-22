@@ -15,14 +15,14 @@ public class PhrasePredictor extends KeyPredictor {
     private Phrase targetPhrase = null;
 
     @Override
-    public void addNote(Note toAdd, int consecutiveMillisHeard) {
+    public void noteDetected(Note note) {
         if (userPhrase.getNotes().size() > targetPhrase.getNotes().size()) {
             throw new IllegalStateException("User phrase size has exceeded target phrase size.");
         }
         else if (userPhrase.getNotes().size() == targetPhrase.getNotes().size()) {
             userPhrase.removeNoteAtIx(0);
         }
-        userPhrase.addNote(toAdd);
+        userPhrase.addNote(note);
         if (userPhraseMatchesTarget() && userPhraseIsWithinBounds()) {
             // TODO: make better
             // For now, the predicted key is always the index of the first note in the phrase.
@@ -30,6 +30,11 @@ public class PhrasePredictor extends KeyPredictor {
             // phrase implementations).
             notifyListeners(userPhrase.getNotes().get(0).getIx() % MusicTheory.TOTAL_NOTES);
         }
+    }
+
+    @Override
+    public void noteUndetected(Note note) {
+        // todo: implement
     }
 
     public int getLowerBound() {
