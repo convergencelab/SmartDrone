@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="DroneButton">
+        <attr name="db_text" format="string" />
+        <attr name="db_icon" format="integer" />
+        <attr name="db_ringWidth" format="dimension" />
+    </declare-styleable>
+
+</resources>
