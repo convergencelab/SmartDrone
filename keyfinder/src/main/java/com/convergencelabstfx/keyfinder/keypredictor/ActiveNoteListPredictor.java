@@ -5,12 +5,12 @@ import com.convergencelabstfx.keyfinder.Note;
 public class ActiveNoteListPredictor extends KeyPredictor {
 
     @Override
-    public void noteDetected(Note note) {
+    public void noteDetected(int note) {
 
     }
 
     @Override
-    public void noteUndetected(Note note) {
+    public void noteUndetected(int note) {
 
     }
 

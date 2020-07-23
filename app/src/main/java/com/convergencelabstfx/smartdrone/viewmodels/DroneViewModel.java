@@ -35,6 +35,10 @@ public class DroneViewModel extends ViewModel {
 
     private KeyPredictor mKeyPredictor;
 
+    // private ChordConstructor mChordConstructor;
+
+    // private MidiDriver mMidiDriver;
+
     private boolean mIsRunning;
 
 
@@ -66,9 +70,12 @@ public class DroneViewModel extends ViewModel {
         mOctavePhrase.addNote(new Note(0));
         mOctavePhrase.addNote(new Note(12));
         final PhrasePredictor predictor = new PhrasePredictor();
-        predictor.setTargetPhrase(mOctavePhrase);
+        predictor.targetPhrase = mOctavePhrase;
+
+        mKeyPredictor = predictor;
     }
 
+    // todo: gotta figure out exactly where a note index should turn into a note object
     private void initPipeline() {
         mSignalProcessor.addPitchListener(new SignalProcessorObserver() {
             @Override
@@ -79,14 +86,16 @@ public class DroneViewModel extends ViewModel {
 
         mNoteProcessor.addNoteProcessorListener(new NoteProcessorObserver() {
             @Override
-            public void notifyNoteDetected(Note note) {
+            public void notifyNoteDetected(int note) {
                 mKeyPredictor.noteDetected(note);
             }
             @Override
-            public void notifyNoteUndetected(Note note) {
+            public void notifyNoteUndetected(int note) {
                 mKeyPredictor.noteUndetected(note);
             }
         });
+
+
     }
 
 }
