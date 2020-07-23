@@ -3,11 +3,13 @@ package com.convergencelabstfx.smartdrone.viewmodels;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.convergencelabstfx.keyfinder.Key;
 import com.convergencelabstfx.keyfinder.Note;
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor;
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictorListener;
 import com.convergencelabstfx.keyfinder.keypredictor.Phrase;
 import com.convergencelabstfx.keyfinder.keypredictor.PhrasePredictor;
+import com.convergencelabstfx.smartdrone.models.ChordConstructor;
 import com.convergencelabstfx.smartdrone.models.NoteProcessor;
 import com.convergencelabstfx.smartdrone.models.NoteProcessorObserver;
 import com.convergencelabstfx.smartdrone.models.SignalProcessorKt;
@@ -38,7 +40,7 @@ public class DroneViewModel extends ViewModel {
 
     private KeyPredictor mKeyPredictor;
 
-    // private ChordConstructor mChordConstructor;
+     private ChordConstructor mChordConstructor = new ChordConstructor();
 
     // private MidiDriver mMidiDriver;
 
@@ -103,6 +105,9 @@ public class DroneViewModel extends ViewModel {
             @Override
             public void notifyKeyPrediction(int newKey) {
                 Timber.i("key: %s", newKey);
+                mChordConstructor.setKey(new Key(newKey));
+                // todo: implement
+                // mMidiDriver.playChord(mChordConstructor.constructChord())
             }
         });
 
