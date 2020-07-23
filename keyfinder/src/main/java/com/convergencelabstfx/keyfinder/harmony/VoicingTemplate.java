@@ -1,52 +1,61 @@
 package com.convergencelabstfx.keyfinder.harmony;
 
+import androidx.annotation.NonNull;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class VoicingTemplate {
 
-    private final String name;
+    private List<Tone> mBassTones = new ArrayList<>();
 
-    private final BassTone[] bassTones;
+    private List<Tone> mChordTones = new ArrayList<>();
 
-    private final ChordTone[] chordTones;
+    public VoicingTemplate() {
 
-    private final int size;
-
-    public VoicingTemplate(int[] bassTones, int[] chordTones) {
-        this(null, bassTones, chordTones);
     }
 
-    public VoicingTemplate(String name, int[] bassTones, int[] chordTones) {
-        this.name = name;
-        this.bassTones = ixsToBassTones(bassTones);
-        this.chordTones = ixsToChordTones(chordTones);
-        this.size = bassTones.length + chordTones.length;
+    // todo: has to be binary insertion
+    public void addBassTone(int degree) {
+
     }
 
-    public BassTone[] getBassTones() {
-        return bassTones;
+    public void removeBassTone(int degree) {
+        mBassTones.indexOf(degree);
     }
 
-    public ChordTone[] getChordTones() {
-        return chordTones;
+    // todo: has to be binary insertion
+    public void addChordTone(int degree) {
+
+    }
+
+    public void removeChordTone(int degree) {
+
+    }
+
+    public List<Tone> getBassTones() {
+        return mBassTones;
+    }
+
+    public void setBassTones(List<Tone> bassTones) {
+        mBassTones = bassTones;
+    }
+
+    public List<Tone> getChordTones() {
+        return mChordTones;
+    }
+
+    public void setChordTones(List<Tone> chordTones) {
+        mChordTones = chordTones;
     }
 
     public int size() {
-        return size;
+        return mBassTones.size() + mChordTones.size();
     }
 
-    private BassTone[] ixsToBassTones(int[] bassToneIxs) {
-        final BassTone[] toReturn = new BassTone[bassToneIxs.length];
-        for (int i = 0; i < bassToneIxs.length; ++i) {
-            toReturn[i] = new BassTone(bassToneIxs[i]);
-        }
-        return toReturn;
+    @NonNull
+    @Override
+    public String toString() {
+        return super.toString();
     }
-
-    private ChordTone[] ixsToChordTones(int[] chordToneIxs) {
-        final ChordTone[] toReturn = new ChordTone[chordToneIxs.length];
-        for (int i = 0; i < chordToneIxs.length; ++i) {
-            toReturn[i] = new ChordTone(chordToneIxs[i]);
-        }
-        return toReturn;
-    }
-
 }

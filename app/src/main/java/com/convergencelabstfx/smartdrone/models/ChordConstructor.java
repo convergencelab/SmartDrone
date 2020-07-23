@@ -18,7 +18,7 @@ public class ChordConstructor {
     public ChordConstructor() {
 
     }
-    
+
     public Voicing makeVoicing() {
         // todo: implement voicing making logic
         return null;

@@ -1,9 +1,8 @@
 package com.convergencelabstfx.keyfinder.harmony;
 
-public abstract class Tone {
+public class Tone {
 
-    // TODO: can this be private ?
-    protected final int degree;
+    private final int degree;
 
     public Tone(int degree) {
         this.degree = degree;
