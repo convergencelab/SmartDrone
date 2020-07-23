@@ -5,12 +5,15 @@ import androidx.lifecycle.ViewModel;
 
 import com.convergencelabstfx.keyfinder.Note;
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor;
+import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictorListener;
 import com.convergencelabstfx.keyfinder.keypredictor.Phrase;
 import com.convergencelabstfx.keyfinder.keypredictor.PhrasePredictor;
 import com.convergencelabstfx.smartdrone.models.NoteProcessor;
 import com.convergencelabstfx.smartdrone.models.NoteProcessorObserver;
 import com.convergencelabstfx.smartdrone.models.SignalProcessorKt;
 import com.convergencelabstfx.smartdrone.models.SignalProcessorObserver;
+
+import timber.log.Timber;
 
 
 /**
@@ -49,6 +52,7 @@ public class DroneViewModel extends ViewModel {
     }
 
     public void startDrone() {
+        Timber.i("starting");
         mSignalProcessor.start();
         mIsRunning = true;
     }
@@ -75,6 +79,7 @@ public class DroneViewModel extends ViewModel {
     }
 
     // todo: gotta figure out exactly where a note index should turn into a note object
+    // todo: make consist naming (observer/listener, notify/handle, onKeyPrediction etc...)
     private void initPipeline() {
         mSignalProcessor.addPitchListener(new SignalProcessorObserver() {
             @Override
@@ -94,6 +99,12 @@ public class DroneViewModel extends ViewModel {
             }
         });
 
+        mKeyPredictor.addListener(new KeyPredictorListener() {
+            @Override
+            public void notifyKeyPrediction(int newKey) {
+                Timber.i("key: %s", newKey);
+            }
+        });
 
     }
 

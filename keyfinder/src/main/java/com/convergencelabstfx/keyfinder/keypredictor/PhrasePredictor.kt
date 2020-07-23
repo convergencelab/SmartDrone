@@ -6,16 +6,20 @@ import com.convergencelabstfx.keyfinder.Note
 import kotlinx.coroutines.Job
 
 // Wrote this class in Kotlin to take advantage of coroutines
+// todo: deal with threading later on, it's fine for right now
 class PhrasePredictor : KeyPredictor() {
 
     // TODO: deal with default bounds
-    var lowerBound = 48
+    var lowerBound = 36
     var upperBound = 59
+
+    private var prevDetectedKey = -1
 
     private val noteJobs: HashMap<Int, Job> = HashMap()
 
     private val userPhrase = Phrase()
 
+    // todo: maybe type Phrase? instead of lateinit
     lateinit var targetPhrase: Phrase
 
     override fun noteDetected(note: Int) {
@@ -27,18 +31,29 @@ class PhrasePredictor : KeyPredictor() {
         }
 
         userPhrase.addNote(Note(note))
-        if (userPhraseMatchesTarget() && userPhraseIsWithinBounds()) {
+        if (newKeyDetected()) {
             // TODO: make better
             // For now, the predicted key is always the index of the first note in the phrase.
             // (this works for octave phrase predictions, but won't necessarily work with other
             // phrase implementations).
             notifyListeners(userPhrase.notes[0].ix % MusicTheory.TOTAL_NOTES)
+            prevDetectedKey = userPhrase.notes[0].ix % MusicTheory.TOTAL_NOTES;
         }
     }
 
     override fun noteUndetected(note: Int) {
         // todo: implement
         Log.d("PhrasePredictor", "Undetected: $note")
+        // todo: Dispatchers.main ??
+//        val curJob = GlobalScope.launch() {
+//            delay(noteExpirationLength.toLong())
+//        }
+    }
+
+    private fun newKeyDetected(): Boolean {
+        return userPhrase.notes[0].ix % MusicTheory.TOTAL_NOTES != prevDetectedKey
+                && userPhraseMatchesTarget()
+                && userPhraseIsWithinBounds()
     }
 
     private fun userPhraseMatchesTarget(): Boolean {
