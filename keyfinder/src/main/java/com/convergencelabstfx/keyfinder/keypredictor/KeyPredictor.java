@@ -1,8 +1,6 @@
 package com.convergencelabstfx.keyfinder.keypredictor;
 
 
-import com.convergencelabstfx.keyfinder.Note;
-
 import java.util.ArrayList;
 import java.util.List;
 

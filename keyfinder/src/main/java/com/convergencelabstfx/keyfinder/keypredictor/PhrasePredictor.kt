@@ -1,7 +1,9 @@
 package com.convergencelabstfx.keyfinder.keypredictor
 
+import android.util.Log
 import com.convergencelabstfx.keyfinder.MusicTheory
 import com.convergencelabstfx.keyfinder.Note
+import kotlinx.coroutines.Job
 
 // Wrote this class in Kotlin to take advantage of coroutines
 class PhrasePredictor : KeyPredictor() {
@@ -10,14 +12,17 @@ class PhrasePredictor : KeyPredictor() {
     var lowerBound = 48
     var upperBound = 59
 
+    private val noteJobs: HashMap<Int, Job> = HashMap()
+
     private val userPhrase = Phrase()
 
-    var targetPhrase: Phrase? = null
+    lateinit var targetPhrase: Phrase
 
     override fun noteDetected(note: Int) {
-        check(userPhrase.notes.size <= targetPhrase!!.notes.size) { "User phrase size has exceeded target phrase size." }
+        Log.d("PhrasePredictor", "Detected: $note")
+        check(userPhrase.notes.size <= targetPhrase.notes.size) { "User phrase size has exceeded target phrase size." }
 
-        if (userPhrase.notes.size == targetPhrase!!.notes.size) {
+        if (userPhrase.notes.size == targetPhrase.notes.size) {
             userPhrase.removeNoteAtIx(0)
         }
 
@@ -33,17 +38,18 @@ class PhrasePredictor : KeyPredictor() {
 
     override fun noteUndetected(note: Int) {
         // todo: implement
+        Log.d("PhrasePredictor", "Undetected: $note")
     }
 
     private fun userPhraseMatchesTarget(): Boolean {
         checkNotNull(targetPhrase) { "Target Phrase not set." }
-        if (targetPhrase!!.notes.size != userPhrase.notes.size) {
+        if (targetPhrase.notes.size != userPhrase.notes.size) {
             return false
         }
-        val targetBase = targetPhrase!!.notes[0].ix
+        val targetBase = targetPhrase.notes[0].ix
         val userBase = userPhrase.notes[0].ix
-        for (i in targetPhrase!!.notes.indices) {
-            if (targetPhrase!!.notes[i].ix - targetBase
+        for (i in targetPhrase.notes.indices) {
+            if (targetPhrase.notes[i].ix - targetBase
                     != userPhrase.notes[i].ix - userBase) {
                 return false
             }

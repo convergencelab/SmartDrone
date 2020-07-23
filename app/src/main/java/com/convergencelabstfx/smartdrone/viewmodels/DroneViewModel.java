@@ -51,7 +51,6 @@ public class DroneViewModel extends ViewModel {
     public void startDrone() {
         mSignalProcessor.start();
         mIsRunning = true;
-
     }
 
     public void stopDrone() {

@@ -13,7 +13,15 @@ public class NoteProcessor {
 
     final private List<NoteProcessorObserver> mListeners = new ArrayList<>();
 
-    private int mLastNoteHeardIx = -1;
+    private int mMillisRequired = 150;
+
+    private int mPrevNoteHeardIx = -1;
+    private long mPrevHeardTimeStamp = -1;
+
+    private int mLastDetectedNoteIx = -1;
+    private boolean mHasNotifiedDetected = false;
+    private boolean mHasNotifiedUndetected = false;
+
 
     public NoteProcessor() {
 
@@ -24,18 +32,26 @@ public class NoteProcessor {
     //       this will need to be reworked
     public void onPitchDetected(int noteIx, float probability, boolean isPitched) {
         // todo: use other parameters later to better filter out noise / incorrect guesses
-        if (noteIx != mLastNoteHeardIx) {
-            if (mLastNoteHeardIx != -1) {
+        if (noteIx != mPrevNoteHeardIx) {
+            mHasNotifiedDetected = false;
+            if (!mHasNotifiedUndetected && mLastDetectedNoteIx != -1) {
                 for (NoteProcessorObserver listener : mListeners) {
-                    listener.notifyNoteUndetected(mLastNoteHeardIx);
+                    listener.notifyNoteUndetected(mLastDetectedNoteIx);
                 }
+                mHasNotifiedUndetected = true;
             }
             if (noteIx != -1) {
-                for (NoteProcessorObserver listener : mListeners) {
-                    listener.notifyNoteDetected(noteIx);
-                }
+                mPrevHeardTimeStamp = System.currentTimeMillis();
             }
-            mLastNoteHeardIx = noteIx;
+            mPrevNoteHeardIx = noteIx;
+        }
+        else if (noteIx != -1 && !mHasNotifiedDetected && hasMetFilterLengthThreshold()) {
+            for (NoteProcessorObserver listener : mListeners) {
+                listener.notifyNoteDetected(noteIx);
+            }
+            mLastDetectedNoteIx = noteIx;
+            mHasNotifiedUndetected = false;
+            mHasNotifiedDetected = true;
         }
     }
 
@@ -45,6 +61,10 @@ public class NoteProcessor {
 
     public void removeNoteProcessorListener(NoteProcessorObserver listener) {
         mListeners.remove(listener);
+    }
+
+    private boolean hasMetFilterLengthThreshold() {
+        return (int) (System.currentTimeMillis() - mPrevHeardTimeStamp) > mMillisRequired;
     }
 
 }
