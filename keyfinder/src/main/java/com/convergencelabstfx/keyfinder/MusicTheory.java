@@ -1,5 +1,8 @@
 package com.convergencelabstfx.keyfinder;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * The MusicTheory class contains static variables that help with automating the
  * creation of keys and indexing note values.
@@ -176,5 +179,28 @@ public class MusicTheory {
         return lowest;
     }
 
+    /**
+     * Transposes intervals to the mode given by the ix.
+     */
+    public static List<Integer> getModeIntervals(List<Integer> intervals, int modeIx) {
+        if (intervals.get(0) != 0) {
+            throw new IllegalArgumentException(
+                    "Cannot use scale when first interval is not zero.\n" +
+                            "Intervals = " + intervals.toString());
+        }
+        // No need to change anything
+        if (modeIx == 0) {
+            return intervals;
+        }
+        final List<Integer> toReturn = new ArrayList<>(intervals.size());
+        final int offset = intervals.get(modeIx);
+        for (int i = modeIx; i < intervals.size(); i++) {
+            toReturn.add(intervals.get(i) - offset);
+        }
+        for (int i = 0; i < modeIx; i++) {
+            toReturn.add(intervals.get(i) + TOTAL_NOTES - offset);
+        }
+        return toReturn;
+    }
 
 }

@@ -1,6 +1,9 @@
 package com.convergencelabstfx.smartdrone.models;
 
 
+import androidx.annotation.NonNull;
+
+import com.convergencelabstfx.keyfinder.MusicTheory;
 import com.convergencelabstfx.keyfinder.Scale;
 
 import java.util.ArrayList;
@@ -20,22 +23,30 @@ class ScaleConstructor {
 
     }
 
-    public int addParentScale(List<Integer> parentScaleIntervals, List<String> modeNames) {
-        if (modeNames != null && modeNames.size() != parentScaleIntervals.size()) {
+    public int addParentScale(@NonNull List<Integer> parentScaleIntervals, @NonNull List<String> modeNames) {
+        if (modeNames.contains(null) || modeNames.size() != parentScaleIntervals.size()) {
             throw new IllegalArgumentException(
-                    "If mode names is not null then the size of " +
-                    "modeNames must be equal to the size of parentScaleIntervals."
+                    "modeNames cannot contain 'null' and must match the size of parent scale intervals."
             );
+        }
+        for (Integer interval : parentScaleIntervals) {
+            if (interval < 0 || interval > 11) {
+                throw new IllegalArgumentException(
+                    "All intervals in parent scale must be between " +
+                    "0 (inclusive) and 11 (inclusive)."
+                );
+            }
         }
 
         final List<Scale> mModes = new ArrayList<>();
-        final int scaleId = mCurId;
-        mCurId++;
 
+        for (int i = 0; i < parentScaleIntervals.size(); i++) {
+            final List<Integer> curDegrees = MusicTheory.getModeIntervals(parentScaleIntervals, i);
+            final Scale scale = new Scale(modeNames.get(i), curDegrees);
+            mModes.add(scale);
+        }
 
-        // todo: make scale object for each mode in scale
-
-
+        final int scaleId = getNewId();
         mScaleMap.put(scaleId, mModes);
         return scaleId;
     }
@@ -46,6 +57,12 @@ class ScaleConstructor {
 
     public Scale getMode(int parentScaleId, int modeIx) {
         return mScaleMap.get(parentScaleId).get(modeIx);
+    }
+
+    private int getNewId() {
+        final int newId = mCurId;
+        mCurId++;
+        return newId;
     }
 
 }
