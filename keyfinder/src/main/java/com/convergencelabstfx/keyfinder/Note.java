@@ -2,6 +2,7 @@ package com.convergencelabstfx.keyfinder;
 
 import java.util.Objects;
 
+@Deprecated
 public class Note {
 
     private final int ix;

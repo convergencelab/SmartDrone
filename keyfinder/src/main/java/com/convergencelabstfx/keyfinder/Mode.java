@@ -3,12 +3,12 @@ package com.convergencelabstfx.keyfinder;
 import java.util.Arrays;
 import java.util.Objects;
 
+@Deprecated
 public class Mode {
 
-//    // Implementation will setup intervals and name
-//    protected abstract void setup();
-
     protected final int ix;
+
+
 
     private int[] intervals;
 

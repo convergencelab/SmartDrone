@@ -1,29 +1,37 @@
 package com.convergencelabstfx.keyfinder;
 
+import java.util.Collections;
+import java.util.List;
+
+@Deprecated
 public class ParentScale {
 
-    private final String name;
+    private final String mName;
 
-    private final int[] intervals;
+    private final List<Integer> mIntervals;
 
-    private final String[] modeNames;
+    private final List<String> mModeNames;
 
-    public ParentScale(String name, int[] intervals, String[] modeNames) {
-        this.name = name;
-        this.intervals = intervals;
-        this.modeNames = modeNames;
+    public ParentScale(String name, List<Integer> intervals, List<String> modeNames) {
+        this.mName = name;
+        this.mIntervals = intervals;
+        this.mModeNames = modeNames;
     }
 
     public String getName() {
-        return name;
+        return mName;
     }
 
-    public int[] getIntervals() {
-        return intervals;
+    public List<Integer> getParentIntervals() {
+        return Collections.unmodifiableList(mIntervals);
     }
 
-    public String[] getModeNameAt(int ix) {
-        return modeNames;
-    }
+//    public List<Integer> getIntervalsForMode() {
+//
+//    }
+//
+//    public String[] getModeNameAt(int ix) {
+////        return mModeNames;
+//    }
 
 }
