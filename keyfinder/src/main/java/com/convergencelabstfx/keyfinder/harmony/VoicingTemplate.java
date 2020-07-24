@@ -3,6 +3,7 @@ package com.convergencelabstfx.keyfinder.harmony;
 import androidx.annotation.NonNull;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class VoicingTemplate {
@@ -15,22 +16,20 @@ public class VoicingTemplate {
 
     }
 
-    // todo: has to be binary insertion
     public void addBassTone(int degree) {
-
+        binaryInsertion(mBassTones, new Tone(degree));
     }
 
     public void removeBassTone(int degree) {
-        mBassTones.indexOf(degree);
+        binaryRemoval(mBassTones, new Tone(degree));
     }
 
-    // todo: has to be binary insertion
     public void addChordTone(int degree) {
-
+        binaryInsertion(mChordTones, new Tone(degree));
     }
 
     public void removeChordTone(int degree) {
-
+        binaryRemoval(mChordTones, new Tone(degree));
     }
 
     public List<Tone> getBassTones() {
@@ -56,6 +55,35 @@ public class VoicingTemplate {
     @NonNull
     @Override
     public String toString() {
-        return super.toString();
+        StringBuilder sb = new StringBuilder();
+        sb.append("[ ");
+        for (Tone tone : mBassTones) {
+            sb.append(tone.getDegree());
+            sb.append(" ");
+        }
+        sb.append("] ");
+
+        sb.append("[ ");
+        for (Tone tone : mChordTones) {
+            sb.append(tone.getDegree());
+            sb.append(" ");
+        }
+        sb.append("]");
+        return sb.toString();
+    }
+
+    private void binaryInsertion(List<Tone> list, Tone tone) {
+        final int ix = Collections.binarySearch(list, tone);
+        if (ix < 0) {
+            final int addIx = -(ix + 1);
+            list.add(addIx, tone);
+        }
+    }
+
+    private void binaryRemoval(List<Tone> list, Tone tone) {
+        final int ix = Collections.binarySearch(list, tone);
+        if (ix >= 0) {
+            list.remove(ix);
+        }
     }
 }
