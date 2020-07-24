@@ -8,43 +8,42 @@ import java.util.List;
 
 public class VoicingTemplate {
 
-    private List<Tone> mBassTones = new ArrayList<>();
-
-    private List<Tone> mChordTones = new ArrayList<>();
+    private List<Integer> mBassTones = new ArrayList<>();
+    private List<Integer> mChordTones = new ArrayList<>();
 
     public VoicingTemplate() {
 
     }
 
     public void addBassTone(int degree) {
-        binaryInsertion(mBassTones, new Tone(degree));
+        binaryInsertion(mBassTones, degree);
     }
 
     public void removeBassTone(int degree) {
-        binaryRemoval(mBassTones, new Tone(degree));
+        binaryRemoval(mBassTones, degree);
     }
 
     public void addChordTone(int degree) {
-        binaryInsertion(mChordTones, new Tone(degree));
+        binaryInsertion(mChordTones, degree);
     }
 
     public void removeChordTone(int degree) {
-        binaryRemoval(mChordTones, new Tone(degree));
+        binaryRemoval(mChordTones, degree);
     }
 
-    public List<Tone> getBassTones() {
+    public List<Integer> getBassTones() {
         return mBassTones;
     }
 
-    public void setBassTones(List<Tone> bassTones) {
+    public void setBassTones(List<Integer> bassTones) {
         mBassTones = bassTones;
     }
 
-    public List<Tone> getChordTones() {
+    public List<Integer> getChordTones() {
         return mChordTones;
     }
 
-    public void setChordTones(List<Tone> chordTones) {
+    public void setChordTones(List<Integer> chordTones) {
         mChordTones = chordTones;
     }
 
@@ -57,22 +56,22 @@ public class VoicingTemplate {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("[ ");
-        for (Tone tone : mBassTones) {
-            sb.append(tone.getDegree());
+        for (Integer tone : mBassTones) {
+            sb.append(tone);
             sb.append(" ");
         }
         sb.append("] ");
 
         sb.append("[ ");
-        for (Tone tone : mChordTones) {
-            sb.append(tone.getDegree());
+        for (Integer tone : mChordTones) {
+            sb.append(tone);
             sb.append(" ");
         }
         sb.append("]");
         return sb.toString();
     }
 
-    private void binaryInsertion(List<Tone> list, Tone tone) {
+    private void binaryInsertion(List<Integer> list, int tone) {
         final int ix = Collections.binarySearch(list, tone);
         if (ix < 0) {
             final int addIx = -(ix + 1);
@@ -80,10 +79,11 @@ public class VoicingTemplate {
         }
     }
 
-    private void binaryRemoval(List<Tone> list, Tone tone) {
+    private void binaryRemoval(List<Integer> list, int tone) {
         final int ix = Collections.binarySearch(list, tone);
         if (ix >= 0) {
             list.remove(ix);
         }
     }
+
 }
