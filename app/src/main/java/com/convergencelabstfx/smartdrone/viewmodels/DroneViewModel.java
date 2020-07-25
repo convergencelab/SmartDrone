@@ -9,6 +9,7 @@ import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictorListener;
 import com.convergencelabstfx.keyfinder.keypredictor.Phrase;
 import com.convergencelabstfx.keyfinder.keypredictor.PhrasePredictor;
 import com.convergencelabstfx.smartdrone.models.ChordConstructor;
+import com.convergencelabstfx.smartdrone.models.MidiPlayer;
 import com.convergencelabstfx.smartdrone.models.NoteProcessor;
 import com.convergencelabstfx.smartdrone.models.NoteProcessorObserver;
 import com.convergencelabstfx.smartdrone.models.SignalProcessorKt;
@@ -22,13 +23,12 @@ import timber.log.Timber;
 
 /**
  * Drone pipeline:
- *   1) Process signal; TarsosDSP signal processing
- *   2) Process note data; analyze note probability, how long note was heard, etc... (filter out noise)
- *   3) Determine key; analyze processed notes (KeyPredictor)
- *   4) Determine chord;
- *   5) Play chord; MidiDriver
- *   6) Notify UI;
- *
+ * 1) Process signal; TarsosDSP signal processing
+ * 2) Process note data; analyze note probability, how long note was heard, etc... (filter out noise)
+ * 3) Determine key; analyze processed notes (KeyPredictor)
+ * 4) Determine chord;
+ * 5) Play chord; MidiDriver
+ * 6) Notify UI;
  */
 
 public class DroneViewModel extends ViewModel {
@@ -42,28 +42,34 @@ public class DroneViewModel extends ViewModel {
 
     private KeyPredictor mKeyPredictor;
 
-     private ChordConstructor mChordConstructor = new ChordConstructor();
+    private ChordConstructor mChordConstructor = new ChordConstructor();
 
-    // private MidiDriver mMidiDriver;
+    private MidiPlayer mMidiPlayer = new MidiPlayer();
 
     private boolean mIsRunning;
 
+//    public MutableLiveData<Integer> mDetectedNote = new MutableLiveData<>();
+//
+//    public MutableLiveData<Integer> mUndetectedNote
 
 
     public DroneViewModel() {
         testMethod_setupKeyPredictor();
         testMethod_setupChordConstructor();
+        testMethod_setupMidiPlayer();
         initPipeline();
     }
 
     public void startDrone() {
         Timber.i("starting");
         mSignalProcessor.start();
+        mMidiPlayer.start();
         mIsRunning = true;
     }
 
     public void stopDrone() {
         mSignalProcessor.stop();
+        mMidiPlayer.stop();
         mIsRunning = false;
     }
 
@@ -108,6 +114,10 @@ public class DroneViewModel extends ViewModel {
         mChordConstructor.setBounds(36, 60, 51, 72);
     }
 
+    private void testMethod_setupMidiPlayer() {
+        mMidiPlayer.setPlugin(48);
+    }
+
     // todo: gotta figure out exactly where a note index should turn into a note object
     // todo: make consist naming (observer/listener, notify/handle, onKeyPrediction etc...)
     private void initPipeline() {
@@ -121,8 +131,11 @@ public class DroneViewModel extends ViewModel {
         mNoteProcessor.addNoteProcessorListener(new NoteProcessorObserver() {
             @Override
             public void notifyNoteDetected(int note) {
+                Timber.i("Detected: " + note);
                 mKeyPredictor.noteDetected(note);
+
             }
+
             @Override
             public void notifyNoteUndetected(int note) {
                 mKeyPredictor.noteUndetected(note);
@@ -135,8 +148,9 @@ public class DroneViewModel extends ViewModel {
                 Timber.i("key: %s", newKey);
                 mChordConstructor.setKey(newKey);
                 // todo: implement
-                Timber.i(mChordConstructor.makeVoicing().toString());
-//                mMidiDriver.playChord(mChordConstructor.constructChord())
+                mMidiPlayer.clear();
+                mMidiPlayer.playChord(mChordConstructor.makeVoicing());
+                Timber.i("newKey: %s", newKey);
             }
         });
 

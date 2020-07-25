@@ -2,7 +2,6 @@ package com.convergencelabstfx.smartdrone.models;
 
 import org.billthefarmer.mididriver.MidiDriver;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -120,6 +119,11 @@ public class MidiPlayer  {
         setVolume(mVolume);
     }
 
+    /*
+     * noteOn and noteOff exist because they don't have the side effect of adding and removing notes
+     * to mActiveNotes.
+     * Methods refreshPlayback and clear require this to avoid throwing ConcurrentModificationException()
+     */
     private void noteOn(int note) {
         sendMessage(START, note, mVolume);
     }
