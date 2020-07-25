@@ -1,5 +1,6 @@
 package com.convergencelabstfx.keyfinder;
 
+@Deprecated
 public class Key {
 
     private final int ix;

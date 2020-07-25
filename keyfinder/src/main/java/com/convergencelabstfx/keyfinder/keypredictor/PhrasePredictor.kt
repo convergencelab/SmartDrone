@@ -30,14 +30,14 @@ class PhrasePredictor : KeyPredictor() {
             userPhrase.removeNoteAtIx(0)
         }
 
-        userPhrase.addNote(Note(note))
+        userPhrase.addNote(note)
         if (newKeyDetected()) {
             // TODO: make better
             // For now, the predicted key is always the index of the first note in the phrase.
             // (this works for octave phrase predictions, but won't necessarily work with other
             // phrase implementations).
-            notifyListeners(userPhrase.notes[0].ix % MusicTheory.TOTAL_NOTES)
-            prevDetectedKey = userPhrase.notes[0].ix % MusicTheory.TOTAL_NOTES;
+            notifyListeners(userPhrase.notes[0] % MusicTheory.TOTAL_NOTES)
+            prevDetectedKey = userPhrase.notes[0] % MusicTheory.TOTAL_NOTES;
         }
     }
 
@@ -51,7 +51,7 @@ class PhrasePredictor : KeyPredictor() {
     }
 
     private fun newKeyDetected(): Boolean {
-        return userPhrase.notes[0].ix % MusicTheory.TOTAL_NOTES != prevDetectedKey
+        return userPhrase.notes[0] % MusicTheory.TOTAL_NOTES != prevDetectedKey
                 && userPhraseMatchesTarget()
                 && userPhraseIsWithinBounds()
     }
@@ -61,11 +61,11 @@ class PhrasePredictor : KeyPredictor() {
         if (targetPhrase.notes.size != userPhrase.notes.size) {
             return false
         }
-        val targetBase = targetPhrase.notes[0].ix
-        val userBase = userPhrase.notes[0].ix
+        val targetBase = targetPhrase.notes[0]
+        val userBase = userPhrase.notes[0]
         for (i in targetPhrase.notes.indices) {
-            if (targetPhrase.notes[i].ix - targetBase
-                    != userPhrase.notes[i].ix - userBase) {
+            if (targetPhrase.notes[i] - targetBase
+                    != userPhrase.notes[i] - userBase) {
                 return false
             }
         }
@@ -74,6 +74,6 @@ class PhrasePredictor : KeyPredictor() {
 
     private fun userPhraseIsWithinBounds(): Boolean {
         // Both upper and lower bound are INCLUSIVE
-        return (userPhrase.notes[0].ix in lowerBound..upperBound)
+        return (userPhrase.notes[0] in lowerBound..upperBound)
     }
 }
