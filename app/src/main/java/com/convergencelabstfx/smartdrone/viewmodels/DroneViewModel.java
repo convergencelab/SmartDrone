@@ -105,7 +105,7 @@ public class DroneViewModel extends ViewModel {
             @Override
             public void notifyKeyPrediction(int newKey) {
                 Timber.i("key: %s", newKey);
-                mChordConstructor.setKey(new Key(newKey));
+                mChordConstructor.setKey(newKey);
                 // todo: implement
                 // mMidiDriver.playChord(mChordConstructor.constructChord())
             }
