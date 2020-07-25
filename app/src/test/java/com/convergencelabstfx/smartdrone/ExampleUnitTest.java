@@ -45,7 +45,7 @@ public class ExampleUnitTest {
         chordConstructor.setMode(mode);
         chordConstructor.setKey(0);
         chordConstructor.setTemplate(template);
-        chordConstructor.setBounds(37, 60, 51, 72);
+        chordConstructor.setBounds(36, 60, 51, 72);
 
 
 

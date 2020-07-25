@@ -1,7 +1,5 @@
 package com.convergencelabstfx.keyfinder.keypredictor;
 
-import com.convergencelabstfx.keyfinder.Note;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -10,24 +8,24 @@ import java.util.List;
  */
 public class Phrase {
 
-    private List<Note> notes = new LinkedList<>();
+    private List<Integer> notes = new LinkedList<>();
 
     public Phrase() {
     }
 
-    public List<Note> getNotes() {
+    public List<Integer> getNotes() {
         return notes;
     }
 
-    public void setNotes(List<Note> notes) {
+    public void setNotes(List<Integer> notes) {
         this.notes = notes;
     }
 
-    public void addNote(Note toAdd) {
+    public void addNote(Integer toAdd) {
         notes.add(toAdd);
     }
 
-    public Note removeNoteAtIx(int ix) {
+    public Integer removeNoteAtIx(int ix) {
         return notes.remove(ix);
     }
 

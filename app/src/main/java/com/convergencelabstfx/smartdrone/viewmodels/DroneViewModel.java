@@ -3,8 +3,7 @@ package com.convergencelabstfx.smartdrone.viewmodels;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.convergencelabstfx.keyfinder.Key;
-import com.convergencelabstfx.keyfinder.Note;
+import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor;
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictorListener;
 import com.convergencelabstfx.keyfinder.keypredictor.Phrase;
@@ -14,6 +13,9 @@ import com.convergencelabstfx.smartdrone.models.NoteProcessor;
 import com.convergencelabstfx.smartdrone.models.NoteProcessorObserver;
 import com.convergencelabstfx.smartdrone.models.SignalProcessorKt;
 import com.convergencelabstfx.smartdrone.models.SignalProcessorObserver;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import timber.log.Timber;
 
@@ -49,7 +51,8 @@ public class DroneViewModel extends ViewModel {
 
 
     public DroneViewModel() {
-        setupKeyPredictor();
+        testMethod_setupKeyPredictor();
+        testMethod_setupChordConstructor();
         initPipeline();
     }
 
@@ -69,15 +72,40 @@ public class DroneViewModel extends ViewModel {
     }
 
     // todo: just a method for development purposes; should delete later
-    private void setupKeyPredictor() {
+    private void testMethod_setupKeyPredictor() {
         // todo: find a better place for this eventually
         final Phrase mOctavePhrase = new Phrase();
-        mOctavePhrase.addNote(new Note(0));
-        mOctavePhrase.addNote(new Note(12));
+        mOctavePhrase.addNote(0);
+        mOctavePhrase.addNote(12);
         final PhrasePredictor predictor = new PhrasePredictor();
         predictor.targetPhrase = mOctavePhrase;
 
         mKeyPredictor = predictor;
+    }
+
+    private void testMethod_setupChordConstructor() {
+        final List<Integer> mode = new ArrayList<>();
+        mode.add(0);
+        mode.add(2);
+        mode.add(3);
+        mode.add(5);
+        mode.add(7);
+        mode.add(9);
+        mode.add(10);
+
+        final VoicingTemplate template = new VoicingTemplate();
+        template.addBassTone(0);
+        template.addBassTone(4);
+
+        template.addChordTone(1);
+        template.addChordTone(2);
+        template.addChordTone(4);
+        template.addChordTone(8);
+
+        mChordConstructor.setMode(mode);
+        mChordConstructor.setKey(0);
+        mChordConstructor.setTemplate(template);
+        mChordConstructor.setBounds(36, 60, 51, 72);
     }
 
     // todo: gotta figure out exactly where a note index should turn into a note object
@@ -107,7 +135,8 @@ public class DroneViewModel extends ViewModel {
                 Timber.i("key: %s", newKey);
                 mChordConstructor.setKey(newKey);
                 // todo: implement
-                // mMidiDriver.playChord(mChordConstructor.constructChord())
+                Timber.i(mChordConstructor.makeVoicing().toString());
+//                mMidiDriver.playChord(mChordConstructor.constructChord())
             }
         });
 
