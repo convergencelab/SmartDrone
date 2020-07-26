@@ -3,6 +3,7 @@ package com.convergencelabstfx.smartdrone.viewmodels;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.convergencelabstfx.keyfinder.Scale;
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor;
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictorListener;
@@ -51,6 +52,8 @@ public class DroneViewModel extends ViewModel {
     public MutableLiveData<Integer> mUndetectedNote = new MutableLiveData<>();
 
     public MutableLiveData<Integer> mDetectedKey = new MutableLiveData<>();
+
+    public MutableLiveData<Scale> mCurScale = new MutableLiveData<>();
 
     public DroneViewModel() {
         testMethod_setupKeyPredictor();

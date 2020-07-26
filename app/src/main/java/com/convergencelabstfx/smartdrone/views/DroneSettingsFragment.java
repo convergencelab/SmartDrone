@@ -1,5 +1,6 @@
 package com.convergencelabstfx.smartdrone.views;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,8 +17,10 @@ import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDroneSettingsBinding;
 import com.convergencelabstfx.smartdrone.viewmodels.DroneViewModel;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Settings:
@@ -57,13 +60,66 @@ public class DroneSettingsFragment extends Fragment {
         return mBinding.getRoot();
     }
 
-    public ListAdapter makeSettingsAdapter() {
+    private ListAdapter makeSettingsAdapter() {
         final ArrayList<DroneSettingsItem> settingsList = new ArrayList<>();
+
+
+
+
         DroneSettingsItem modeSetting = new DroneSettingsItem.ListItem(
                 "Mode",
                 "Choose the mode",
-                getResources().getDrawable(R.drawable.ic_music_note));
+                getResources().getDrawable(R.drawable.ic_music_note),
+                view -> {
+                    showParentScaleDialog();
+                });
         settingsList.add(modeSetting);
+
         return new DroneSettingsAdapter(getContext(), settingsList);
     }
+
+    private void showParentScaleDialog() {
+        final List<String> tempList = new ArrayList<>();
+        tempList.add("One");
+        tempList.add("Two");
+        tempList.add("Three");
+        tempList.add("Four");
+        CharSequence[] cs = tempList.toArray(new CharSequence[tempList.size()]);
+
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle("Choose Parent Scale")
+                .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .setSingleChoiceItems(cs, -1,  (dialogInterface, i) -> {
+                    dialogInterface.dismiss();
+                    showModeDialog();
+                }).show();
+    }
+
+    private void showModeDialog() {
+        final List<String> tempList = new ArrayList<>();
+        tempList.add("Travis");
+        tempList.add("Jenna");
+        tempList.add("Seb");
+        tempList.add("Kyle");
+        CharSequence[] cs = tempList.toArray(new CharSequence[tempList.size()]);
+
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle("Choose Mode")
+                .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .setSingleChoiceItems(cs, -1,  (dialogInterface, i) -> {
+
+                    dialogInterface.dismiss();
+                }).show();
+    }
+
 }
