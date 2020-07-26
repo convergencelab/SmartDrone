@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.convergencelabstfx.keyfinder.MusicTheory;
 import com.convergencelabstfx.pianoview.PianoTouchListener;
 import com.convergencelabstfx.pianoview.PianoView;
 import com.convergencelabstfx.smartdrone.R;
@@ -71,6 +72,18 @@ public class DroneFragment extends Fragment {
             }
         });
 
+        mBinding.playButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!mViewModel.isRunning()) {
+                    mViewModel.startDrone();
+                }
+                else {
+                    mViewModel.stopDrone();
+                }
+            }
+        });
+
         mBinding.piano.addPianoTouchListener(new PianoTouchListener() {
             @Override
             public void onKeyDown(@NonNull PianoView piano, int key) { }
@@ -82,6 +95,20 @@ public class DroneFragment extends Fragment {
             public void onKeyClick(@NonNull PianoView piano, int key) {
                 if (mViewModel.isRunning()) {
                     mViewModel.setKeyChange(key);
+                }
+            }
+        });
+
+        mViewModel.mDroneIsActive.observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+            @Override
+            public void onChanged(Boolean aBoolean) {
+                if (aBoolean) {
+                    mBinding.activeKeyButton.setText("Listening", ACTIVE_KEY_TEXT_SMALL);
+                    mBinding.playButton.setIcon(getResources().getDrawable(R.drawable.ic_stop_drone));
+                }
+                else {
+                    mBinding.activeKeyButton.setText("Start", ACTIVE_KEY_TEXT_SMALL);
+                    mBinding.playButton.setIcon(getResources().getDrawable(R.drawable.ic_play_drone));
                 }
             }
         });
@@ -107,10 +134,10 @@ public class DroneFragment extends Fragment {
             @Override
             public void onChanged(Integer integer) {
                 if (integer.equals(-1)) {
-                    mBinding.activeKeyButton.setText("Start", ACTIVE_KEY_TEXT_LARGE);
+                    mBinding.activeKeyButton.setText("Start", ACTIVE_KEY_TEXT_SMALL);
                 }
                 else {
-                    mBinding.activeKeyButton.setText(integer.toString(), ACTIVE_KEY_TEXT_SMALL);
+                    mBinding.activeKeyButton.setText(MusicTheory.CHROMATIC_SCALE_FLAT[integer], ACTIVE_KEY_TEXT_LARGE);
                 }
             }
         });

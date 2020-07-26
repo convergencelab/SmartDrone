@@ -78,7 +78,6 @@ public class DroneViewModel extends ViewModel {
         if (isRunning() && mDetectedKey.getValue() != null && key != mDetectedKey.getValue()) {
             mChordConstructor.setKey(key);
             mDetectedKey.setValue(key);
-            // todo: implement
             mMidiPlayer.clear();
             mMidiPlayer.playChord(mChordConstructor.makeVoicing());
         }
@@ -86,6 +85,11 @@ public class DroneViewModel extends ViewModel {
 
     public boolean isRunning() {
         return mDroneIsActive.getValue() != null && mDroneIsActive.getValue();
+    }
+
+    // todo: figure how this should work
+    public String getCurModeName() {
+        return null;
     }
 
     // todo: just a method for development purposes; should delete later
@@ -126,6 +130,7 @@ public class DroneViewModel extends ViewModel {
     }
 
     private void testMethod_setupMidiPlayer() {
+        // todo: yeah it's hardcoded for now
         mMidiPlayer.setPlugin(48);
     }
 

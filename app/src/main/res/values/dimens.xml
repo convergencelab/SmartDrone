@@ -22,7 +22,7 @@
     <!-- Sound Preference Items -->
     <dimen name="sound_pref_spacing">14dp</dimen>
 
-    <dimen name="activeKeyText_small">10dp</dimen>
-    <dimen name="activeKeyText_large">14dp</dimen>
+    <dimen name="activeKeyText_small">9dp</dimen>
+    <dimen name="activeKeyText_large">12dp</dimen>
 
 </resources>
