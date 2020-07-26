@@ -13,16 +13,17 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.convergencelabstfx.smartdrone.R;
-import com.convergencelabstfx.smartdrone.databinding.FragmentDroneSettings2Binding;
+
+import com.convergencelabstfx.smartdrone.databinding.FragmentDroneSettingsBinding;
 import com.convergencelabstfx.smartdrone.viewmodels.DroneViewModel;
 
-public class DroneSettingsFragment2 extends Fragment {
+public class DroneSettingsFragment extends Fragment {
 
     private DroneViewModel mViewModel;
 
-    private FragmentDroneSettings2Binding mBinding;
+    private FragmentDroneSettingsBinding mBinding;
 
-    public DroneSettingsFragment2() {
+    public DroneSettingsFragment() {
         // Required empty public constructor
     }
 
@@ -31,7 +32,7 @@ public class DroneSettingsFragment2 extends Fragment {
                              Bundle savedInstanceState) {
 
         mBinding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_drone_settings_2, container, false
+                inflater, R.layout.fragment_drone_settings, container, false
         );
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
 

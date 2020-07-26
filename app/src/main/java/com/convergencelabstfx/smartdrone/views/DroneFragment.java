@@ -18,20 +18,20 @@ import androidx.lifecycle.ViewModelProvider;
 import com.convergencelabstfx.pianoview.PianoTouchListener;
 import com.convergencelabstfx.pianoview.PianoView;
 import com.convergencelabstfx.smartdrone.R;
-import com.convergencelabstfx.smartdrone.databinding.FragmentDrone2Binding;
+import com.convergencelabstfx.smartdrone.databinding.FragmentDroneBinding;
 import com.convergencelabstfx.smartdrone.viewmodels.DroneViewModel;
 
-public class DroneFragment2 extends Fragment {
+public class DroneFragment extends Fragment {
 
     private int MICROPHONE_PERMISSION_CODE = 1;
 
-    private FragmentDrone2Binding mBinding;
+    private FragmentDroneBinding mBinding;
 
     private DroneViewModel mViewModel;
 
     private int mLastKey = -1;
 
-    public DroneFragment2() {
+    public DroneFragment() {
         // Required empty public constructor
     }
 
@@ -39,7 +39,7 @@ public class DroneFragment2 extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mBinding = DataBindingUtil.inflate(
-                inflater, R.layout.fragment_drone_2, container, false
+                inflater, R.layout.fragment_drone, container, false
         );
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
 
@@ -58,22 +58,6 @@ public class DroneFragment2 extends Fragment {
                 }
             }
         });
-//
-//        mViewModel.getSignalProcessor().addPitchListener(pitch -> {
-//                    Log.d("testV", Integer.toString(pitch));
-//                    if (pitch != mLastKey) {
-//                        if (pitch == -1) {
-//                            mBinding.piano.showKeyNotPressed(mLastKey % 12);
-//                        }
-//                        else {
-//                            mBinding.piano.showKeyPressed(pitch % 12);
-//                        }
-//                        mLastKey = pitch;
-//                    }
-//                }
-//        );
-
-
 
         mBinding.piano.addPianoTouchListener(new PianoTouchListener() {
             @Override
