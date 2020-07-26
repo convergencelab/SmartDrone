@@ -1,14 +1,16 @@
 package com.convergencelabstfx.smartdrone;
 
+import android.graphics.drawable.Drawable;
+
 public interface DroneSettingsItem {
 
-    class ListItem {
+    class ListItem implements DroneSettingsItem {
 
         private String mTitle;
         private String mSummary;
-        private int mIcon;
+        private Drawable mIcon;
 
-        public ListItem(String title, String summary, int icon) {
+        public ListItem(String title, String summary, Drawable icon) {
             mTitle = title;
             mSummary = summary;
             mIcon = icon;
@@ -22,7 +24,7 @@ public interface DroneSettingsItem {
             return mSummary;
         }
 
-        public int getIcon() {
+        public Drawable getIcon() {
             return mIcon;
         }
 
