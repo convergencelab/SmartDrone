@@ -24,6 +24,10 @@ import com.convergencelabstfx.smartdrone.viewmodels.DroneViewModel;
 
 public class DroneFragment extends Fragment {
 
+    private int ACTIVE_KEY_TEXT_SMALL;
+
+    private int ACTIVE_KEY_TEXT_LARGE;
+
     private int MICROPHONE_PERMISSION_CODE = 1;
 
     private FragmentDroneBinding mBinding;
@@ -46,6 +50,10 @@ public class DroneFragment extends Fragment {
                 inflater, R.layout.fragment_drone, container, false
         );
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
+//        mBinding.activeKeyButton.setText("Start", ACTIVE_KEY_TEXT_LARGE);
+
+        ACTIVE_KEY_TEXT_SMALL = (int) getResources().getDimension(R.dimen.activeKeyText_small);
+        ACTIVE_KEY_TEXT_LARGE = (int) getResources().getDimension(R.dimen.activeKeyText_large);
 
         if (!hasMicrophoneRuntimePermission()) {
             requestMicrophonePermission();
@@ -72,11 +80,13 @@ public class DroneFragment extends Fragment {
 
             @Override
             public void onKeyClick(@NonNull PianoView piano, int key) {
-                mBinding.activeKeyButton.setText(Integer.toString(key), 20);
+                if (mViewModel.isRunning()) {
+                    mViewModel.setKeyChange(key);
+                }
             }
         });
 
-        // todo: see how to set the value back to null or something
+        // todo: see how to set the value of mDetectedNote back to null or something
         mViewModel.mDetectedNote.observe(getViewLifecycleOwner(), new Observer<Integer>() {
             @Override
             public void onChanged(Integer integer) {
@@ -93,12 +103,17 @@ public class DroneFragment extends Fragment {
             }
         });
 
-//        mViewModel.mUndetectedNote.observe(getViewLifecycleOwner(), new Observer<Integer>() {
-//            @Override
-//            public void onChanged(Integer integer) {
-//                mBinding.piano.showKeyNotPressed(integer % mBinding.piano.getNumberOfKeys());
-//            }
-//        });
+        mViewModel.mDetectedKey.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                if (integer.equals(-1)) {
+                    mBinding.activeKeyButton.setText("Start", ACTIVE_KEY_TEXT_LARGE);
+                }
+                else {
+                    mBinding.activeKeyButton.setText(integer.toString(), ACTIVE_KEY_TEXT_SMALL);
+                }
+            }
+        });
 
         return mBinding.getRoot();
     }

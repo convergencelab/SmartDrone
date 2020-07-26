@@ -41,7 +41,8 @@ public class DroneButton extends ConstraintLayout {
         TypedArray a = context.getTheme().obtainStyledAttributes(
                 attrs,
                 R.styleable.DroneButton,
-                0, 0
+                0,
+                0
         );
         parseAttrs(a);
         a.recycle();

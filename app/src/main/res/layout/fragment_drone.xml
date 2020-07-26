@@ -23,7 +23,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/activeKey_button"
-            app:showPressMode="onClick" />
+            app:showPressMode="off" />
 
 
         <com.convergencelabstfx.smartdrone.views.DroneButton

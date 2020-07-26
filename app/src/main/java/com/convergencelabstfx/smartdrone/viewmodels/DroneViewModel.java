@@ -45,10 +45,12 @@ public class DroneViewModel extends ViewModel {
 
     private MidiPlayer mMidiPlayer = new MidiPlayer();
 
-    private boolean mIsRunning;
+    public MutableLiveData<Boolean> mDroneIsActive = new MutableLiveData<>();
 
     public MutableLiveData<Integer> mDetectedNote = new MutableLiveData<>();
     public MutableLiveData<Integer> mUndetectedNote = new MutableLiveData<>();
+
+    public MutableLiveData<Integer> mDetectedKey = new MutableLiveData<>();
 
     public DroneViewModel() {
         testMethod_setupKeyPredictor();
@@ -58,20 +60,32 @@ public class DroneViewModel extends ViewModel {
     }
 
     public void startDrone() {
-        Timber.i("starting");
         mSignalProcessor.start();
         mMidiPlayer.start();
-        mIsRunning = true;
+        mDetectedKey.setValue(-1);
+        mDroneIsActive.setValue(true);
     }
 
     public void stopDrone() {
         mSignalProcessor.stop();
         mMidiPlayer.stop();
-        mIsRunning = false;
+        mDetectedNote.setValue(-1);
+        mDetectedKey.setValue(-1);
+        mDroneIsActive.setValue(false);
+    }
+
+    public void setKeyChange(int key) {
+        if (isRunning() && mDetectedKey.getValue() != null && key != mDetectedKey.getValue()) {
+            mChordConstructor.setKey(key);
+            mDetectedKey.setValue(key);
+            // todo: implement
+            mMidiPlayer.clear();
+            mMidiPlayer.playChord(mChordConstructor.makeVoicing());
+        }
     }
 
     public boolean isRunning() {
-        return mIsRunning;
+        return mDroneIsActive.getValue() != null && mDroneIsActive.getValue();
     }
 
     // todo: just a method for development purposes; should delete later
@@ -108,7 +122,7 @@ public class DroneViewModel extends ViewModel {
         mChordConstructor.setMode(mode);
         mChordConstructor.setKey(0);
         mChordConstructor.setTemplate(template);
-        mChordConstructor.setBounds(36, 60, 51, 72);
+        mChordConstructor.setBounds(36, 60, 48, 72);
     }
 
     private void testMethod_setupMidiPlayer() {
@@ -146,6 +160,7 @@ public class DroneViewModel extends ViewModel {
             public void notifyKeyPrediction(int newKey) {
                 Timber.i("key: %s", newKey);
                 mChordConstructor.setKey(newKey);
+                mDetectedKey.setValue(newKey);
                 // todo: implement
                 mMidiPlayer.clear();
                 mMidiPlayer.playChord(mChordConstructor.makeVoicing());
