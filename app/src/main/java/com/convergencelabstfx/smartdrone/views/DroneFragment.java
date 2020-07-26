@@ -13,6 +13,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.convergencelabstfx.pianoview.PianoTouchListener;
@@ -28,6 +29,9 @@ public class DroneFragment extends Fragment {
     private FragmentDroneBinding mBinding;
 
     private DroneViewModel mViewModel;
+
+    // todo: add a clean() method to PianoView
+    private Integer mLastPressedKey = -1;
 
     private int mLastKey = -1;
 
@@ -61,20 +65,40 @@ public class DroneFragment extends Fragment {
 
         mBinding.piano.addPianoTouchListener(new PianoTouchListener() {
             @Override
-            public void onKeyDown(@NonNull PianoView piano, int key) {
-
-            }
+            public void onKeyDown(@NonNull PianoView piano, int key) { }
 
             @Override
-            public void onKeyUp(@NonNull PianoView piano, int key) {
-
-            }
+            public void onKeyUp(@NonNull PianoView piano, int key) { }
 
             @Override
             public void onKeyClick(@NonNull PianoView piano, int key) {
                 mBinding.activeKeyButton.setText(Integer.toString(key), 20);
             }
         });
+
+        // todo: see how to set the value back to null or something
+        mViewModel.mDetectedNote.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+            @Override
+            public void onChanged(Integer integer) {
+                final Integer cappedInteger = integer % 12;
+                if (!cappedInteger.equals(mLastPressedKey)) {
+                    if (cappedInteger == -1) {
+                        mBinding.piano.showKeyNotPressed(mLastPressedKey);
+                    }
+                    else {
+                        mBinding.piano.showKeyPressed(cappedInteger % mBinding.piano.getNumberOfKeys());
+                    }
+                    mLastPressedKey = cappedInteger;
+                }
+            }
+        });
+
+//        mViewModel.mUndetectedNote.observe(getViewLifecycleOwner(), new Observer<Integer>() {
+//            @Override
+//            public void onChanged(Integer integer) {
+//                mBinding.piano.showKeyNotPressed(integer % mBinding.piano.getNumberOfKeys());
+//            }
+//        });
 
         return mBinding.getRoot();
     }

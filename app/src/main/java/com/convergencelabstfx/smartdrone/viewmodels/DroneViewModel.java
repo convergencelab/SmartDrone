@@ -34,7 +34,6 @@ import timber.log.Timber;
 public class DroneViewModel extends ViewModel {
 
     // todo: remove; just a place holder field
-    public MutableLiveData<String> mTestField = new MutableLiveData<>("test");
 
     private SignalProcessorKt mSignalProcessor = new SignalProcessorKt();
 
@@ -48,10 +47,8 @@ public class DroneViewModel extends ViewModel {
 
     private boolean mIsRunning;
 
-//    public MutableLiveData<Integer> mDetectedNote = new MutableLiveData<>();
-//
-//    public MutableLiveData<Integer> mUndetectedNote
-
+    public MutableLiveData<Integer> mDetectedNote = new MutableLiveData<>();
+    public MutableLiveData<Integer> mUndetectedNote = new MutableLiveData<>();
 
     public DroneViewModel() {
         testMethod_setupKeyPredictor();
@@ -124,6 +121,7 @@ public class DroneViewModel extends ViewModel {
         mSignalProcessor.addPitchListener(new SignalProcessorObserver() {
             @Override
             public void handlePitchResult(int pitch, float probability, boolean isPitched) {
+                mDetectedNote.setValue(pitch);
                 mNoteProcessor.onPitchDetected(pitch, probability, isPitched);
             }
         });
@@ -139,6 +137,7 @@ public class DroneViewModel extends ViewModel {
             @Override
             public void notifyNoteUndetected(int note) {
                 mKeyPredictor.noteUndetected(note);
+//                mUndetectedNote.setValue(note);
             }
         });
 

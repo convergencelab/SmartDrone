@@ -44,7 +44,6 @@ public class DroneSettingsFragment extends Fragment {
                 mBinding.textView.setText(newText);
             }
         };
-        mViewModel.mTestField.observe(getViewLifecycleOwner(), nameObserver);
 
         return mBinding.getRoot();
     }
