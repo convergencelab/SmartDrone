@@ -6,6 +6,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+// todo: look into the SF2 midi lib on github
+//       https://github.com/rodydavis/MidiDriver-Android-SF2
 public class MidiPlayer  {
 
     private static final int START = 0X90;
@@ -33,6 +35,7 @@ public class MidiPlayer  {
     public void start() {
         mDriver.start();
         sendMidiSetup();
+
     }
 
     public void stop() {

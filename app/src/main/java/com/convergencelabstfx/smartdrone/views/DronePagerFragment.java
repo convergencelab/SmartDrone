@@ -73,11 +73,11 @@ public class DronePagerFragment extends Fragment {
         public Fragment createFragment(int position) {
             switch (position) {
                 case DRONE_FRAG:
-                    return new DroneFragment2();
+                    return new DroneFragment();
                 case SETTINGS_FRAG:
-                    return new DroneSettingsFragment2();
+                    return new DroneSettingsFragment();
             }
-            return new DroneFragment2();
+            return new DroneFragment();
         }
 
         @Override

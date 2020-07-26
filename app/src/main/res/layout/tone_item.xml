@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.convergencelabstfx.smartdrone.widget.FButton xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="@dimen/voice_button_height"
-    android:layout_height="@dimen/voice_button_height"
-    app:cornerRadius="@dimen/voice_button_height" />
