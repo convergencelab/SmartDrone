@@ -68,7 +68,7 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
                         false);
         binding.setItem(listItem);
         // todo: for some reason, couldn't get the databinding expression to work,
-        //       also; why the F was this turning white ????????????
+        //       also; why the F was this drawable turning white ????????????
         binding.icon.setImageDrawable(listItem.getIcon());
         binding.icon.getDrawable().setTint(Color.BLACK);
         return binding.getRoot();

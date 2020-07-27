@@ -28,13 +28,13 @@ public class MusicTheory {
      * Intervals that make up the major scale.
      * Each number can be viewed as the semitone offset from the root.
      */
-    public final static int[] MAJOR_SCALE_SEQUENCE = { 0, 2, 4, 5, 7, 9, 11 };
+    public final static Integer[] MAJOR_SCALE_SEQUENCE = { 0, 2, 4, 5, 7, 9, 11 };
 
     /**
      * Intervals that make up the melodic minor scale.
      * Each number can be viewed as the semitone offset from the root.
      */
-    public final static int[] MELODIC_MINOR_SCALE_SEQUENCE = { 0, 2, 3, 5, 7, 9, 11 };
+    public final static Integer[] MELODIC_MINOR_SCALE_SEQUENCE = { 0, 2, 3, 5, 7, 9, 11 };
 
     /**
      * Intervals pertaining to harmonic minor scale.

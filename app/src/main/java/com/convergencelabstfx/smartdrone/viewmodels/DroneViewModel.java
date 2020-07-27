@@ -3,6 +3,8 @@ package com.convergencelabstfx.smartdrone.viewmodels;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.convergencelabstfx.keyfinder.MusicTheory;
+import com.convergencelabstfx.keyfinder.ParentScale;
 import com.convergencelabstfx.keyfinder.Scale;
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor;
@@ -13,10 +15,12 @@ import com.convergencelabstfx.smartdrone.models.ChordConstructor;
 import com.convergencelabstfx.smartdrone.models.MidiPlayer;
 import com.convergencelabstfx.smartdrone.models.NoteProcessor;
 import com.convergencelabstfx.smartdrone.models.NoteProcessorObserver;
+import com.convergencelabstfx.smartdrone.models.ScaleConstructor;
 import com.convergencelabstfx.smartdrone.models.SignalProcessorKt;
 import com.convergencelabstfx.smartdrone.models.SignalProcessorObserver;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import timber.log.Timber;
@@ -36,11 +40,15 @@ public class DroneViewModel extends ViewModel {
 
     // todo: remove; just a place holder field
 
+//    private Scale mCurScale;
+
     private SignalProcessorKt mSignalProcessor = new SignalProcessorKt();
 
     private NoteProcessor mNoteProcessor = new NoteProcessor();
 
     private KeyPredictor mKeyPredictor;
+
+    private List<ParentScale> mParentScales = new ArrayList<>();
 
     private ChordConstructor mChordConstructor = new ChordConstructor();
 
@@ -59,6 +67,7 @@ public class DroneViewModel extends ViewModel {
         testMethod_setupKeyPredictor();
         testMethod_setupChordConstructor();
         testMethod_setupMidiPlayer();
+        testMethod_setupParentScales();
         initPipeline();
     }
 
@@ -93,6 +102,16 @@ public class DroneViewModel extends ViewModel {
     // todo: figure how this should work
     public String getCurModeName() {
         return null;
+    }
+
+    public List<ParentScale> getParentScales() {
+        return mParentScales;
+    }
+
+    public void setScale(Scale scale) {
+        mCurScale.setValue(scale);
+        // todo: update playback
+        mChordConstructor.setMode(scale.getIntervals());
     }
 
     // todo: just a method for development purposes; should delete later
@@ -135,6 +154,23 @@ public class DroneViewModel extends ViewModel {
     private void testMethod_setupMidiPlayer() {
         // todo: yeah it's hardcoded for now
         mMidiPlayer.setPlugin(48);
+    }
+
+    private void testMethod_setupParentScales() {
+        final ParentScale majorScale = ScaleConstructor.makeParentScale(
+                "Major Scale",
+                Arrays.asList(MusicTheory.MAJOR_SCALE_SEQUENCE),
+                Arrays.asList(MusicTheory.MAJOR_MODE_NAMES)
+        );
+        final ParentScale melodicMinor = ScaleConstructor.makeParentScale(
+                "Melodic Minor",
+                Arrays.asList(MusicTheory.MELODIC_MINOR_SCALE_SEQUENCE),
+                Arrays.asList(MusicTheory.MELODIC_MINOR_MODE_NAMES)
+        );
+        mParentScales.add(majorScale);
+        mParentScales.add(melodicMinor);
+
+        mCurScale.setValue(mParentScales.get(0).getScaleAt(0));
     }
 
     // todo: gotta figure out exactly where a note index should turn into a note object

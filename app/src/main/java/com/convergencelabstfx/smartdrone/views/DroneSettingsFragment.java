@@ -12,6 +12,7 @@ import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.convergencelabstfx.keyfinder.ParentScale;
 import com.convergencelabstfx.smartdrone.DroneSettingsAdapter;
 import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
@@ -71,20 +72,24 @@ public class DroneSettingsFragment extends Fragment {
                 "Choose the mode",
                 getResources().getDrawable(R.drawable.ic_music_note),
                 view -> {
-                    showParentScaleDialog();
+                    showParentScaleDialog(mViewModel.getParentScales());
                 });
         settingsList.add(modeSetting);
 
         return new DroneSettingsAdapter(getContext(), settingsList);
     }
 
-    private void showParentScaleDialog() {
+    private void showParentScaleDialog(List<ParentScale> parentScales) {
         final List<String> tempList = new ArrayList<>();
         tempList.add("One");
         tempList.add("Two");
         tempList.add("Three");
         tempList.add("Four");
         CharSequence[] cs = tempList.toArray(new CharSequence[tempList.size()]);
+        final CharSequence[] charSeq = new CharSequence[parentScales.size()];
+        for (int i = 0; i <parentScales.size(); i++) {
+            charSeq[i] = parentScales.get(i).getName();
+        }
 
         new MaterialAlertDialogBuilder(getContext())
                 .setTitle("Choose Parent Scale")
@@ -94,18 +99,22 @@ public class DroneSettingsFragment extends Fragment {
 
                     }
                 })
-                .setSingleChoiceItems(cs, -1,  (dialogInterface, i) -> {
+                .setSingleChoiceItems(charSeq, -1,  (dialogInterface, i) -> {
                     dialogInterface.dismiss();
-                    showModeDialog();
+                    showModeDialog(parentScales.get(i));
                 }).show();
     }
 
-    private void showModeDialog() {
+    private void showModeDialog(ParentScale parentScale) {
         final List<String> tempList = new ArrayList<>();
         tempList.add("Travis");
         tempList.add("Jenna");
         tempList.add("Seb");
         tempList.add("Kyle");
+        CharSequence[] charSeq = new CharSequence[parentScale.numModes()];
+        for (int i = 0; i < parentScale.numModes(); i++) {
+            charSeq[i] = parentScale.getScaleAt(i).getName();
+        }
         CharSequence[] cs = tempList.toArray(new CharSequence[tempList.size()]);
 
         new MaterialAlertDialogBuilder(getContext())
@@ -116,8 +125,8 @@ public class DroneSettingsFragment extends Fragment {
 
                     }
                 })
-                .setSingleChoiceItems(cs, -1,  (dialogInterface, i) -> {
-
+                .setSingleChoiceItems(charSeq, -1,  (dialogInterface, i) -> {
+                    mViewModel.setScale(parentScale.getScaleAt(i));
                     dialogInterface.dismiss();
                 }).show();
     }
