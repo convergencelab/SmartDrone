@@ -163,11 +163,8 @@ public class DroneSettingsFragment extends Fragment {
         }
         new MaterialAlertDialogBuilder(getContext())
                 .setTitle("Title")
-                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
+                .setPositiveButton("Close", (dialogInterface, i) -> {
+                    // nothing on click
                 })
                 .setSingleChoiceItems(
                         strList,

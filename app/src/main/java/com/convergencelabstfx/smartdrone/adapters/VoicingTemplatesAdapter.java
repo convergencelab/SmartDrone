@@ -21,6 +21,7 @@ public class VoicingTemplatesAdapter extends ArrayAdapter<VoicingTemplate> {
         super(context, 0, templates);
     }
 
+    // todo: look into this warning
     @NonNull
     @Override
     public View getView(int i, View view, @NonNull ViewGroup container) {
