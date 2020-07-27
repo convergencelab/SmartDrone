@@ -5,6 +5,7 @@ import androidx.annotation.NonNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 public class VoicingTemplate {
 
@@ -86,4 +87,17 @@ public class VoicingTemplate {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        VoicingTemplate that = (VoicingTemplate) o;
+        return Objects.equals(mBassTones, that.mBassTones) &&
+                Objects.equals(mChordTones, that.mChordTones);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(mBassTones, mChordTones);
+    }
 }
