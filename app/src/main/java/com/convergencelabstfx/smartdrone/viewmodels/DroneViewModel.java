@@ -49,6 +49,7 @@ public class DroneViewModel extends ViewModel {
     private KeyPredictor mKeyPredictor;
 
     private List<ParentScale> mParentScales = new ArrayList<>();
+    private List<VoicingTemplate> mVoicingTemplates = new ArrayList<>();
 
     private ChordConstructor mChordConstructor = new ChordConstructor();
 
@@ -68,6 +69,7 @@ public class DroneViewModel extends ViewModel {
         testMethod_setupChordConstructor();
         testMethod_setupMidiPlayer();
         testMethod_setupParentScales();
+        testMethod_setupVoicingTemplates();
         initPipeline();
     }
 
@@ -108,10 +110,26 @@ public class DroneViewModel extends ViewModel {
         return mParentScales;
     }
 
+    public List<VoicingTemplate> getVoicingTemplates() {
+        return mVoicingTemplates;
+    }
+
     public void setScale(Scale scale) {
         mCurScale.setValue(scale);
         // todo: update playback
         mChordConstructor.setMode(scale.getIntervals());
+        if (mMidiPlayer.hasActiveNotes()) {
+            mMidiPlayer.clear();
+            mMidiPlayer.playChord(mChordConstructor.makeVoicing());
+        }
+    }
+
+    public void setVoicingTemplate(VoicingTemplate template) {
+        mChordConstructor.setTemplate(template);
+        if (mMidiPlayer.hasActiveNotes()) {
+            mMidiPlayer.clear();
+            mMidiPlayer.playChord(mChordConstructor.makeVoicing());
+        }
     }
 
     // todo: just a method for development purposes; should delete later
@@ -124,6 +142,29 @@ public class DroneViewModel extends ViewModel {
         predictor.targetPhrase = mOctavePhrase;
 
         mKeyPredictor = predictor;
+    }
+
+    private void testMethod_setupVoicingTemplates() {
+        final VoicingTemplate template = new VoicingTemplate();
+        template.addBassTone(0);
+        template.addChordTone(0);
+        template.addChordTone(4);
+        template.addChordTone(9);
+        mVoicingTemplates.add(template);
+
+        final VoicingTemplate template2 = new VoicingTemplate();
+        template2.addBassTone(0);
+        template2.addChordTone(6);
+        template2.addChordTone(9);
+        template2.addChordTone(11);
+        mVoicingTemplates.add(template2);
+
+        final VoicingTemplate template3 = new VoicingTemplate();
+        template3.addBassTone(0);
+        template3.addChordTone(3);
+        template3.addChordTone(6);
+        template3.addChordTone(9);
+        mVoicingTemplates.add(template3);
     }
 
     private void testMethod_setupChordConstructor() {

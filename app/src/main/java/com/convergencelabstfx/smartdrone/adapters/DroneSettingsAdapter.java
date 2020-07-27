@@ -1,4 +1,4 @@
-package com.convergencelabstfx.smartdrone;
+package com.convergencelabstfx.smartdrone.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -11,6 +11,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 
+import com.convergencelabstfx.smartdrone.DroneSettingsItem;
+import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.databinding.SettingsItemListBinding;
 
 import java.util.ArrayList;
@@ -69,6 +71,7 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
         binding.setItem(listItem);
         // todo: for some reason, couldn't get the databinding expression to work,
         //       also; why the F was this drawable turning white ????????????
+        //       WHERE DID THE DRAWABLES GO
         binding.icon.setImageDrawable(listItem.getIcon());
         binding.icon.getDrawable().setTint(Color.BLACK);
         return binding.getRoot();

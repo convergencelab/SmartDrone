@@ -11,9 +11,11 @@ import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.convergencelabstfx.keyfinder.ParentScale;
-import com.convergencelabstfx.smartdrone.DroneSettingsAdapter;
+import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
+import com.convergencelabstfx.smartdrone.adapters.DroneSettingsAdapter;
 import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDroneSettingsBinding;
@@ -64,17 +66,22 @@ public class DroneSettingsFragment extends Fragment {
     private ListAdapter makeSettingsAdapter() {
         final ArrayList<DroneSettingsItem> settingsList = new ArrayList<>();
 
-
-
-
-        DroneSettingsItem modeSetting = new DroneSettingsItem.ListItem(
+        DroneSettingsItem modePicker = new DroneSettingsItem.ListItem(
                 "Mode",
                 "Choose the mode",
                 getResources().getDrawable(R.drawable.ic_music_note),
-                view -> {
-                    showParentScaleDialog(mViewModel.getParentScales());
-                });
-        settingsList.add(modeSetting);
+                // todo: show the previously chosen index
+                view -> showParentScaleDialog(mViewModel.getParentScales())
+                );
+        settingsList.add(modePicker);
+
+        DroneSettingsItem voicingTemplatePicker = new DroneSettingsItem.ListItem(
+                "Voicing Template",
+                "Select a template",
+                getResources().getDrawable(R.drawable.ic_music_note),
+                view -> showVoicingTemplateDialog(mViewModel.getVoicingTemplates())
+        );
+        settingsList.add(voicingTemplatePicker);
 
         return new DroneSettingsAdapter(getContext(), settingsList);
     }
@@ -129,6 +136,52 @@ public class DroneSettingsFragment extends Fragment {
                     mViewModel.setScale(parentScale.getScaleAt(i));
                     dialogInterface.dismiss();
                 }).show();
+    }
+
+    private void showVoicingTemplateDialog(List<VoicingTemplate> templates) {
+        CharSequence[] strList = new CharSequence[templates.size()];
+        for (int i = 0; i < templates.size(); i++) {
+            final StringBuilder sb = new StringBuilder();
+            if (templates.get(i).getBassTones().size() != 0) {
+                sb.append("Bass: ");
+                sb.append(templates.get(i).getBassTones().get(0) + 1);
+                for (int j = 1; j < templates.get(i).getBassTones().size(); j++) {
+                    sb.append(", ");
+                    sb.append(templates.get(i).getBassTones().get(j) + 1);
+                }
+                sb.append('\n');
+            }
+            if (templates.get(i).getChordTones().size() != 0) {
+                sb.append("Chord: ");
+                sb.append(templates.get(i).getChordTones().get(0) + 1);
+                for (int j = 1; j < templates.get(i).getChordTones().size(); j++) {
+                    sb.append(", ");
+                    sb.append(templates.get(i).getChordTones().get(j) + 1);
+                }
+            }
+            strList[i] = sb.toString();
+        }
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle("Title")
+                .setPositiveButton("Close", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .setSingleChoiceItems(
+                        strList,
+                        -1,
+                        (dialogInterface, i) -> {
+                            mViewModel.setVoicingTemplate(templates.get(i));
+                        })
+                .show();
+    }
+
+    private View makeTemplateRecyclerView() {
+        RecyclerView recyclerView = new RecyclerView(getContext());
+
+        return null;
     }
 
 }
