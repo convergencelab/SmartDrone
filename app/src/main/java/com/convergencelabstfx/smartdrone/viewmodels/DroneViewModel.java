@@ -1,7 +1,10 @@
 package com.convergencelabstfx.smartdrone.viewmodels;
 
+import android.app.Application;
+
+import androidx.lifecycle.AndroidViewModel;
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 
 import com.convergencelabstfx.keyfinder.MusicTheory;
 import com.convergencelabstfx.keyfinder.ParentScale;
@@ -11,6 +14,10 @@ import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor;
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictorListener;
 import com.convergencelabstfx.keyfinder.keypredictor.Phrase;
 import com.convergencelabstfx.keyfinder.keypredictor.PhrasePredictor;
+import com.convergencelabstfx.smartdrone.database.DroneDatabase;
+import com.convergencelabstfx.smartdrone.database.DroneRepository;
+import com.convergencelabstfx.smartdrone.database.VoicingTemplateDao;
+import com.convergencelabstfx.smartdrone.database.VoicingTemplateEntity;
 import com.convergencelabstfx.smartdrone.models.ChordConstructor;
 import com.convergencelabstfx.smartdrone.models.MidiPlayer;
 import com.convergencelabstfx.smartdrone.models.NoteProcessor;
@@ -36,35 +43,37 @@ import timber.log.Timber;
  * 6) Notify UI;
  */
 
-public class DroneViewModel extends ViewModel {
+public class DroneViewModel extends AndroidViewModel {
 
     // todo: remove; just a place holder field
 
 //    private Scale mCurScale;
 
+    private DroneRepository mRepository;
+    // todo: CHANGE HERE
+    private LiveData<List<VoicingTemplateEntity>> mAllTemplates;
+
     private SignalProcessorKt mSignalProcessor = new SignalProcessorKt();
-
     private NoteProcessor mNoteProcessor = new NoteProcessor();
-
     private KeyPredictor mKeyPredictor;
+    private ChordConstructor mChordConstructor = new ChordConstructor();
+    private MidiPlayer mMidiPlayer = new MidiPlayer();
 
     private List<ParentScale> mParentScales = new ArrayList<>();
     private List<VoicingTemplate> mVoicingTemplates = new ArrayList<>();
 
-    private ChordConstructor mChordConstructor = new ChordConstructor();
-
-    private MidiPlayer mMidiPlayer = new MidiPlayer();
-
     public MutableLiveData<Boolean> mDroneIsActive = new MutableLiveData<>();
-
     public MutableLiveData<Integer> mDetectedNote = new MutableLiveData<>();
     public MutableLiveData<Integer> mUndetectedNote = new MutableLiveData<>();
-
     public MutableLiveData<Integer> mDetectedKey = new MutableLiveData<>();
-
     public MutableLiveData<Scale> mCurScale = new MutableLiveData<>();
 
-    public DroneViewModel() {
+    public DroneViewModel(Application application) {
+        super(application);
+        final VoicingTemplateDao templateDao = DroneDatabase.Companion.getDatabase(application).voicingTemplateDao();
+        mRepository = new DroneRepository(templateDao);
+        mAllTemplates = mRepository.getAllTemplates();
+
         testMethod_setupKeyPredictor();
         testMethod_setupChordConstructor();
         testMethod_setupMidiPlayer();

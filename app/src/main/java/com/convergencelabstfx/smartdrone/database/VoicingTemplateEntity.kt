@@ -7,6 +7,6 @@ import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate
 
 @Entity(tableName = "voicing_template_table")
 class VoicingTemplateEntity(
-        @PrimaryKey(autoGenerate = true) val id: Int,
-        @ColumnInfo(name = "template") val template: VoicingTemplate
+        @PrimaryKey
+        @ColumnInfo(name = "template") val template: VoicingTemplate // todo: CHANGE HERE
 )
