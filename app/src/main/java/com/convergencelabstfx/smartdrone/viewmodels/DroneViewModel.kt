@@ -29,13 +29,15 @@ import java.util.*
  * 5) Play chord; MidiDriver
  * 6) Notify UI;
  */
-class DroneViewModel(application: Application?) : AndroidViewModel(application!!) {
-    // todo: remove; just a place holder field
-    //    private Scale mCurScale;
+// todo: clean up the java-isms; and clean up the MutableLiveData
+class DroneViewModel(application: Application) : AndroidViewModel(application) {
+
     private val mRepository: DroneRepository
 
     // todo: CHANGE HERE
-    private val mAllTemplates: LiveData<List<VoicingTemplateEntity>>
+    val mAllTemplates: LiveData<List<VoicingTemplateEntity>>
+
+
     private val mSignalProcessor = SignalProcessorKt()
     private val mNoteProcessor = NoteProcessor()
     private var mKeyPredictor: KeyPredictor? = null
@@ -51,6 +53,20 @@ class DroneViewModel(application: Application?) : AndroidViewModel(application!!
     @JvmField
     var mDetectedKey = MutableLiveData<Int?>()
     var mCurScale = MutableLiveData<Scale>()
+
+    init {
+        val templateDao = getDatabase(application, viewModelScope).voicingTemplateDao()
+        mRepository = DroneRepository(templateDao)
+        mAllTemplates = mRepository.allTemplates
+
+        testMethod_setupKeyPredictor()
+        testMethod_setupChordConstructor()
+        testMethod_setupMidiPlayer()
+        testMethod_setupParentScales()
+//        testMethod_setupVoicingTemplates()
+        initPipeline()
+    }
+
     fun startDrone() {
         mSignalProcessor.start()
         mMidiPlayer.start()
@@ -123,24 +139,7 @@ class DroneViewModel(application: Application?) : AndroidViewModel(application!!
     }
 
     private fun testMethod_setupVoicingTemplates() {
-        val template = VoicingTemplate()
-        template.addBassTone(0)
-        template.addChordTone(0)
-        template.addChordTone(4)
-        template.addChordTone(9)
-        mVoicingTemplates.add(template)
-        val template2 = VoicingTemplate()
-        template2.addBassTone(0)
-        template2.addChordTone(6)
-        template2.addChordTone(9)
-        template2.addChordTone(11)
-        mVoicingTemplates.add(template2)
-        val template3 = VoicingTemplate()
-        template3.addBassTone(0)
-        template3.addChordTone(3)
-        template3.addChordTone(6)
-        template3.addChordTone(9)
-        mVoicingTemplates.add(template3)
+
     }
 
     private fun testMethod_setupChordConstructor() {
@@ -215,15 +214,4 @@ class DroneViewModel(application: Application?) : AndroidViewModel(application!!
         }
     }
 
-    init {
-        val templateDao = getDatabase(application!!).voicingTemplateDao()
-        mRepository = DroneRepository(templateDao)
-        mAllTemplates = mRepository.allTemplates
-        testMethod_setupKeyPredictor()
-        testMethod_setupChordConstructor()
-        testMethod_setupMidiPlayer()
-        testMethod_setupParentScales()
-        testMethod_setupVoicingTemplates()
-        initPipeline()
-    }
 }

@@ -1,24 +1,21 @@
 package com.convergencelabstfx.smartdrone.database
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 
 @Dao
 interface VoicingTemplateDao {
 
-    @Query("SELECT * from voicing_template_table")
+    @Query("SELECT * FROM voicing_template_table")
     fun getTemplates(): LiveData<List<VoicingTemplateEntity>> // todo: CHANGE HERE
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insert(template: VoicingTemplateEntity)
+    fun insertTemplate(template: VoicingTemplateEntity)
 
-//    @Delete
-//    suspend fun deleteTemplates(vararg templates: VoicingTemplateEntity)
-//
-//    @Update
-//    suspend fun updateTemplates(vararg templates: VoicingTemplateEntity)
+    @Delete
+    fun deleteTemplate(template: VoicingTemplateEntity)
+
+    @Update
+    fun updateTemplate(template: VoicingTemplateEntity)
 
 }

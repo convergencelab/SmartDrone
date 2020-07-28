@@ -10,14 +10,15 @@ import android.widget.ListAdapter;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.convergencelabstfx.keyfinder.ParentScale;
-import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
-import com.convergencelabstfx.smartdrone.adapters.DroneSettingsAdapter;
 import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
+import com.convergencelabstfx.smartdrone.adapters.DroneSettingsAdapter;
+import com.convergencelabstfx.smartdrone.database.VoicingTemplateEntity;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDroneSettingsBinding;
 import com.convergencelabstfx.smartdrone.viewmodels.DroneViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -39,6 +40,8 @@ import java.util.List;
  */
 public class DroneSettingsFragment extends Fragment {
 
+    private List<VoicingTemplateEntity> mTempList = new ArrayList<>();
+
     private DroneViewModel mViewModel;
 
     private FragmentDroneSettingsBinding mBinding;
@@ -57,6 +60,15 @@ public class DroneSettingsFragment extends Fragment {
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
 
         final ListAdapter settingsAdapter = makeSettingsAdapter();
+
+        mViewModel.getMAllTemplates().observe(getViewLifecycleOwner(), new Observer<List<VoicingTemplateEntity>>() {
+            @Override
+            public void onChanged(List<VoicingTemplateEntity> voicingTemplateEntities) {
+                if (voicingTemplateEntities != null && voicingTemplateEntities.size() != 0) {
+                    mTempList = voicingTemplateEntities;
+                }
+            }
+        });
 
         mBinding.settingsList.setAdapter(settingsAdapter);
 
@@ -79,7 +91,10 @@ public class DroneSettingsFragment extends Fragment {
                 "Voicing Template",
                 "Select a template",
                 getResources().getDrawable(R.drawable.ic_music_note),
-                view -> showVoicingTemplateDialog(mViewModel.getVoicingTemplates())
+                view -> {
+//                    Timber.i("allTemps: " + mViewModel.getMAllTemplates());
+                    showVoicingTemplateDialog(mTempList);
+                }
         );
         settingsList.add(voicingTemplatePicker);
 
@@ -138,25 +153,25 @@ public class DroneSettingsFragment extends Fragment {
                 }).show();
     }
 
-    private void showVoicingTemplateDialog(List<VoicingTemplate> templates) {
+    private void showVoicingTemplateDialog(List<VoicingTemplateEntity> templates) {
         CharSequence[] strList = new CharSequence[templates.size()];
         for (int i = 0; i < templates.size(); i++) {
             final StringBuilder sb = new StringBuilder();
-            if (templates.get(i).getBassTones().size() != 0) {
+            if (templates.get(i).getTemplate().getBassTones().size() != 0) {
                 sb.append("Bass: ");
-                sb.append(templates.get(i).getBassTones().get(0) + 1);
-                for (int j = 1; j < templates.get(i).getBassTones().size(); j++) {
+                sb.append(templates.get(i).getTemplate().getBassTones().get(0) + 1);
+                for (int j = 1; j < templates.get(i).getTemplate().getBassTones().size(); j++) {
                     sb.append(", ");
-                    sb.append(templates.get(i).getBassTones().get(j) + 1);
+                    sb.append(templates.get(i).getTemplate().getBassTones().get(j) + 1);
                 }
                 sb.append('\n');
             }
-            if (templates.get(i).getChordTones().size() != 0) {
+            if (templates.get(i).getTemplate().getChordTones().size() != 0) {
                 sb.append("Chord: ");
-                sb.append(templates.get(i).getChordTones().get(0) + 1);
-                for (int j = 1; j < templates.get(i).getChordTones().size(); j++) {
+                sb.append(templates.get(i).getTemplate().getChordTones().get(0) + 1);
+                for (int j = 1; j < templates.get(i).getTemplate().getChordTones().size(); j++) {
                     sb.append(", ");
-                    sb.append(templates.get(i).getChordTones().get(j) + 1);
+                    sb.append(templates.get(i).getTemplate().getChordTones().get(j) + 1);
                 }
             }
             strList[i] = sb.toString();
@@ -170,7 +185,7 @@ public class DroneSettingsFragment extends Fragment {
                         strList,
                         -1,
                         (dialogInterface, i) -> {
-                            mViewModel.setVoicingTemplate(templates.get(i));
+                            mViewModel.setVoicingTemplate(templates.get(i).getTemplate());
                         })
                 .show();
     }

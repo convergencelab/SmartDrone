@@ -14,16 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".views.BaseActivity">
-        </activity>
-        <activity
-            android:name=".templatecreator.TemplateCreatorActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".drone.DroneActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".AboutActivity" />
+        <activity android:name=".views.BaseActivity"></activity>
         <activity
             android:name=".views.SplashScreenActivity"
             android:screenOrientation="portrait"
@@ -34,29 +25,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".templatecreator.TemplateCreatorActivityOld"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".DroneSoundActivity"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".DroneSettingsActivity"
-            android:label="Settings"
-            android:parentActivityName=".DroneActivityOld"
-            android:screenOrientation="portrait">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.convergencelabstfx.smartdrone.DroneActivityOld" />
-        </activity>
-        <activity
-            android:name=".DroneActivityOld"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
-        <activity
-            android:name=".soundsettings.SoundSettingsActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar" />
 
         <meta-data
             android:name="preloaded_fonts"

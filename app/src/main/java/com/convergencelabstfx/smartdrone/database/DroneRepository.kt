@@ -11,7 +11,7 @@ class DroneRepository(private val voicingTemplateDao: VoicingTemplateDao) {
 
     // todo: insert
     suspend fun insert(template: VoicingTemplateEntity) {
-        voicingTemplateDao.insert(template)
+        voicingTemplateDao.insertTemplate(template)
     }
 
     // todo: delete
