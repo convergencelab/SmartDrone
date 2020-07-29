@@ -44,6 +44,9 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
     private val listeners: MutableList<VoicingTemplateTouchListener> = ArrayList()
 
     init {
+//        for (i in 0 until NUM_CHORD_TONES) {
+//            chordDegrees.
+//        }
         val a = context.theme.obtainStyledAttributes(
                 attrs,
                 R.styleable.VoicingTemplateView,
@@ -84,6 +87,22 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
         }
 
         if (touchedTone != -1 && event.action == MotionEvent.ACTION_UP) {
+            if (isChordTone) {
+                if (chordDegreeIsActive(touchedTone)) {
+                    deactivateChordDegree(touchedTone)
+                }
+                else {
+                    activateChordDegree(touchedTone)
+                }
+            }
+            else {
+                if (bassDegreeIsActive(touchedTone)) {
+                    deactivateBassDegree(touchedTone)
+                }
+                else {
+                    activateBassDegree(touchedTone)
+                }
+            }
             for (listener in listeners) {
                 listener.onClick(this, touchedTone, isChordTone)
             }
@@ -98,24 +117,32 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
     fun activateChordDegree(degree: Int) {
         if (!chordDegrees[degree]) {
             chordDegrees[degree] = true
+            chordDegreeDrawables[degree]?.setColor(activeColor)
+            invalidate()
         }
     }
 
     fun deactivateChordDegree(degree: Int) {
         if (chordDegrees[degree]) {
             chordDegrees[degree] = false
+            chordDegreeDrawables[degree]?.setColor(inactiveColor)
+            invalidate()
         }
     }
 
     fun activateBassDegree(degree: Int) {
         if (!bassDegrees[degree]) {
             bassDegrees[degree] = true
+            bassDegreeDrawables[degree]?.setColor(activeColor)
+            invalidate()
         }
     }
 
     fun deactivateBassDegree(degree: Int) {
         if (bassDegrees[degree]) {
             bassDegrees[degree] = false
+            bassDegreeDrawables[degree]?.setColor(inactiveColor)
+            invalidate()
         }
     }
 
