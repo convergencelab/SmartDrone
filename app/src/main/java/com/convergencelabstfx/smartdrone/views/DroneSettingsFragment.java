@@ -23,8 +23,12 @@ import com.convergencelabstfx.smartdrone.databinding.FragmentDroneSettingsBindin
 import com.convergencelabstfx.smartdrone.viewmodels.DroneViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.ArrayList;
 import java.util.List;
+
+import timber.log.Timber;
 
 /**
  * Settings:
@@ -99,7 +103,12 @@ public class DroneSettingsFragment extends Fragment {
         settingsList.add(voicingTemplatePicker);
 
         DroneSettingsItem voicingTemplateItem = new DroneSettingsItem.VoicingTemplateItem(
-
+                new VoicingTemplateTouchListener() {
+                    @Override
+                    public void onClick(@NotNull VoicingTemplateView view, int degree, boolean isChordTone) {
+                        Timber.i("d: " + degree + "; isC: " + isChordTone);
+                    }
+                }
         );
         settingsList.add(voicingTemplateItem);
 

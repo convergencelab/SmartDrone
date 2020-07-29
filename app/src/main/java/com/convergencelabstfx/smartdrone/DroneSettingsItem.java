@@ -3,6 +3,8 @@ package com.convergencelabstfx.smartdrone;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import com.convergencelabstfx.smartdrone.views.VoicingTemplateTouchListener;
+
 public interface DroneSettingsItem {
 
     class ListItem implements DroneSettingsItem {
@@ -47,8 +49,14 @@ public interface DroneSettingsItem {
 
     class VoicingTemplateItem implements DroneSettingsItem {
 
-        public VoicingTemplateItem() {
+        VoicingTemplateTouchListener mListener;
 
+        public VoicingTemplateItem(VoicingTemplateTouchListener listener) {
+            mListener = listener;
+        }
+
+        public VoicingTemplateTouchListener getListener() {
+            return mListener;
         }
 
     }
