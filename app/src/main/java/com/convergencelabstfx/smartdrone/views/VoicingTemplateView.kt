@@ -1,23 +1,70 @@
 package com.convergencelabstfx.smartdrone.views
 
 import android.content.Context
+import android.content.res.TypedArray
+import android.graphics.Canvas
+import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
 import android.view.View
+import com.convergencelabstfx.smartdrone.R
+import timber.log.Timber
 
-/**
- * Some weird stuff goes on with the bass tones here because currently there are only two options:
- * the root (1) and the fifth (5).
- */
+
 class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     companion object {
         const val NUM_CHORD_TONES = 14
-        const val NUM_BASS_TONES = 2
+        // Even though the size is 5, there are only 2 used bass tones:
+        // 0 and 4. The indices in between are not used.
+        const val NUM_BASS_TONES = 5
     }
+
+    private val chordDegreeDrawables = ArrayList<GradientDrawable?>(NUM_CHORD_TONES)
+
+    private val bassDegreeDrawables = ArrayList<GradientDrawable?>(NUM_BASS_TONES)
 
     private val chordDegrees = BooleanArray(NUM_CHORD_TONES)
 
     private val bassDegrees = BooleanArray(NUM_BASS_TONES)
+
+    private var squareLen: Int = -1
+
+    private var verticalSpacing: Int = -1
+
+    private var cornerRadius: Int = -1
+
+    private var toneSpacing: Int = -1
+
+    private var activeColor: Int = -1
+
+    private var inactiveColor: Int = -1
+
+    init {
+        val a = context.theme.obtainStyledAttributes(
+                attrs,
+                R.styleable.VoicingTemplateView,
+                0,
+                0
+        )
+        parseAttrs(a)
+        a.recycle()
+    }
+
+    override fun onDraw(canvas: Canvas?) {
+        Timber.i("onDraw called")
+        for (drawable in chordDegreeDrawables) {
+            drawable?.draw(canvas!!)
+        }
+        for (drawable in bassDegreeDrawables) {
+            drawable?.draw(canvas!!)
+        }
+    }
+
+    override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
+        Timber.i("onSizeChanged called")
+        squareLen = (h - 7 * toneSpacing - verticalSpacing) / 5
+        constructView()
+    }
 
     fun activateChordDegree(degree: Int) {
         if (!chordDegrees[degree]) {
@@ -32,26 +79,14 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
     }
 
     fun activateBassDegree(degree: Int) {
-        val realDegree = if (degree == 4) {
-            1
-        }
-        else {
-            degree
-        }
-        if (!bassDegrees[realDegree]) {
-            bassDegrees[realDegree] = true
+        if (!bassDegrees[degree]) {
+            bassDegrees[degree] = true
         }
     }
 
     fun deactivateBassDegree(degree: Int) {
-        val realDegree = if (degree == 4) {
-            1
-        }
-        else {
-            degree
-        }
-        if (bassDegrees[realDegree]) {
-            bassDegrees[realDegree] = false
+        if (bassDegrees[degree]) {
+            bassDegrees[degree] = false
         }
     }
 
@@ -60,21 +95,101 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
     }
 
     fun bassDegreeIsActive(degree: Int): Boolean {
-        val realDegree = if (degree == 4) {
-            1
-        }
-        else {
-            degree
-        }
-        return bassDegrees[realDegree]
+        return bassDegrees[degree]
     }
 
-    // todo:
-    //   - touchListener
-    //   - draw
-    //   - onSizeChanged
-    //   - active color / inactive color
-    //   - square size
-    //   - construct layout
+    private fun parseAttrs(a: TypedArray) {
+        activeColor = a.getColor(
+                R.styleable.VoicingTemplateView_vt_activeColor,
+                resources.getColor(R.color.template_activeColor)
+        )
+
+        inactiveColor = a.getColor(
+                R.styleable.VoicingTemplateView_vt_inactiveColor,
+                resources.getColor(R.color.template_inactiveColor)
+        )
+
+        toneSpacing = a.getDimension(
+                R.styleable.VoicingTemplateView_vt_toneSpacing,
+                resources.getDimension(R.dimen.template_toneSpacing)
+        ).toInt()
+
+        verticalSpacing = a.getDimension(
+                R.styleable.VoicingTemplateView_vt_verticalSpacing,
+                resources.getDimension(R.dimen.template_verticalSpacing)
+        ).toInt()
+
+        cornerRadius = a.getDimension(
+                R.styleable.VoicingTemplateView_vt_cornerRadius,
+                resources.getDimension(R.dimen.template_cornerRadius)
+        ).toInt()
+    }
+
+    // todo: could extract the drawable construction into a function, but hey, who cares
+    private fun constructView() {
+        var vOffset = toneSpacing
+        var hOffset = toneSpacing
+        for (i in 0 until 4) {
+            val shape = GradientDrawable()
+            shape.shape = GradientDrawable.RECTANGLE
+            shape.setColor(inactiveColor)
+            shape.cornerRadius = cornerRadius.toFloat()
+            shape.setBounds(hOffset, vOffset, squareLen + hOffset, squareLen + vOffset)
+            chordDegreeDrawables.add(shape)
+            vOffset += squareLen + toneSpacing
+        }
+
+        vOffset = toneSpacing + squareLen / 2 + toneSpacing / 2
+        hOffset = toneSpacing * 2 + squareLen
+        for (i in 0 until 3) {
+            val shape = GradientDrawable()
+            shape.shape = GradientDrawable.RECTANGLE
+            shape.setColor(inactiveColor)
+            shape.cornerRadius = cornerRadius.toFloat()
+            shape.setBounds(hOffset, vOffset, squareLen + hOffset, squareLen + vOffset)
+            chordDegreeDrawables.add(shape)
+            vOffset += squareLen + toneSpacing
+        }
+
+        vOffset = toneSpacing
+        hOffset = width - toneSpacing - squareLen - toneSpacing - squareLen
+        for (i in 0 until 4) {
+            val shape = GradientDrawable()
+            shape.shape = GradientDrawable.RECTANGLE
+            shape.setColor(inactiveColor)
+            shape.cornerRadius = cornerRadius.toFloat()
+            shape.setBounds(hOffset, vOffset, squareLen + hOffset, squareLen + vOffset)
+            chordDegreeDrawables.add(shape)
+            vOffset += squareLen + toneSpacing
+        }
+
+        vOffset = toneSpacing + squareLen / 2 + toneSpacing / 2
+        hOffset = width - toneSpacing - squareLen
+        for (i in 0 until 3) {
+            val shape = GradientDrawable()
+            shape.shape = GradientDrawable.RECTANGLE
+            shape.setColor(inactiveColor)
+            shape.cornerRadius = cornerRadius.toFloat()
+            shape.setBounds(hOffset, vOffset, squareLen + hOffset, squareLen + vOffset)
+            chordDegreeDrawables.add(shape)
+            vOffset += squareLen + toneSpacing
+        }
+
+        vOffset = height - squareLen - toneSpacing
+        hOffset = width / 2 - squareLen - toneSpacing / 2
+        for (i in 0 until 2) {
+            val shape = GradientDrawable()
+            shape.shape = GradientDrawable.RECTANGLE
+            shape.setColor(inactiveColor)
+            shape.cornerRadius = cornerRadius.toFloat()
+            shape.setBounds(hOffset, vOffset, squareLen + hOffset, squareLen + vOffset)
+            bassDegreeDrawables.add(shape)
+            hOffset += squareLen + toneSpacing
+            bassDegreeDrawables.add(null)
+            bassDegreeDrawables.add(null)
+            bassDegreeDrawables.add(null)
+        }
+
+    }
 
 }

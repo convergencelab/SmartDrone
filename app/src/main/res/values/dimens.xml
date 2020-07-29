@@ -25,4 +25,8 @@
     <dimen name="activeKeyText_small">9dp</dimen>
     <dimen name="activeKeyText_large">12dp</dimen>
 
+    <dimen name="template_toneSpacing">2dp</dimen>
+    <dimen name="template_verticalSpacing">10dp</dimen>
+    <dimen name="template_cornerRadius">3dp</dimen>
+
 </resources>

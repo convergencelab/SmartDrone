@@ -52,4 +52,7 @@
     <color name="fbutton_color_asbestos">#7f8c8d</color>
     <color name="fbutton_color_transparent">@android:color/transparent</color>
 
+    <color name="template_activeColor">#3498DB</color>
+    <color name="template_inactiveColor">#34495E</color>
+
 </resources>

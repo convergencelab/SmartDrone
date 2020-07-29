@@ -7,4 +7,12 @@
         <attr name="db_ringWidth" format="dimension" />
     </declare-styleable>
 
+    <declare-styleable name="VoicingTemplateView">
+        <attr name="vt_activeColor" format="color" />
+        <attr name="vt_inactiveColor" format="color" />
+        <attr name="vt_toneSpacing" format="dimension" />
+        <attr name="vt_verticalSpacing" format="dimension" />
+        <attr name="vt_cornerRadius" format="dimension" />
+    </declare-styleable>
+
 </resources>
