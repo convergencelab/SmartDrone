@@ -58,17 +58,6 @@ abstract class DroneDatabase : RoomDatabase() {
             }
         }
 
-//        override fun onOpen(db: SupportSQLiteDatabase) {
-//            super.onOpen(db)
-//            Timber.i("onOpen called")
-//            INSTANCE?.let { database ->
-//                scope.launch(Dispatchers.IO) {
-//                    initDatabase(database.voicingTemplateDao())
-//                }
-//            }
-//        }
-
-
         fun initDatabase(voicingTemplateDao: VoicingTemplateDao) {
 
             val template = VoicingTemplate()

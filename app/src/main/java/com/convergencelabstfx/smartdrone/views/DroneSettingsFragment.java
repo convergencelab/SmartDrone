@@ -98,6 +98,11 @@ public class DroneSettingsFragment extends Fragment {
         );
         settingsList.add(voicingTemplatePicker);
 
+        DroneSettingsItem voicingTemplateItem = new DroneSettingsItem.VoicingTemplateItem(
+
+        );
+        settingsList.add(voicingTemplateItem);
+
         return new DroneSettingsAdapter(getContext(), settingsList);
     }
 

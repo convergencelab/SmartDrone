@@ -21,6 +21,7 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
 
     private static final int TYPE_LIST = 0;
     private static final int TYPE_CHECKBOX = 1;
+    private static final int TYPE_TEMPLATE = 2;
 
     public DroneSettingsAdapter(Context context, ArrayList<DroneSettingsItem> settingsItems) {
         super(context, 0, settingsItems);
@@ -36,6 +37,9 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
         else if (item instanceof DroneSettingsItem.CheckBoxItem) {
             return TYPE_CHECKBOX;
         }
+        else if (item instanceof DroneSettingsItem.VoicingTemplateItem) {
+            return TYPE_TEMPLATE;
+        }
         else {
             throw new IllegalStateException("Unrecognized type given as DroneSettingsItem.");
         }
@@ -43,7 +47,7 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
 
     @Override
     public int getViewTypeCount() {
-        return 2;
+        return 3;
     }
 
     @NonNull
@@ -55,6 +59,8 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
                 return makeListItem((DroneSettingsItem.ListItem) getItem(i), viewGroup);
             case TYPE_CHECKBOX:
                 return makeCheckBoxItem((DroneSettingsItem.CheckBoxItem) getItem(i));
+            case TYPE_TEMPLATE:
+                return makeTemplateItem((DroneSettingsItem.VoicingTemplateItem) getItem(i), viewGroup);
             default:
                 throw new IllegalStateException("Unrecognized type in DroneSettingsAdapter.");
         }
@@ -78,6 +84,11 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
     }
 
     private View makeCheckBoxItem(DroneSettingsItem.CheckBoxItem checkBoxItem) {
+        return new TextView(getContext());
+    }
+
+    // todo: implement
+    private View makeTemplateItem(DroneSettingsItem.VoicingTemplateItem item, ViewGroup container) {
         return new TextView(getContext());
     }
 

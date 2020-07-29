@@ -37,9 +37,17 @@ public interface DroneSettingsItem {
 
     }
 
-    class CheckBoxItem {
+    class CheckBoxItem implements DroneSettingsItem {
 
         public CheckBoxItem() {
+
+        }
+
+    }
+
+    class VoicingTemplateItem implements DroneSettingsItem {
+
+        public VoicingTemplateItem() {
 
         }
 
