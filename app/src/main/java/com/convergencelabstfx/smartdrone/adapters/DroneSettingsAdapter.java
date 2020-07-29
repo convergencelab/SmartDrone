@@ -97,6 +97,7 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
                         container,
                         false);
         binding.templateEditor.addListener(item.getListener());
+        binding.questionMark.setOnClickListener(item.getHelpListener());
         return binding.getRoot();
     }
 

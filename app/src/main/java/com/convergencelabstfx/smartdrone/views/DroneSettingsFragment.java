@@ -108,6 +108,12 @@ public class DroneSettingsFragment extends Fragment {
                     public void onClick(@NotNull VoicingTemplateView view, int degree, boolean isChordTone) {
                         Timber.i("d: " + degree + "; isC: " + isChordTone);
                     }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showTemplateEditorDialog();
+                    }
                 }
         );
         settingsList.add(voicingTemplateItem);
@@ -201,6 +207,20 @@ public class DroneSettingsFragment extends Fragment {
                         (dialogInterface, i) -> {
                             mViewModel.setVoicingTemplate(templates.get(i).getTemplate());
                         })
+                .show();
+    }
+
+    private void showTemplateEditorDialog() {
+        new MaterialAlertDialogBuilder(getContext())
+                .setTitle("Template Editor")
+                .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                // todo: implement template editor message
+                .setMessage("This is the template editor")
                 .show();
     }
 

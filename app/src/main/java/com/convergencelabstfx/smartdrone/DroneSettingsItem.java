@@ -50,13 +50,19 @@ public interface DroneSettingsItem {
     class VoicingTemplateItem implements DroneSettingsItem {
 
         VoicingTemplateTouchListener mListener;
+        View.OnClickListener mHelpListener;
 
-        public VoicingTemplateItem(VoicingTemplateTouchListener listener) {
+        public VoicingTemplateItem(VoicingTemplateTouchListener listener, View.OnClickListener helpListener) {
             mListener = listener;
+            mHelpListener = helpListener;
         }
 
         public VoicingTemplateTouchListener getListener() {
             return mListener;
+        }
+
+        public View.OnClickListener getHelpListener() {
+            return mHelpListener;
         }
 
     }
