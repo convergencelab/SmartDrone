@@ -11,6 +11,7 @@
         android:layout_height="wrap_content">
 
         <com.convergencelabstfx.smartdrone.views.VoicingTemplateView
+            android:id="@+id/templateEditor"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             android:layout_width="180dp"

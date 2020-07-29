@@ -15,8 +15,14 @@ import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.databinding.SettingsItemListBinding;
 import com.convergencelabstfx.smartdrone.databinding.SettingsItemTemplateBinding;
+import com.convergencelabstfx.smartdrone.views.VoicingTemplateTouchListener;
+import com.convergencelabstfx.smartdrone.views.VoicingTemplateView;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+
+import timber.log.Timber;
 
 public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
 
@@ -96,6 +102,12 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
                         R.layout.settings_item_template,
                         container,
                         false);
+        binding.templateEditor.addListener(new VoicingTemplateTouchListener() {
+            @Override
+            public void onClick(@NotNull VoicingTemplateView view, int degree, boolean isChordTone) {
+                Timber.i("d: " + degree + "; isC: " + isChordTone);
+            }
+        });
         return binding.getRoot();
     }
 

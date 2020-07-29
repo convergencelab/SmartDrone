@@ -5,9 +5,11 @@ import android.content.res.TypedArray
 import android.graphics.Canvas
 import android.graphics.drawable.GradientDrawable
 import android.util.AttributeSet
+import android.view.MotionEvent
 import android.view.View
 import com.convergencelabstfx.smartdrone.R
 import timber.log.Timber
+import kotlin.math.roundToInt
 
 
 class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context, attrs) {
@@ -39,6 +41,8 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
 
     private var inactiveColor: Int = -1
 
+    private val listeners: MutableList<VoicingTemplateTouchListener> = ArrayList()
+
     init {
         val a = context.theme.obtainStyledAttributes(
                 attrs,
@@ -64,6 +68,31 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
         Timber.i("onSizeChanged called")
         squareLen = (h - 7 * toneSpacing - verticalSpacing) / 5
         constructView()
+    }
+
+    override fun onTouchEvent(event: MotionEvent?): Boolean {
+        var isChordTone = false
+        var touchedTone = checkChordToneTouch(event!!.x.roundToInt(), event.y.roundToInt())
+        if (touchedTone != -1) {
+            isChordTone = true
+        }
+        else {
+            touchedTone = checkBassToneTouch(event.x.roundToInt(), event.y.roundToInt())
+            if (touchedTone != -1) {
+                isChordTone = false
+            }
+        }
+
+        if (touchedTone != -1 && event.action == MotionEvent.ACTION_UP) {
+            for (listener in listeners) {
+                listener.onClick(this, touchedTone, isChordTone)
+            }
+        }
+        return true
+    }
+
+    fun addListener(listener: VoicingTemplateTouchListener) {
+        listeners.add(listener)
     }
 
     fun activateChordDegree(degree: Int) {
@@ -185,11 +214,40 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
             shape.setBounds(hOffset, vOffset, squareLen + hOffset, squareLen + vOffset)
             bassDegreeDrawables.add(shape)
             hOffset += squareLen + toneSpacing
+            // todo: quite hacky
             bassDegreeDrawables.add(null)
             bassDegreeDrawables.add(null)
             bassDegreeDrawables.add(null)
         }
-
     }
+
+    private fun checkChordToneTouch(x: Int, y: Int): Int {
+        for ((ix, drawable) in chordDegreeDrawables.withIndex()) {
+            if (x >= drawable?.bounds!!.left && x <= drawable.bounds.right && y >= drawable.bounds.top && y <= drawable.bounds.bottom) {
+                return ix
+            }
+        }
+        return -1
+    }
+
+    // todo: quite hacky
+    private fun checkBassToneTouch(x: Int, y: Int): Int {
+//        for ((ix, drawable) in bassDegreeDrawables.withIndex()) {
+//            if (x >= drawable?.bounds!!.left && x <= drawable.bounds.right && y >= drawable.bounds.top && y <= drawable.bounds.bottom) {
+//                return ix
+//            }
+//        }
+        var drawable = bassDegreeDrawables[0]
+        if (x >= drawable?.bounds!!.left && x <= drawable.bounds.right && y >= drawable.bounds.top && y <= drawable.bounds.bottom) {
+            return 0
+        }
+        drawable = bassDegreeDrawables[4]
+        if (x >= drawable?.bounds!!.left && x <= drawable!!.bounds.right && y >= drawable.bounds.top && y <= drawable.bounds.bottom) {
+            return 4
+        }
+        return -1
+    }
+
+
 
 }
