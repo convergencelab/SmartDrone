@@ -96,6 +96,38 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
+    fun addChordTone(degree: Int) {
+        curTemplate.value?.addChordTone(degree)
+        if (isRunning) {
+            mMidiPlayer.clear()
+            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+        }
+    }
+
+    fun removeChordTone(degree: Int) {
+        curTemplate.value?.removeChordTone(degree)
+        if (isRunning) {
+            mMidiPlayer.clear()
+            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+        }
+    }
+
+    fun addBassTone(degree: Int) {
+        curTemplate.value?.addBassTone(degree)
+        if (isRunning) {
+            mMidiPlayer.clear()
+            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+        }
+    }
+
+    fun removeBassTone(degree: Int) {
+        curTemplate.value?.removeBassTone(degree)
+        if (isRunning) {
+            mMidiPlayer.clear()
+            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+        }
+    }
+
     val isRunning: Boolean
         get() = mDroneIsActive.value != null && mDroneIsActive.value!!
 

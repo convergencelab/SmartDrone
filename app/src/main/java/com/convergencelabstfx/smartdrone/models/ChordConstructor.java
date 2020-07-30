@@ -35,9 +35,7 @@ public class ChordConstructor {
 
     public List<Integer> makeVoicing() {
         // todo: implement voicing making logic
-        if (mTemplate.size() == 0) {
-            throw new IllegalStateException("Attempted to make voicing with empty voicing template.");
-        } else if (mMode.size() == 0) {
+         if (mMode.size() == 0) {
             throw new IllegalStateException("Attempted to make voicing with empty mode.");
         }
 
@@ -125,6 +123,9 @@ public class ChordConstructor {
     }
 
     private List<Integer> constructNotes(List<Integer> degrees, int lowerBound, int upperBound) {
+        if (degrees.isEmpty()) {
+            return new ArrayList<>();
+        }
         final List<Integer> notes = new ArrayList<>(degrees.size());
 
         /*
@@ -145,7 +146,6 @@ public class ChordConstructor {
             int note = mMode.get(degrees.get(i) % mMode.size());
             note += (degrees.get(i) / mMode.size()) * MusicTheory.TOTAL_NOTES;
             note += mKey;
-//            note += octaveOffset * MusicTheory.TOTAL_NOTES;
             notes.add(note);
         }
 

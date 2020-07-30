@@ -13,6 +13,7 @@ import timber.log.Timber
 import kotlin.math.roundToInt
 
 
+// todo: some of the code in this class is pretty bad, but it works how it's supposed to
 class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context, attrs) {
 
     companion object {

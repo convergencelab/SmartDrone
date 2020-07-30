@@ -44,8 +44,6 @@ import timber.log.Timber;
  */
 public class DroneSettingsFragment extends Fragment {
 
-    private List<VoicingTemplateEntity> mTempList = new ArrayList<>();
-
     private DroneViewModel mViewModel;
 
     private FragmentDroneSettingsBinding mBinding;
@@ -67,29 +65,7 @@ public class DroneSettingsFragment extends Fragment {
 
         mAdapter = makeSettingsAdapter();
 
-//        mViewModel.getCurTemplate().observe(getViewLifecycleOwner(), new Observer<VoicingTemplate>() {
-//            @Override
-//            public void onChanged(VoicingTemplate voicingTemplate) {
-//                for (int i = 0; i < VoicingTemplateView.NUM_CHORD_TONES; i++) {
-//                    if (voicingTemplate.getChordTones().contains(i)) {
-//                        mBinding.settingsList.getAdapter();
-//                    }
-//                }
-//            }
-//        });
-
-//        mViewModel.getMAllTemplates().observe(getViewLifecycleOwner(), new Observer<List<VoicingTemplateEntity>>() {
-//            @Override
-//            public void onChanged(List<VoicingTemplateEntity> voicingTemplateEntities) {
-//                if (voicingTemplateEntities != null && voicingTemplateEntities.size() != 0) {
-//                    mTempList = voicingTemplateEntities;
-//                }
-//            }
-//        });
-
         mBinding.settingsList.setAdapter(mAdapter);
-
-
 
         mViewModel.getCurTemplate().observe(getViewLifecycleOwner(), new Observer<VoicingTemplate>() {
             @Override
@@ -124,22 +100,27 @@ public class DroneSettingsFragment extends Fragment {
                 );
         settingsList.add(modePicker);
 
-//        DroneSettingsItem voicingTemplatePicker = new DroneSettingsItem.ListItem(
-//                "Voicing Template",
-//                "Select a template",
-//                getResources().getDrawable(R.drawable.ic_music_note),
-//                view -> {
-////                    Timber.i("allTemps: " + mViewModel.getMAllTemplates());
-//                    showVoicingTemplateDialog(mTempList);
-//                }
-//        );
-//        settingsList.add(voicingTemplatePicker);
-
         DroneSettingsItem voicingTemplateItem = new DroneSettingsItem.VoicingTemplateItem(
                 new VoicingTemplateTouchListener() {
                     @Override
                     public void onClick(@NotNull VoicingTemplateView view, int degree, boolean isChordTone) {
                         Timber.i("d: " + degree + "; isC: " + isChordTone);
+                        if (isChordTone) {
+                            if (view.chordDegreeIsActive(degree)) {
+                                mViewModel.addChordTone(degree);
+                            }
+                            else {
+                                mViewModel.removeChordTone(degree);
+                            }
+                        }
+                        else {
+                            if (view.bassDegreeIsActive(degree)) {
+                                mViewModel.addBassTone(degree);
+                            }
+                            else {
+                                mViewModel.removeBassTone(degree);
+                            }
+                        }
                     }
                 },
                 new View.OnClickListener() {
@@ -245,7 +226,7 @@ public class DroneSettingsFragment extends Fragment {
     }
 
     private void showTemplateEditorDialog() {
-        new MaterialAlertDialogBuilder(getContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Template Editor")
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
                     @Override
