@@ -103,11 +103,11 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
         binding.templateEditor.addListener(item.getListener());
         binding.questionMark.setOnClickListener(item.getHelpListener());
         mTemplateView = binding.templateEditor;
-//        mTemplateBinding = binding;
-        if (item.getTemplate() != null) {
-            binding.templateEditor.clear();
-            binding.templateEditor.showTemplate(item.getTemplate().getValue());
-        }
+        binding.setItem(item);
+//        if (item.getTemplate() != null) {
+//            binding.templateEditor.clear();
+//            binding.templateEditor.showTemplate(item.getTemplate().getValue());
+//        }
         return binding.getRoot();
     }
 

@@ -96,36 +96,26 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun addChordTone(degree: Int) {
-        curTemplate.value?.addChordTone(degree)
-        if (isRunning) {
-            mMidiPlayer.clear()
-            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+    fun onBassToneClick(degree: Int) {
+        val template = curTemplate.value
+        if (template?.bassTones!!.contains(degree)) {
+            template.removeBassTone(degree)
         }
+        else {
+            template.addBassTone(degree)
+        }
+        setVoicingTemplate(template)
     }
 
-    fun removeChordTone(degree: Int) {
-        curTemplate.value?.removeChordTone(degree)
-        if (isRunning) {
-            mMidiPlayer.clear()
-            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+    fun onChordToneClick(degree: Int) {
+        val template = curTemplate.value
+        if (template?.chordTones!!.contains(degree)) {
+            template.removeChordTone(degree)
         }
-    }
-
-    fun addBassTone(degree: Int) {
-        curTemplate.value?.addBassTone(degree)
-        if (isRunning) {
-            mMidiPlayer.clear()
-            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+        else {
+            template.addChordTone(degree)
         }
-    }
-
-    fun removeBassTone(degree: Int) {
-        curTemplate.value?.removeBassTone(degree)
-        if (isRunning) {
-            mMidiPlayer.clear()
-            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
-        }
+        setVoicingTemplate(template)
     }
 
     val isRunning: Boolean
@@ -154,7 +144,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     fun setVoicingTemplate(template: VoicingTemplate) {
         mChordConstructor.template = template
         curTemplate.value = template
-        if (mMidiPlayer.hasActiveNotes()) {
+        if (isRunning) {
             mMidiPlayer.clear()
             mMidiPlayer.playChord(mChordConstructor.makeVoicing())
         }

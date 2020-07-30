@@ -103,25 +103,37 @@ public class DroneSettingsFragment extends Fragment {
         DroneSettingsItem voicingTemplateItem = new DroneSettingsItem.VoicingTemplateItem(
                 new VoicingTemplateTouchListener() {
                     @Override
-                    public void onClick(@NotNull VoicingTemplateView view, int degree, boolean isChordTone) {
-                        Timber.i("d: " + degree + "; isC: " + isChordTone);
-                        if (isChordTone) {
-                            if (view.chordDegreeIsActive(degree)) {
-                                mViewModel.addChordTone(degree);
-                            }
-                            else {
-                                mViewModel.removeChordTone(degree);
-                            }
-                        }
-                        else {
-                            if (view.bassDegreeIsActive(degree)) {
-                                mViewModel.addBassTone(degree);
-                            }
-                            else {
-                                mViewModel.removeBassTone(degree);
-                            }
-                        }
+                    public void onBassToneClick(@NotNull VoicingTemplateView view, int degree) {
+                        Timber.i("bass: " + degree);
+                        mViewModel.onBassToneClick(degree);
                     }
+
+                    @Override
+                    public void onChordToneClick(@NotNull VoicingTemplateView view, int degree) {
+                        Timber.i("cord: " + degree);
+                        mViewModel.onChordToneClick(degree);
+                    }
+
+//                    @Override
+//                    public void onClick(@NotNull VoicingTemplateView view, int degree, boolean isChordTone) {
+//                        Timber.i("d: " + degree + "; isC: " + isChordTone);
+//                        if (isChordTone) {
+//                            if (view.chordDegreeIsActive(degree)) {
+//                                mViewModel.addChordTone(degree);
+//                            }
+//                            else {
+//                                mViewModel.removeChordTone(degree);
+//                            }
+//                        }
+//                        else {
+//                            if (view.bassDegreeIsActive(degree)) {
+//                                mViewModel.addBassTone(degree);
+//                            }
+//                            else {
+//                                mViewModel.removeBassTone(degree);
+//                            }
+//                        }
+//                    }
                 },
                 new View.OnClickListener() {
                     @Override

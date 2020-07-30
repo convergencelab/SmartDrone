@@ -43,7 +43,7 @@
 
         <com.convergencelabstfx.smartdrone.views.VoicingTemplateView
             android:id="@+id/templateEditor"
-
+            app:voicingTemplate="@{item.template}"
             android:layout_width="180dp"
             android:layout_height="200dp"
             android:layout_margin="16dp"

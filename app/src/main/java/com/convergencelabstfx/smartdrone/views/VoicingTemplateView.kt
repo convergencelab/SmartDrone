@@ -76,40 +76,47 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
         constructView()
     }
 
+    // todo: make it easier to press by checking the space inbetween the tone buttons
     override fun onTouchEvent(event: MotionEvent?): Boolean {
-        var isChordTone = false
-        var touchedTone = checkChordToneTouch(event!!.x.roundToInt(), event.y.roundToInt())
-        if (touchedTone != -1) {
-            isChordTone = true
-        }
-        else {
-            touchedTone = checkBassToneTouch(event.x.roundToInt(), event.y.roundToInt())
-            if (touchedTone != -1) {
-                isChordTone = false
-            }
-        }
+        if (event?.action == MotionEvent.ACTION_UP) {
+            var touchedTone = checkChordToneTouch(event!!.x.roundToInt(), event.y.roundToInt())
 
-        if (touchedTone != -1 && event.action == MotionEvent.ACTION_UP) {
-            if (isChordTone) {
-                if (chordDegreeIsActive(touchedTone)) {
-                    deactivateChordDegree(touchedTone)
-                }
-                else {
-                    activateChordDegree(touchedTone)
+            if (touchedTone != -1) {
+                for (listener in listeners) {
+                    listener.onChordToneClick(this, touchedTone)
                 }
             }
             else {
-                if (bassDegreeIsActive(touchedTone)) {
-                    deactivateBassDegree(touchedTone)
+                touchedTone = checkBassToneTouch(event.x.roundToInt(), event.y.roundToInt())
+                if (touchedTone != -1) {
+                    for (listener in listeners) {
+                        listener.onBassToneClick(this, touchedTone)
+                    }
                 }
-                else {
-                    activateBassDegree(touchedTone)
-                }
-            }
-            for (listener in listeners) {
-                listener.onClick(this, touchedTone, isChordTone)
             }
         }
+//
+//        if (touchedTone != -1 && event.action == MotionEvent.ACTION_UP) {
+//            if (isChordTone) {
+//                if (chordDegreeIsActive(touchedTone)) {
+//                    deactivateChordDegree(touchedTone)
+//                }
+//                else {
+//                    activateChordDegree(touchedTone)
+//                }
+//            }
+//            else {
+//                if (bassDegreeIsActive(touchedTone)) {
+//                    deactivateBassDegree(touchedTone)
+//                }
+//                else {
+//                    activateBassDegree(touchedTone)
+//                }
+//            }
+//            for (listener in listeners) {
+//                listener.onClick(this, touchedTone, isChordTone)
+//            }
+//        }
         return true
     }
 
