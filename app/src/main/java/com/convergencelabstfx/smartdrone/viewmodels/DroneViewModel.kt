@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.convergencelabstfx.keyfinder.MusicTheory
 import com.convergencelabstfx.keyfinder.ParentScale
 import com.convergencelabstfx.keyfinder.Scale
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate
@@ -33,18 +32,19 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
     private val mRepository: DroneRepository
 
-    // todo: CHANGE HERE
-//    val mAllTemplates: LiveData<List<VoicingTemplateEntity>>
-
     var curTemplate: MutableLiveData<VoicingTemplate> = MutableLiveData()
-
+    var curScale = MutableLiveData<Scale>()
 
     private val mSignalProcessor = SignalProcessorKt()
     private val mNoteProcessor = NoteProcessor()
     private var mKeyPredictor: KeyPredictor? = null
     private val mChordConstructor = ChordConstructor()
+
+
     private val mMidiPlayer = MidiPlayer()
-    private val mParentScales: MutableList<ParentScale> = ArrayList()
+    private val mParentScales: List<ParentScale>
+
+
     private val mVoicingTemplates: MutableList<VoicingTemplate> = ArrayList()
     @JvmField
     var mDroneIsActive = MutableLiveData<Boolean?>()
@@ -53,11 +53,12 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     var mUndetectedNote = MutableLiveData<Int>()
     @JvmField
     var mDetectedKey = MutableLiveData<Int?>()
-    var mCurScale = MutableLiveData<Scale>()
 
     init {
         val templateDao = getDatabase(application, viewModelScope).voicingTemplateDao()
         mRepository = DroneRepository(templateDao)
+        mParentScales = mRepository.getParentScales()
+        setScale(mParentScales[mRepository.getParentScaleIx()].getScaleAt(mRepository.getModeIx()))
 //        mAllTemplates = mRepository.allTemplates
 
         testMethod_setupKeyPredictor()
@@ -118,6 +119,11 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         setVoicingTemplate(template)
     }
 
+    fun saveScaleIxs(parentIx: Int, modeIx: Int) {
+        setScale(mParentScales[parentIx].getScaleAt(modeIx))
+        mRepository.saveScaleIxs(parentIx, modeIx)
+    }
+
     val isRunning: Boolean
         get() = mDroneIsActive.value != null && mDroneIsActive.value!!
 
@@ -132,7 +138,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         get() = mVoicingTemplates
 
     fun setScale(scale: Scale) {
-        mCurScale.value = scale
+        curScale.value = scale
         // todo: update playback
         mChordConstructor.mode = scale.intervals
         if (mMidiPlayer.hasActiveNotes()) {
@@ -166,19 +172,15 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         mKeyPredictor = predictor
     }
 
-    private fun testMethod_setupVoicingTemplates() {
-
-    }
-
     private fun testMethod_setupChordConstructor() {
-        val mode: MutableList<Int> = ArrayList()
-        mode.add(0)
-        mode.add(2)
-        mode.add(3)
-        mode.add(5)
-        mode.add(7)
-        mode.add(9)
-        mode.add(10)
+//        val mode: MutableList<Int> = ArrayList()
+//        mode.add(0)
+//        mode.add(2)
+//        mode.add(3)
+//        mode.add(5)
+//        mode.add(7)
+//        mode.add(9)
+//        mode.add(10)
 //        val template = VoicingTemplate()
 //        template.addBassTone(0)
 //        template.addBassTone(4)
@@ -186,7 +188,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 //        template.addChordTone(2)
 //        template.addChordTone(4)
 //        template.addChordTone(8)
-        mChordConstructor.mode = mode
+//        mChordConstructor.mode = mode
         mChordConstructor.key = 0
         mChordConstructor.setBounds(36, 60, 48, 72)
 //        mChordConstructor.template = template
@@ -199,19 +201,19 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     private fun testMethod_setupParentScales() {
-        val majorScale = ScaleConstructor.makeParentScale(
-                "Major Scale",
-                Arrays.asList(*MusicTheory.MAJOR_SCALE_SEQUENCE),
-                Arrays.asList(*MusicTheory.MAJOR_MODE_NAMES)
-        )
-        val melodicMinor = ScaleConstructor.makeParentScale(
-                "Melodic Minor",
-                Arrays.asList(*MusicTheory.MELODIC_MINOR_SCALE_SEQUENCE),
-                Arrays.asList(*MusicTheory.MELODIC_MINOR_MODE_NAMES)
-        )
-        mParentScales.add(majorScale)
-        mParentScales.add(melodicMinor)
-        mCurScale.value = mParentScales[0].getScaleAt(0)
+//        val majorScale = ScaleConstructor.makeParentScale(
+//                "Major Scale",
+//                Arrays.asList(*MusicTheory.MAJOR_SCALE_SEQUENCE),
+//                Arrays.asList(*MusicTheory.MAJOR_MODE_NAMES)
+//        )
+//        val melodicMinor = ScaleConstructor.makeParentScale(
+//                "Melodic Minor",
+//                Arrays.asList(*MusicTheory.MELODIC_MINOR_SCALE_SEQUENCE),
+//                Arrays.asList(*MusicTheory.MELODIC_MINOR_MODE_NAMES)
+//        )
+//        mParentScales.add(majorScale)
+//        mParentScales.add(melodicMinor)
+//        mCurScale.value = mParentScales[0].getScaleAt(0)
     }
 
     // todo: gotta figure out exactly where a note index should turn into a note object

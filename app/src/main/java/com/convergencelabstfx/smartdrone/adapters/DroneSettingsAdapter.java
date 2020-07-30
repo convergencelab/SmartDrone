@@ -26,7 +26,7 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
     private static final int TYPE_TEMPLATE = 2;
 
     private VoicingTemplateView mTemplateView;
-    private SettingsItemTemplateBinding mTemplateBinding;
+    private TextView mScaleText;
 
     public DroneSettingsAdapter(Context context, ArrayList<DroneSettingsItem> settingsItems) {
         super(context, 0, settingsItems);
@@ -85,6 +85,7 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
         //       WHERE DID THE DRAWABLES GO
         binding.icon.setImageDrawable(listItem.getIcon());
         binding.icon.getDrawable().setTint(Color.BLACK);
+        mScaleText = binding.summary;
         return binding.getRoot();
     }
 
@@ -115,5 +116,7 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
         return mTemplateView;
     }
 
-
+    public TextView getScaleText() {
+        return mScaleText;
+    }
 }

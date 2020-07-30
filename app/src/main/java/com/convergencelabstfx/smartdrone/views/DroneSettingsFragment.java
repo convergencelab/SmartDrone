@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.convergencelabstfx.keyfinder.ParentScale;
+import com.convergencelabstfx.keyfinder.Scale;
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
@@ -27,8 +28,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import timber.log.Timber;
 
 /**
  * Settings:
@@ -78,6 +77,15 @@ public class DroneSettingsFragment extends Fragment {
             }
         });
 
+        mViewModel.getCurScale().observe(getViewLifecycleOwner(), new Observer<Scale>() {
+            @Override
+            public void onChanged(Scale scale) {
+                if (scale != null && mAdapter.getScaleText() != null) {
+                    mAdapter.getScaleText().setText(scale.getName());
+                }
+            }
+        });
+
 
         return mBinding.getRoot();
     }
@@ -96,7 +104,8 @@ public class DroneSettingsFragment extends Fragment {
                 "Choose the mode",
                 getResources().getDrawable(R.drawable.ic_music_note),
                 // todo: show the previously chosen index
-                view -> showParentScaleDialog(mViewModel.getParentScales())
+                view -> showParentScaleDialog(),
+                mViewModel.getCurScale()
                 );
         settingsList.add(modePicker);
 
@@ -104,36 +113,12 @@ public class DroneSettingsFragment extends Fragment {
                 new VoicingTemplateTouchListener() {
                     @Override
                     public void onBassToneClick(@NotNull VoicingTemplateView view, int degree) {
-                        Timber.i("bass: " + degree);
                         mViewModel.onBassToneClick(degree);
                     }
-
                     @Override
                     public void onChordToneClick(@NotNull VoicingTemplateView view, int degree) {
-                        Timber.i("cord: " + degree);
                         mViewModel.onChordToneClick(degree);
                     }
-
-//                    @Override
-//                    public void onClick(@NotNull VoicingTemplateView view, int degree, boolean isChordTone) {
-//                        Timber.i("d: " + degree + "; isC: " + isChordTone);
-//                        if (isChordTone) {
-//                            if (view.chordDegreeIsActive(degree)) {
-//                                mViewModel.addChordTone(degree);
-//                            }
-//                            else {
-//                                mViewModel.removeChordTone(degree);
-//                            }
-//                        }
-//                        else {
-//                            if (view.bassDegreeIsActive(degree)) {
-//                                mViewModel.addBassTone(degree);
-//                            }
-//                            else {
-//                                mViewModel.removeBassTone(degree);
-//                            }
-//                        }
-//                    }
                 },
                 new View.OnClickListener() {
                     @Override
@@ -148,45 +133,29 @@ public class DroneSettingsFragment extends Fragment {
         return new DroneSettingsAdapter(getContext(), settingsList);
     }
 
-    private void showParentScaleDialog(List<ParentScale> parentScales) {
-        final List<String> tempList = new ArrayList<>();
-        tempList.add("One");
-        tempList.add("Two");
-        tempList.add("Three");
-        tempList.add("Four");
-        CharSequence[] cs = tempList.toArray(new CharSequence[tempList.size()]);
-        final CharSequence[] charSeq = new CharSequence[parentScales.size()];
-        for (int i = 0; i <parentScales.size(); i++) {
-            charSeq[i] = parentScales.get(i).getName();
+    private void showParentScaleDialog() {
+        final List<ParentScale> parentScales = mViewModel.getParentScales();
+        final CharSequence[] scaleNames = new CharSequence[parentScales.size()];
+        for (int i = 0; i < parentScales.size(); i++) {
+            scaleNames[i] = parentScales.get(i).getName();
         }
 
-        new MaterialAlertDialogBuilder(getContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Choose Parent Scale")
-                .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                    }
-                })
-                .setSingleChoiceItems(charSeq, -1,  (dialogInterface, i) -> {
+                .setNegativeButton("Dismiss", (dialogInterface, i) -> { })
+                .setSingleChoiceItems(scaleNames, -1,  (dialogInterface, i) -> {
                     dialogInterface.dismiss();
-                    showModeDialog(parentScales.get(i));
+                    showModeDialog(parentScales.get(i), i);
                 }).show();
     }
 
-    private void showModeDialog(ParentScale parentScale) {
-        final List<String> tempList = new ArrayList<>();
-        tempList.add("Travis");
-        tempList.add("Jenna");
-        tempList.add("Seb");
-        tempList.add("Kyle");
-        CharSequence[] charSeq = new CharSequence[parentScale.numModes()];
+    private void showModeDialog(ParentScale parentScale, int ix) {
+        CharSequence[] modeNames = new CharSequence[parentScale.numModes()];
         for (int i = 0; i < parentScale.numModes(); i++) {
-            charSeq[i] = parentScale.getScaleAt(i).getName();
+            modeNames[i] = parentScale.getScaleAt(i).getName();
         }
-        CharSequence[] cs = tempList.toArray(new CharSequence[tempList.size()]);
 
-        new MaterialAlertDialogBuilder(getContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Choose Mode")
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
                     @Override
@@ -194,8 +163,9 @@ public class DroneSettingsFragment extends Fragment {
 
                     }
                 })
-                .setSingleChoiceItems(charSeq, -1,  (dialogInterface, i) -> {
-                    mViewModel.setScale(parentScale.getScaleAt(i));
+                .setSingleChoiceItems(modeNames, -1,  (dialogInterface, i) -> {
+//                    mViewModel.setScale(parentScale.getScaleAt(i));
+                    mViewModel.saveScaleIxs(ix, i);
                     dialogInterface.dismiss();
                 }).show();
     }

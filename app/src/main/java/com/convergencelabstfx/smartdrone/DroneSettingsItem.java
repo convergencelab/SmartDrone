@@ -5,6 +5,7 @@ import android.view.View;
 
 import androidx.lifecycle.LiveData;
 
+import com.convergencelabstfx.keyfinder.Scale;
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import com.convergencelabstfx.smartdrone.views.VoicingTemplateTouchListener;
 
@@ -16,12 +17,14 @@ public interface DroneSettingsItem {
         private String mSummary;
         private Drawable mIcon;
         private View.OnClickListener mListener;
+        private LiveData<Scale> mScale;
 
-        public ListItem(String title, String summary, Drawable icon, View.OnClickListener listener) {
+        public ListItem(String title, String summary, Drawable icon, View.OnClickListener listener, LiveData<Scale> scale) {
             mTitle = title;
             mSummary = summary;
             mIcon = icon;
             mListener = listener;
+            mScale = scale;
         }
 
         public String getTitle() {
@@ -40,6 +43,9 @@ public interface DroneSettingsItem {
             return mListener;
         }
 
+        public LiveData<Scale> getScale() {
+            return mScale;
+        }
     }
 
     class CheckBoxItem implements DroneSettingsItem {
