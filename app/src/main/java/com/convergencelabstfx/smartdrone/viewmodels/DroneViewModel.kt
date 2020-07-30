@@ -2,7 +2,6 @@ package com.convergencelabstfx.smartdrone.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.convergencelabstfx.keyfinder.MusicTheory
@@ -35,7 +34,9 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     private val mRepository: DroneRepository
 
     // todo: CHANGE HERE
-    val mAllTemplates: LiveData<List<VoicingTemplateEntity>>
+//    val mAllTemplates: LiveData<List<VoicingTemplateEntity>>
+
+    var curTemplate: MutableLiveData<VoicingTemplate> = MutableLiveData()
 
 
     private val mSignalProcessor = SignalProcessorKt()
@@ -57,14 +58,18 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val templateDao = getDatabase(application, viewModelScope).voicingTemplateDao()
         mRepository = DroneRepository(templateDao)
-        mAllTemplates = mRepository.allTemplates
+//        mAllTemplates = mRepository.allTemplates
 
         testMethod_setupKeyPredictor()
         testMethod_setupChordConstructor()
         testMethod_setupMidiPlayer()
         testMethod_setupParentScales()
+
 //        testMethod_setupVoicingTemplates()
+
         initPipeline()
+
+        setVoicingTemplate(mRepository.getCurTemplate())
     }
 
     fun startDrone() {
@@ -114,8 +119,9 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun setVoicingTemplate(template: VoicingTemplate?) {
+    fun setVoicingTemplate(template: VoicingTemplate) {
         mChordConstructor.template = template
+        curTemplate.value = template
         if (mMidiPlayer.hasActiveNotes()) {
             mMidiPlayer.clear()
             mMidiPlayer.playChord(mChordConstructor.makeVoicing())
@@ -151,17 +157,18 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         mode.add(7)
         mode.add(9)
         mode.add(10)
-        val template = VoicingTemplate()
-        template.addBassTone(0)
-        template.addBassTone(4)
-        template.addChordTone(1)
-        template.addChordTone(2)
-        template.addChordTone(4)
-        template.addChordTone(8)
+//        val template = VoicingTemplate()
+//        template.addBassTone(0)
+//        template.addBassTone(4)
+//        template.addChordTone(1)
+//        template.addChordTone(2)
+//        template.addChordTone(4)
+//        template.addChordTone(8)
         mChordConstructor.mode = mode
         mChordConstructor.key = 0
-        mChordConstructor.template = template
         mChordConstructor.setBounds(36, 60, 48, 72)
+//        mChordConstructor.template = template
+//        setVoicingTemplate(template)
     }
 
     private fun testMethod_setupMidiPlayer() {

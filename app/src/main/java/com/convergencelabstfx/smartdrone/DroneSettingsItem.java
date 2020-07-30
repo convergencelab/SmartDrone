@@ -3,6 +3,9 @@ package com.convergencelabstfx.smartdrone;
 import android.graphics.drawable.Drawable;
 import android.view.View;
 
+import androidx.lifecycle.LiveData;
+
+import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import com.convergencelabstfx.smartdrone.views.VoicingTemplateTouchListener;
 
 public interface DroneSettingsItem {
@@ -51,10 +54,15 @@ public interface DroneSettingsItem {
 
         VoicingTemplateTouchListener mListener;
         View.OnClickListener mHelpListener;
+        LiveData<VoicingTemplate> mTemplate;
 
-        public VoicingTemplateItem(VoicingTemplateTouchListener listener, View.OnClickListener helpListener) {
+        public VoicingTemplateItem(
+                VoicingTemplateTouchListener listener,
+                View.OnClickListener helpListener,
+                LiveData<VoicingTemplate> template) {
             mListener = listener;
             mHelpListener = helpListener;
+            mTemplate = template;
         }
 
         public VoicingTemplateTouchListener getListener() {
@@ -63,6 +71,10 @@ public interface DroneSettingsItem {
 
         public View.OnClickListener getHelpListener() {
             return mHelpListener;
+        }
+
+        public LiveData<VoicingTemplate> getTemplate() {
+            return mTemplate;
         }
 
     }

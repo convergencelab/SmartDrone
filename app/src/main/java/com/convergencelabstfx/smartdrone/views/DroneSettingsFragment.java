@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListAdapter;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -15,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.convergencelabstfx.keyfinder.ParentScale;
+import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.adapters.DroneSettingsAdapter;
@@ -50,6 +50,8 @@ public class DroneSettingsFragment extends Fragment {
 
     private FragmentDroneSettingsBinding mBinding;
 
+    private DroneSettingsAdapter mAdapter;
+
     public DroneSettingsFragment() {
         // Required empty public constructor
     }
@@ -63,23 +65,54 @@ public class DroneSettingsFragment extends Fragment {
         );
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
 
-        final ListAdapter settingsAdapter = makeSettingsAdapter();
+        mAdapter = makeSettingsAdapter();
 
-        mViewModel.getMAllTemplates().observe(getViewLifecycleOwner(), new Observer<List<VoicingTemplateEntity>>() {
+//        mViewModel.getCurTemplate().observe(getViewLifecycleOwner(), new Observer<VoicingTemplate>() {
+//            @Override
+//            public void onChanged(VoicingTemplate voicingTemplate) {
+//                for (int i = 0; i < VoicingTemplateView.NUM_CHORD_TONES; i++) {
+//                    if (voicingTemplate.getChordTones().contains(i)) {
+//                        mBinding.settingsList.getAdapter();
+//                    }
+//                }
+//            }
+//        });
+
+//        mViewModel.getMAllTemplates().observe(getViewLifecycleOwner(), new Observer<List<VoicingTemplateEntity>>() {
+//            @Override
+//            public void onChanged(List<VoicingTemplateEntity> voicingTemplateEntities) {
+//                if (voicingTemplateEntities != null && voicingTemplateEntities.size() != 0) {
+//                    mTempList = voicingTemplateEntities;
+//                }
+//            }
+//        });
+
+        mBinding.settingsList.setAdapter(mAdapter);
+
+
+
+        mViewModel.getCurTemplate().observe(getViewLifecycleOwner(), new Observer<VoicingTemplate>() {
             @Override
-            public void onChanged(List<VoicingTemplateEntity> voicingTemplateEntities) {
-                if (voicingTemplateEntities != null && voicingTemplateEntities.size() != 0) {
-                    mTempList = voicingTemplateEntities;
+            public void onChanged(VoicingTemplate voicingTemplate) {
+                VoicingTemplateView v = mAdapter.getVoicingTemplateView();
+                if (v != null) {
+                    v.clear();
+                    v.showTemplate(voicingTemplate);
                 }
             }
         });
 
-        mBinding.settingsList.setAdapter(settingsAdapter);
 
         return mBinding.getRoot();
     }
 
-    private ListAdapter makeSettingsAdapter() {
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    private DroneSettingsAdapter makeSettingsAdapter() {
         final ArrayList<DroneSettingsItem> settingsList = new ArrayList<>();
 
         DroneSettingsItem modePicker = new DroneSettingsItem.ListItem(
@@ -91,16 +124,16 @@ public class DroneSettingsFragment extends Fragment {
                 );
         settingsList.add(modePicker);
 
-        DroneSettingsItem voicingTemplatePicker = new DroneSettingsItem.ListItem(
-                "Voicing Template",
-                "Select a template",
-                getResources().getDrawable(R.drawable.ic_music_note),
-                view -> {
-//                    Timber.i("allTemps: " + mViewModel.getMAllTemplates());
-                    showVoicingTemplateDialog(mTempList);
-                }
-        );
-        settingsList.add(voicingTemplatePicker);
+//        DroneSettingsItem voicingTemplatePicker = new DroneSettingsItem.ListItem(
+//                "Voicing Template",
+//                "Select a template",
+//                getResources().getDrawable(R.drawable.ic_music_note),
+//                view -> {
+////                    Timber.i("allTemps: " + mViewModel.getMAllTemplates());
+//                    showVoicingTemplateDialog(mTempList);
+//                }
+//        );
+//        settingsList.add(voicingTemplatePicker);
 
         DroneSettingsItem voicingTemplateItem = new DroneSettingsItem.VoicingTemplateItem(
                 new VoicingTemplateTouchListener() {
@@ -114,7 +147,8 @@ public class DroneSettingsFragment extends Fragment {
                     public void onClick(View view) {
                         showTemplateEditorDialog();
                     }
-                }
+                },
+                mViewModel.getCurTemplate()
         );
         settingsList.add(voicingTemplateItem);
 

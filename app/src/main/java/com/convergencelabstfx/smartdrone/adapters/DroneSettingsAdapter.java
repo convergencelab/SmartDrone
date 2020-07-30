@@ -15,6 +15,7 @@ import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.databinding.SettingsItemListBinding;
 import com.convergencelabstfx.smartdrone.databinding.SettingsItemTemplateBinding;
+import com.convergencelabstfx.smartdrone.views.VoicingTemplateView;
 
 import java.util.ArrayList;
 
@@ -23,6 +24,9 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
     private static final int TYPE_LIST = 0;
     private static final int TYPE_CHECKBOX = 1;
     private static final int TYPE_TEMPLATE = 2;
+
+    private VoicingTemplateView mTemplateView;
+    private SettingsItemTemplateBinding mTemplateBinding;
 
     public DroneSettingsAdapter(Context context, ArrayList<DroneSettingsItem> settingsItems) {
         super(context, 0, settingsItems);
@@ -98,7 +102,17 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
                         false);
         binding.templateEditor.addListener(item.getListener());
         binding.questionMark.setOnClickListener(item.getHelpListener());
+        mTemplateView = binding.templateEditor;
+//        mTemplateBinding = binding;
+        if (item.getTemplate() != null) {
+            binding.templateEditor.clear();
+            binding.templateEditor.showTemplate(item.getTemplate().getValue());
+        }
         return binding.getRoot();
+    }
+
+    public VoicingTemplateView getVoicingTemplateView() {
+        return mTemplateView;
     }
 
 
