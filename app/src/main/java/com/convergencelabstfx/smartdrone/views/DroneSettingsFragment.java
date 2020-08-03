@@ -66,6 +66,10 @@ public class DroneSettingsFragment extends Fragment {
 
         mBinding.settingsList.setAdapter(mAdapter);
 
+        mBinding.setLifecycleOwner(getViewLifecycleOwner());
+
+
+        // todo: remove these if xml databinding will work
         mViewModel.getCurTemplate().observe(getViewLifecycleOwner(), new Observer<VoicingTemplate>() {
             @Override
             public void onChanged(VoicingTemplate voicingTemplate) {

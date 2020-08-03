@@ -7,6 +7,8 @@ import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import java.util.ArrayList;
 import java.util.List;
 
+import timber.log.Timber;
+
 public class ChordConstructor {
 
     public static int MIN_BOUND = 0;
@@ -35,7 +37,7 @@ public class ChordConstructor {
 
     public List<Integer> makeVoicing() {
         // todo: implement voicing making logic
-         if (mMode.size() == 0) {
+        if (mMode.size() == 0) {
             throw new IllegalStateException("Attempted to make voicing with empty mode.");
         }
 
@@ -44,7 +46,7 @@ public class ChordConstructor {
         voicing.addAll(constructNotes(mTemplate.getChordTones(), mChordLowerBound, mChordUpperBound));
 
         mCurVoicing = voicing;
-
+        Timber.i("chord:" + mCurVoicing.toString());
         return voicing;
     }
 
@@ -127,41 +129,15 @@ public class ChordConstructor {
             return new ArrayList<>();
         }
         final List<Integer> notes = new ArrayList<>(degrees.size());
-
-        /*
-        int octaveOffset =
-                (lowerBound + ((mMode.get(degrees.get(0) % mMode.size())
-                        + (degrees.get(0) / mMode.size()) * MusicTheory.TOTAL_NOTES) + mKey))
-                        / MusicTheory.TOTAL_NOTES;
-
-//        if (((lowerBound + ((mMode.get(degrees.get(0) % mMode.size())
-//                + (degrees.get(0) / mMode.size()) * MusicTheory.TOTAL_NOTES) + mKey))
-//                / MusicTheory.TOTAL_NOTES) != 0) {
-//            octaveOffset += 1;
-//        }
-
-         */
+        final int octaveOffset = (lowerBound - mKey) / MusicTheory.TOTAL_NOTES;
 
         for (int i = 0; i < degrees.size(); i++) {
             int note = mMode.get(degrees.get(i) % mMode.size());
             note += (degrees.get(i) / mMode.size()) * MusicTheory.TOTAL_NOTES;
             note += mKey;
+            note += octaveOffset * MusicTheory.TOTAL_NOTES;
             notes.add(note);
         }
-
-        // todo: this is done iteratively because I haven't figured out the correct math
-        //       and speed isn't really a problem here
-        boolean offsetFound = false;
-        while (!offsetFound) {
-            for (int i = 0; i < notes.size(); i++) {
-                notes.set(i, notes.get(i) + MusicTheory.TOTAL_NOTES);
-            }
-            // todo: implement the other half of this condition later
-            if (notes.get(0) >= lowerBound /* && notes.get(notes.size() - 1) <=  upperBound */) {
-                offsetFound = true;
-            }
-        }
-
         return notes;
     }
 
