@@ -197,7 +197,7 @@ public class DroneSettingsFragment extends Fragment {
             }
             strList[i] = sb.toString();
         }
-        new MaterialAlertDialogBuilder(getContext())
+        new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Title")
                 .setPositiveButton("Close", (dialogInterface, i) -> {
                     // nothing on click
@@ -206,7 +206,7 @@ public class DroneSettingsFragment extends Fragment {
                         strList,
                         -1,
                         (dialogInterface, i) -> {
-                            mViewModel.setVoicingTemplate(templates.get(i).getTemplate());
+                            mViewModel.setVoicingTemplate(templates.get(i).getTemplate(), true);
                         })
                 .show();
     }

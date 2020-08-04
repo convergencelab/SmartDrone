@@ -5,6 +5,7 @@ import com.convergencelabstfx.keyfinder.MusicTheory
 import com.convergencelabstfx.keyfinder.ParentScale
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate
 import com.convergencelabstfx.smartdrone.models.ScaleConstructor
+import com.convergencelabstfx.smartdrone.models.VoicingBounds
 
 class DroneRepository(private val voicingTemplateDao: VoicingTemplateDao) {
 
@@ -62,6 +63,9 @@ class DroneRepository(private val voicingTemplateDao: VoicingTemplateDao) {
         return list
     }
 
+    fun getVoicingBounds(): VoicingBounds {
+        return VoicingBounds(36, 60, 48, 84)
+    }
 
     // todo: delete
 

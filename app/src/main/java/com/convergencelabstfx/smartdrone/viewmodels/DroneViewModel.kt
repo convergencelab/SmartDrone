@@ -59,8 +59,9 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         mRepository = DroneRepository(templateDao)
         mParentScales = mRepository.getParentScales()
         setScale(mParentScales[mRepository.getParentScaleIx()].getScaleAt(mRepository.getModeIx()))
-//        mAllTemplates = mRepository.allTemplates
-
+        mChordConstructor.key = 0
+        mChordConstructor.bounds = mRepository.getVoicingBounds()
+        
         testMethod_setupKeyPredictor()
         testMethod_setupChordConstructor()
         testMethod_setupMidiPlayer()
@@ -105,7 +106,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         else {
             template.addBassTone(degree)
         }
-        setVoicingTemplate(template)
+        setVoicingTemplate(template, false)
     }
 
     fun onChordToneClick(degree: Int) {
@@ -116,7 +117,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         else {
             template.addChordTone(degree)
         }
-        setVoicingTemplate(template)
+        setVoicingTemplate(template, false)
     }
 
     fun saveScaleIxs(parentIx: Int, modeIx: Int) {
@@ -147,12 +148,15 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun setVoicingTemplate(template: VoicingTemplate) {
+    fun setVoicingTemplate(template: VoicingTemplate, restartPlayback: Boolean = true) {
         mChordConstructor.template = template
+        mChordConstructor.makeVoicing()
         curTemplate.value = template
         if (isRunning) {
-            mMidiPlayer.clear()
-            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+//            if (restartPlayback) {
+                mMidiPlayer.clear()
+                mMidiPlayer.playChord(mChordConstructor.curVoicing)
+//            }
         }
     }
 
@@ -189,8 +193,8 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 //        template.addChordTone(4)
 //        template.addChordTone(8)
 //        mChordConstructor.mode = mode
-        mChordConstructor.key = 0
-        mChordConstructor.setBounds(36, 60, 48, 72)
+
+//        mChordConstructor.setBounds(36, 60, 48, 72)
 //        mChordConstructor.template = template
 //        setVoicingTemplate(template)
     }

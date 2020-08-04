@@ -21,13 +21,7 @@ public class ChordConstructor {
 
     private int mKey = -1;
 
-    private int mBassLowerBound = -1;
-
-    private int mBassUpperBound = -1;
-
-    private int mChordLowerBound = -1;
-
-    private int mChordUpperBound = -1;
+    private VoicingBounds mBounds = null;
 
     private VoicingTemplate mTemplate = null;
 
@@ -42,8 +36,8 @@ public class ChordConstructor {
         }
 
         final List<Integer> voicing = new ArrayList<>(mTemplate.size());
-        voicing.addAll(constructNotes(mTemplate.getBassTones(), mBassLowerBound, mBassUpperBound));
-        voicing.addAll(constructNotes(mTemplate.getChordTones(), mChordLowerBound, mChordUpperBound));
+        voicing.addAll(constructNotes(mTemplate.getBassTones(), mBounds.getBassLower(), mBounds.getBassUpper()));
+        voicing.addAll(constructNotes(mTemplate.getChordTones(), mBounds.getChordLower(), mBounds.getChordUpper()));
 
         mCurVoicing = voicing;
         Timber.i("chord:" + mCurVoicing.toString());
@@ -81,47 +75,12 @@ public class ChordConstructor {
         mTemplate = template;
     }
 
-    public void setBounds(
-            int bassLowerBound,
-            int bassUpperBound,
-            int chordLowerBound,
-            int chordUpperBound) {
-        mBassLowerBound = bassLowerBound;
-        mBassUpperBound = bassUpperBound;
-        mChordLowerBound = chordLowerBound;
-        mChordUpperBound = chordUpperBound;
+    public void setBounds(VoicingBounds bounds) {
+        mBounds = bounds;
     }
 
-    public int getBassLowerBound() {
-        return mBassLowerBound;
-    }
-
-    public void setBassLowerBound(int bassLowerBound) {
-        mBassLowerBound = bassLowerBound;
-    }
-
-    public int getBassUpperBound() {
-        return mBassUpperBound;
-    }
-
-    public void setBassUpperBound(int bassUpperBound) {
-        mBassUpperBound = bassUpperBound;
-    }
-
-    public int getChordLowerBound() {
-        return mChordLowerBound;
-    }
-
-    public void setChordLowerBound(int chordLowerBound) {
-        mChordLowerBound = chordLowerBound;
-    }
-
-    public int getChordUpperBound() {
-        return mChordUpperBound;
-    }
-
-    public void setChordUpperBound(int chordUpperBound) {
-        mChordUpperBound = chordUpperBound;
+    public VoicingBounds getBounds() {
+        return mBounds;
     }
 
     private List<Integer> constructNotes(List<Integer> degrees, int lowerBound, int upperBound) {
@@ -129,7 +88,7 @@ public class ChordConstructor {
             return new ArrayList<>();
         }
         final List<Integer> notes = new ArrayList<>(degrees.size());
-        final int octaveOffset = (lowerBound - mKey) / MusicTheory.TOTAL_NOTES;
+        int octaveOffset = (int) Math.ceil( ((double) (lowerBound - mKey)) / ((double) MusicTheory.TOTAL_NOTES) );
 
         for (int i = 0; i < degrees.size(); i++) {
             int note = mMode.get(degrees.get(i) % mMode.size());
