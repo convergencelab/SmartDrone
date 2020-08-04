@@ -6,9 +6,13 @@ import java.util.List;
 
 public abstract class KeyPredictor {
 
+    public static final int TYPE_PHRASE_PREDICTOR = 0;
+    public static final int TYPE_ANL_PREDICTOR = 1;
+
+    public static final int DEFAULT_NOTE_EXPIRATION_LENGTH = 3000;
+
     // todo: i'm not totally sold on noteExpiration being a part of this class
-    // todo: hardcoded, for now
-    private int noteExpirationLength = 3000;
+    private int noteExpirationLength = DEFAULT_NOTE_EXPIRATION_LENGTH;
 
     final private List<KeyPredictorListener> listeners = new ArrayList<>();
 

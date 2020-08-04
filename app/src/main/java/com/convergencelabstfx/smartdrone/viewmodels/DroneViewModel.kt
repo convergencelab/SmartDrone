@@ -57,17 +57,15 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     init {
         val templateDao = getDatabase(application, viewModelScope).voicingTemplateDao()
         mRepository = DroneRepository(templateDao)
+
         mParentScales = mRepository.getParentScales()
         setScale(mParentScales[mRepository.getParentScaleIx()].getScaleAt(mRepository.getModeIx()))
-        mChordConstructor.key = 0
         mChordConstructor.bounds = mRepository.getVoicingBounds()
-        
+
         testMethod_setupKeyPredictor()
         testMethod_setupChordConstructor()
         testMethod_setupMidiPlayer()
         testMethod_setupParentScales()
-
-//        testMethod_setupVoicingTemplates()
 
         initPipeline()
 
@@ -150,9 +148,9 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setVoicingTemplate(template: VoicingTemplate, restartPlayback: Boolean = true) {
         mChordConstructor.template = template
-        mChordConstructor.makeVoicing()
         curTemplate.value = template
         if (isRunning) {
+            mChordConstructor.makeVoicing()
 //            if (restartPlayback) {
                 mMidiPlayer.clear()
                 mMidiPlayer.playChord(mChordConstructor.curVoicing)

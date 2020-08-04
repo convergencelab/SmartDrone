@@ -46,6 +46,7 @@ class DroneRepository(private val voicingTemplateDao: VoicingTemplateDao) {
         return 0;
     }
 
+    // todo: consider putting this on another thread
     fun getParentScales() : List<ParentScale> {
         val list = ArrayList<ParentScale>()
         val majorScale = ScaleConstructor.makeParentScale(
@@ -58,8 +59,20 @@ class DroneRepository(private val voicingTemplateDao: VoicingTemplateDao) {
                 listOf(*MusicTheory.MELODIC_MINOR_SCALE_SEQUENCE),
                 listOf(*MusicTheory.MELODIC_MINOR_MODE_NAMES)
         )
+        val harmonicMinor = ScaleConstructor.makeParentScale(
+                "Harmonic Minor",
+                listOf(*MusicTheory.HARMONIC_MINOR_SCALE_SEQUENCE),
+                listOf(*MusicTheory.HARMONIC_MINOR_MODE_NAMES)
+        )
+        val harmonicMajor = ScaleConstructor.makeParentScale(
+                "Harmonic Major",
+                listOf(*MusicTheory.HARMONIC_MAJOR_SCALE_SEQUENCE),
+                listOf(*MusicTheory.HARMONIC_MAJOR_MODE_NAMES)
+        )
         list.add(majorScale)
         list.add(melodicMinor)
+        list.add(harmonicMinor)
+        list.add(harmonicMajor)
         return list
     }
 

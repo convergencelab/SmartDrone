@@ -40,7 +40,10 @@ public class MusicTheory {
      * Intervals pertaining to harmonic minor scale.
      * Indices represent semitones away from root.
      */
-    public final static int[] HARMONIC_MINOR_SCALE_SEQUENCE = { 0, 2, 3, 5, 7, 8, 11 };
+    public final static Integer[] HARMONIC_MINOR_SCALE_SEQUENCE = { 0, 2, 3, 5, 7, 8, 11 };
+
+    public final static Integer[] HARMONIC_MAJOR_SCALE_SEQUENCE = { 0, 2, 4, 5, 7, 8, 11 };
+
 
     /**
      * Intervals that make up the Phrygian scale.
@@ -150,6 +153,16 @@ public class MusicTheory {
             "Phrygian Dominant",
             "Lydian " + SHARP + '9',
             "Altered Diminished"
+    };
+
+    public final static String[] HARMONIC_MAJOR_MODE_NAMES = {
+            "Harmonic Major",
+            "Dorian " + FLAT + '5',
+            "Phrygian " + FLAT + '4',
+            "Lydian " + FLAT + '3',
+            "Mixolydian " + FLAT + '2',
+            "Lydian Augmented" + SHARP + '2',
+            "Locrian" + FLAT + FLAT + '7'
     };
 
     /**
