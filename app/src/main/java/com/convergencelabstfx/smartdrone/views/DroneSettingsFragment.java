@@ -168,7 +168,6 @@ public class DroneSettingsFragment extends Fragment {
                     }
                 })
                 .setSingleChoiceItems(modeNames, -1,  (dialogInterface, i) -> {
-//                    mViewModel.setScale(parentScale.getScaleAt(i));
                     mViewModel.saveScaleIxs(ix, i);
                     dialogInterface.dismiss();
                 }).show();

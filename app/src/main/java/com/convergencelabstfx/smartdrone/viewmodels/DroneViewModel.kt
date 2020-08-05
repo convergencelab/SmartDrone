@@ -1,6 +1,7 @@
 package com.convergencelabstfx.smartdrone.viewmodels
 
 import android.app.Application
+import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
@@ -10,6 +11,7 @@ import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor
 import com.convergencelabstfx.keyfinder.keypredictor.Phrase
 import com.convergencelabstfx.keyfinder.keypredictor.PhrasePredictor
+import com.convergencelabstfx.smartdrone.R
 import com.convergencelabstfx.smartdrone.database.DroneDatabase.Companion.getDatabase
 import com.convergencelabstfx.smartdrone.database.DroneRepository
 import com.convergencelabstfx.smartdrone.database.VoicingTemplateEntity
@@ -30,7 +32,7 @@ import java.util.*
 // todo: clean up the java-isms; and clean up the MutableLiveData
 class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val mRepository: DroneRepository
+    private val repository: DroneRepository
 
     var curTemplate: MutableLiveData<VoicingTemplate> = MutableLiveData()
     var curScale = MutableLiveData<Scale>()
@@ -56,11 +58,13 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
     init {
         val templateDao = getDatabase(application, viewModelScope).voicingTemplateDao()
-        mRepository = DroneRepository(templateDao)
+        val resources = application.resources
+        val sharedPreferences = application.getSharedPreferences(resources.getString(R.string.file_key), Context.MODE_PRIVATE)
+        repository = DroneRepository(templateDao, sharedPreferences, resources)
 
-        mParentScales = mRepository.getParentScales()
-        setScale(mParentScales[mRepository.getParentScaleIx()].getScaleAt(mRepository.getModeIx()))
-        mChordConstructor.bounds = mRepository.getVoicingBounds()
+        mParentScales = repository.getParentScales()
+        setScale(mParentScales[repository.getParentScaleIx()].getScaleAt(repository.getModeIx()))
+        mChordConstructor.bounds = repository.getVoicingBounds()
 
         testMethod_setupKeyPredictor()
         testMethod_setupChordConstructor()
@@ -69,7 +73,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
         initPipeline()
 
-        setVoicingTemplate(mRepository.getCurTemplate())
+        setVoicingTemplate(repository.getCurTemplate())
     }
 
     fun startDrone() {
@@ -120,7 +124,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
     fun saveScaleIxs(parentIx: Int, modeIx: Int) {
         setScale(mParentScales[parentIx].getScaleAt(modeIx))
-        mRepository.saveScaleIxs(parentIx, modeIx)
+        repository.saveScaleIxs(parentIx, modeIx)
     }
 
     val isRunning: Boolean
@@ -160,7 +164,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
     fun insertVoicingTemplate(template: VoicingTemplate?) = viewModelScope.launch {
         val templateEntity = VoicingTemplateEntity(template!!)
-        mRepository.insert(templateEntity)
+        repository.insert(templateEntity)
     }
 
     // todo: just a method for development purposes; should delete later
