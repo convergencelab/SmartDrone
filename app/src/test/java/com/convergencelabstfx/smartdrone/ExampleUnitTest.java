@@ -1,17 +1,12 @@
 package com.convergencelabstfx.smartdrone;
 
-import com.convergencelabstfx.keyfinder.MusicTheory;
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
-import com.convergencelabstfx.smartdrone.models.ChordConstructor;
+import com.convergencelabstfx.smartdrone.models.VoicingConstructor;
 
 import org.junit.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
-
-import static org.junit.Assert.*;
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -22,7 +17,7 @@ public class ExampleUnitTest {
 
     @Test
     public void chordConstructor() {
-        final ChordConstructor chordConstructor = new ChordConstructor();
+        final VoicingConstructor voicingConstructor = new VoicingConstructor();
         final List<Integer> mode = new ArrayList<>();
         mode.add(0);
         mode.add(2);
@@ -42,10 +37,10 @@ public class ExampleUnitTest {
         template.addChordTone(4);
         template.addChordTone(8);
 
-        chordConstructor.setMode(mode);
-        chordConstructor.setKey(0);
-        chordConstructor.setTemplate(template);
-        chordConstructor.setBounds(36, 60, 51, 72);
+        voicingConstructor.setMode(mode);
+        voicingConstructor.setKey(0);
+        voicingConstructor.setTemplate(template);
+        voicingConstructor.setBounds(36, 60, 51, 72);
 
 
 
@@ -53,6 +48,6 @@ public class ExampleUnitTest {
 //        for (Integer note : chordConstructor.makeVoicing()) {
 //            str += note + ", ";
 //        }
-        System.out.println(chordConstructor.makeVoicing());
+        System.out.println(voicingConstructor.makeVoicing());
     }
 }

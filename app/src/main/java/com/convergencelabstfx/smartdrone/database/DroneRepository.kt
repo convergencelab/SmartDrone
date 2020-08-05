@@ -6,7 +6,11 @@ import androidx.lifecycle.LiveData
 import com.convergencelabstfx.keyfinder.MusicTheory
 import com.convergencelabstfx.keyfinder.ParentScale
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate
+import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor
+import com.convergencelabstfx.keyfinder.keypredictor.Phrase
+import com.convergencelabstfx.keyfinder.keypredictor.PhrasePredictor
 import com.convergencelabstfx.smartdrone.R
+import com.convergencelabstfx.smartdrone.models.ChordConstructor
 import com.convergencelabstfx.smartdrone.models.ScaleConstructor
 import com.convergencelabstfx.smartdrone.models.VoicingBounds
 import com.convergencelabstfx.smartdrone.stringToVoicingTemplate
@@ -89,11 +93,45 @@ class DroneRepository(
     }
 
     fun saveVoicingBounds(bounds: VoicingBounds) {
-
+        // todo:
     }
 
     fun getVoicingBounds(): VoicingBounds {
         return VoicingBounds(36, 60, 48, 84)
+    }
+
+    fun saveMidiPlugin(ix: Int) {
+        // todo:
+    }
+
+    fun getMidiPlugin() : Int {
+        return sharedPreferences.getInt(resources.getString(R.string.midi_plugin_key), 48)
+    }
+
+    fun saveKeyPredictor(predictor: KeyPredictor) {
+        // todo
+    }
+
+    // todo
+    fun getKeyPredictor() : KeyPredictor {
+        val mOctavePhrase = Phrase()
+        mOctavePhrase.addNote(0)
+        mOctavePhrase.addNote(12)
+        val predictor = PhrasePredictor()
+        predictor.targetPhrase = mOctavePhrase
+        return predictor
+    }
+
+    fun saveChordConstructorType(type: ChordConstructor) {
+        with (sharedPreferences.edit()) {
+            putInt(resources.getString(R.string.parent_ix_key), type.ordinal)
+            commit()
+        }
+    }
+
+    fun getChordConstructorType() : ChordConstructor {
+        val ordinal = sharedPreferences.getInt(resources.getString(R.string.key_predictor_key), 0)
+        return ChordConstructor.values()[ordinal]
     }
 
 }

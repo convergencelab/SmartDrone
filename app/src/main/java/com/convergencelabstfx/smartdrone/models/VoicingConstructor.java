@@ -9,7 +9,7 @@ import java.util.List;
 
 import timber.log.Timber;
 
-public class ChordConstructor {
+public class VoicingConstructor {
 
     public static int MIN_BOUND = 0;
 
@@ -25,7 +25,7 @@ public class ChordConstructor {
 
     private VoicingTemplate mTemplate = null;
 
-    public ChordConstructor() {
+    public VoicingConstructor() {
 
     }
 

@@ -9,8 +9,6 @@ import com.convergencelabstfx.keyfinder.ParentScale
 import com.convergencelabstfx.keyfinder.Scale
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate
 import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor
-import com.convergencelabstfx.keyfinder.keypredictor.Phrase
-import com.convergencelabstfx.keyfinder.keypredictor.PhrasePredictor
 import com.convergencelabstfx.smartdrone.R
 import com.convergencelabstfx.smartdrone.database.DroneDatabase.Companion.getDatabase
 import com.convergencelabstfx.smartdrone.database.DroneRepository
@@ -37,13 +35,13 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     var curTemplate: MutableLiveData<VoicingTemplate> = MutableLiveData()
     var curScale = MutableLiveData<Scale>()
 
-    private val mSignalProcessor = SignalProcessorKt()
-    private val mNoteProcessor = NoteProcessor()
-    private var mKeyPredictor: KeyPredictor? = null
-    private val mChordConstructor = ChordConstructor()
+    private val signalProcessor = SignalProcessorKt()
+    private val noteProcessor = NoteProcessor()
+    private val chordConstructor = VoicingConstructor()
+    private var keyPredictor: KeyPredictor
 
 
-    private val mMidiPlayer = MidiPlayer()
+    private val midiPlayer = MidiPlayer()
     private val mParentScales: List<ParentScale>
 
 
@@ -64,28 +62,25 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
         mParentScales = repository.getParentScales()
         setScale(mParentScales[repository.getParentScaleIx()].getScaleAt(repository.getModeIx()))
-        mChordConstructor.bounds = repository.getVoicingBounds()
-
-        testMethod_setupKeyPredictor()
-        testMethod_setupChordConstructor()
-        testMethod_setupMidiPlayer()
-        testMethod_setupParentScales()
+        chordConstructor.bounds = repository.getVoicingBounds()
+        midiPlayer.plugin = repository.getMidiPlugin()
+        keyPredictor = repository.getKeyPredictor()
+        setVoicingTemplate(repository.getCurTemplate())
 
         initPipeline()
 
-        setVoicingTemplate(repository.getCurTemplate())
     }
 
     fun startDrone() {
-        mSignalProcessor.start()
-        mMidiPlayer.start()
+        signalProcessor.start()
+        midiPlayer.start()
         mDetectedKey.value = -1
         mDroneIsActive.value = true
     }
 
     fun stopDrone() {
-        mSignalProcessor.stop()
-        mMidiPlayer.stop()
+        signalProcessor.stop()
+        midiPlayer.stop()
         mDetectedNote.value = -1
         mDetectedKey.value = -1
         mDroneIsActive.value = false
@@ -93,10 +88,10 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
     fun setKeyChange(key: Int) {
         if (isRunning && mDetectedKey.value != null && key != mDetectedKey.value) {
-            mChordConstructor.key = key
+            chordConstructor.key = key
             mDetectedKey.value = key
-            mMidiPlayer.clear()
-            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+            midiPlayer.clear()
+            midiPlayer.playChord(chordConstructor.makeVoicing())
         }
     }
 
@@ -143,22 +138,22 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     fun setScale(scale: Scale) {
         curScale.value = scale
         // todo: update playback
-        mChordConstructor.mode = scale.intervals
-        if (mMidiPlayer.hasActiveNotes()) {
-            mMidiPlayer.clear()
-            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+        chordConstructor.mode = scale.intervals
+        if (midiPlayer.hasActiveNotes()) {
+            midiPlayer.clear()
+            midiPlayer.playChord(chordConstructor.makeVoicing())
         }
     }
 
     fun setVoicingTemplate(template: VoicingTemplate, restartPlayback: Boolean = true) {
-        mChordConstructor.template = template
+        chordConstructor.template = template
         curTemplate.value = template
         repository.saveCurTemplate(template)
         if (isRunning) {
-            mChordConstructor.makeVoicing()
+            chordConstructor.makeVoicing()
 //            if (restartPlayback) {
-                mMidiPlayer.clear()
-                mMidiPlayer.playChord(mChordConstructor.curVoicing)
+                midiPlayer.clear()
+                midiPlayer.playChord(chordConstructor.curVoicing)
 //            }
         }
     }
@@ -168,86 +163,31 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         repository.insert(templateEntity)
     }
 
-    // todo: just a method for development purposes; should delete later
-    private fun testMethod_setupKeyPredictor() {
-        // todo: find a better place for this eventually
-        val mOctavePhrase = Phrase()
-        mOctavePhrase.addNote(0)
-        mOctavePhrase.addNote(12)
-        val predictor = PhrasePredictor()
-        predictor.targetPhrase = mOctavePhrase
-        mKeyPredictor = predictor
-    }
-
-    private fun testMethod_setupChordConstructor() {
-//        val mode: MutableList<Int> = ArrayList()
-//        mode.add(0)
-//        mode.add(2)
-//        mode.add(3)
-//        mode.add(5)
-//        mode.add(7)
-//        mode.add(9)
-//        mode.add(10)
-//        val template = VoicingTemplate()
-//        template.addBassTone(0)
-//        template.addBassTone(4)
-//        template.addChordTone(1)
-//        template.addChordTone(2)
-//        template.addChordTone(4)
-//        template.addChordTone(8)
-//        mChordConstructor.mode = mode
-
-//        mChordConstructor.setBounds(36, 60, 48, 72)
-//        mChordConstructor.template = template
-//        setVoicingTemplate(template)
-    }
-
-    private fun testMethod_setupMidiPlayer() {
-        // todo: yeah it's hardcoded for now
-        mMidiPlayer.plugin = 48
-    }
-
-    private fun testMethod_setupParentScales() {
-//        val majorScale = ScaleConstructor.makeParentScale(
-//                "Major Scale",
-//                Arrays.asList(*MusicTheory.MAJOR_SCALE_SEQUENCE),
-//                Arrays.asList(*MusicTheory.MAJOR_MODE_NAMES)
-//        )
-//        val melodicMinor = ScaleConstructor.makeParentScale(
-//                "Melodic Minor",
-//                Arrays.asList(*MusicTheory.MELODIC_MINOR_SCALE_SEQUENCE),
-//                Arrays.asList(*MusicTheory.MELODIC_MINOR_MODE_NAMES)
-//        )
-//        mParentScales.add(majorScale)
-//        mParentScales.add(melodicMinor)
-//        mCurScale.value = mParentScales[0].getScaleAt(0)
-    }
-
     // todo: gotta figure out exactly where a note index should turn into a note object
     // todo: make consist naming (observer/listener, notify/handle, onKeyPrediction etc...)
     private fun initPipeline() {
-        mSignalProcessor.addPitchListener(SignalProcessorObserver { pitch, probability, isPitched ->
+        signalProcessor.addPitchListener(SignalProcessorObserver { pitch, probability, isPitched ->
             mDetectedNote.value = pitch
-            mNoteProcessor.onPitchDetected(pitch, probability, isPitched)
+            noteProcessor.onPitchDetected(pitch, probability, isPitched)
         })
-        mNoteProcessor.addNoteProcessorListener(object : NoteProcessorObserver {
+        noteProcessor.addNoteProcessorListener(object : NoteProcessorObserver {
             override fun notifyNoteDetected(note: Int) {
                 Timber.i("Detected: $note")
-                mKeyPredictor!!.noteDetected(note)
+                keyPredictor!!.noteDetected(note)
             }
 
             override fun notifyNoteUndetected(note: Int) {
-                mKeyPredictor!!.noteUndetected(note)
+                keyPredictor!!.noteUndetected(note)
                 //                mUndetectedNote.setValue(note);
             }
         })
-        mKeyPredictor!!.addListener { newKey ->
+        keyPredictor!!.addListener { newKey ->
             Timber.i("key: %s", newKey)
-            mChordConstructor.key = newKey
+            chordConstructor.key = newKey
             mDetectedKey.value = newKey
             // todo: implement
-            mMidiPlayer.clear()
-            mMidiPlayer.playChord(mChordConstructor.makeVoicing())
+            midiPlayer.clear()
+            midiPlayer.playChord(chordConstructor.makeVoicing())
             Timber.i("newKey: %s", newKey)
         }
     }
