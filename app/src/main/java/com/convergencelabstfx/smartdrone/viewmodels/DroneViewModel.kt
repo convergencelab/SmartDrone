@@ -153,6 +153,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     fun setVoicingTemplate(template: VoicingTemplate, restartPlayback: Boolean = true) {
         mChordConstructor.template = template
         curTemplate.value = template
+        repository.saveCurTemplate(template)
         if (isRunning) {
             mChordConstructor.makeVoicing()
 //            if (restartPlayback) {

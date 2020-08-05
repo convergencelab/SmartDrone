@@ -4,4 +4,8 @@
 
     <string name="parent_ix_key">parentIx</string>
     <string name="mode_ix_key">modeIx</string>
+
+    <string name="voicing_template_key">templateKey</string>
+    <string name="default_voicing_template">b0c0,4,9</string>
+
 </resources>

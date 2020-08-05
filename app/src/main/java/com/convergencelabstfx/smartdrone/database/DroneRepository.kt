@@ -9,6 +9,8 @@ import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate
 import com.convergencelabstfx.smartdrone.R
 import com.convergencelabstfx.smartdrone.models.ScaleConstructor
 import com.convergencelabstfx.smartdrone.models.VoicingBounds
+import com.convergencelabstfx.smartdrone.stringToVoicingTemplate
+import com.convergencelabstfx.smartdrone.voicingTemplateToString
 
 class DroneRepository(
         private val voicingTemplateDao: VoicingTemplateDao,
@@ -25,17 +27,19 @@ class DroneRepository(
         voicingTemplateDao.insertTemplate(template)
     }
 
-    fun getCurTemplate(): VoicingTemplate {
-        val template = VoicingTemplate()
-        template.addBassTone(0)
-        template.addChordTone(0)
-        template.addChordTone(4)
-        template.addChordTone(9)
-        return template
+    fun saveCurTemplate(template: VoicingTemplate) {
+        with (sharedPreferences.edit()) {
+            putString(resources.getString(R.string.voicing_template_key), voicingTemplateToString(template))
+            commit()
+        }
     }
 
-    fun saveCurTemplate() {
-        // todo: implement
+    fun getCurTemplate(): VoicingTemplate {
+        val templateStr = sharedPreferences.getString(
+                resources.getString(R.string.voicing_template_key),
+                resources.getString(R.string.default_voicing_template)
+        )
+        return stringToVoicingTemplate(templateStr!!)
     }
 
     fun saveScaleIxs(parent: Int, mode: Int) {
@@ -46,7 +50,6 @@ class DroneRepository(
         }
     }
 
-    //todo: implement these
     fun getParentScaleIx() : Int {
         return sharedPreferences.getInt(resources.getString(R.string.parent_ix_key), 0)
     }
@@ -57,7 +60,6 @@ class DroneRepository(
 
     // todo: consider putting this on another thread
     fun getParentScales() : List<ParentScale> {
-        
         val list = ArrayList<ParentScale>()
         val majorScale = ScaleConstructor.makeParentScale(
                 "Major Scale",
@@ -86,13 +88,12 @@ class DroneRepository(
         return list
     }
 
+    fun saveVoicingBounds(bounds: VoicingBounds) {
+
+    }
+
     fun getVoicingBounds(): VoicingBounds {
         return VoicingBounds(36, 60, 48, 84)
     }
-
-    // todo: delete
-
-
-    // todo: update
 
 }

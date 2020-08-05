@@ -2,7 +2,6 @@ package com.convergencelabstfx.smartdrone.database
 
 import androidx.room.TypeConverter
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate
-import timber.log.Timber
 
 class Converters {
 
@@ -11,7 +10,6 @@ class Converters {
         val sb = StringBuilder()
         sb.append(template.bassTones.joinToString(prefix = "b", separator = ","))
         sb.append(template.chordTones.joinToString(prefix = "c", separator = ","))
-        Timber.i(template.toString())
         return sb.toString()
     }
 
@@ -25,7 +23,6 @@ class Converters {
         val template = VoicingTemplate()
         template.bassTones = bassTones
         template.chordTones = chordTones
-        Timber.i(string)
         return template
     }
 
