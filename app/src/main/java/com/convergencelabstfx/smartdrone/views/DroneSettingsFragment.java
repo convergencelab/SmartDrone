@@ -7,9 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.arch.core.util.Function;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
+import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -109,9 +111,23 @@ public class DroneSettingsFragment extends Fragment {
                 getResources().getDrawable(R.drawable.ic_music_note),
                 // todo: show the previously chosen index
                 view -> showParentScaleDialog(),
-                mViewModel.getCurScale()
+                Transformations.map(mViewModel.getCurScale(), new Function<Scale, String>() {
+                    @Override
+                    public String apply(Scale input) {
+                        return input.getName();
+                    }
+                })
                 );
         settingsList.add(modePicker);
+
+//        DroneSettingsItem chordConstructorPicker = new DroneSettingsItem.ListItem(
+//                "Chord Constructor",
+//                "Choose the chord constructor",
+//                null,
+//                view -> showChordConstructorDialog(),
+//
+//        );
+//        settingsList.add(chordConstructorPicker);
 
         DroneSettingsItem voicingTemplateItem = new DroneSettingsItem.VoicingTemplateItem(
                 new VoicingTemplateTouchListener() {

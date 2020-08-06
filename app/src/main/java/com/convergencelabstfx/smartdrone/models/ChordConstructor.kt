@@ -1,6 +1,6 @@
 package com.convergencelabstfx.smartdrone.models
 
-enum class ChordConstructor {
-    VOICING_CONSTRUCTOR,
-    PITCH_CONSTRUCTOR
+enum class ChordConstructor(val str: String) {
+    VOICING_CONSTRUCTOR("Voicing Constructor"),
+    PITCH_CONSTRUCTOR("Pitch Constructor")
 }

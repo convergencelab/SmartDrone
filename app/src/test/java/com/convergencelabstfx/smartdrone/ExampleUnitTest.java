@@ -40,7 +40,7 @@ public class ExampleUnitTest {
         voicingConstructor.setMode(mode);
         voicingConstructor.setKey(0);
         voicingConstructor.setTemplate(template);
-        voicingConstructor.setBounds(36, 60, 51, 72);
+//        voicingConstructor.setBounds(36, 60, 51, 72);
 
 
 

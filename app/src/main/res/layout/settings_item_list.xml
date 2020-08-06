@@ -39,7 +39,7 @@
             android:layout_height="20dp"
             android:layout_marginStart="16dp"
             android:gravity="bottom"
-            android:text="@{item.scale.name}"
+            android:text="@{item.liveSummary}"
             android:textSize="15sp"
             app:layout_constraintLeft_toRightOf="@id/icon"
             app:layout_constraintTop_toBottomOf="@id/title"

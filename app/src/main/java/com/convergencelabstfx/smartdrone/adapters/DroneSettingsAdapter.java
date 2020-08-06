@@ -119,4 +119,5 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
     public TextView getScaleText() {
         return mScaleText;
     }
+
 }
