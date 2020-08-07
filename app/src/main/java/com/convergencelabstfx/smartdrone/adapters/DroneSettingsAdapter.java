@@ -72,7 +72,6 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
     }
 
     private View makeListItem(DroneSettingsItem.ListItem listItem, ViewGroup container) {
-//        final SettingsItemListBinding binding = LayoutInflater.from(getContext()).inflate(R.layout.settings_item_list, null);
         final SettingsItemListBinding binding =
                 DataBindingUtil.inflate(
                         LayoutInflater.from(getContext()),
@@ -105,10 +104,6 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
         binding.questionMark.setOnClickListener(item.getHelpListener());
         mTemplateView = binding.templateEditor;
         binding.setItem(item);
-//        if (item.getTemplate() != null) {
-//            binding.templateEditor.clear();
-//            binding.templateEditor.showTemplate(item.getTemplate().getValue());
-//        }
         return binding.getRoot();
     }
 

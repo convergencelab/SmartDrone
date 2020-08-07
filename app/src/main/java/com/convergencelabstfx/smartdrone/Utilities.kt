@@ -1,6 +1,5 @@
 package com.convergencelabstfx.smartdrone
 
-import androidx.room.TypeConverter
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate
 
 fun voicingTemplateToString(template: VoicingTemplate): String {

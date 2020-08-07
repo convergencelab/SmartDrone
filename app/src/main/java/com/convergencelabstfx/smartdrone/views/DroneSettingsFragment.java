@@ -33,15 +33,14 @@ import java.util.List;
 
 /**
  * Settings:
- *     .) KeyDetector (activeNoteList, phraseDetector)
- *         - List
- *     .) if (activeNoteList) -> Mode
- *         - List (parent scale) -> List (mode)
- *     .) Change Keys on Piano Touch
- *         - checkbox
- *     .) Template List
- *         - List; last option takes to template creator fragment
- *
+ * .) KeyDetector (activeNoteList, phraseDetector)
+ * - List
+ * .) if (activeNoteList) -> Mode
+ * - List (parent scale) -> List (mode)
+ * .) Change Keys on Piano Touch
+ * - checkbox
+ * .) Template List
+ * - List; last option takes to template creator fragment
  */
 public class DroneSettingsFragment extends Fragment {
 
@@ -64,12 +63,29 @@ public class DroneSettingsFragment extends Fragment {
         );
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
 
-        mAdapter = makeSettingsAdapter();
+//        mBinding.modePicker.title.setText("Title");
+//        mBinding.modePicker.summary.setText("Summary");
+//        mBinding.modePicker.icon.setImageResource(R.drawable.ic_music_note);
 
-        mBinding.settingsList.setAdapter(mAdapter);
+        DroneSettingsItem.ListItem modePicker = new DroneSettingsItem.ListItem(
+                "Mode",
+                Transformations.map(mViewModel.getCurScale(), new Function<Scale, String>() {
+                    @Override
+                    public String apply(Scale scale) {
+                        return scale.getName();
+                    }
+                }),
+                getResources().getDrawable(R.drawable.ic_music_note),
+                // todo: show the previously chosen index
+                view -> showParentScaleDialog()
+        );
 
-        mBinding.setLifecycleOwner(getViewLifecycleOwner());
+        mBinding.modePicker.setItem(modePicker);
 
+
+        mBinding.setLifecycleOwner(this);
+
+        /*
 
         // todo: remove these if xml databinding will work
         mViewModel.getCurTemplate().observe(getViewLifecycleOwner(), new Observer<VoicingTemplate>() {
@@ -93,6 +109,9 @@ public class DroneSettingsFragment extends Fragment {
         });
 
 
+         */
+
+
         return mBinding.getRoot();
     }
 
@@ -107,17 +126,12 @@ public class DroneSettingsFragment extends Fragment {
 
         DroneSettingsItem modePicker = new DroneSettingsItem.ListItem(
                 "Mode",
-                "Choose the mode",
+//                mViewModel.getCurScale().getValue().getName(),
+                null,
                 getResources().getDrawable(R.drawable.ic_music_note),
                 // todo: show the previously chosen index
-                view -> showParentScaleDialog(),
-                Transformations.map(mViewModel.getCurScale(), new Function<Scale, String>() {
-                    @Override
-                    public String apply(Scale input) {
-                        return input.getName();
-                    }
-                })
-                );
+                view -> showParentScaleDialog()
+        );
         settingsList.add(modePicker);
 
 //        DroneSettingsItem chordConstructorPicker = new DroneSettingsItem.ListItem(
@@ -135,6 +149,7 @@ public class DroneSettingsFragment extends Fragment {
                     public void onBassToneClick(@NotNull VoicingTemplateView view, int degree) {
                         mViewModel.onBassToneClick(degree);
                     }
+
                     @Override
                     public void onChordToneClick(@NotNull VoicingTemplateView view, int degree) {
                         mViewModel.onChordToneClick(degree);
@@ -162,8 +177,9 @@ public class DroneSettingsFragment extends Fragment {
 
         new MaterialAlertDialogBuilder(requireContext())
                 .setTitle("Choose Parent Scale")
-                .setNegativeButton("Dismiss", (dialogInterface, i) -> { })
-                .setSingleChoiceItems(scaleNames, -1,  (dialogInterface, i) -> {
+                .setNegativeButton("Dismiss", (dialogInterface, i) -> {
+                })
+                .setSingleChoiceItems(scaleNames, -1, (dialogInterface, i) -> {
                     dialogInterface.dismiss();
                     showModeDialog(parentScales.get(i), i);
                 }).show();
@@ -183,7 +199,7 @@ public class DroneSettingsFragment extends Fragment {
 
                     }
                 })
-                .setSingleChoiceItems(modeNames, -1,  (dialogInterface, i) -> {
+                .setSingleChoiceItems(modeNames, -1, (dialogInterface, i) -> {
                     mViewModel.saveScaleIxs(ix, i);
                     dialogInterface.dismiss();
                 }).show();
