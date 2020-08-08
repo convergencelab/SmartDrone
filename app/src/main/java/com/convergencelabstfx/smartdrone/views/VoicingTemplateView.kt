@@ -47,9 +47,6 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
     var touchListener: VoicingTemplateTouchListener? = null
 
     init {
-//        for (i in 0 until NUM_CHORD_TONES) {
-//            chordDegrees.
-//        }
         val a = context.theme.obtainStyledAttributes(
                 attrs,
                 R.styleable.VoicingTemplateView,
@@ -79,7 +76,7 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
     // todo: make it easier to press by checking the space inbetween the tone buttons
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.action == MotionEvent.ACTION_UP) {
-            var touchedTone = checkChordToneTouch(event!!.x.roundToInt(), event.y.roundToInt())
+            var touchedTone = checkChordToneTouch(event.x.roundToInt(), event.y.roundToInt())
 
             if (touchedTone != -1) {
                 touchListener?.onChordToneClick(this, touchedTone)
@@ -91,28 +88,6 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
                 }
             }
         }
-//
-//        if (touchedTone != -1 && event.action == MotionEvent.ACTION_UP) {
-//            if (isChordTone) {
-//                if (chordDegreeIsActive(touchedTone)) {
-//                    deactivateChordDegree(touchedTone)
-//                }
-//                else {
-//                    activateChordDegree(touchedTone)
-//                }
-//            }
-//            else {
-//                if (bassDegreeIsActive(touchedTone)) {
-//                    deactivateBassDegree(touchedTone)
-//                }
-//                else {
-//                    activateBassDegree(touchedTone)
-//                }
-//            }
-//            for (listener in listeners) {
-//                listener.onClick(this, touchedTone, isChordTone)
-//            }
-//        }
         return true
     }
 

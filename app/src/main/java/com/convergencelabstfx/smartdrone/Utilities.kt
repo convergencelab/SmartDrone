@@ -12,8 +12,20 @@ fun voicingTemplateToString(template: VoicingTemplate): String {
 fun stringToVoicingTemplate(string: String): VoicingTemplate {
     val ixOfC = string.indexOf("c")
     val regex = "\\s*,\\s*".toRegex()
-    val bassTones = string.substring(1, ixOfC).split(regex).map { it.toInt() }
-    val chordTones = string.substring(ixOfC + 1).split(regex).map { it.toInt() }
+
+    val bassTonesStr = string.substring(1, ixOfC)
+    val bassTones = if (bassTonesStr.isEmpty()) {
+        arrayListOf()
+    } else {
+        string.substring(1, ixOfC).split(regex).map { it.toInt() }
+    }
+
+    val chordTonesStr = string.substring(ixOfC + 1)
+    val chordTones = if (chordTonesStr.isEmpty()) {
+        arrayListOf()
+    } else {
+        string.substring(ixOfC + 1).split(regex).map { it.toInt() }
+    }
 
     val template = VoicingTemplate()
     template.bassTones = bassTones
