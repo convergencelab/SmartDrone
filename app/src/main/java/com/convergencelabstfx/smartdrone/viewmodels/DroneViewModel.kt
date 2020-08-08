@@ -103,7 +103,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         else {
             template.addBassTone(degree)
         }
-        setVoicingTemplate(template, false)
+        setVoicingTemplate(template)
     }
 
     fun onChordToneClick(degree: Int) {
@@ -114,7 +114,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         else {
             template.addChordTone(degree)
         }
-        setVoicingTemplate(template, false)
+        setVoicingTemplate(template)
     }
 
     fun saveScaleIxs(parentIx: Int, modeIx: Int) {
@@ -145,7 +145,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun setVoicingTemplate(template: VoicingTemplate, restartPlayback: Boolean = true) {
+    fun setVoicingTemplate(template: VoicingTemplate) {
         chordConstructor.template = template
         curTemplate.value = template
         repository.saveCurTemplate(template)

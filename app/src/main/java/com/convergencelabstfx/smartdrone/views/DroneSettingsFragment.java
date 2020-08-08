@@ -18,7 +18,6 @@ import com.convergencelabstfx.keyfinder.Scale;
 import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.adapters.DroneSettingsAdapter;
-import com.convergencelabstfx.smartdrone.database.VoicingTemplateEntity;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDroneSettingsBinding;
 import com.convergencelabstfx.smartdrone.viewmodels.DroneViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -60,10 +59,6 @@ public class DroneSettingsFragment extends Fragment {
         );
         mViewModel = new ViewModelProvider(requireActivity()).get(DroneViewModel.class);
 
-//        mBinding.modePicker.title.setText("Title");
-//        mBinding.modePicker.summary.setText("Summary");
-//        mBinding.modePicker.icon.setImageResource(R.drawable.ic_music_note);
-
         DroneSettingsItem.ListItem modePicker = new DroneSettingsItem.ListItem(
                 "Mode",
                 Transformations.map(mViewModel.getCurScale(), new Function<Scale, String>() {
@@ -93,31 +88,31 @@ public class DroneSettingsFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        showTemplateEditorDialog();
+                        showTemplateEditorHelpDialog();
                     }
                 },
                 mViewModel.getCurTemplate()
         );
         mBinding.templateEditor.setItem(voicingTemplateItem);
-        mBinding.templateEditor.templateView.addListener(voicingTemplateItem.getListener());
+        mBinding.templateEditor.templateView.setTouchListener(voicingTemplateItem.getListener());
 
         mBinding.setLifecycleOwner(this);
 
-        /*
 
-        // todo: remove these if xml databinding will work
-        mViewModel.getCurTemplate().observe(getViewLifecycleOwner(), new Observer<VoicingTemplate>() {
-            @Override
-            public void onChanged(VoicingTemplate voicingTemplate) {
-                VoicingTemplateView v = mAdapter.getVoicingTemplateView();
-                if (v != null) {
-                    v.clear();
-                    v.showTemplate(voicingTemplate);
-                }
-            }
-        });
 
-         */
+//        // todo: remove these if xml databinding will work
+//        mViewModel.getCurTemplate().observe(getViewLifecycleOwner(), new Observer<VoicingTemplate>() {
+//            @Override
+//            public void onChanged(VoicingTemplate voicingTemplate) {
+//                VoicingTemplateView v = mAdapter.getVoicingTemplateView();
+//                if (v != null) {
+//                    v.clear();
+//                    v.showTemplate(voicingTemplate);
+//                }
+//            }
+//        });
+
+
 
 
         return mBinding.getRoot();
@@ -160,7 +155,7 @@ public class DroneSettingsFragment extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        showTemplateEditorDialog();
+                        showTemplateEditorHelpDialog();
                     }
                 },
                 mViewModel.getCurTemplate()
@@ -170,6 +165,8 @@ public class DroneSettingsFragment extends Fragment {
         return new DroneSettingsAdapter(getContext(), settingsList);
     }
 
+
+    // todo: extract all of these hardcoded strings
     private void showParentScaleDialog() {
         final List<ParentScale> parentScales = mViewModel.getParentScales();
         final CharSequence[] scaleNames = new CharSequence[parentScales.size()];
@@ -207,46 +204,47 @@ public class DroneSettingsFragment extends Fragment {
                 }).show();
     }
 
-    private void showVoicingTemplateDialog(List<VoicingTemplateEntity> templates) {
-        CharSequence[] strList = new CharSequence[templates.size()];
-        for (int i = 0; i < templates.size(); i++) {
-            final StringBuilder sb = new StringBuilder();
-            if (templates.get(i).getTemplate().getBassTones().size() != 0) {
-                sb.append("Bass: ");
-                sb.append(templates.get(i).getTemplate().getBassTones().get(0) + 1);
-                for (int j = 1; j < templates.get(i).getTemplate().getBassTones().size(); j++) {
-                    sb.append(", ");
-                    sb.append(templates.get(i).getTemplate().getBassTones().get(j) + 1);
-                }
-                sb.append('\n');
-            }
-            if (templates.get(i).getTemplate().getChordTones().size() != 0) {
-                sb.append("Chord: ");
-                sb.append(templates.get(i).getTemplate().getChordTones().get(0) + 1);
-                for (int j = 1; j < templates.get(i).getTemplate().getChordTones().size(); j++) {
-                    sb.append(", ");
-                    sb.append(templates.get(i).getTemplate().getChordTones().get(j) + 1);
-                }
-            }
-            strList[i] = sb.toString();
-        }
-        new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Title")
-                .setPositiveButton("Close", (dialogInterface, i) -> {
-                    // nothing on click
-                })
-                .setSingleChoiceItems(
-                        strList,
-                        -1,
-                        (dialogInterface, i) -> {
-                            mViewModel.setVoicingTemplate(templates.get(i).getTemplate(), true);
-                        })
-                .show();
-    }
+//    private void showVoicingTemplateDialog(List<VoicingTemplateEntity> templates) {
+//        CharSequence[] strList = new CharSequence[templates.size()];
+//        for (int i = 0; i < templates.size(); i++) {
+//            final StringBuilder sb = new StringBuilder();
+//            if (templates.get(i).getTemplate().getBassTones().size() != 0) {
+//                sb.append("Bass: ");
+//                sb.append(templates.get(i).getTemplate().getBassTones().get(0) + 1);
+//                for (int j = 1; j < templates.get(i).getTemplate().getBassTones().size(); j++) {
+//                    sb.append(", ");
+//                    sb.append(templates.get(i).getTemplate().getBassTones().get(j) + 1);
+//                }
+//                sb.append('\n');
+//            }
+//            if (templates.get(i).getTemplate().getChordTones().size() != 0) {
+//                sb.append("Chord: ");
+//                sb.append(templates.get(i).getTemplate().getChordTones().get(0) + 1);
+//                for (int j = 1; j < templates.get(i).getTemplate().getChordTones().size(); j++) {
+//                    sb.append(", ");
+//                    sb.append(templates.get(i).getTemplate().getChordTones().get(j) + 1);
+//                }
+//            }
+//            strList[i] = sb.toString();
+//        }
+//        new MaterialAlertDialogBuilder(requireContext())
+//                .setTitle("Title")
+//                .setPositiveButton("Close", (dialogInterface, i) -> {
+//                    // nothing on click
+//                })
+//                .setSingleChoiceItems(
+//                        strList,
+//                        -1,
+//                        (dialogInterface, i) -> {
+//                            mViewModel.setVoicingTemplate(templates.get(i).getTemplate());
+//                        })
+//                .show();
+//    }
 
-    private void showTemplateEditorDialog() {
+    private void showTemplateEditorHelpDialog() {
         new MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Template Editor")
+                // todo: extract hardcoded string
+                .setTitle("Template Editor Help")
                 .setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

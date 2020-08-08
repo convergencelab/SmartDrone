@@ -12,5 +12,5 @@ fun setVoicingTemplate(view: VoicingTemplateView, template: VoicingTemplate) {
 
 @BindingAdapter("app:voicingTemplateListener")
 fun voicingTemplateListener(view: VoicingTemplateView, listener: VoicingTemplateTouchListener) {
-    view.addListener(listener)
+    view.touchListener = listener
 }

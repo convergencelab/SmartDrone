@@ -44,7 +44,7 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
 
     private var inactiveColor: Int = -1
 
-    private val listeners: MutableList<VoicingTemplateTouchListener> = ArrayList()
+    var touchListener: VoicingTemplateTouchListener? = null
 
     init {
 //        for (i in 0 until NUM_CHORD_TONES) {
@@ -82,16 +82,12 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
             var touchedTone = checkChordToneTouch(event!!.x.roundToInt(), event.y.roundToInt())
 
             if (touchedTone != -1) {
-                for (listener in listeners) {
-                    listener.onChordToneClick(this, touchedTone)
-                }
+                touchListener?.onChordToneClick(this, touchedTone)
             }
             else {
                 touchedTone = checkBassToneTouch(event.x.roundToInt(), event.y.roundToInt())
                 if (touchedTone != -1) {
-                    for (listener in listeners) {
-                        listener.onBassToneClick(this, touchedTone)
-                    }
+                    touchListener?.onBassToneClick(this, touchedTone)
                 }
             }
         }
@@ -118,10 +114,6 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
 //            }
 //        }
         return true
-    }
-
-    fun addListener(listener: VoicingTemplateTouchListener) {
-        listeners.add(listener)
     }
 
     fun activateChordDegree(degree: Int) {
@@ -165,6 +157,7 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
     }
 
     fun showTemplate(template: VoicingTemplate) {
+        this.clear()
         for (degree in template.chordTones) {
             this.activateChordDegree(degree)
         }
