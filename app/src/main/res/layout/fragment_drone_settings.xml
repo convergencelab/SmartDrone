@@ -8,7 +8,7 @@
     <ScrollView
         android:id="@+id/settingsList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/settingsContainer"
@@ -19,6 +19,13 @@
             <include
                 android:id="@+id/modePicker"
                 layout="@layout/settings_item_list" />
+
+            <include
+                layout="@layout/list_divider" />
+
+            <include
+                android:id="@+id/templateEditor"
+                layout="@layout/settings_item_template" />
 
         </LinearLayout>
 

@@ -10,14 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.arch.core.util.Function;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.convergencelabstfx.keyfinder.ParentScale;
 import com.convergencelabstfx.keyfinder.Scale;
-import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.adapters.DroneSettingsAdapter;
@@ -79,9 +76,30 @@ public class DroneSettingsFragment extends Fragment {
                 // todo: show the previously chosen index
                 view -> showParentScaleDialog()
         );
-
         mBinding.modePicker.setItem(modePicker);
 
+        DroneSettingsItem.VoicingTemplateItem voicingTemplateItem = new DroneSettingsItem.VoicingTemplateItem(
+                new VoicingTemplateTouchListener() {
+                    @Override
+                    public void onBassToneClick(@NotNull VoicingTemplateView view, int degree) {
+                        mViewModel.onBassToneClick(degree);
+                    }
+
+                    @Override
+                    public void onChordToneClick(@NotNull VoicingTemplateView view, int degree) {
+                        mViewModel.onChordToneClick(degree);
+                    }
+                },
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        showTemplateEditorDialog();
+                    }
+                },
+                mViewModel.getCurTemplate()
+        );
+        mBinding.templateEditor.setItem(voicingTemplateItem);
+        mBinding.templateEditor.templateView.addListener(voicingTemplateItem.getListener());
 
         mBinding.setLifecycleOwner(this);
 
@@ -99,26 +117,10 @@ public class DroneSettingsFragment extends Fragment {
             }
         });
 
-        mViewModel.getCurScale().observe(getViewLifecycleOwner(), new Observer<Scale>() {
-            @Override
-            public void onChanged(Scale scale) {
-                if (scale != null && mAdapter.getScaleText() != null) {
-                    mAdapter.getScaleText().setText(scale.getName());
-                }
-            }
-        });
-
-
          */
 
 
         return mBinding.getRoot();
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
     }
 
     private DroneSettingsAdapter makeSettingsAdapter() {
@@ -254,12 +256,6 @@ public class DroneSettingsFragment extends Fragment {
                 // todo: implement template editor message
                 .setMessage("This is the template editor")
                 .show();
-    }
-
-    private View makeTemplateRecyclerView() {
-        RecyclerView recyclerView = new RecyclerView(getContext());
-
-        return null;
     }
 
 }

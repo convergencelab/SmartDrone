@@ -14,10 +14,10 @@
     <!-- todo: make 'clickable' a parameter -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
+        android:layout_height="72dp"
         android:clickable="true"
         android:focusable="true"
-        android:onClick="@{item.listener}"
-        android:layout_height="72dp">
+        android:onClick="@{item.listener}">
 
         <TextView
             android:id="@+id/title"

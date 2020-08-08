@@ -94,17 +94,18 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
 
     // todo: implement
     private View makeTemplateItem(DroneSettingsItem.VoicingTemplateItem item, ViewGroup container) {
-        final SettingsItemTemplateBinding binding =
-                DataBindingUtil.inflate(
-                        LayoutInflater.from(getContext()),
-                        R.layout.settings_item_template,
-                        container,
-                        false);
-        binding.templateEditor.addListener(item.getListener());
-        binding.questionMark.setOnClickListener(item.getHelpListener());
-        mTemplateView = binding.templateEditor;
-        binding.setItem(item);
-        return binding.getRoot();
+//        final SettingsItemTemplateBinding binding =
+//                DataBindingUtil.inflate(
+//                        LayoutInflater.from(getContext()),
+//                        R.layout.settings_item_template,
+//                        container,
+//                        false);
+//        binding.templateEditor.addListener(item.getListener());
+//        binding.questionMark.setOnClickListener(item.getHelpListener());
+//        mTemplateView = binding.templateEditor;
+//        binding.setItem(item);
+//        return binding.getRoot();
+        return null;
     }
 
     public VoicingTemplateView getVoicingTemplateView() {
