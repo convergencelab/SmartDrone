@@ -41,7 +41,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     private var keyPredictor: KeyPredictor
 
 
-    private val midiPlayer = MidiPlayer()
+    private val midiPlayer = MidiPlayerImpl()
     private val mParentScales: List<ParentScale>
 
 

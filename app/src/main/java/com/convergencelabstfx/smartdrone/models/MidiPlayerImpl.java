@@ -8,7 +8,7 @@ import java.util.Set;
 
 // todo: look into the SF2 midi lib on github
 //       https://github.com/rodydavis/MidiDriver-Android-SF2
-public class MidiPlayer  {
+public class MidiPlayerImpl implements MidiPlayer {
 
     private static final int START = 0X90;
 
@@ -28,21 +28,36 @@ public class MidiPlayer  {
 
     private int mPlugin = -1;
 
-    public MidiPlayer() {
+    public MidiPlayerImpl() {
 
     }
 
+    @Override
     public void start() {
         mDriver.start();
         sendMidiSetup();
 
     }
 
+    @Override
     public void stop() {
         clear();
         mDriver.stop();
     }
 
+    // todo:
+    @Override
+    public boolean isRunning() {
+        return false;
+    }
+
+    // todo:
+    @Override
+    public boolean isMuted() {
+        return false;
+    }
+
+    @Override
     public void playNote(int note) {
         if (!noteIsActive(note)) {
             noteOn(note);
@@ -50,6 +65,7 @@ public class MidiPlayer  {
         }
     }
 
+    @Override
     public void stopNote(int note) {
         if (noteIsActive(note)) {
             noteOff(note);
@@ -57,18 +73,21 @@ public class MidiPlayer  {
         }
     }
 
+    @Override
     public void playChord(List<Integer> notes) {
         for (Integer note : notes) {
             playNote(note);
         }
     }
 
+    @Override
     public void stopChord(List<Integer> notes) {
         for (Integer note : notes) {
             stopNote(note);
         }
     }
 
+    @Override
     public void clear() {
         for (Integer note : mActiveNotes) {
             noteOff(note);
@@ -76,18 +95,22 @@ public class MidiPlayer  {
         mActiveNotes.clear();
     }
 
+    @Override
     public boolean noteIsActive(int note) {
         return mActiveNotes.contains(note);
     }
 
+    @Override
     public boolean hasActiveNotes() {
         return !mActiveNotes.isEmpty();
     }
 
+    @Override
     public int getPlugin() {
         return mPlugin;
     }
 
+    @Override
     public void setPlugin(int plugin) {
         if (plugin != mPlugin) {
             mPlugin = plugin;
@@ -101,10 +124,12 @@ public class MidiPlayer  {
         }
     }
 
+    @Override
     public int getVolume() {
         return mVolume;
     }
 
+    @Override
     public void setVolume(int volume) {
         if (volume != mVolume) {
             mVolume = volume;
@@ -114,10 +139,12 @@ public class MidiPlayer  {
         }
     }
 
+    @Override
     public void mute() {
         setVolume(VOLUME_OFF);
     }
 
+    @Override
     public void unMute() {
         setVolume(mVolume);
     }

@@ -1,24 +1,45 @@
 package com.convergencelabstfx.smartdrone.models
 
+import cn.sherlock.com.sun.media.sound.SF2Soundbank
 import cn.sherlock.com.sun.media.sound.SoftSynthesizer
+import jp.kshoji.javax.sound.midi.MidiUnavailableException
+import jp.kshoji.javax.sound.midi.Receiver
+import java.io.IOException
 import java.util.*
 
-class MidiPlayer2 {
+class MidiPlayerImpl2 : MidiPlayer {
 
-    private val synth: SoftSynthesizer = SoftSynthesizer()
+    private var synth: SoftSynthesizer? = null
+
+    private var recv: Receiver? = null
 
     private val activeNotes: Set<Int> = HashSet()
 
     private var plugin: Int = -1
 
     fun start() {
-        mDriver.start()
-        sendMidiSetup()
+        try {
+            val sf = SF2Soundbank(getAssets.open("SmallTimGM6mb.sf2"))
+            synth = SoftSynthesizer()
+            synth.open()
+            synth.loadAllInstruments(sf)
+            synth.channels[0].programChange(0)
+            synth.channels[1].programChange(1)
+            recv = synth.receiver
+        } catch (e: IOException) {
+            e.printStackTrace()
+        } catch (e: MidiUnavailableException) {
+            e.printStackTrace()
+        }
     }
 
     fun stop() {
         clear()
         mDriver.stop()
+    }
+
+    override fun isRunning(): Boolean {
+        TODO("Not yet implemented")
     }
 
     fun playNote(note: Int) {
@@ -93,11 +114,15 @@ class MidiPlayer2 {
     }
 
     fun mute() {
-        setVolume(MidiPlayer.VOLUME_OFF)
+        setVolume(MidiPlayerImpl.VOLUME_OFF)
     }
 
     fun unMute() {
         setVolume(mVolume)
+    }
+
+    override fun isMuted(): Boolean {
+        TODO("Not yet implemented")
     }
 
     /*
@@ -106,16 +131,16 @@ class MidiPlayer2 {
      * Methods refreshPlayback and clear require this to avoid throwing ConcurrentModificationException()
      */
     private fun noteOn(note: Int) {
-        sendMessage(MidiPlayer.START, note, mVolume)
+        sendMessage(MidiPlayerImpl.START, note, mVolume)
     }
 
     private fun noteOff(note: Int) {
-        sendMessage(MidiPlayer.STOP, note, mVolume)
+        sendMessage(MidiPlayerImpl.STOP, note, mVolume)
     }
 
     private fun sendMidiSetup() {
         val message = ByteArray(2)
-        message[0] = MidiPlayer.PROGRAM_CHANGE.toByte()
+        message[0] = MidiPlayerImpl.PROGRAM_CHANGE.toByte()
         message[1] = mPlugin as Byte
         mDriver.write(message)
     }
