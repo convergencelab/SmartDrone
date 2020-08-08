@@ -17,13 +17,20 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.convergencelabstfx.keyfinder.MusicTheory;
+import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import com.convergencelabstfx.pianoview.PianoTouchListener;
 import com.convergencelabstfx.pianoview.PianoView;
 import com.convergencelabstfx.smartdrone.R;
+import com.convergencelabstfx.smartdrone.database.VoicingTemplateEntity;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDroneBinding;
 import com.convergencelabstfx.smartdrone.viewmodels.DroneViewModel;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class DroneFragment extends Fragment {
+
+    private List<VoicingTemplate> mTempList = new ArrayList<>();
 
     private int ACTIVE_KEY_TEXT_SMALL;
 
@@ -59,6 +66,8 @@ public class DroneFragment extends Fragment {
         if (!hasMicrophoneRuntimePermission()) {
             requestMicrophonePermission();
         }
+
+
 
         mBinding.activeKeyButton.setOnClickListener(new View.OnClickListener() {
             @Override

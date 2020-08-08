@@ -24,7 +24,7 @@ class SignalProcessorKt {
         private set
 
     fun start() {
-        val handler = PitchDetectionHandler { result: PitchDetectionResult, event: AudioEvent? ->
+        val handler = PitchDetectionHandler { result: PitchDetectionResult, _: AudioEvent? ->
             val pitchInHz = result.pitch
             GlobalScope.launch(Dispatchers.Main) {
                 val pitchAsInt = convertPitchToIx(pitchInHz.toDouble())

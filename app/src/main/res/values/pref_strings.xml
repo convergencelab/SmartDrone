@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="file_key">"com.convergencelabstfx.smartdrone.PREF_FILE_KEY"</string>
+
+    <string name="parent_ix_key">parentIxKey</string>
+    <string name="mode_ix_key">modeIxKey</string>
+
+    <string name="voicing_template_key">templateKey</string>
+    <string name="midi_plugin_key">midiPluginKey</string>
+    <string name="key_predictor_key">keyPredictorKey</string>
+
+    <string name="default_voicing_template">b0c0,4,9</string>
+</resources>

@@ -6,16 +6,9 @@
 
     </data>
 
-    <FrameLayout
+    <ListView
+        android:id="@+id/settingsList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".views.DroneSettingsFragment">
+        android:layout_height="wrap_content" />
 
-        <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:text="@string/hello_blank_fragment" />
-
-    </FrameLayout>
 </layout>

@@ -28,19 +28,22 @@ public class MusicTheory {
      * Intervals that make up the major scale.
      * Each number can be viewed as the semitone offset from the root.
      */
-    public final static int[] MAJOR_SCALE_SEQUENCE = { 0, 2, 4, 5, 7, 9, 11 };
+    public final static Integer[] MAJOR_SCALE_SEQUENCE = { 0, 2, 4, 5, 7, 9, 11 };
 
     /**
      * Intervals that make up the melodic minor scale.
      * Each number can be viewed as the semitone offset from the root.
      */
-    public final static int[] MELODIC_MINOR_SCALE_SEQUENCE = { 0, 2, 3, 5, 7, 9, 11 };
+    public final static Integer[] MELODIC_MINOR_SCALE_SEQUENCE = { 0, 2, 3, 5, 7, 9, 11 };
 
     /**
      * Intervals pertaining to harmonic minor scale.
      * Indices represent semitones away from root.
      */
-    public final static int[] HARMONIC_MINOR_SCALE_SEQUENCE = { 0, 2, 3, 5, 7, 8, 11 };
+    public final static Integer[] HARMONIC_MINOR_SCALE_SEQUENCE = { 0, 2, 3, 5, 7, 8, 11 };
+
+    public final static Integer[] HARMONIC_MAJOR_SCALE_SEQUENCE = { 0, 2, 4, 5, 7, 8, 11 };
+
 
     /**
      * Intervals that make up the Phrygian scale.
@@ -150,6 +153,16 @@ public class MusicTheory {
             "Phrygian Dominant",
             "Lydian " + SHARP + '9',
             "Altered Diminished"
+    };
+
+    public final static String[] HARMONIC_MAJOR_MODE_NAMES = {
+            "Harmonic Major",
+            "Dorian " + FLAT + '5',
+            "Phrygian " + FLAT + '4',
+            "Lydian " + FLAT + '3',
+            "Mixolydian " + FLAT + '2',
+            "Lydian Augmented" + SHARP + '2',
+            "Locrian" + FLAT + FLAT + '7'
     };
 
     /**
