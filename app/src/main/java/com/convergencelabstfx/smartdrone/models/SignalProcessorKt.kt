@@ -11,14 +11,13 @@ import be.tarsos.dsp.util.PitchConverter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.*
 
 // Wrote this class in Kotlin to take advantage of coroutines
 class SignalProcessorKt {
 
     private var dispatcher: AudioDispatcher? = null
 
-    private val mObservers: MutableList<SignalProcessorObserver> = ArrayList()
+    var listener: SignalProcessorListener? = null
 
     var isRunning = false
         private set
@@ -28,9 +27,10 @@ class SignalProcessorKt {
             val pitchInHz = result.pitch
             GlobalScope.launch(Dispatchers.Main) {
                 val pitchAsInt = convertPitchToIx(pitchInHz.toDouble())
-                for (observer in mObservers) {
-                    observer.handlePitchResult(pitchAsInt, result.probability, result.isPitched)
-                }
+                listener?.notifyPitchResult(pitchAsInt, result.probability, result.isPitched)
+//                for (observer in listener) {
+//                    observer.notifyPitchResult(pitchAsInt, result.probability, result.isPitched)
+//                }
             }
         }
         val pitchProcessor: AudioProcessor = PitchProcessor(
@@ -59,13 +59,13 @@ class SignalProcessorKt {
         isRunning = false
     }
 
-    fun addPitchListener(observer: SignalProcessorObserver) {
-        mObservers.add(observer)
-    }
-
-    fun removePitchListener(observer: SignalProcessorObserver?) {
-        mObservers.remove(observer)
-    }
+//    fun addPitchListener(listener: SignalProcessorListener) {
+//        this.listener.add(listener)
+//    }
+//
+//    fun removePitchListener(listener: SignalProcessorListener?) {
+//        this.listener.remove(listener)
+//    }
 
     private fun convertPitchToIx(pitchInHz: Double): Int {
         return if (pitchInHz == -1.0) {

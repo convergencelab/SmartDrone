@@ -1,6 +1,6 @@
 package com.convergencelabstfx.smartdrone.models;
 
-public interface NoteProcessorObserver {
+public interface NoteProcessorListener {
 
     void notifyNoteDetected(int note);
 

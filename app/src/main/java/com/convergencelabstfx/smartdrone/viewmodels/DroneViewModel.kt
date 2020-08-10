@@ -16,7 +16,6 @@ import com.convergencelabstfx.smartdrone.database.DroneRepository
 import com.convergencelabstfx.smartdrone.database.VoicingTemplateEntity
 import com.convergencelabstfx.smartdrone.models.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -79,7 +78,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
         curChordConstructorType.value = repository.getChordConstructorType()
 
-        initPipeline()
+        constructPipeline()
 
     }
 
@@ -183,32 +182,26 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         repository.insert(templateEntity)
     }
 
-    // todo: gotta figure out exactly where a note index should turn into a note object
     // todo: make consist naming (observer/listener, notify/handle, onKeyPrediction etc...)
-    private fun initPipeline() {
-        signalProcessor.addPitchListener(SignalProcessorObserver { pitch, probability, isPitched ->
+    private fun constructPipeline() {
+        signalProcessor.listener = (SignalProcessorListener { pitch, probability, isPitched ->
             mDetectedNote.value = pitch
             noteProcessor.onPitchDetected(pitch, probability, isPitched)
         })
-        noteProcessor.addNoteProcessorListener(object : NoteProcessorObserver {
+        noteProcessor.addNoteProcessorListener(object : NoteProcessorListener {
             override fun notifyNoteDetected(note: Int) {
-                Timber.i("Detected: $note")
                 keyPredictor.noteDetected(note)
             }
-
             override fun notifyNoteUndetected(note: Int) {
                 keyPredictor.noteUndetected(note)
-                //                mUndetectedNote.setValue(note);
             }
         })
         keyPredictor.addListener { newKey ->
-            Timber.i("key: %s", newKey)
             chordConstructor.key = newKey
             mDetectedKey.value = newKey
             // todo: implement
             midiPlayer.clear()
             midiPlayer.playChord(chordConstructor.makeVoicing())
-            Timber.i("newKey: %s", newKey)
         }
     }
 

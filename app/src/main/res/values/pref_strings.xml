@@ -8,6 +8,7 @@
     <string name="voicing_template_key">templateKey</string>
     <string name="midi_plugin_key">midiPluginKey</string>
     <string name="key_predictor_key">keyPredictorKey</string>
+    <string name="chord_constructor_key">chordConstructorKey</string>
 
     <string name="default_voicing_template">b0c0,4,9</string>
 </resources>

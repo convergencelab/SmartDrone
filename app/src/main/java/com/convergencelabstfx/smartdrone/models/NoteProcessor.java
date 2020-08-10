@@ -11,7 +11,7 @@ public class NoteProcessor {
     // todo: tinker with this value
     final private float PROBABILITY_THRESHOLD = 0.0f;
 
-    final private List<NoteProcessorObserver> mListeners = new ArrayList<>();
+    final private List<NoteProcessorListener> mListeners = new ArrayList<>();
 
     private int mMillisRequired = 150;
 
@@ -35,7 +35,7 @@ public class NoteProcessor {
         if (noteIx != mPrevNoteHeardIx) {
             mHasNotifiedDetected = false;
             if (!mHasNotifiedUndetected && mLastDetectedNoteIx != -1) {
-                for (NoteProcessorObserver listener : mListeners) {
+                for (NoteProcessorListener listener : mListeners) {
                     listener.notifyNoteUndetected(mLastDetectedNoteIx);
                 }
                 mHasNotifiedUndetected = true;
@@ -46,7 +46,7 @@ public class NoteProcessor {
             mPrevNoteHeardIx = noteIx;
         }
         else if (noteIx != -1 && !mHasNotifiedDetected && hasMetFilterLengthThreshold()) {
-            for (NoteProcessorObserver listener : mListeners) {
+            for (NoteProcessorListener listener : mListeners) {
                 listener.notifyNoteDetected(noteIx);
             }
             mLastDetectedNoteIx = noteIx;
@@ -55,11 +55,11 @@ public class NoteProcessor {
         }
     }
 
-    public void addNoteProcessorListener(NoteProcessorObserver listener) {
+    public void addNoteProcessorListener(NoteProcessorListener listener) {
         mListeners.add(listener);
     }
 
-    public void removeNoteProcessorListener(NoteProcessorObserver listener) {
+    public void removeNoteProcessorListener(NoteProcessorListener listener) {
         mListeners.remove(listener);
     }
 

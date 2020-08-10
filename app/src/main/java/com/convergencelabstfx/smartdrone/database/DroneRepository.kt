@@ -124,13 +124,13 @@ class DroneRepository(
 
     fun saveChordConstructorType(type: ChordConstructorType) {
         with (sharedPreferences.edit()) {
-            putInt(resources.getString(R.string.parent_ix_key), type.ordinal)
+            putInt(resources.getString(R.string.chord_constructor_key), type.ordinal)
             commit()
         }
     }
 
     fun getChordConstructorType() : ChordConstructorType {
-        val ordinal = sharedPreferences.getInt(resources.getString(R.string.key_predictor_key), 0)
+        val ordinal = sharedPreferences.getInt(resources.getString(R.string.chord_constructor_key), 0)
         return ChordConstructorType.values()[ordinal]
     }
 
