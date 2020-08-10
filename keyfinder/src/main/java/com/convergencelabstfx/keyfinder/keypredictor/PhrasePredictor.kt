@@ -2,7 +2,6 @@ package com.convergencelabstfx.keyfinder.keypredictor
 
 import android.util.Log
 import com.convergencelabstfx.keyfinder.MusicTheory
-import com.convergencelabstfx.keyfinder.Note
 import kotlinx.coroutines.Job
 
 // Wrote this class in Kotlin to take advantage of coroutines
@@ -20,13 +19,13 @@ class PhrasePredictor : KeyPredictor() {
     private val userPhrase = Phrase()
 
     // todo: maybe type Phrase? instead of lateinit
-    lateinit var targetPhrase: Phrase
+    var targetPhrase: Phrase? = null
 
     override fun noteDetected(note: Int) {
         Log.d("PhrasePredictor", "Detected: $note")
-        check(userPhrase.notes.size <= targetPhrase.notes.size) { "User phrase size has exceeded target phrase size." }
+        check(userPhrase.notes.size <= targetPhrase?.notes!!.size) { "User phrase size has exceeded target phrase size." }
 
-        if (userPhrase.notes.size == targetPhrase.notes.size) {
+        if (userPhrase.notes.size == targetPhrase?.notes!!.size) {
             userPhrase.removeNoteAtIx(0)
         }
 
@@ -57,14 +56,13 @@ class PhrasePredictor : KeyPredictor() {
     }
 
     private fun userPhraseMatchesTarget(): Boolean {
-        checkNotNull(targetPhrase) { "Target Phrase not set." }
-        if (targetPhrase.notes.size != userPhrase.notes.size) {
+        if (targetPhrase?.notes?.size != userPhrase.notes.size) {
             return false
         }
-        val targetBase = targetPhrase.notes[0]
+        val targetBase = targetPhrase?.notes?.get(0)
         val userBase = userPhrase.notes[0]
-        for (i in targetPhrase.notes.indices) {
-            if (targetPhrase.notes[i] - targetBase
+        for (i in targetPhrase?.notes!!.indices) {
+            if (targetPhrase?.notes!![i] - targetBase!!
                     != userPhrase.notes[i] - userBase) {
                 return false
             }

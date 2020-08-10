@@ -1,8 +1,5 @@
 package com.convergencelabstfx.smartdrone.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Process incoming pitch data so that noise can be filtered out from actual notes.
  */
@@ -11,7 +8,7 @@ public class NoteProcessor {
     // todo: tinker with this value
     final private float PROBABILITY_THRESHOLD = 0.0f;
 
-    final private List<NoteProcessorListener> mListeners = new ArrayList<>();
+    private NoteProcessorListener mListener = null;
 
     private int mMillisRequired = 150;
 
@@ -35,8 +32,8 @@ public class NoteProcessor {
         if (noteIx != mPrevNoteHeardIx) {
             mHasNotifiedDetected = false;
             if (!mHasNotifiedUndetected && mLastDetectedNoteIx != -1) {
-                for (NoteProcessorListener listener : mListeners) {
-                    listener.notifyNoteUndetected(mLastDetectedNoteIx);
+                if (mListener != null) {
+                    mListener.notifyNoteUndetected(mLastDetectedNoteIx);
                 }
                 mHasNotifiedUndetected = true;
             }
@@ -46,8 +43,8 @@ public class NoteProcessor {
             mPrevNoteHeardIx = noteIx;
         }
         else if (noteIx != -1 && !mHasNotifiedDetected && hasMetFilterLengthThreshold()) {
-            for (NoteProcessorListener listener : mListeners) {
-                listener.notifyNoteDetected(noteIx);
+            if (mListener != null) {
+                mListener.notifyNoteDetected(noteIx);
             }
             mLastDetectedNoteIx = noteIx;
             mHasNotifiedUndetected = false;
@@ -55,12 +52,29 @@ public class NoteProcessor {
         }
     }
 
-    public void addNoteProcessorListener(NoteProcessorListener listener) {
-        mListeners.add(listener);
+//    public void addNoteProcessorListener(NoteProcessorListener listener) {
+//        mListener.add(listener);
+//    }
+//
+//    public void removeNoteProcessorListener(NoteProcessorListener listener) {
+//        mListener.remove(listener);
+//    }
+
+
+    public void setListener(NoteProcessorListener listener) {
+        mListener = listener;
     }
 
-    public void removeNoteProcessorListener(NoteProcessorListener listener) {
-        mListeners.remove(listener);
+    public NoteProcessorListener getListener() {
+        return mListener;
+    }
+
+    public int getMillisRequired() {
+        return mMillisRequired;
+    }
+
+    public void setMillisRequired(int millisRequired) {
+        mMillisRequired = millisRequired;
     }
 
     private boolean hasMetFilterLengthThreshold() {

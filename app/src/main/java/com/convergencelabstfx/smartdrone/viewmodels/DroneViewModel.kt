@@ -16,6 +16,7 @@ import com.convergencelabstfx.smartdrone.database.DroneRepository
 import com.convergencelabstfx.smartdrone.database.VoicingTemplateEntity
 import com.convergencelabstfx.smartdrone.models.*
 import kotlinx.coroutines.launch
+import timber.log.Timber
 import java.util.*
 
 /**
@@ -35,6 +36,8 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     var curTemplate: MutableLiveData<VoicingTemplate> = MutableLiveData()
     var curScale = MutableLiveData<Scale>()
     var curChordConstructorType = MutableLiveData<ChordConstructorType>()
+
+    private val pitchConstructor = PitchConstructor()
 
     private val signalProcessor = SignalProcessorKt()
     private val noteProcessor = NoteProcessor()
@@ -188,7 +191,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
             mDetectedNote.value = pitch
             noteProcessor.onPitchDetected(pitch, probability, isPitched)
         })
-        noteProcessor.addNoteProcessorListener(object : NoteProcessorListener {
+        noteProcessor.listener = (object : NoteProcessorListener {
             override fun notifyNoteDetected(note: Int) {
                 keyPredictor.noteDetected(note)
             }
@@ -201,7 +204,33 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
             mDetectedKey.value = newKey
             // todo: implement
             midiPlayer.clear()
-            midiPlayer.playChord(chordConstructor.makeVoicing())
+            if (curChordConstructorType.value == ChordConstructorType.VOICING_CONSTRUCTOR) {
+                midiPlayer.playChord(chordConstructor.makeVoicing())
+            }
+            else if (curChordConstructorType.value == ChordConstructorType.PITCH_CONSTRUCTOR) {
+                // todo: hardcoded for now, just plays bass note for new key
+                midiPlayer.playNote(newKey + 36)
+                val tempListener = noteProcessor.listener
+                noteProcessor.listener = (object : NoteProcessorListener {
+                    override fun notifyNoteDetected(note: Int) {
+                        Timber.i("notify note detected")
+                        pitchConstructor.noteDetected(note)
+                    }
+                    override fun notifyNoteUndetected(note: Int) {
+                        pitchConstructor.noteUndetected(note)
+                    }
+                })
+                pitchConstructor.listener = (object : PitchConstructorListener {
+                    override fun onNoteDetected(note: Int) {
+                        midiPlayer.playNote(note)
+                    }
+                    override fun onConstructorFinished() {
+                        // Restore note processor values
+                        noteProcessor.listener = tempListener
+                    }
+                })
+                pitchConstructor.start()
+            }
         }
     }
 

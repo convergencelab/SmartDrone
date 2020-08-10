@@ -59,14 +59,6 @@ class SignalProcessorKt {
         isRunning = false
     }
 
-//    fun addPitchListener(listener: SignalProcessorListener) {
-//        this.listener.add(listener)
-//    }
-//
-//    fun removePitchListener(listener: SignalProcessorListener?) {
-//        this.listener.remove(listener)
-//    }
-
     private fun convertPitchToIx(pitchInHz: Double): Int {
         return if (pitchInHz == -1.0) {
             -1
