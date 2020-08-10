@@ -44,12 +44,9 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
 
     private var inactiveColor: Int = -1
 
-    private val listeners: MutableList<VoicingTemplateTouchListener> = ArrayList()
+    var touchListener: VoicingTemplateTouchListener? = null
 
     init {
-//        for (i in 0 until NUM_CHORD_TONES) {
-//            chordDegrees.
-//        }
         val a = context.theme.obtainStyledAttributes(
                 attrs,
                 R.styleable.VoicingTemplateView,
@@ -79,49 +76,19 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
     // todo: make it easier to press by checking the space inbetween the tone buttons
     override fun onTouchEvent(event: MotionEvent?): Boolean {
         if (event?.action == MotionEvent.ACTION_UP) {
-            var touchedTone = checkChordToneTouch(event!!.x.roundToInt(), event.y.roundToInt())
+            var touchedTone = checkChordToneTouch(event.x.roundToInt(), event.y.roundToInt())
 
             if (touchedTone != -1) {
-                for (listener in listeners) {
-                    listener.onChordToneClick(this, touchedTone)
-                }
+                touchListener?.onChordToneClick(this, touchedTone)
             }
             else {
                 touchedTone = checkBassToneTouch(event.x.roundToInt(), event.y.roundToInt())
                 if (touchedTone != -1) {
-                    for (listener in listeners) {
-                        listener.onBassToneClick(this, touchedTone)
-                    }
+                    touchListener?.onBassToneClick(this, touchedTone)
                 }
             }
         }
-//
-//        if (touchedTone != -1 && event.action == MotionEvent.ACTION_UP) {
-//            if (isChordTone) {
-//                if (chordDegreeIsActive(touchedTone)) {
-//                    deactivateChordDegree(touchedTone)
-//                }
-//                else {
-//                    activateChordDegree(touchedTone)
-//                }
-//            }
-//            else {
-//                if (bassDegreeIsActive(touchedTone)) {
-//                    deactivateBassDegree(touchedTone)
-//                }
-//                else {
-//                    activateBassDegree(touchedTone)
-//                }
-//            }
-//            for (listener in listeners) {
-//                listener.onClick(this, touchedTone, isChordTone)
-//            }
-//        }
         return true
-    }
-
-    fun addListener(listener: VoicingTemplateTouchListener) {
-        listeners.add(listener)
     }
 
     fun activateChordDegree(degree: Int) {
@@ -165,6 +132,7 @@ class VoicingTemplateView(context: Context, attrs: AttributeSet) : View(context,
     }
 
     fun showTemplate(template: VoicingTemplate) {
+        this.clear()
         for (degree in template.chordTones) {
             this.activateChordDegree(degree)
         }

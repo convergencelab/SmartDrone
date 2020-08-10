@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import cn.sherlock.com.sun.media.sound.SF2Soundbank
 import com.convergencelabstfx.keyfinder.ParentScale
 import com.convergencelabstfx.keyfinder.Scale
 import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate
@@ -41,7 +42,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     private var keyPredictor: KeyPredictor
 
 
-    private val midiPlayer = MidiPlayer()
+    private var midiPlayer: MidiPlayer
     private val mParentScales: List<ParentScale>
 
 
@@ -60,10 +61,18 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         val sharedPreferences = application.getSharedPreferences(resources.getString(R.string.file_key), Context.MODE_PRIVATE)
         repository = DroneRepository(templateDao, sharedPreferences, resources)
 
+        val sfMidiPlayer = MidiPlayer()
+        sfMidiPlayer.setPlugin(repository.getMidiPlugin())
+
+        val sf = SF2Soundbank(application.assets.open(repository.getSf2FileName()))
+        sfMidiPlayer.sf2 = sf
+        sfMidiPlayer.setPlugin(repository.getMidiPlugin())
+        midiPlayer = sfMidiPlayer
+
         mParentScales = repository.getParentScales()
         setScale(mParentScales[repository.getParentScaleIx()].getScaleAt(repository.getModeIx()))
         chordConstructor.bounds = repository.getVoicingBounds()
-        midiPlayer.plugin = repository.getMidiPlugin()
+
         keyPredictor = repository.getKeyPredictor()
         setVoicingTemplate(repository.getCurTemplate())
 
@@ -103,7 +112,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         else {
             template.addBassTone(degree)
         }
-        setVoicingTemplate(template, false)
+        setVoicingTemplate(template)
     }
 
     fun onChordToneClick(degree: Int) {
@@ -114,7 +123,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         else {
             template.addChordTone(degree)
         }
-        setVoicingTemplate(template, false)
+        setVoicingTemplate(template)
     }
 
     fun saveScaleIxs(parentIx: Int, modeIx: Int) {
@@ -145,7 +154,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun setVoicingTemplate(template: VoicingTemplate, restartPlayback: Boolean = true) {
+    fun setVoicingTemplate(template: VoicingTemplate) {
         chordConstructor.template = template
         curTemplate.value = template
         repository.saveCurTemplate(template)
@@ -173,15 +182,15 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         noteProcessor.addNoteProcessorListener(object : NoteProcessorObserver {
             override fun notifyNoteDetected(note: Int) {
                 Timber.i("Detected: $note")
-                keyPredictor!!.noteDetected(note)
+                keyPredictor.noteDetected(note)
             }
 
             override fun notifyNoteUndetected(note: Int) {
-                keyPredictor!!.noteUndetected(note)
+                keyPredictor.noteUndetected(note)
                 //                mUndetectedNote.setValue(note);
             }
         })
-        keyPredictor!!.addListener { newKey ->
+        keyPredictor.addListener { newKey ->
             Timber.i("key: %s", newKey)
             chordConstructor.key = newKey
             mDetectedKey.value = newKey

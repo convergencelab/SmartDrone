@@ -13,24 +13,22 @@ public interface DroneSettingsItem {
     class ListItem implements DroneSettingsItem {
 
         private String mTitle;
-        private String mSummary;
+        private LiveData<String> mSummary;
         private Drawable mIcon;
         private View.OnClickListener mListener;
-        private LiveData<String> mLiveSummary;
 
-        public ListItem(String title, String summary, Drawable icon, View.OnClickListener listener, LiveData<String> liveSummary) {
+        public ListItem(String title, LiveData<String> summary, Drawable icon, View.OnClickListener listener) {
             mTitle = title;
             mSummary = summary;
             mIcon = icon;
             mListener = listener;
-            mLiveSummary = liveSummary;
         }
 
         public String getTitle() {
             return mTitle;
         }
 
-        public String getSummary() {
+        public LiveData<String> getSummary() {
             return mSummary;
         }
 
@@ -42,9 +40,6 @@ public interface DroneSettingsItem {
             return mListener;
         }
 
-        public LiveData<String> getLiveSummary() {
-            return mLiveSummary;
-        }
     }
 
     class CheckBoxItem implements DroneSettingsItem {

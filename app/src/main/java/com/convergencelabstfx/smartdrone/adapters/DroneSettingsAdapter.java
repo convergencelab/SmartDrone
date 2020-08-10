@@ -72,7 +72,6 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
     }
 
     private View makeListItem(DroneSettingsItem.ListItem listItem, ViewGroup container) {
-//        final SettingsItemListBinding binding = LayoutInflater.from(getContext()).inflate(R.layout.settings_item_list, null);
         final SettingsItemListBinding binding =
                 DataBindingUtil.inflate(
                         LayoutInflater.from(getContext()),
@@ -95,21 +94,18 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
 
     // todo: implement
     private View makeTemplateItem(DroneSettingsItem.VoicingTemplateItem item, ViewGroup container) {
-        final SettingsItemTemplateBinding binding =
-                DataBindingUtil.inflate(
-                        LayoutInflater.from(getContext()),
-                        R.layout.settings_item_template,
-                        container,
-                        false);
-        binding.templateEditor.addListener(item.getListener());
-        binding.questionMark.setOnClickListener(item.getHelpListener());
-        mTemplateView = binding.templateEditor;
-        binding.setItem(item);
-//        if (item.getTemplate() != null) {
-//            binding.templateEditor.clear();
-//            binding.templateEditor.showTemplate(item.getTemplate().getValue());
-//        }
-        return binding.getRoot();
+//        final SettingsItemTemplateBinding binding =
+//                DataBindingUtil.inflate(
+//                        LayoutInflater.from(getContext()),
+//                        R.layout.settings_item_template,
+//                        container,
+//                        false);
+//        binding.templateEditor.addListener(item.getListener());
+//        binding.questionMark.setOnClickListener(item.getHelpListener());
+//        mTemplateView = binding.templateEditor;
+//        binding.setItem(item);
+//        return binding.getRoot();
+        return null;
     }
 
     public VoicingTemplateView getVoicingTemplateView() {

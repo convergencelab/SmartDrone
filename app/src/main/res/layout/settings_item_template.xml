@@ -19,15 +19,13 @@
             android:id="@+id/text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="bottom"
-            android:text="Template\nEditor"
+            android:text="Template Editor"
             android:textColor="@color/black"
             android:textSize="18sp"
             app:layout_constraintBottom_toTopOf="@id/questionMark"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/templateEditor"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Template\nEditor" />
+            app:layout_constraintRight_toLeftOf="@id/templateView"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/questionMark"
@@ -35,21 +33,22 @@
             android:layout_height="wrap_content"
             android:clickable="true"
             android:focusable="true"
+            android:onClick="@{item.helpListener}"
             android:src="@drawable/ic_question_mark"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toLeftOf="@id/templateEditor"
+            app:layout_constraintRight_toLeftOf="@id/templateView"
             app:layout_constraintTop_toBottomOf="@id/text" />
 
         <com.convergencelabstfx.smartdrone.views.VoicingTemplateView
-            android:id="@+id/templateEditor"
-            app:voicingTemplate="@{item.template}"
+            android:id="@+id/templateView"
             android:layout_width="180dp"
             android:layout_height="200dp"
             android:layout_margin="16dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:voicingTemplate="@{item.template}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
