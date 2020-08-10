@@ -75,8 +75,8 @@ dependencies {
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
-    // Default MidiDriver
-    implementation 'com.github.billthefarmer:mididriver:v1.17'
+    // Default MidiDriver; goodbye old friend
+//    implementation 'com.github.billthefarmer:mididriver:v1.17'
     // Sf2 MidiDriver
     implementation 'com.github.rodydavis:MidiDriver-Android-SF2:v1.1'
 
