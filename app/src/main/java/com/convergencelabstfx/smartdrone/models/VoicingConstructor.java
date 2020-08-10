@@ -75,6 +75,58 @@ public class VoicingConstructor {
         mTemplate = template;
     }
 
+    public int addChordTone(int degree) {
+        final int note;
+        final ArrayList<Integer> list = new ArrayList<>();
+        list.add(degree);
+        note = constructNotes(list, mBounds.getChordLower(), mBounds.getChordUpper()).get(0);
+        if (!mTemplate.getChordTones().contains(degree)) {
+            mTemplate.addChordTone(degree);
+            // todo: do binary insert so the notes in voicing remain in ascending order
+            mCurVoicing.add(note);
+        }
+        return note;
+    }
+
+    public int removeChordTone(int degree) {
+        final int note;
+        final ArrayList<Integer> list = new ArrayList<>();
+        list.add(degree);
+        note = constructNotes(list, mBounds.getChordLower(), mBounds.getChordUpper()).get(0);
+        if (mTemplate.getChordTones().contains(degree)) {
+            mTemplate.removeChordTone(degree);
+            // todo: do binary insert so the notes in voicing remain in ascending order
+            mCurVoicing.remove(Integer.valueOf(note));
+        }
+        return note;
+    }
+
+    public int addBassTone(int degree) {
+        final int note;
+        final ArrayList<Integer> list = new ArrayList<>();
+        list.add(degree);
+        note = constructNotes(list, mBounds.getBassLower(), mBounds.getBassUpper()).get(0);
+        if (!mTemplate.getBassTones().contains(degree)) {
+            mTemplate.addBassTone(degree);
+            // todo: do binary insert so the notes in voicing remain in ascending order
+            mCurVoicing.add(note);
+        }
+        return note;
+    }
+
+    public int removeBassTone(int degree) {
+        final int note;
+        final ArrayList<Integer> list = new ArrayList<>();
+        list.add(degree);
+        note = constructNotes(list, mBounds.getBassLower(), mBounds.getBassUpper()).get(0);
+        if (mTemplate.getBassTones().contains(degree)) {
+            mTemplate.removeBassTone(degree);
+            // todo: do binary insert so the notes in voicing remain in ascending order
+            mCurVoicing.remove(Integer.valueOf(note));
+        }
+        return note;
+    }
+
     public void setBounds(VoicingBounds bounds) {
         mBounds = bounds;
     }

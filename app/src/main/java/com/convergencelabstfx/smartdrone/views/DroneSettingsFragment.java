@@ -76,13 +76,13 @@ public class DroneSettingsFragment extends Fragment {
         DroneSettingsItem.VoicingTemplateItem voicingTemplateItem = new DroneSettingsItem.VoicingTemplateItem(
                 new VoicingTemplateTouchListener() {
                     @Override
-                    public void onBassToneClick(@NotNull VoicingTemplateView view, int degree) {
-                        mViewModel.onBassToneClick(degree);
+                    public void onBassToneClick(VoicingTemplateView view, int degree) {
+                        mViewModel.toggleBassTone(degree);
                     }
 
                     @Override
-                    public void onChordToneClick(@NotNull VoicingTemplateView view, int degree) {
-                        mViewModel.onChordToneClick(degree);
+                    public void onChordToneClick(VoicingTemplateView view, int degree) {
+                        mViewModel.toggleChordTone(degree);
                     }
                 },
                 new View.OnClickListener() {
@@ -144,12 +144,12 @@ public class DroneSettingsFragment extends Fragment {
                 new VoicingTemplateTouchListener() {
                     @Override
                     public void onBassToneClick(@NotNull VoicingTemplateView view, int degree) {
-                        mViewModel.onBassToneClick(degree);
+                        mViewModel.toggleBassTone(degree);
                     }
 
                     @Override
                     public void onChordToneClick(@NotNull VoicingTemplateView view, int degree) {
-                        mViewModel.onChordToneClick(degree);
+                        mViewModel.toggleChordTone(degree);
                     }
                 },
                 new View.OnClickListener() {
