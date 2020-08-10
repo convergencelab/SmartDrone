@@ -35,6 +35,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
     var curTemplate: MutableLiveData<VoicingTemplate> = MutableLiveData()
     var curScale = MutableLiveData<Scale>()
+    var curChordConstructorType = MutableLiveData<ChordConstructorType>()
 
     private val signalProcessor = SignalProcessorKt()
     private val noteProcessor = NoteProcessor()
@@ -75,6 +76,8 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
         keyPredictor = repository.getKeyPredictor()
         setVoicingTemplate(repository.getCurTemplate())
+
+        curChordConstructorType.value = repository.getChordConstructorType()
 
         initPipeline()
 

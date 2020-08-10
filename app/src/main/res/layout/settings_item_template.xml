@@ -48,6 +48,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:voicingTemplateListener="@{item.listener}"
             app:voicingTemplate="@{item.template}" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -13,8 +13,7 @@ import androidx.databinding.DataBindingUtil;
 
 import com.convergencelabstfx.smartdrone.DroneSettingsItem;
 import com.convergencelabstfx.smartdrone.R;
-import com.convergencelabstfx.smartdrone.databinding.SettingsItemListBinding;
-import com.convergencelabstfx.smartdrone.databinding.SettingsItemTemplateBinding;
+import com.convergencelabstfx.smartdrone.databinding.SettingsItemTwolineBinding;
 import com.convergencelabstfx.smartdrone.views.VoicingTemplateView;
 
 import java.util.ArrayList;
@@ -72,10 +71,10 @@ public class DroneSettingsAdapter extends ArrayAdapter<DroneSettingsItem> {
     }
 
     private View makeListItem(DroneSettingsItem.ListItem listItem, ViewGroup container) {
-        final SettingsItemListBinding binding =
+        final SettingsItemTwolineBinding binding =
                 DataBindingUtil.inflate(
                         LayoutInflater.from(getContext()),
-                        R.layout.settings_item_list,
+                        R.layout.settings_item_twoline,
                         container,
                         false);
         binding.setItem(listItem);

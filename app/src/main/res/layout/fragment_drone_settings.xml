@@ -17,8 +17,15 @@
             android:orientation="vertical">
 
             <include
+                android:id="@+id/chordConstructorPicker"
+                layout="@layout/settings_item_twoline" />
+
+            <include
+                layout="@layout/layout_divider" />
+
+            <include
                 android:id="@+id/modePicker"
-                layout="@layout/settings_item_list" />
+                layout="@layout/settings_item_twoline" />
 
             <include
                 layout="@layout/list_divider" />
