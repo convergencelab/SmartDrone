@@ -7,6 +7,7 @@ import jp.kshoji.javax.sound.midi.Receiver
 import jp.kshoji.javax.sound.midi.ShortMessage
 import java.util.*
 
+// todo: there is likely a bug with muting/unmuting; look into it later if it pops up
 class MidiPlayer {
 
     private val START = 0X90
@@ -29,6 +30,9 @@ class MidiPlayer {
 
     private var volume = DEFAULT_VOLUME
 
+    var isRunning: Boolean = false
+    private set
+
     var sf2: SF2Soundbank? = null
         set(value) {
             field = value
@@ -40,15 +44,13 @@ class MidiPlayer {
 
     fun start() {
         sendMidiSetup()
+        isRunning = true
     }
 
     fun stop() {
         clear()
         synth.close()
-    }
-
-    fun isRunning(): Boolean {
-        TODO("Not yet implemented")
+        isRunning = false
     }
 
     fun playNote(note: Int) {
@@ -125,26 +127,13 @@ class MidiPlayer {
 
     fun mute() {
         setVolume(VOLUME_OFF)
+        isMuted = true
     }
 
     fun unMute() {
         setVolume(volume)
+        isMuted = false
     }
-
-//    fun setSf2(sf2: SF2Soundbank) {
-//        try {
-//            synth = SoftSynthesizer()
-//            synth?.open()
-//            synth?.loadAllInstruments(sf2)
-//            synth?.channels?.get(0)?.programChange(0)
-//            recv = synth?.receiver
-//            this.sf2 = sf2
-//        } catch (e: IOException) {
-//            e.printStackTrace()
-//        } catch (e: MidiUnavailableException) {
-//            e.printStackTrace()
-//        }
-//    }
 
     /*
      * noteOn and noteOff exist because they don't have the side effect of adding and removing notes
@@ -178,14 +167,6 @@ class MidiPlayer {
             synth.channels[0].programChange(0)
             recv = synth.receiver
         }
-    }
-
-    private fun sendMessage(event: Int, toSend: Int, volume: Int) {
-//        val message = ByteArray(3)
-//        message[0] = event.toByte()
-//        message[1] = toSend.toByte()
-//        message[2] = volume.toByte()
-//        mDriver.write(message)
     }
 
     private fun refreshPlayback() {
