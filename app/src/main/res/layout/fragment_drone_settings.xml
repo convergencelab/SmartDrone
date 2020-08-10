@@ -28,7 +28,7 @@
                 layout="@layout/settings_item_twoline" />
 
             <include
-                layout="@layout/list_divider" />
+                layout="@layout/layout_divider" />
 
             <include
                 android:id="@+id/templateEditor"

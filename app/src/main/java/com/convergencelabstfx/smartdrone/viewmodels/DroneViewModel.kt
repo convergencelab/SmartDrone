@@ -171,13 +171,11 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         chordConstructor.template = template
         curTemplate.value = template
         repository.saveCurTemplate(template)
-//        if (isRunning) {
-//            chordConstructor.makeVoicing()
-////            if (restartPlayback) {
-//                midiPlayer.clear()
-//                midiPlayer.playChord(chordConstructor.curVoicing)
-////            }
-//        }
+    }
+
+    fun setChordConstructorType(type: ChordConstructorType) {
+        repository.saveChordConstructorType(type)
+        curChordConstructorType.value = type
     }
 
     fun insertVoicingTemplate(template: VoicingTemplate?) = viewModelScope.launch {

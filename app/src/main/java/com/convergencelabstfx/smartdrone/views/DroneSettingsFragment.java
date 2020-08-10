@@ -216,7 +216,8 @@ public class DroneSettingsFragment extends Fragment {
                 .setNegativeButton("Dismiss", (dialogInterface, i) -> {
 
                 })
-                .setSingleChoiceItems(names, -1, (dialogInterface, i) -> {
+                .setSingleChoiceItems(names, mViewModel.getCurChordConstructorType().getValue().ordinal(), (dialogInterface, i) -> {
+                    mViewModel.setChordConstructorType(ChordConstructorType.values()[i]);
                     dialogInterface.dismiss();
                 }).show();
     }
