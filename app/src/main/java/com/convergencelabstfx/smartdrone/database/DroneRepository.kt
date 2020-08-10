@@ -134,4 +134,8 @@ class DroneRepository(
         return ChordConstructor.values()[ordinal]
     }
 
+    fun getSf2FileName() : String {
+        return "string_section.sf2"
+    }
+
 }

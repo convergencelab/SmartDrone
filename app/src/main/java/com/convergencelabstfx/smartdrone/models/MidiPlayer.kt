@@ -1,39 +1,200 @@
 package com.convergencelabstfx.smartdrone.models
 
-interface MidiPlayer {
+import cn.sherlock.com.sun.media.sound.SF2Soundbank
+import cn.sherlock.com.sun.media.sound.SoftSynthesizer
+import jp.kshoji.javax.sound.midi.InvalidMidiDataException
+import jp.kshoji.javax.sound.midi.Receiver
+import jp.kshoji.javax.sound.midi.ShortMessage
+import java.util.*
 
-    fun start()
+class MidiPlayer {
 
-    fun stop()
+    private val START = 0X90
 
-    fun isRunning() : Boolean
+    private val STOP = 0X80
 
-    fun playNote(note: Int)
+    private val PROGRAM_CHANGE = 0XC0
 
-    fun stopNote(note: Int)
+    private val VOLUME_OFF = 0
 
-    fun playChord(chord: List<Int>)
+    private val DEFAULT_VOLUME = 65
 
-    fun stopChord(chord: List<Int>)
+    private var synth: SoftSynthesizer = SoftSynthesizer()
 
-    fun clear()
+    private var recv: Receiver? = null
 
-    fun noteIsActive(note: Int) : Boolean
+    private val activeNotes: MutableSet<Int> = HashSet()
 
-    fun hasActiveNotes() : Boolean
+    private var plugin: Int = -1
 
-    fun setPlugin(plugin: Int)
+    private var volume = DEFAULT_VOLUME
 
-    fun getPlugin() : Int
+    var sf2: SF2Soundbank? = null
+        set(value) {
+            field = value
+            sendMidiSetup()
+        }
 
-    fun setVolume(volume: Int)
+    var isMuted: Boolean = false
+        private set
 
-    fun getVolume() : Int
+    fun start() {
+        sendMidiSetup()
+    }
 
-    fun mute()
+    fun stop() {
+        clear()
+        synth.close()
+    }
 
-    fun unMute()
+    fun isRunning(): Boolean {
+        TODO("Not yet implemented")
+    }
 
-    fun isMuted() : Boolean
+    fun playNote(note: Int) {
+        if (!noteIsActive(note)) {
+            noteOn(note)
+            activeNotes.add(note)
+        }
+    }
+
+    fun stopNote(note: Int) {
+        if (noteIsActive(note)) {
+            noteOff(note)
+            activeNotes.remove(note)
+        }
+    }
+
+    fun playChord(chord: List<Int>) {
+        for (note in chord) {
+            playNote(note)
+        }
+    }
+
+    fun stopChord(chord: List<Int>) {
+        for (note in chord) {
+            stopNote(note)
+        }
+    }
+
+    fun clear() {
+        for (note in activeNotes) {
+            noteOff(note)
+        }
+        activeNotes.clear()
+    }
+
+    fun noteIsActive(note: Int): Boolean {
+        return activeNotes.contains(note)
+    }
+
+    fun hasActiveNotes(): Boolean {
+        return !activeNotes.isEmpty()
+    }
+
+    fun getPlugin(): Int {
+        return plugin
+    }
+
+    // todo: clean this up
+    fun setPlugin(plugin: Int) {
+        if (this.plugin != plugin) {
+            this.plugin = plugin
+//            if (mDriver != null) {
+//                // Need to write plugin to midi driver.
+//                sendMidiSetup()
+//                if (hasActiveNotes()) {
+//                    refreshPlayback()
+//                }
+//            }
+        }
+    }
+
+    fun getVolume(): Int {
+        return volume
+    }
+
+    fun setVolume(volume: Int) {
+        if (volume != this.volume) {
+            this.volume = volume
+            if (synth != null && hasActiveNotes()) {
+                refreshPlayback()
+            }
+        }
+    }
+
+    fun mute() {
+        setVolume(VOLUME_OFF)
+    }
+
+    fun unMute() {
+        setVolume(volume)
+    }
+
+//    fun setSf2(sf2: SF2Soundbank) {
+//        try {
+//            synth = SoftSynthesizer()
+//            synth?.open()
+//            synth?.loadAllInstruments(sf2)
+//            synth?.channels?.get(0)?.programChange(0)
+//            recv = synth?.receiver
+//            this.sf2 = sf2
+//        } catch (e: IOException) {
+//            e.printStackTrace()
+//        } catch (e: MidiUnavailableException) {
+//            e.printStackTrace()
+//        }
+//    }
+
+    /*
+     * noteOn and noteOff exist because they don't have the side effect of adding and removing notes
+     * to mActiveNotes.
+     * Methods refreshPlayback and clear require this to avoid throwing ConcurrentModificationException()
+     */
+    private fun noteOn(note: Int) {
+        try {
+            val msg = ShortMessage()
+            msg.setMessage(ShortMessage.NOTE_ON, 0, note, 127)
+            recv?.send(msg, -1)
+        } catch (e: InvalidMidiDataException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun noteOff(note: Int) {
+        try {
+            val msg = ShortMessage()
+            msg.setMessage(ShortMessage.NOTE_OFF, 0, note, 127)
+            recv?.send(msg, -1)
+        } catch (e: InvalidMidiDataException) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun sendMidiSetup() {
+        if (sf2 != null) {
+            synth.open()
+            synth.loadAllInstruments(sf2!!)
+            synth.channels[0].programChange(0)
+            recv = synth.receiver
+        }
+    }
+
+    private fun sendMessage(event: Int, toSend: Int, volume: Int) {
+//        val message = ByteArray(3)
+//        message[0] = event.toByte()
+//        message[1] = toSend.toByte()
+//        message[2] = volume.toByte()
+//        mDriver.write(message)
+    }
+
+    private fun refreshPlayback() {
+        for (note in activeNotes) {
+            noteOff(note)
+        }
+        for (note in activeNotes) {
+            noteOn(note)
+        }
+    }
 
 }

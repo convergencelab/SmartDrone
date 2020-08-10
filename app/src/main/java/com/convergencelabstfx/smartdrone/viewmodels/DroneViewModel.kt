@@ -61,18 +61,13 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         val sharedPreferences = application.getSharedPreferences(resources.getString(R.string.file_key), Context.MODE_PRIVATE)
         repository = DroneRepository(templateDao, sharedPreferences, resources)
 
-
-
-        val sfMidiPlayer = MidiPlayerImpl2()
+        val sfMidiPlayer = MidiPlayer()
         sfMidiPlayer.setPlugin(repository.getMidiPlugin())
-        // ***NOTE: this file is ignored in the gitrepo
-        val sf = SF2Soundbank(application.assets.open("SmallTimGM6mb.sf2"))
-        sfMidiPlayer.setSf2(sf)
+
+        val sf = SF2Soundbank(application.assets.open(repository.getSf2FileName()))
+        sfMidiPlayer.sf2 = sf
         sfMidiPlayer.setPlugin(repository.getMidiPlugin())
         midiPlayer = sfMidiPlayer
-
-//        midiPlayer = MidiPlayerImpl()
-//        midiPlayer.setPlugin(0)
 
         mParentScales = repository.getParentScales()
         setScale(mParentScales[repository.getParentScaleIx()].getScaleAt(repository.getModeIx()))
