@@ -119,7 +119,7 @@ class MidiPlayer {
     fun setVolume(volume: Int) {
         if (volume != this.volume) {
             this.volume = volume
-            if (synth != null && hasActiveNotes()) {
+            if (hasActiveNotes()) {
                 refreshPlayback()
             }
         }
@@ -143,7 +143,7 @@ class MidiPlayer {
     private fun noteOn(note: Int) {
         try {
             val msg = ShortMessage()
-            msg.setMessage(ShortMessage.NOTE_ON, 0, note, 127)
+            msg.setMessage(ShortMessage.NOTE_ON, 0, note, volume)
             recv?.send(msg, -1)
         } catch (e: InvalidMidiDataException) {
             e.printStackTrace()
@@ -153,7 +153,7 @@ class MidiPlayer {
     private fun noteOff(note: Int) {
         try {
             val msg = ShortMessage()
-            msg.setMessage(ShortMessage.NOTE_OFF, 0, note, 127)
+            msg.setMessage(ShortMessage.NOTE_OFF, 0, note, volume)
             recv?.send(msg, -1)
         } catch (e: InvalidMidiDataException) {
             e.printStackTrace()

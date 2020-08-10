@@ -10,7 +10,7 @@ import com.convergencelabstfx.keyfinder.keypredictor.KeyPredictor
 import com.convergencelabstfx.keyfinder.keypredictor.Phrase
 import com.convergencelabstfx.keyfinder.keypredictor.PhrasePredictor
 import com.convergencelabstfx.smartdrone.R
-import com.convergencelabstfx.smartdrone.models.ChordConstructor
+import com.convergencelabstfx.smartdrone.models.ChordConstructorType
 import com.convergencelabstfx.smartdrone.models.ScaleConstructor
 import com.convergencelabstfx.smartdrone.models.VoicingBounds
 import com.convergencelabstfx.smartdrone.stringToVoicingTemplate
@@ -122,16 +122,16 @@ class DroneRepository(
         return predictor
     }
 
-    fun saveChordConstructorType(type: ChordConstructor) {
+    fun saveChordConstructorType(type: ChordConstructorType) {
         with (sharedPreferences.edit()) {
             putInt(resources.getString(R.string.parent_ix_key), type.ordinal)
             commit()
         }
     }
 
-    fun getChordConstructorType() : ChordConstructor {
+    fun getChordConstructorType() : ChordConstructorType {
         val ordinal = sharedPreferences.getInt(resources.getString(R.string.key_predictor_key), 0)
-        return ChordConstructor.values()[ordinal]
+        return ChordConstructorType.values()[ordinal]
     }
 
     fun getSf2FileName() : String {

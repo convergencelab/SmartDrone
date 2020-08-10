@@ -134,11 +134,11 @@ public class MusicTheory {
      */
     public final static String[] MELODIC_MINOR_MODE_NAMES = {
             "Melodic Minor",
-            "Phrygian " + SHARP + "6",
+            "Phrygian " + SHARP + '6',
             "Lydian Augmented",
-            "Lydian " + FLAT + "7",
-            "Mixolydian " + FLAT + "6",
-            "Locrian " + SHARP + "2",
+            "Lydian " + FLAT + '7',
+            "Mixolydian " + FLAT + '6',
+            "Locrian " + SHARP + '2',
             "Altered"
     };
 
@@ -147,7 +147,7 @@ public class MusicTheory {
      */
     public final static String[] HARMONIC_MINOR_MODE_NAMES = {
             "Harmonic Minor",
-            "Locrian " + NATURAL + "6",
+            "Locrian " + NATURAL + '6',
             "Ionian " + SHARP + '5',
             "Dorian " + SHARP + '4',
             "Phrygian Dominant",
@@ -161,7 +161,7 @@ public class MusicTheory {
             "Phrygian " + FLAT + '4',
             "Lydian " + FLAT + '3',
             "Mixolydian " + FLAT + '2',
-            "Lydian Augmented" + SHARP + '2',
+            "Lydian Augmented " + SHARP + '2',
             "Locrian" + FLAT + FLAT + '7'
     };
 

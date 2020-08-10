@@ -104,24 +104,38 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    fun onBassToneClick(degree: Int) {
+    fun toggleBassTone(degree: Int) {
         val template = curTemplate.value
+        val note: Int
         if (template?.bassTones!!.contains(degree)) {
-            template.removeBassTone(degree)
+            note = chordConstructor.removeBassTone(degree)
+            if (midiPlayer.isRunning) {
+                midiPlayer.stopNote(note)
+            }
         }
         else {
-            template.addBassTone(degree)
+            note = chordConstructor.addBassTone(degree)
+            if (midiPlayer.isRunning) {
+                midiPlayer.playNote(note)
+            }
         }
         setVoicingTemplate(template)
     }
 
-    fun onChordToneClick(degree: Int) {
+    fun toggleChordTone(degree: Int) {
         val template = curTemplate.value
+        val note: Int
         if (template?.chordTones!!.contains(degree)) {
-            template.removeChordTone(degree)
+            note = chordConstructor.removeChordTone(degree)
+            if (midiPlayer.isRunning) {
+                midiPlayer.stopNote(note)
+            }
         }
         else {
-            template.addChordTone(degree)
+            note = chordConstructor.addChordTone(degree)
+            if (midiPlayer.isRunning) {
+                midiPlayer.playNote(note)
+            }
         }
         setVoicingTemplate(template)
     }
@@ -133,10 +147,6 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
     val isRunning: Boolean
         get() = mDroneIsActive.value != null && mDroneIsActive.value!!
-
-    // todo: figure how this should work
-    val curModeName: String?
-        get() = null
 
     val parentScales: List<ParentScale>
         get() = mParentScales
@@ -158,13 +168,13 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         chordConstructor.template = template
         curTemplate.value = template
         repository.saveCurTemplate(template)
-        if (isRunning) {
-            chordConstructor.makeVoicing()
-//            if (restartPlayback) {
-                midiPlayer.clear()
-                midiPlayer.playChord(chordConstructor.curVoicing)
-//            }
-        }
+//        if (isRunning) {
+//            chordConstructor.makeVoicing()
+////            if (restartPlayback) {
+//                midiPlayer.clear()
+//                midiPlayer.playChord(chordConstructor.curVoicing)
+////            }
+//        }
     }
 
     fun insertVoicingTemplate(template: VoicingTemplate?) = viewModelScope.launch {
