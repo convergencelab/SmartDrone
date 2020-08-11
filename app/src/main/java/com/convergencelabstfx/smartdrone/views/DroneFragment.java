@@ -21,7 +21,6 @@ import com.convergencelabstfx.keyfinder.harmony.VoicingTemplate;
 import com.convergencelabstfx.pianoview.PianoTouchListener;
 import com.convergencelabstfx.pianoview.PianoView;
 import com.convergencelabstfx.smartdrone.R;
-import com.convergencelabstfx.smartdrone.database.VoicingTemplateEntity;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDroneBinding;
 import com.convergencelabstfx.smartdrone.viewmodels.DroneViewModel;
 
@@ -67,8 +66,6 @@ public class DroneFragment extends Fragment {
             requestMicrophonePermission();
         }
 
-
-
         mBinding.activeKeyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,17 +78,17 @@ public class DroneFragment extends Fragment {
             }
         });
 
-        mBinding.playButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!mViewModel.isRunning()) {
-                    mViewModel.startDrone();
-                }
-                else {
-                    mViewModel.stopDrone();
-                }
+        mBinding.playButton.setOnClickListener(view -> {
+            if (!mViewModel.isRunning()) {
+                mViewModel.startDrone();
+            }
+            else {
+                mViewModel.stopDrone();
             }
         });
+
+        // todo: do something eventually
+        mBinding.lockButton.setOnClickListener(view -> { } );
 
         mBinding.piano.addPianoTouchListener(new PianoTouchListener() {
             @Override

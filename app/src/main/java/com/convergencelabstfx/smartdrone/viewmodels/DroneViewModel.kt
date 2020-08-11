@@ -127,10 +127,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
                     override fun onConstructorFinished() {
                         // Restore note processor values
                         noteProcessor.listener = tempListener
-                        midiPlayer.clear()
-                        // todo: extract hardcoded
-                        midiPlayer.playNote(key + 36)
-                        midiPlayer.playChord(pitchConstructor.chord)
+                        soundEffectPlayer.playFinishedSound()
                         pitchConstructor.clear()
                     }
                 })
@@ -257,10 +254,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
                     override fun onConstructorFinished() {
                         // Restore note processor values
                         noteProcessor.listener = tempListener
-                        midiPlayer.clear()
-                        // todo: extract hardcoded
-                        midiPlayer.playNote(newKey + 36)
-                        midiPlayer.playChord(pitchConstructor.chord)
+                        soundEffectPlayer.playFinishedSound()
                         pitchConstructor.clear()
                     }
                 })
