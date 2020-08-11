@@ -16,7 +16,6 @@ import com.convergencelabstfx.smartdrone.database.DroneRepository
 import com.convergencelabstfx.smartdrone.database.VoicingTemplateEntity
 import com.convergencelabstfx.smartdrone.models.*
 import kotlinx.coroutines.launch
-import timber.log.Timber
 import java.util.*
 
 /**
@@ -42,6 +41,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     private val signalProcessor = SignalProcessorKt()
     private val noteProcessor = NoteProcessor()
     private val chordConstructor = VoicingConstructor()
+    private val soundEffectPlayer = SoundEffectPlayer(application.applicationContext)
     private var keyPredictor: KeyPredictor
 
 
@@ -213,7 +213,6 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
                 val tempListener = noteProcessor.listener
                 noteProcessor.listener = (object : NoteProcessorListener {
                     override fun notifyNoteDetected(note: Int) {
-                        Timber.i("notify note detected")
                         pitchConstructor.noteDetected(note)
                     }
                     override fun notifyNoteUndetected(note: Int) {
@@ -227,6 +226,10 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
                     override fun onConstructorFinished() {
                         // Restore note processor values
                         noteProcessor.listener = tempListener
+                        midiPlayer.clear()
+                        midiPlayer.playNote(newKey + 36)
+                        midiPlayer.playChord(pitchConstructor.chord)
+                        pitchConstructor.clear()
                     }
                 })
                 pitchConstructor.start()
