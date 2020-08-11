@@ -105,7 +105,38 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
             chordConstructor.key = key
             mDetectedKey.value = key
             midiPlayer.clear()
-            midiPlayer.playChord(chordConstructor.makeVoicing())
+            if (curChordConstructorType.value == ChordConstructorType.VOICING_CONSTRUCTOR) {
+                midiPlayer.playChord(chordConstructor.makeVoicing())
+            }
+            else if (curChordConstructorType.value == ChordConstructorType.PITCH_CONSTRUCTOR) {
+                // todo: hardcoded for now, just plays bass note for new key
+                midiPlayer.playNote(key + 36)
+                val tempListener = noteProcessor.listener
+                noteProcessor.listener = (object : NoteProcessorListener {
+                    override fun notifyNoteDetected(note: Int) {
+                        pitchConstructor.noteDetected(note)
+                    }
+                    override fun notifyNoteUndetected(note: Int) {
+                        pitchConstructor.noteUndetected(note)
+                    }
+                })
+                pitchConstructor.listener = (object : PitchConstructorListener {
+                    override fun onNoteDetected(note: Int) {
+                        midiPlayer.playNote(note)
+                    }
+                    override fun onConstructorFinished() {
+                        // Restore note processor values
+                        noteProcessor.listener = tempListener
+                        midiPlayer.clear()
+                        // todo: extract hardcoded
+                        midiPlayer.playNote(key + 36)
+                        midiPlayer.playChord(pitchConstructor.chord)
+                        pitchConstructor.clear()
+                    }
+                })
+                pitchConstructor.start()
+            }
+//            midiPlayer.playChord(chordConstructor.makeVoicing())
         }
     }
 
@@ -227,6 +258,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
                         // Restore note processor values
                         noteProcessor.listener = tempListener
                         midiPlayer.clear()
+                        // todo: extract hardcoded
                         midiPlayer.playNote(newKey + 36)
                         midiPlayer.playChord(pitchConstructor.chord)
                         pitchConstructor.clear()

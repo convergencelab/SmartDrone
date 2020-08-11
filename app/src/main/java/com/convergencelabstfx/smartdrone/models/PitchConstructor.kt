@@ -4,7 +4,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import timber.log.Timber
 
 class PitchConstructor {
 
@@ -19,29 +18,21 @@ class PitchConstructor {
 
     var curJob: Job? = null
 
+    private val threadIsActive: Boolean
+        get() = curJob != null
+
     fun start() {
-        curJob = GlobalScope.launch {
-            Timber.i("thread started")
-            delay(silenceThreshold)
-            Timber.i("thread executed")
-            listener?.onConstructorFinished()
-        }
+        startThread()
     }
 
     fun noteDetected(note: Int) {
         if (!notes.contains(note)) {
-            if (curJob != null) {
-                curJob?.cancel()
-                Timber.i("thread stopped")
+            if (threadIsActive) {
+                stopThread()
             }
             notes.add(note)
             listener?.onNoteDetected(note)
-            curJob = GlobalScope.launch {
-                Timber.i("thread started")
-                delay(silenceThreshold)
-                Timber.i("thread executed")
-                listener?.onConstructorFinished()
-            }
+            startThread()
         }
     }
 
@@ -51,6 +42,20 @@ class PitchConstructor {
 
     fun clear() {
         notes.clear()
+    }
+
+    private fun startThread() {
+        if (curJob == null) {
+            curJob = GlobalScope.launch {
+                delay(silenceThreshold)
+                listener?.onConstructorFinished()
+            }
+        }
+    }
+
+    private fun stopThread() {
+        curJob?.cancel()
+        curJob = null
     }
 
 }
