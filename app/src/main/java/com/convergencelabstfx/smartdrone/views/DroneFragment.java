@@ -88,7 +88,7 @@ public class DroneFragment extends Fragment {
         });
 
         // todo: do something eventually
-        mBinding.lockButton.setOnClickListener(view -> { } );
+        mBinding.lockButton.setOnClickListener(view -> { mViewModel.testFun(); } );
 
         mBinding.piano.addPianoTouchListener(new PianoTouchListener() {
             @Override

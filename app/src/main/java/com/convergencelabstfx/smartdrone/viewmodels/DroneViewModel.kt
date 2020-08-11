@@ -85,6 +85,10 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
     }
 
+    fun testFun() {
+        soundEffectPlayer.playMetronomeClack()
+    }
+
     fun startDrone() {
         signalProcessor.start()
         midiPlayer.start()

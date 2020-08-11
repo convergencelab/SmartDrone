@@ -8,8 +8,11 @@ import com.convergencelabstfx.smartdrone.R
 class SoundEffectPlayer(val context: Context) {
 
     fun playFinishedSound() {
-        val mp: MediaPlayer = MediaPlayer.create(context, R.raw.beep)
-        mp.start()
+        MediaPlayer.create(context, R.raw.beep).start()
+    }
+
+    fun playMetronomeClack() {
+        MediaPlayer.create(context, R.raw.metronome_clack).start()
     }
 
 }
