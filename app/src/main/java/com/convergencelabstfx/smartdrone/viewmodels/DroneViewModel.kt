@@ -43,10 +43,13 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     private val chordConstructor = VoicingConstructor()
     private val soundEffectPlayer = SoundEffectPlayer(application.applicationContext)
     private var keyPredictor: KeyPredictor
+    private val metronome = Metronome()
 
 
     private var midiPlayer: MidiPlayer
     private val mParentScales: List<ParentScale>
+
+
 
 
     private val mVoicingTemplates: MutableList<VoicingTemplate> = ArrayList()
@@ -81,12 +84,23 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
         curChordConstructorType.value = repository.getChordConstructorType()
 
+        metronome.soundCallback = (object : MetronomeSoundCallback {
+            override fun playSound() {
+                soundEffectPlayer.playMetronomeClack()
+            }
+        })
+
         constructPipeline()
 
     }
 
-    fun testFun() {
-        soundEffectPlayer.playMetronomeClack()
+    fun toggleMetronome() {
+        if (metronome.isActive) {
+            metronome.stop()
+        }
+        else {
+            metronome.start()
+        }
     }
 
     fun startDrone() {
