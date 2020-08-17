@@ -86,6 +86,11 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
         metronome.soundCallback = (object : MetronomeSoundCallback {
             override fun playSound() {
+//                if (midiPlayer.noteIsActive(36)) {
+//                    midiPlayer.stopNote(36)
+//                }
+//                midiPlayer.playNote(36)
+
                 soundEffectPlayer.playMetronomeClack()
             }
         })

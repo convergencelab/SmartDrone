@@ -5,7 +5,6 @@ import kotlinx.coroutines.channels.ReceiveChannel
 import kotlinx.coroutines.channels.ticker
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import kotlin.math.abs
 
 class Metronome {
 
@@ -13,6 +12,7 @@ class Metronome {
 
     var soundCallback: MetronomeSoundCallback? = null
 
+    // todo: remove these; debug variables
     var timeStamp = 0L
 
     var lastDif = 0L
@@ -21,16 +21,27 @@ class Metronome {
         private set
 
     var bpm = 0
+        set(value) {
+            field = value
+        }
 
     fun start() {
         if (!isActive) {
             GlobalScope.launch {
-                tickerChannel = ticker(200, 0)
+                tickerChannel = ticker(700, 0)
                 while (true) {
                     tickerChannel!!.receive()
-//                    soundCallback?.playSound()
+
+                    val soundTimeStamp = System.currentTimeMillis()
+                    soundCallback?.playSound()
+
+                    // This line prints the length of the playSound call
+                    Timber.i("soundLen: ${System.currentTimeMillis() - soundTimeStamp}")
+
                     val dif = System.currentTimeMillis() - timeStamp
-                    Timber.i("${(System.currentTimeMillis() - timeStamp)}, ${abs(dif - lastDif)}ms")
+
+                    // This line prints the difference between sound finished
+                    Timber.i("${(System.currentTimeMillis() - timeStamp)}, ${dif - lastDif}ms")
                     timeStamp = System.currentTimeMillis()
                     lastDif = dif
 
