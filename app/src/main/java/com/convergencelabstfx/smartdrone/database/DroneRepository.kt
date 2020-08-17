@@ -130,12 +130,29 @@ class DroneRepository(
     }
 
     fun getChordConstructorType() : ChordConstructorType {
-        val ordinal = sharedPreferences.getInt(resources.getString(R.string.chord_constructor_key), 0)
+        val ordinal = sharedPreferences.getInt(
+                resources.getString(R.string.chord_constructor_key),
+                0
+        )
         return ChordConstructorType.values()[ordinal]
     }
 
     fun getSf2FileName() : String {
         return "string_section.sf2"
+    }
+
+    fun getBpm() : Int {
+        return sharedPreferences.getInt(
+                resources.getString(R.string.bpm_key),
+                60
+        )
+    }
+
+    fun saveBpm(bpm: Int) {
+        with (sharedPreferences.edit()) {
+            putInt(resources.getString(R.string.bpm_key), bpm)
+            commit()
+        }
     }
 
 }

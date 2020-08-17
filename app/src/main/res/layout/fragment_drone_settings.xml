@@ -34,6 +34,13 @@
                 android:id="@+id/templateEditor"
                 layout="@layout/settings_item_template" />
 
+            <include
+                layout="@layout/layout_divider" />
+
+            <include
+                android:id="@+id/metronomeSlider"
+                layout="@layout/settings_item_slider" />
+
         </LinearLayout>
 
     </ScrollView>

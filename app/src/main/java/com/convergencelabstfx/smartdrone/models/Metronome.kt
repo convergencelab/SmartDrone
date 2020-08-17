@@ -8,6 +8,13 @@ import timber.log.Timber
 
 class Metronome {
 
+    companion object {
+        const val MIN_BPM = 30
+        const val MAX_BPM = 240
+    }
+
+    private val DEFAULT_BPM = 60
+
     var tickerChannel: ReceiveChannel<Unit>? = null
 
     var soundCallback: MetronomeSoundCallback? = null
@@ -20,9 +27,13 @@ class Metronome {
     var isActive: Boolean = false
         private set
 
-    var bpm = 0
+    var bpm = DEFAULT_BPM
         set(value) {
             field = value
+            if (isActive) {
+                stop()
+                start()
+            }
         }
 
     fun start() {

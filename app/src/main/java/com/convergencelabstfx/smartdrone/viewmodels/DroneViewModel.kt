@@ -35,6 +35,7 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
     var curTemplate: MutableLiveData<VoicingTemplate> = MutableLiveData()
     var curScale = MutableLiveData<Scale>()
     var curChordConstructorType = MutableLiveData<ChordConstructorType>()
+    var curBpm = MutableLiveData<Int>()
 
     private val pitchConstructor = PitchConstructor()
 
@@ -84,6 +85,8 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
 
         curChordConstructorType.value = repository.getChordConstructorType()
 
+        setBpm(repository.getBpm())
+
         metronome.soundCallback = (object : MetronomeSoundCallback {
             override fun playSound() {
 //                if (midiPlayer.noteIsActive(36)) {
@@ -121,6 +124,12 @@ class DroneViewModel(application: Application) : AndroidViewModel(application) {
         mDetectedNote.value = -1
         mDetectedKey.value = -1
         mDroneIsActive.value = false
+    }
+
+    fun setBpm(bpm: Int) {
+        metronome.bpm = bpm
+        curBpm.value = bpm
+        repository.saveBpm(bpm)
     }
 
     fun setKeyChange(key: Int) {

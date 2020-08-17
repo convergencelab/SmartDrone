@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
+import androidx.arch.core.util.Function;
 import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Transformations;
@@ -19,12 +20,11 @@ import com.convergencelabstfx.smartdrone.R;
 import com.convergencelabstfx.smartdrone.adapters.DroneSettingsAdapter;
 import com.convergencelabstfx.smartdrone.databinding.FragmentDroneSettingsBinding;
 import com.convergencelabstfx.smartdrone.models.ChordConstructorType;
+import com.convergencelabstfx.smartdrone.models.Metronome;
 import com.convergencelabstfx.smartdrone.viewmodels.DroneViewModel;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.slider.Slider;
 
-import org.jetbrains.annotations.NotNull;
-
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,54 +65,6 @@ public class DroneSettingsFragment extends Fragment {
         return mBinding.getRoot();
     }
 
-    private DroneSettingsAdapter makeSettingsAdapter() {
-        final ArrayList<DroneSettingsItem> settingsList = new ArrayList<>();
-
-        DroneSettingsItem modePicker = new DroneSettingsItem.ListItem(
-                "Mode",
-//                mViewModel.getCurScale().getValue().getName(),
-                null,
-                getResources().getDrawable(R.drawable.ic_music_note),
-                // todo: show the previously chosen index
-                view -> showParentScaleDialog()
-        );
-        settingsList.add(modePicker);
-
-//        DroneSettingsItem chordConstructorPicker = new DroneSettingsItem.ListItem(
-//                "Chord Constructor",
-//                "Choose the chord constructor",
-//                null,
-//                view -> showChordConstructorDialog(),
-//
-//        );
-//        settingsList.add(chordConstructorPicker);
-
-        DroneSettingsItem voicingTemplateItem = new DroneSettingsItem.VoicingTemplateItem(
-                new VoicingTemplateTouchListener() {
-                    @Override
-                    public void onBassToneClick(@NotNull VoicingTemplateView view, int degree) {
-                        mViewModel.toggleBassTone(degree);
-                    }
-
-                    @Override
-                    public void onChordToneClick(@NotNull VoicingTemplateView view, int degree) {
-                        mViewModel.toggleChordTone(degree);
-                    }
-                },
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        showTemplateEditorHelpDialog();
-                    }
-                },
-                mViewModel.getCurTemplate()
-        );
-        settingsList.add(voicingTemplateItem);
-
-        return new DroneSettingsAdapter(getContext(), settingsList);
-    }
-
-
     private void setupSettingsList() {
         /* Setup Chord Constructor Picker */
         DroneSettingsItem.ListItem chordConstructorPicker = new DroneSettingsItem.ListItem(
@@ -150,6 +102,26 @@ public class DroneSettingsFragment extends Fragment {
                 mViewModel.getCurTemplate()
         );
         mBinding.templateEditor.setItem(voicingTemplateItem);
+
+        DroneSettingsItem.SliderItem metronomeSlider = new DroneSettingsItem.SliderItem(
+                "Title",
+                Transformations.map(mViewModel.getCurBpm(), new Function<Integer, String>() {
+                    @Override
+                    public String apply(Integer input) {
+                        return input + " bpm";
+                    }
+                }),
+                mViewModel.getCurBpm(),
+                Metronome.MIN_BPM,
+                Metronome.MAX_BPM
+        );
+        mBinding.metronomeSlider.setItem(metronomeSlider);
+        mBinding.metronomeSlider.slider.addOnChangeListener(new Slider.OnChangeListener() {
+            @Override
+            public void onValueChange(@NonNull Slider slider, float value, boolean fromUser) {
+                mViewModel.setBpm((int) slider.getValue());
+            }
+        });
     }
 
     // todo: extract all of these hardcoded strings

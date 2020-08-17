@@ -8,7 +8,7 @@ import timber.log.Timber
 
 class SoundEffectPlayer(val context: Context) {
 
-    val metronomeClack = MediaPlayer.create(context, R.raw.metronome_clack)
+    private val metronomeClack: MediaPlayer = MediaPlayer.create(context, R.raw.metronome_clack)
 
 
     fun playFinishedSound() {
@@ -18,7 +18,6 @@ class SoundEffectPlayer(val context: Context) {
     }
 
     fun playMetronomeClack() {
-
         if (metronomeClack.isPlaying) {
             Timber.i("seek called")
             metronomeClack.seekTo(0)
