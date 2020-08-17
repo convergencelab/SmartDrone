@@ -30,8 +30,8 @@ interface DroneSettingsItem {
             val summary: LiveData<String>,
             val curVal: LiveData<Int>,
             val minVal: Int,
-            val maxVal: Int
-    ) : DroneSettingsItem {
-    }
+            val maxVal: Int,
+            val icon: Drawable?
+    ) : DroneSettingsItem
 
 }

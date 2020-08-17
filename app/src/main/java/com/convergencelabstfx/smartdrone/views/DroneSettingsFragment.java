@@ -79,7 +79,7 @@ public class DroneSettingsFragment extends Fragment {
         DroneSettingsItem.ListItem modePicker = new DroneSettingsItem.ListItem(
                 "Mode",
                 Transformations.map(mViewModel.getCurScale(), Scale::getName),
-                getResources().getDrawable(R.drawable.ic_music_note),
+                getResources().getDrawable(R.drawable.ic_music_note, requireActivity().getTheme()),
                 // todo: show the previously chosen index
                 view -> showParentScaleDialog()
         );
@@ -113,7 +113,8 @@ public class DroneSettingsFragment extends Fragment {
                 }),
                 mViewModel.getCurBpm(),
                 Metronome.MIN_BPM,
-                Metronome.MAX_BPM
+                Metronome.MAX_BPM,
+                getResources().getDrawable(R.drawable.ic_metronome, requireActivity().getTheme())
         );
         mBinding.metronomeSlider.setItem(metronomeSlider);
         mBinding.metronomeSlider.slider.addOnChangeListener(new Slider.OnChangeListener() {

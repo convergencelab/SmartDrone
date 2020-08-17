@@ -15,6 +15,17 @@
         android:layout_width="match_parent"
         android:layout_height="102dp">
 
+        <ImageView
+            android:id="@+id/icon"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="Metronome icon"
+            android:src="@{item.icon}"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/title"
             style="@style/title_style"
@@ -23,7 +34,7 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:text="@{item.title}"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="blah blah blah" />
 
@@ -41,7 +52,7 @@
 
         <com.google.android.material.slider.Slider
             android:id="@+id/slider"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_margin="16sp"
             android:stepSize="1"
@@ -50,7 +61,7 @@
             android:valueTo="@{item.maxVal}"
             app:labelBehavior="gone"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintLeft_toRightOf="@id/icon"
             app:layout_constraintRight_toRightOf="parent" />
 
 
