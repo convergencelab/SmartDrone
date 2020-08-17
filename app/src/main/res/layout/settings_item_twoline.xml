@@ -21,26 +21,25 @@
 
         <TextView
             android:id="@+id/title"
+            style="@style/title_style"
             android:layout_width="wrap_content"
             android:layout_height="32dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="4dp"
             android:gravity="bottom"
             android:text="@{item.title}"
-            android:textColor="@color/black"
-            android:textSize="18sp"
             app:layout_constraintLeft_toRightOf="@id/icon"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Title" />
 
         <TextView
             android:id="@+id/summary"
+            style="@style/summary_style"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:layout_marginStart="16dp"
             android:gravity="bottom"
             android:text="@{item.summary}"
-            android:textSize="15sp"
             app:layout_constraintLeft_toRightOf="@id/icon"
             app:layout_constraintTop_toBottomOf="@id/title"
             tools:text="Summary" />

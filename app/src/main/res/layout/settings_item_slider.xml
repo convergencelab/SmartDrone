@@ -13,12 +13,15 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="72dp">
+        android:layout_height="102dp">
 
         <TextView
             android:id="@+id/title"
+            style="@style/title_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
             android:text="@{item.title}"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -26,22 +29,26 @@
 
         <TextView
             android:id="@+id/summary"
+            style="@style/summary_style"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16sp"
+            android:layout_marginEnd="16sp"
             android:text="@{item.summary}"
-            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            tools:text="60bpm"/>
+            app:layout_constraintTop_toTopOf="parent"
+            tools:text="60bpm" />
 
         <com.google.android.material.slider.Slider
             android:id="@+id/slider"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="16sp"
             android:stepSize="1"
-            app:labelBehavior="gone"
             android:value="@{item.curVal}"
             android:valueFrom="@{item.minVal}"
             android:valueTo="@{item.maxVal}"
+            app:labelBehavior="gone"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />

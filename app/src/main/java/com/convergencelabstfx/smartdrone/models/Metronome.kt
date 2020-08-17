@@ -39,7 +39,8 @@ class Metronome {
     fun start() {
         if (!isActive) {
             GlobalScope.launch {
-                tickerChannel = ticker(700, 0)
+                val millis = bpmToMillis(bpm)
+                tickerChannel = ticker(millis, millis)
                 while (true) {
                     tickerChannel!!.receive()
 
@@ -67,6 +68,10 @@ class Metronome {
             tickerChannel?.cancel()
             isActive = false
         }
+    }
+
+    private fun bpmToMillis(bpm: Int) : Long {
+        return (60000 / bpm).toLong()
     }
 
 }

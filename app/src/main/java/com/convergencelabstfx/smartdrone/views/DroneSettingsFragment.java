@@ -104,7 +104,7 @@ public class DroneSettingsFragment extends Fragment {
         mBinding.templateEditor.setItem(voicingTemplateItem);
 
         DroneSettingsItem.SliderItem metronomeSlider = new DroneSettingsItem.SliderItem(
-                "Title",
+                "BPM",
                 Transformations.map(mViewModel.getCurBpm(), new Function<Integer, String>() {
                     @Override
                     public String apply(Integer input) {
